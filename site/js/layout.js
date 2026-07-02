@@ -16,6 +16,9 @@ export const MIN_SIZE = {
   art: [1, 1],
   aqi: [1, 1],
   worldclock: [1, 2], // five fixed rows never fit a single cell
+  sports: [2, 2],
+  worldcup: [2, 2],
+  news: [2, 2],
 };
 
 export const DEFAULT_LAYOUT = Object.freeze([

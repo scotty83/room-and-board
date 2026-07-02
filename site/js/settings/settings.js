@@ -23,6 +23,9 @@ const WIDGET_LABELS = {
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
   worldclock: 'World Clock',
+  sports: 'My Teams (sports)',
+  worldcup: 'World Cup 2026',
+  news: 'Headlines',
 };
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
@@ -98,6 +101,8 @@ const SECTIONS = [
   ['njt', 'NJ Transit'],
   ['bus', 'MTA Bus'],
   ['markets', 'Markets'],
+  ['sports', 'My Teams'],
+  ['news', 'Headlines'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
@@ -134,6 +139,8 @@ function renderSection() {
     njt: renderNjt,
     bus: renderBus,
     markets: renderMarkets,
+    sports: renderSports,
+    news: renderNews,
     art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
@@ -434,6 +441,79 @@ function renderMarkets() {
         }
       } else if (ticker.length < 10) ticker += k;
       display.textContent = ticker;
+    }),
+  );
+}
+
+let teamsData = null;
+async function renderSports() {
+  teamsData ??= await fetchJSON('data/teams.json');
+  const byKey = {};
+  for (const l of teamsData.leagues) for (const t of l.teams) byKey[`${l.lg}:${t.id}`] = { ...t, label: l.label };
+  const chips = state.cfg.sports.teams
+    .map((sel) => {
+      const t = byKey[`${sel.lg}:${sel.id}`];
+      return `<button class="chip" data-remove-team="${sel.lg}:${sel.id}">${t ? `${t.name} (${t.label})` : sel.id} ✕</button>`;
+    })
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">My Teams</h2>
+    <p class="pane__hint">Follow up to 6 teams — one glanceable row each: live score, final, or next game.</p>
+    <div class="chips">${chips || '<span class="pane__empty">No teams yet</span>'}</div>
+    <button class="btn btn--primary" data-add-team>Add a team</button>
+    <div class="drill"></div>`;
+  pane().querySelectorAll('[data-remove-team]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      const [lg, id] = chip.dataset.removeTeam.split(':');
+      state.cfg.sports.teams = state.cfg.sports.teams.filter((t) => !(t.lg === lg && t.id === id));
+      renderSports();
+    }),
+  );
+  pane().querySelector('[data-add-team]').addEventListener('click', () => {
+    drillList(
+      'Choose a league',
+      teamsData.leagues.map((l) => ({ html: escapeHtml(l.label), value: l })),
+      (pick) => {
+        state.stack.push(() => renderSports());
+        drillList(
+          `${pick.value.label} — choose a team`,
+          pick.value.teams.map((t) => ({ html: escapeHtml(t.name), value: { lg: pick.value.lg, id: t.id } })),
+          (teamPick) => {
+            const sel = teamPick.value;
+            const exists = state.cfg.sports.teams.some((t) => t.lg === sel.lg && t.id === sel.id);
+            if (!exists && state.cfg.sports.teams.length < 6) {
+              state.cfg.sports.teams = [...state.cfg.sports.teams, sel];
+            }
+            state.stack = [];
+            renderSports();
+          },
+        );
+      },
+    );
+  });
+}
+
+async function renderNews() {
+  const { NEWS_SOURCES } = await import('../widgets/news.js');
+  const groups = ['National', 'Local NYC'];
+  pane().innerHTML = `
+    <h2 class="pane__title">Headlines</h2>
+    <p class="pane__hint">Pick your sources — newest stories across all of them, merged.</p>
+    ${groups.map((g) => `
+      <p class="pane__hint">${g}</p>
+      <div class="rows">${NEWS_SOURCES.filter((s) => s[4] === g).map(([id, label]) => {
+        const on = state.cfg.news.sources.includes(id);
+        return `<div class="row">
+          <button class="toggle ${on ? 'is-on' : ''}" data-src="${id}" role="switch" aria-checked="${on}">
+            <span class="toggle__knob"></span>
+          </button>
+          <span class="row__label">${label}</span>
+        </div>`;
+      }).join('')}</div>`).join('')}`;
+  pane().querySelectorAll('[data-src]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.news.sources = toggleIn(state.cfg.news.sources, btn.dataset.src);
+      renderNews();
     }),
   );
 }

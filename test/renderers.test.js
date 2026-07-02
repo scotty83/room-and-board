@@ -8,6 +8,9 @@ import * as subway from '../site/js/widgets/subway.js';
 import * as lirr from '../site/js/widgets/lirr.js';
 import * as mnr from '../site/js/widgets/mnr.js';
 import * as busw from '../site/js/widgets/bus.js';
+import * as sports from '../site/js/widgets/sports.js';
+import * as worldcup from '../site/js/widgets/worldcup.js';
+import * as news from '../site/js/widgets/news.js';
 import * as njt from '../site/js/widgets/njt.js';
 import * as art from '../site/js/widgets/art.js';
 import * as history from '../site/js/widgets/history.js';
@@ -26,6 +29,9 @@ const CASES = [
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
   ['bus', busw, ['M34-SBS', 'Javits Center', 'approaching']],
+  ['sports', sports, ['NYM', 'Bot 7th', 'W 24-17']],
+  ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
+  ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
   ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
   ['history', history, ['1776', 'Continental Congress']],

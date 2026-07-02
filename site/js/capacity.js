@@ -19,6 +19,9 @@ const MODELS = {
   njt: listCapacity(80, 56),
   bus: listCapacity(80, 56),
   history: listCapacity(64, 54),
+  sports: listCapacity(76, 60),
+  worldcup: listCapacity(60, 46),
+  news: listCapacity(68, 48),
 };
 
 export function itemCapacity(id, w, h) {
@@ -47,6 +50,12 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `next ${n} buses`;
     case 'history':
       return `${n} events`;
+    case 'sports':
+      return ofTotal(Math.min(n, cfg.sports?.teams?.length ?? n), cfg.sports?.teams?.length, 'teams');
+    case 'worldcup':
+      return `${n} matches`;
+    case 'news':
+      return `${n} headlines`;
     case 'weather':
       return h >= 3 ? '8 hourly · 5-day forecast' : `${w <= 2 ? 6 : 8} hourly · 2-day forecast`;
     default:

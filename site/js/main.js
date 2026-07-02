@@ -5,7 +5,7 @@ import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer } from './net.js';
 import { schedule } from './scheduler.js';
 import { resolveMode } from './modes.js';
-import { registerWidget, activeWidgets, getWidget } from './registry.js';
+import { registerWidget, getWidget } from './registry.js';
 import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
 import { stripData } from './ambient.js';
@@ -21,8 +21,9 @@ import * as history from './widgets/history.js';
 import * as aqi from './widgets/aqi.js';
 import * as quote from './widgets/quote.js';
 import * as markets from './widgets/markets.js';
+import * as worldclock from './widgets/worldclock.js';
 
-const MODULES = [weather, subway, lirr, njt, art, history, aqi, quote, markets];
+const MODULES = [weather, subway, lirr, njt, art, history, aqi, quote, markets, worldclock];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer };
@@ -35,7 +36,7 @@ let lastFreshRender = Date.now();
 let slideshow = null;
 const cancels = [];
 
-function cardFor(mod) {
+function cardFor(mod, rect) {
   let card = document.querySelector(`[data-widget="${mod.meta.id}"]`);
   if (!card) {
     card = document.createElement('article');
@@ -46,6 +47,10 @@ function cardFor(mod) {
       <div class="card__body"></div>
       <div class="card__stamp" hidden></div>`;
     $('#grid').appendChild(card);
+  }
+  if (rect) {
+    card.style.gridColumn = `${rect.x + 1} / span ${rect.w}`;
+    card.style.gridRow = `${rect.y + 1} / span ${rect.h}`;
   }
   return card;
 }
@@ -70,8 +75,8 @@ function markStale(card, cachedAtSec) {
   }
 }
 
-function renderWidget(mod, vm) {
-  const card = cardFor(mod);
+function renderWidget(mod, vm, rect) {
+  const card = cardFor(mod, rect);
   try {
     mod.render(card.querySelector('.card__body'), vm, cfg);
   } catch (err) {
@@ -79,8 +84,8 @@ function renderWidget(mod, vm) {
   }
 }
 
-function startWidget(mod) {
-  const card = cardFor(mod);
+function startWidget(mod, rect) {
+  const card = cardFor(mod, rect);
   const cached = loadCache(mod.meta.id);
   if (cached) {
     renderWidget(mod, cached.data);
@@ -207,7 +212,10 @@ function startSelfHealing() {
 
 function startRuntime() {
   startClock();
-  for (const mod of activeWidgets(cfg)) startWidget(mod);
+  for (const rect of cfg.layout) {
+    const mod = getWidget(rect.id);
+    if (mod) startWidget(mod, rect);
+  }
   applyMode();
   cancels.push(schedule(applyMode, 60 * 1000, { jitter: 0 }));
   cancels.push(schedule(renderStrip, 30 * 1000, { jitter: 0 }));
@@ -221,13 +229,24 @@ async function boot() {
 
   if (DEMO) {
     cfg = normalizeConfig({
+      v: 2,
       name: 'Sean',
-      widgets: ['weather', 'subway', 'lirr', 'njt', 'markets', 'art', 'history', 'aqi', 'quote'],
       mode: 'dashboard',
+      layout: [
+        { id: 'weather', x: 0, y: 0, w: 2, h: 2 },
+        { id: 'subway', x: 2, y: 0, w: 2, h: 2 },
+        { id: 'lirr', x: 4, y: 0, w: 2, h: 2 },
+        { id: 'art', x: 0, y: 2, w: 1, h: 2 },
+        { id: 'worldclock', x: 1, y: 2, w: 1, h: 2 },
+        { id: 'history', x: 2, y: 2, w: 3, h: 1 },
+        { id: 'quote', x: 2, y: 3, w: 3, h: 1 },
+        { id: 'aqi', x: 5, y: 2, w: 1, h: 2 },
+      ],
     });
     startClock();
-    for (const mod of activeWidgets(cfg)) {
-      renderWidget(mod, DEMO_VMS[mod.meta.id]);
+    for (const rect of cfg.layout) {
+      const mod = getWidget(rect.id);
+      if (mod) renderWidget(mod, DEMO_VMS[mod.meta.id], rect);
     }
     applyMode();
     return;

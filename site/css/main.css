@@ -42,8 +42,8 @@ html, body {
 .grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(0, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, minmax(0, 1fr));
   gap: var(--gap);
   min-height: 0;
 }
@@ -62,12 +62,13 @@ html, body {
 .card__stamp { position: absolute; top: 24px; right: 26px; font-size: 20px; color: var(--warn); }
 .card.is-stale { opacity: 0.75; }
 
-.card--weather { grid-column: span 2; grid-row: span 2; }
-.card--subway { grid-row: span 2; }
-.card--art { grid-row: span 2; }
-.card--history { grid-column: span 2; }
-
 .empty { color: var(--ink-faint); font-size: 22px; }
+
+/* ---------- world clock ---------- */
+.wc-row { display: flex; justify-content: space-between; align-items: baseline; min-height: 44px; }
+.wc-row__city { font-size: 21px; color: var(--ink-dim); }
+.wc-row__time { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wc-row__day { font-size: 15px; color: var(--warn); font-weight: 600; margin-left: 4px; }
 
 /* ---------- weather ---------- */
 .alert { display: flex; gap: 10px; align-items: center; background: rgba(210, 153, 34, 0.15); color: var(--warn); border-radius: 10px; padding: 8px 14px; font-size: 20px; font-weight: 600; }

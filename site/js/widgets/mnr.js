@@ -50,7 +50,7 @@ export function mapMnr(decoded, cfgMnr, nowSec, stationNames = {}) {
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   // Each alert banner costs roughly one train row of space.
   const cap = Math.max(1, itemCapacity('mnr', w, h) - (vm.alerts?.length ?? 0));
   const shown = vm.departures.slice(0, cap);

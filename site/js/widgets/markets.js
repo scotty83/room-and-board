@@ -36,7 +36,7 @@ export function render(el, vm, _cfg) {
     }
     asof.textContent = `as of ${fmtTime(vm.updatedAt)}`;
   }
-  const [w, h] = cardSize(el, [2, 1]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);
   const hidden = vm.indices.length - shown.length;

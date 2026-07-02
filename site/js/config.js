@@ -1,6 +1,7 @@
 // Config schema, normalization and codec. Runs in browser (Chromium >=102),
 // on user phones (setup page) and in Node >=20 (tests, tooling).
 //
+// Schema v3 (2026-07-02): grid refined from 6x4 to 12x8 — v2 rects double.
 // Schema v2 (2026-07-02): the ordered `widgets` list became `layout`
 // ({id,x,y,w,h} on the 6×4 grid); `lirr` became a Penn-only branch filter;
 // the default location moved to ZIP 10001. v1 configs migrate automatically.
@@ -19,7 +20,7 @@ export const WIDGET_IDS = [
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
-  v: 2,
+  v: 3,
   t: 0,
   name: '',
   loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
@@ -64,18 +65,24 @@ export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
     throw new TypeError('config must be an object');
   }
-  if (raw.v !== undefined && raw.v !== 1 && raw.v !== 2) {
+  if (raw.v !== undefined && ![1, 2, 3].includes(raw.v)) {
     throw new TypeError(`unsupported config version: ${raw.v}`);
   }
+  // v2 layouts lived on a 6x4 grid; double onto today's 12x8.
+  const rawLayout = Array.isArray(raw.layout)
+    ? raw.v === 2
+      ? raw.layout.map((r) => ({ id: r.id, x: r.x * 2, y: r.y * 2, w: r.w * 2, h: r.h * 2 }))
+      : raw.layout
+    : null;
   const layout =
-    Array.isArray(raw.layout) && raw.layout.length
-      ? normalizeLayout(raw.layout)
+    rawLayout && rawLayout.length
+      ? normalizeLayout(rawLayout)
       : Array.isArray(raw.widgets)
         ? migrateWidgetsToLayout(raw.widgets)
         : [...DEFAULT_LAYOUT];
 
   return {
-    v: 2,
+    v: 3,
     t: num(raw.t, 0),
     name: str(raw.name, DEFAULT_CONFIG.name, MAX_NAME),
     loc: normalizeLoc(raw.loc),

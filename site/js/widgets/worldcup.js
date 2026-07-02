@@ -64,7 +64,7 @@ function matchRow(m, nowMs) {
 }
 
 export function render(el, vm, _cfg) {
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('worldcup', w, h);
   const nowMs = vm.nowMs ?? Date.now();
   const sections = [];

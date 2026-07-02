@@ -1,33 +1,40 @@
-// Pure grid geometry for the 6×4 dashboard layout. Everything here is
+// Pure grid geometry for the 12×8 dashboard layout. Everything here is
 // side-effect free; edit.js and config.js consume it.
 
-export const GRID = { cols: 6, rows: 4 };
+// 12x8: cells ~135x92 logical px. v2 layouts (6x4) migrate by doubling.
+export const GRID = { cols: 12, rows: 8 };
 
+// Minimums scale the old 6×4 footprints onto the finer grid so a widget can't
+// shrink below a legible size — the extra resolution buys finer positioning
+// and in-between sizes, not sub-legible cards. The list strips (markets,
+// history, quote) get one column narrower than a pure double so they can pack
+// tighter, which is the whole point of the finer grid. Lower any other widget
+// only after the browser overflow audit clears it.
 export const MIN_SIZE = {
-  weather: [2, 2],
-  subway: [2, 2],
-  lirr: [2, 2],
-  mnr: [2, 2],
-  bus: [2, 2],
-  njt: [2, 2],
-  markets: [2, 1],
-  history: [2, 1],
-  quote: [2, 1],
-  art: [1, 1],
-  aqi: [1, 1],
-  worldclock: [1, 2], // five fixed rows never fit a single cell
-  sports: [2, 2],
-  worldcup: [2, 2],
-  news: [2, 2],
+  weather: [4, 4],
+  subway: [4, 4],
+  lirr: [4, 4],
+  mnr: [4, 4],
+  bus: [4, 4],
+  njt: [4, 4],
+  markets: [3, 2],
+  history: [3, 2],
+  quote: [3, 2],
+  art: [2, 2],
+  aqi: [2, 2],
+  worldclock: [2, 4], // five fixed rows never fit a shallow card
+  sports: [4, 4],
+  worldcup: [4, 4],
+  news: [4, 4],
 };
 
 export const DEFAULT_LAYOUT = Object.freeze([
-  { id: 'weather', x: 0, y: 0, w: 2, h: 2 },
-  { id: 'subway', x: 2, y: 0, w: 3, h: 2 },
-  { id: 'worldclock', x: 5, y: 0, w: 1, h: 2 },
-  { id: 'art', x: 0, y: 2, w: 2, h: 2 },
-  { id: 'markets', x: 2, y: 2, w: 2, h: 2 },
-  { id: 'news', x: 4, y: 2, w: 2, h: 2 },
+  { id: 'weather', x: 0, y: 0, w: 4, h: 4 },
+  { id: 'subway', x: 4, y: 0, w: 6, h: 4 },
+  { id: 'worldclock', x: 10, y: 0, w: 2, h: 4 },
+  { id: 'art', x: 0, y: 4, w: 4, h: 4 },
+  { id: 'markets', x: 4, y: 4, w: 4, h: 4 },
+  { id: 'news', x: 8, y: 4, w: 4, h: 4 },
 ].map(Object.freeze));
 
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);

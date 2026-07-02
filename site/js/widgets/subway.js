@@ -29,7 +29,7 @@ export function render(el, vm, _cfg) {
     el.innerHTML = '<div class="empty">Pick your lines in Settings → Subway</div>';
     return;
   }
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('subway', w, h);
   // When truncating, alerting lines take priority over Good Service rows.
   const rows = vm.lines.length > cap

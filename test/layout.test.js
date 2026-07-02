@@ -32,63 +32,63 @@ describe('DEFAULT_LAYOUT', () => {
 
 describe('clampRect', () => {
   it('grows undersized rects to their minimum', () => {
-    expect(clampRect({ id: 'weather', x: 0, y: 0, w: 1, h: 1 })).toEqual({ id: 'weather', x: 0, y: 0, w: 2, h: 2 });
+    expect(clampRect({ id: 'weather', x: 0, y: 0, w: 1, h: 1 })).toEqual({ id: 'weather', x: 0, y: 0, w: 4, h: 4 });
   });
   it('pulls out-of-bounds rects back inside', () => {
-    expect(clampRect({ id: 'aqi', x: 7, y: 9, w: 1, h: 1 })).toEqual({ id: 'aqi', x: 5, y: 3, w: 1, h: 1 });
-    expect(clampRect({ id: 'quote', x: 5, y: 3, w: 2, h: 1 })).toEqual({ id: 'quote', x: 4, y: 3, w: 2, h: 1 });
+    expect(clampRect({ id: 'aqi', x: 13, y: 17, w: 2, h: 2 })).toEqual({ id: 'aqi', x: 10, y: 6, w: 2, h: 2 });
+    expect(clampRect({ id: 'quote', x: 10, y: 7, w: 3, h: 2 })).toEqual({ id: 'quote', x: 9, y: 6, w: 3, h: 2 });
   });
   it('shrinks rects larger than the grid', () => {
-    expect(clampRect({ id: 'art', x: 0, y: 0, w: 99, h: 99 })).toEqual({ id: 'art', x: 0, y: 0, w: 6, h: 4 });
+    expect(clampRect({ id: 'art', x: 0, y: 0, w: 99, h: 99 })).toEqual({ id: 'art', x: 0, y: 0, w: 12, h: 8 });
   });
 });
 
 describe('rectsOverlap / canPlace', () => {
   const layout = [
-    { id: 'weather', x: 0, y: 0, w: 3, h: 2 },
-    { id: 'aqi', x: 3, y: 0, w: 1, h: 1 },
+    { id: 'weather', x: 0, y: 0, w: 6, h: 4 },
+    { id: 'aqi', x: 6, y: 0, w: 2, h: 2 },
   ];
   it('detects overlap', () => {
-    expect(rectsOverlap(layout[0], { x: 2, y: 1, w: 2, h: 2 })).toBe(true);
-    expect(rectsOverlap(layout[0], { x: 3, y: 0, w: 1, h: 1 })).toBe(false);
+    expect(rectsOverlap(layout[0], { x: 4, y: 2, w: 4, h: 4 })).toBe(true);
+    expect(rectsOverlap(layout[0], { x: 6, y: 0, w: 2, h: 2 })).toBe(false);
   });
   it('canPlace rejects overlap and out-of-grid, ignoring the moving widget itself', () => {
-    expect(canPlace(layout, { id: 'art', x: 4, y: 0, w: 2, h: 2 })).toBe(true);
-    expect(canPlace(layout, { id: 'art', x: 2, y: 0, w: 2, h: 2 })).toBe(false); // hits weather
-    expect(canPlace(layout, { id: 'weather', x: 1, y: 0, w: 3, h: 2 })).toBe(false); // hits aqi
-    expect(canPlace(layout, { id: 'weather', x: 0, y: 1, w: 3, h: 2 })).toBe(true); // self ignored
-    expect(canPlace(layout, { id: 'art', x: 5, y: 3, w: 2, h: 1 })).toBe(false); // off grid
-    expect(canPlace(layout, { id: 'weather', x: 4, y: 0, w: 1, h: 1 })).toBe(false); // below min
+    expect(canPlace(layout, { id: 'art', x: 8, y: 0, w: 4, h: 4 })).toBe(true);
+    expect(canPlace(layout, { id: 'art', x: 4, y: 0, w: 4, h: 4 })).toBe(false); // hits weather
+    expect(canPlace(layout, { id: 'weather', x: 2, y: 0, w: 6, h: 4 })).toBe(false); // hits aqi
+    expect(canPlace(layout, { id: 'weather', x: 0, y: 2, w: 6, h: 4 })).toBe(true); // self ignored
+    expect(canPlace(layout, { id: 'art', x: 11, y: 7, w: 3, h: 2 })).toBe(false); // off grid
+    expect(canPlace(layout, { id: 'weather', x: 8, y: 0, w: 2, h: 2 })).toBe(false); // below min
   });
 });
 
 describe('firstFit', () => {
   it('scans row-major from the top-left', () => {
-    const layout = [{ id: 'weather', x: 0, y: 0, w: 3, h: 2 }];
-    expect(firstFit(layout, 'aqi', [1, 1])).toEqual({ id: 'aqi', x: 3, y: 0, w: 1, h: 1 });
-    expect(firstFit(layout, 'markets', [2, 1])).toEqual({ id: 'markets', x: 3, y: 0, w: 2, h: 1 });
+    const layout = [{ id: 'weather', x: 0, y: 0, w: 6, h: 4 }];
+    expect(firstFit(layout, 'aqi', [2, 2])).toEqual({ id: 'aqi', x: 6, y: 0, w: 2, h: 2 });
+    expect(firstFit(layout, 'markets', [3, 2])).toEqual({ id: 'markets', x: 6, y: 0, w: 3, h: 2 });
   });
   it('returns null when nothing fits', () => {
-    const full = [{ id: 'art', x: 0, y: 0, w: 6, h: 4 }];
-    expect(firstFit(full, 'aqi', [1, 1])).toBeNull();
+    const full = [{ id: 'art', x: 0, y: 0, w: 12, h: 8 }];
+    expect(firstFit(full, 'aqi', [2, 2])).toBeNull();
   });
 });
 
 describe('normalizeLayout', () => {
   it('drops unknown ids and duplicates', () => {
     const out = normalizeLayout([
-      { id: 'aqi', x: 0, y: 0, w: 1, h: 1 },
-      { id: 'nope', x: 1, y: 0, w: 1, h: 1 },
-      { id: 'aqi', x: 2, y: 0, w: 1, h: 1 },
+      { id: 'aqi', x: 0, y: 0, w: 2, h: 2 },
+      { id: 'nope', x: 2, y: 0, w: 2, h: 2 },
+      { id: 'aqi', x: 4, y: 0, w: 2, h: 2 },
     ]);
-    expect(out).toEqual([{ id: 'aqi', x: 0, y: 0, w: 1, h: 1 }]);
+    expect(out).toEqual([{ id: 'aqi', x: 0, y: 0, w: 2, h: 2 }]);
   });
   it('re-places overlapping rects first-fit', () => {
     const out = normalizeLayout([
-      { id: 'weather', x: 0, y: 0, w: 3, h: 2 },
-      { id: 'markets', x: 1, y: 1, w: 2, h: 1 }, // overlaps weather
+      { id: 'weather', x: 0, y: 0, w: 6, h: 4 },
+      { id: 'markets', x: 2, y: 2, w: 4, h: 2 }, // overlaps weather
     ]);
-    expect(out[0]).toEqual({ id: 'weather', x: 0, y: 0, w: 3, h: 2 });
+    expect(out[0]).toEqual({ id: 'weather', x: 0, y: 0, w: 6, h: 4 });
     expect(canPlace([out[0]], out[1])).toBe(true);
     expect(out[1].id).toBe('markets');
   });
@@ -119,11 +119,10 @@ describe('migrateWidgetsToLayout', () => {
     for (let i = 0; i < out.length; i++)
       for (let j = i + 1; j < out.length; j++) expect(rectsOverlap(out[i], out[j])).toBe(false);
   });
-  it('drops widgets that cannot fit', () => {
-    // Nine widgets can't all fit their minimums in 24 cells (mins sum > 24).
+  it('packs many widgets within the grid without overlap', () => {
     const out = migrateWidgetsToLayout(['weather', 'subway', 'lirr', 'njt', 'markets', 'history', 'quote', 'art', 'aqi']);
     const total = out.reduce((s, r) => s + area(r), 0);
-    expect(total).toBeLessThanOrEqual(24);
+    expect(total).toBeLessThanOrEqual(96);
     for (let i = 0; i < out.length; i++)
       for (let j = i + 1; j < out.length; j++) expect(rectsOverlap(out[i], out[j])).toBe(false);
   });
@@ -133,53 +132,50 @@ describe('placeWithPush', () => {
   const L = (...rects) => rects.map(([id, x, y, w, h]) => ({ id, x, y, w, h }));
 
   it('places freely when nothing collides', () => {
-    const layout = L(['aqi', 0, 0, 1, 1]);
-    const out = placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 1, h: 1 });
-    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 2, y: 0 });
+    const layout = L(['aqi', 0, 0, 2, 2]);
+    const out = placeWithPush(layout, { id: 'art', x: 4, y: 0, w: 2, h: 2 });
+    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 4, y: 0 });
     expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 0, y: 0 });
   });
 
   it('shifts a collider along the drag direction', () => {
-    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1]);
-    // drag art rightwards onto aqi -> aqi pushed further right
-    const out = placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
-    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 1, y: 0 });
-    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 2, y: 0 });
+    const layout = L(['art', 0, 0, 2, 2], ['aqi', 2, 0, 2, 2]);
+    const out = placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 2, h: 2 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 2, y: 0 });
+    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 4, y: 0 });
   });
 
   it('cascades pushes through a chain', () => {
-    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1], ['worldclock', 2, 0, 1, 2]);
-    const out = placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
-    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 2, y: 0 });
+    const layout = L(['art', 0, 0, 2, 2], ['aqi', 2, 0, 2, 2], ['worldclock', 4, 0, 2, 4]);
+    const out = placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 2, h: 2 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 4, y: 0 });
     const wc = out.find((r) => r.id === 'worldclock');
-    expect(wc.x).toBeGreaterThanOrEqual(3); // pushed onward
+    expect(wc.x).toBeGreaterThanOrEqual(6); // pushed onward
   });
 
   it('falls back to first-fit when the direction is blocked', () => {
-    // aqi pinned against the right edge; pushing right impossible -> relocate
-    const layout = L(['history', 0, 0, 2, 1], ['aqi', 5, 0, 1, 1]);
-    const out = placeWithPush(layout, { id: 'history', x: 4, y: 0, w: 2, h: 1 }, { dx: 1, dy: 0 });
-    expect(out.find((r) => r.id === 'history')).toMatchObject({ x: 4, y: 0 });
+    const layout = L(['history', 0, 0, 4, 2], ['aqi', 10, 0, 2, 2]);
+    const out = placeWithPush(layout, { id: 'history', x: 8, y: 0, w: 4, h: 2 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'history')).toMatchObject({ x: 8, y: 0 });
     const aqi = out.find((r) => r.id === 'aqi');
     expect(canPlace(out.filter((r) => r.id !== 'aqi'), aqi)).toBe(true);
   });
 
   it('returns null when displaced widgets cannot fit anywhere', () => {
-    // grid completely full: pushing is unsolvable
-    const layout = L(['weather', 0, 0, 3, 2], ['subway', 3, 0, 3, 2], ['art', 0, 2, 3, 2], ['history', 3, 2, 3, 1], ['quote', 3, 3, 3, 1]);
-    const out = placeWithPush(layout, { id: 'weather', x: 1, y: 0, w: 3, h: 2 }, { dx: 1, dy: 0 });
+    const layout = L(['weather', 0, 0, 6, 4], ['subway', 6, 0, 6, 4], ['art', 0, 4, 6, 4], ['history', 6, 4, 6, 2], ['quote', 6, 6, 6, 2]);
+    const out = placeWithPush(layout, { id: 'weather', x: 2, y: 0, w: 6, h: 4 }, { dx: 1, dy: 0 });
     expect(out).toBeNull();
   });
 
   it('rejects rects that violate their own minimum or the grid', () => {
-    expect(placeWithPush(L(['aqi', 0, 0, 1, 1]), { id: 'weather', x: 0, y: 2, w: 1, h: 1 })).toBeNull();
-    expect(placeWithPush([], { id: 'aqi', x: 6, y: 0, w: 1, h: 1 })).toBeNull();
+    expect(placeWithPush(L(['aqi', 0, 0, 2, 2]), { id: 'weather', x: 0, y: 4, w: 2, h: 2 })).toBeNull();
+    expect(placeWithPush([], { id: 'aqi', x: 12, y: 0, w: 2, h: 2 })).toBeNull();
   });
 
   it('never mutates the input layout', () => {
-    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1]);
+    const layout = L(['art', 0, 0, 2, 2], ['aqi', 2, 0, 2, 2]);
     const snapshot = JSON.stringify(layout);
-    placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
+    placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 2, h: 2 }, { dx: 1, dy: 0 });
     expect(JSON.stringify(layout)).toBe(snapshot);
   });
 });

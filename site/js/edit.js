@@ -1,4 +1,4 @@
-// Edit mode: arrange, resize, remove and re-add widgets on the 6×4 grid.
+// Edit mode: arrange, resize, remove and re-add widgets on the 12×8 grid.
 // Geometry decisions live in layout.js (placeWithPush displaces neighbors to
 // make room); this module renders the overlay and translates pointer
 // gestures. During a gesture a cell-snapped placeholder previews the target

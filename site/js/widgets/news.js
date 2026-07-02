@@ -70,7 +70,7 @@ export function render(el, vm, _cfg) {
     el.innerHTML = '<div class="empty">No headlines — pick sources in Settings → Headlines</div>';
     return;
   }
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('news', w, h);
   const nowMs = vm.nowMs ?? Date.now();
   el.innerHTML = vm.items

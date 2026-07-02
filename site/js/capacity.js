@@ -3,12 +3,16 @@
 // clipped mid-row), and edit mode surfaces it so users see what a resize
 // gains or loses. Counts are calibrated against the browser overflow audit.
 
-// Usable body height in px for h grid rows (cell ≈ 216px after safe-bottom,
-// minus card chrome: padding + title).
-const bodyPx = (h) => h * 216 + (h - 1) * 20 - 90;
+// Usable body height in px for h grid rows on the 12x8 canvas (cell ≈ 92px
+// tall after the safe-bottom reserve, minus card chrome: padding + title).
+const bodyPx = (h) => h * 92 + (h - 1) * 20 - 90;
+
+// Height tiers drive both row counts and the compact CSS variants:
+// s = shallow (h<=2, old single-row), m = medium (3-4), l = tall (5+).
+export const sizeTier = (h) => (h <= 2 ? 's' : h <= 4 ? 'm' : 'l');
 
 const listCapacity = (rowPx, compactRowPx) => (w, h) =>
-  Math.max(1, Math.floor(bodyPx(h) / (h === 1 ? compactRowPx : rowPx)));
+  Math.max(1, Math.floor(bodyPx(h) / (sizeTier(h) === 's' ? compactRowPx : rowPx)));
 
 // Per-widget capacity of the primary list, or null when there isn't one.
 const MODELS = {
@@ -57,7 +61,7 @@ export function capacityLabel(id, w, h, cfg = {}) {
     case 'news':
       return `${n} headlines`;
     case 'weather':
-      return h >= 3 ? '8 hourly · 5-day forecast' : `${w <= 2 ? 6 : 8} hourly · 2-day forecast`;
+      return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
     default:
       return null;
   }
@@ -65,7 +69,7 @@ export function capacityLabel(id, w, h, cfg = {}) {
 
 // Renderers read their card's size from the DOM (data-w/data-h set by the
 // dashboard and by edit mode); tests render into bare divs and get defaults.
-export function cardSize(el, defaults = [2, 2]) {
+export function cardSize(el, defaults = [4, 4]) {
   const card = el.closest?.('.card');
   const w = Number(card?.dataset.w) || defaults[0];
   const h = Number(card?.dataset.h) || defaults[1];

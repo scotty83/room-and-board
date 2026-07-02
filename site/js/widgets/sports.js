@@ -27,7 +27,7 @@ export function render(el, vm, _cfg) {
     el.innerHTML = '<div class="empty">Pick your teams in Settings → My Teams</div>';
     return;
   }
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('sports', w, h);
   const shown = vm.rows.slice(0, cap);
   const hidden = vm.rows.length - shown.length;

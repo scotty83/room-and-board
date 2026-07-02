@@ -6,8 +6,8 @@ import { openEditMode } from '../site/js/edit.js';
 
 const CFG = {
   layout: [
-    { id: 'weather', x: 0, y: 0, w: 3, h: 2 },
-    { id: 'aqi', x: 3, y: 0, w: 1, h: 1 },
+    { id: 'weather', x: 0, y: 0, w: 6, h: 4 },
+    { id: 'aqi', x: 6, y: 0, w: 2, h: 2 },
   ],
 };
 
@@ -25,8 +25,8 @@ describe('openEditMode', () => {
     expect(trayIds).toContain('subway');
     expect(trayIds).not.toContain('weather');
 
-    expect(editor._test.move('aqi', 5, 3)).toBe(true);
-    expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 5, y: 3 });
+    expect(editor._test.move('aqi', 10, 6)).toBe(true);
+    expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 10, y: 6 });
     // overlapping move now PUSHES the neighbor instead of failing
     expect(editor._test.move('aqi', 1, 1)).toBe(true);
     expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 1, y: 1 });
@@ -36,10 +36,10 @@ describe('openEditMode', () => {
 
   it('rejects moves when the push is unsolvable', () => {
     const full = { layout: [
-      { id: 'weather', x: 0, y: 0, w: 3, h: 2 },
-      { id: 'subway', x: 3, y: 0, w: 3, h: 2 },
-      { id: 'art', x: 0, y: 2, w: 3, h: 2 },
-      { id: 'lirr', x: 3, y: 2, w: 3, h: 2 },
+      { id: 'weather', x: 0, y: 0, w: 6, h: 4 },
+      { id: 'subway', x: 6, y: 0, w: 6, h: 4 },
+      { id: 'art', x: 0, y: 4, w: 6, h: 4 },
+      { id: 'lirr', x: 6, y: 4, w: 6, h: 4 },
     ]};
     const editor = openEditMode(full, { root, cellSize: { w: 100, h: 100 } });
     expect(editor._test.move('weather', 1, 0)).toBe(false);
@@ -48,13 +48,13 @@ describe('openEditMode', () => {
 
   it('rejects resizes below the minimum and applies valid ones', () => {
     const editor = openEditMode(CFG, { root, cellSize: { w: 100, h: 100 } });
-    expect(editor._test.resize('weather', 1, 1)).toBe(false); // min 2x2
-    expect(editor._test.resize('weather', 3, 3)).toBe(true);
-    expect(editor.layout().find((r) => r.id === 'weather')).toMatchObject({ w: 3, h: 3 });
+    expect(editor._test.resize('weather', 2, 2)).toBe(false); // min 4x4
+    expect(editor._test.resize('weather', 6, 6)).toBe(true);
+    expect(editor.layout().find((r) => r.id === 'weather')).toMatchObject({ w: 6, h: 6 });
     // growing over aqi pushes it aside now
-    expect(editor._test.resize('weather', 4, 3)).toBe(true);
+    expect(editor._test.resize('weather', 8, 4)).toBe(true);
     const aqi = editor.layout().find((r) => r.id === 'aqi');
-    expect(aqi.x >= 4 || aqi.y >= 3).toBe(true);
+    expect(aqi.x >= 8 || aqi.y >= 4).toBe(true);
   });
 
   it('supports remove and tray re-add round-trip', () => {
@@ -69,10 +69,10 @@ describe('openEditMode', () => {
   it('commits via Done and discards via Cancel', () => {
     const onDone = vi.fn();
     const editor = openEditMode(CFG, { root, cellSize: { w: 100, h: 100 }, onDone });
-    editor._test.move('aqi', 5, 3);
+    editor._test.move('aqi', 10, 6);
     root.querySelector('[data-done]').click();
     expect(onDone).toHaveBeenCalledWith(
-      expect.arrayContaining([expect.objectContaining({ id: 'aqi', x: 5, y: 3 })]),
+      expect.arrayContaining([expect.objectContaining({ id: 'aqi', x: 10, y: 6 })]),
     );
 
     const onCancel = vi.fn();
@@ -93,14 +93,14 @@ describe('openEditMode', () => {
     expect(ph.hidden).toBe(false);
     expect(ph.classList.contains('edit-placeholder--invalid')).toBe(false);
     window.dispatchEvent(new PointerEvent('pointerup', opts(360, 260)));
-    expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 3, y: 2 });
+    expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 6, y: 2 });
     expect(root.querySelector('.edit-placeholder')?.hidden ?? true).toBe(true);
   });
 
   it('shows size labels with minimums on every block', () => {
     openEditMode(CFG, { root, cellSize: { w: 100, h: 100 } });
     const label = root.querySelector('.edit-block[data-id="weather"] .edit-block__size');
-    expect(label.textContent).toContain('3×2 · min 2×2');
+    expect(label.textContent).toContain('6×4 · min 4×4');
     expect(label.textContent).toContain('hourly'); // capacity impact line
   });
 });

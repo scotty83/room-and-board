@@ -58,9 +58,13 @@ function cardFor(mod, rect) {
     card.style.gridColumn = `${rect.x + 1} / span ${rect.w}`;
     card.style.gridRow = `${rect.y + 1} / span ${rect.h}`;
     // Size hooks for per-size compact styling (container queries need a newer
-    // Chromium than gen1 boards have).
+    // Chromium than gen1 boards have). Tier classes: t-s/t-m/t-l by height,
+    // t-narrow when 4 or fewer columns wide.
     card.dataset.w = rect.w;
     card.dataset.h = rect.h;
+    card.classList.remove('t-s', 't-m', 't-l', 't-narrow');
+    card.classList.add(`t-${rect.h <= 2 ? 's' : rect.h <= 4 ? 'm' : 'l'}`);
+    if (rect.w <= 4) card.classList.add('t-narrow');
   }
   return card;
 }
@@ -244,18 +248,18 @@ async function boot() {
 
   if (DEMO) {
     cfg = normalizeConfig({
-      v: 2,
+      v: 3,
       name: 'Sean',
       mode: 'dashboard',
       layout: [
-        { id: 'weather', x: 0, y: 0, w: 2, h: 2 },
-        { id: 'subway', x: 2, y: 0, w: 2, h: 2 },
-        { id: 'lirr', x: 4, y: 0, w: 2, h: 2 },
-        { id: 'art', x: 0, y: 2, w: 1, h: 2 },
-        { id: 'worldclock', x: 1, y: 2, w: 1, h: 2 },
-        { id: 'history', x: 2, y: 2, w: 3, h: 1 },
-        { id: 'quote', x: 2, y: 3, w: 3, h: 1 },
-        { id: 'aqi', x: 5, y: 2, w: 1, h: 2 },
+        { id: 'weather', x: 0, y: 0, w: 4, h: 4 },
+        { id: 'subway', x: 4, y: 0, w: 4, h: 4 },
+        { id: 'lirr', x: 8, y: 0, w: 4, h: 4 },
+        { id: 'art', x: 0, y: 4, w: 2, h: 4 },
+        { id: 'worldclock', x: 2, y: 4, w: 2, h: 4 },
+        { id: 'history', x: 4, y: 4, w: 6, h: 2 },
+        { id: 'quote', x: 4, y: 6, w: 6, h: 2 },
+        { id: 'aqi', x: 10, y: 4, w: 2, h: 4 },
       ],
     });
     startClock();

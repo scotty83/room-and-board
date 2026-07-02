@@ -7,7 +7,7 @@ import { itemCapacity, cardSize } from '../capacity.js';
 export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
-  const [w, h] = cardSize(el, [3, 1]);
+  const [w, h] = cardSize(el, [6, 2]);
   const cap = itemCapacity('history', w, h);
   el.innerHTML = `<div class="history">${vm.events.slice(0, cap)
     .map(

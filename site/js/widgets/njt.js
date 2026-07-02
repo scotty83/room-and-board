@@ -11,7 +11,7 @@ export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 }
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
-  const [w, h] = cardSize(el, [2, 2]);
+  const [w, h] = cardSize(el, [4, 4]);
   const cap = Math.max(1, itemCapacity('njt', w, h) - (vm.alerts?.length ?? 0));
   const shown = vm.trains.slice(0, cap);
   el.innerHTML = renderAlertRows(vm.alerts) + '<div class="trains">' + (shown.length

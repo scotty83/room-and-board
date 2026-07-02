@@ -8,9 +8,9 @@ import {
 } from '../site/js/config.js';
 
 describe('normalizeConfig', () => {
-  it('fills v2 defaults for an empty object', () => {
+  it('fills v3 defaults for an empty object', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.v).toBe(2);
+    expect(cfg.v).toBe(3);
     expect(cfg.layout).toEqual(DEFAULT_CONFIG.layout);
     expect(cfg.widgets).toEqual(cfg.layout.map((r) => r.id)); // derived
     expect(cfg.mode).toBe('dashboard');
@@ -35,7 +35,7 @@ describe('normalizeConfig', () => {
       loc: { lat: 40.754, lon: -73.984, label: 'Midtown' },
       mode: 'ambient',
     });
-    expect(cfg.v).toBe(2);
+    expect(cfg.v).toBe(3);
     expect(cfg.widgets).toEqual(['weather', 'lirr']); // unknown ids dropped
     const lirr = cfg.layout.find((r) => r.id === 'lirr');
     expect(lirr.w).toBeGreaterThanOrEqual(2);
@@ -82,7 +82,7 @@ describe('normalizeConfig', () => {
   it('throws on non-objects and unknown future versions', () => {
     expect(() => normalizeConfig(null)).toThrow(TypeError);
     expect(() => normalizeConfig('x')).toThrow(TypeError);
-    expect(() => normalizeConfig({ v: 3 })).toThrow(TypeError);
+    expect(() => normalizeConfig({ v: 4 })).toThrow(TypeError);
     expect(() => normalizeConfig({ v: 99 })).toThrow(TypeError);
   });
 

@@ -124,13 +124,19 @@ function renderArtPrefs() {
 }
 
 function renderSubwayLines() {
-  $('#sub-lines').innerHTML = SUBWAY_LINES.map(
-    (l) => `<label><input type="checkbox" data-l="${l}" ${cfg.subway.lines.includes(l) ? 'checked' : ''}> ${l}</label>`,
-  ).join('');
-  $('#sub-lines').addEventListener('change', (e) => {
-    const l = e.target.dataset.l;
-    if (l) cfg.subway.lines = toggleIn(cfg.subway.lines, l);
-  });
+  const paint = () => {
+    $('#sub-lines').innerHTML = SUBWAY_LINES.map((l) => {
+      const on = cfg.subway.lines.includes(l);
+      return `<button type="button" class="bullet bullet--${l} linechip ${on ? '' : 'linechip--off'}" data-l="${l}" role="switch" aria-checked="${on}">${l}</button>`;
+    }).join('');
+    $('#sub-lines').querySelectorAll('[data-l]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cfg.subway.lines = toggleIn(cfg.subway.lines, b.dataset.l);
+        paint();
+      }),
+    );
+  };
+  paint();
 }
 
 function renderLocation() {

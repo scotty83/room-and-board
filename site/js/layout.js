@@ -26,9 +26,8 @@ export const DEFAULT_LAYOUT = Object.freeze([
   { id: 'subway', x: 3, y: 0, w: 2, h: 2 },
   { id: 'worldclock', x: 5, y: 0, w: 1, h: 2 },
   { id: 'art', x: 0, y: 2, w: 2, h: 2 },
-  { id: 'history', x: 2, y: 2, w: 3, h: 1 },
-  { id: 'quote', x: 2, y: 3, w: 3, h: 1 },
-  { id: 'aqi', x: 5, y: 2, w: 1, h: 2 },
+  { id: 'markets', x: 2, y: 2, w: 2, h: 2 },
+  { id: 'news', x: 4, y: 2, w: 2, h: 2 },
 ].map(Object.freeze));
 
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);

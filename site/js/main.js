@@ -291,4 +291,26 @@ $('#gear').addEventListener('click', async () => {
   settings.openSettings(cfg ?? normalizeConfig({}), {});
 });
 
+$('#edit').addEventListener('click', async () => {
+  if (!cfg) return;
+  const { openEditMode } = await import('./edit.js');
+  openEditMode(cfg, {
+    async onDone(layout) {
+      cfg = normalizeConfig({ ...cfg, layout, t: Math.floor(Date.now() / 1000) });
+      if (DEMO) return location.reload(); // demo sessions never persist
+      await saveConfig(cfg);
+      try {
+        if (window.__signage?.bridge) {
+          const { encodeConfig } = await import('./config.js');
+          await window.__signage.bridge.sendConfig(await encodeConfig(cfg));
+          window.__signage.vault = 'synced';
+        }
+      } catch {
+        window.__signage.vault = 'offline';
+      }
+      location.reload();
+    },
+  });
+});
+
 boot();

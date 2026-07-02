@@ -11,9 +11,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // one artwork, a false negative costs a complaint to HR.
 const UNSAFE = /nude|naked|bather|bathing|venus|leda|susanna|lucretia|danae|adam and eve|temptation|odalisque|toilette/i;
 
+// No human subjects at all (per Sean): landscapes, still lifes, ceramics,
+// patterns. Museum subject tags catch most figures; titles are the backstop.
+const HUMAN =
+  /portrait|figure|people|person|\bmen\b|\bman\b|woman|women|child|children|\bboy\b|\bgirl\b|saint|madonna|virgin|christ|angel|apostle|holy|crucifixion|deity|buddha|luohan|god\b|goddess|dancer|musician|soldier|warrior|king\b|queen|emperor|empress|lady|gentleman|monk|nun\b|family|mother|father|wedding|nurse|reader|bather|self-portrait|equestrian|hunter|peasant|farmer|fisherman|shepherd|traders|officials|couple/i;
+
 function isOfficeSafe(title, subjects) {
-  if (UNSAFE.test(title ?? '')) return false;
-  return !(subjects ?? []).some((s) => UNSAFE.test(s));
+  if (UNSAFE.test(title ?? '') || HUMAN.test(title ?? '')) return false;
+  return !(subjects ?? []).some((s) => UNSAFE.test(s) || HUMAN.test(s));
 }
 
 // Manual review blocklist: works that pass the keyword screen but were judged
@@ -26,6 +31,24 @@ const BLOCKLIST = new Set([
   // Vastraharana episode — gopis bathing; title evades the keyword screen.
   'The Gopis Plead with Krishna to Return Their Clothing: Folio from "Isarda" Bhagavata Purana',
 ]);
+
+// No-humans review pass (2026-07-02): works whose figures the museum metadata
+// does not tag — boat crews, travelers, riders, strollers. Matched by prefix
+// so series numbering/subtitle variants stay covered.
+const HUMAN_BLOCK_PREFIXES = [
+  'Whalers',
+  'Under the Wave off Kanagawa',
+  'Shirasuka: Shiomi Slope',
+  'Okabe: Mount Utsu',
+  'Ejiri in Suruga Province',
+  'Capture of the Tripoli by the Enterprise',
+  'The Prairie on Fire',
+  'Boston Common',
+];
+
+export function passesReview(title) {
+  return !BLOCKLIST.has(title) && !HUMAN_BLOCK_PREFIXES.some((p) => title.startsWith(p));
+}
 
 async function getJSON(url, attempt = 0) {
   const res = await fetch(url, { headers: { 'User-Agent': 'board-pro-signage-manifest-builder' } });
@@ -58,24 +81,26 @@ function metAspect(obj) {
 // The Met: highlighted public-domain paintings from a few departments.
 async function fromMet(perDept = 20) {
   const items = [];
+  // Landscape/still-life queries bias the pool toward peopleless works.
   const departments = [
-    [11, 'painting'], // European Paintings
-    [1, 'painting'], // American Wing
+    [11, 'landscape'], // European Paintings
+    [11, 'still life'],
+    [1, 'landscape'], // American Wing
     [6, 'landscape'], // Asian Art
   ];
   for (const [dept, q] of departments) {
     const search = await getJSON(
       `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&isPublicDomain=true&isHighlight=true&departmentId=${dept}&q=${q}`,
     );
-    for (const id of (search.objectIDs ?? []).slice(0, perDept * 8)) {
-      if (items.filter((i) => i.dept === dept).length >= perDept) break;
+    for (const id of (search.objectIDs ?? []).slice(0, perDept * 10)) {
+      if (items.filter((i) => i.dept === `${dept}:${q}`).length >= perDept) break;
       try {
         const obj = await getJSON(
           `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`,
         );
         if (!obj.isPublicDomain || !obj.primaryImageSmall) continue;
         const tagTerms = (obj.tags ?? []).map((t) => t.term);
-        if (!isOfficeSafe(obj.title, tagTerms) || BLOCKLIST.has(obj.title)) continue;
+        if (!isOfficeSafe(obj.title, tagTerms) || !passesReview(obj.title)) continue;
         const ar = metAspect(obj);
         if (!ar || ar < MIN_ASPECT || ar > MAX_ASPECT) continue;
         items.push({
@@ -86,7 +111,7 @@ async function fromMet(perDept = 20) {
           artist: obj.artistDisplayName || 'Unknown',
           year: obj.objectDate || '',
           source: 'The Met',
-          dept,
+          dept: `${dept}:${q}`,
         });
       } catch {
         // skip failed objects
@@ -103,12 +128,12 @@ async function fromAic(count = 40) {
   const items = [];
   for (let page = 1; items.length < count && page <= 12; page++) {
     const res = await getJSON(
-      `https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&fields=id,title,artist_display,date_display,image_id,subject_titles,thumbnail&limit=50&page=${page}&q=painting`,
+      `https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&fields=id,title,artist_display,date_display,image_id,subject_titles,thumbnail&limit=50&page=${page}&q=landscape`,
     );
     for (const a of res.data ?? []) {
       if (items.length >= count) break;
       if (!a.image_id) continue;
-      if (!isOfficeSafe(a.title, a.subject_titles) || BLOCKLIST.has(a.title)) continue;
+      if (!isOfficeSafe(a.title, a.subject_titles) || !passesReview(a.title)) continue;
       const ar = a.thumbnail?.width > 0 && a.thumbnail?.height > 0
         ? a.thumbnail.width / a.thumbnail.height
         : null;
@@ -151,7 +176,11 @@ const MAX_FULL_BYTES = 3_000_000;
 
 async function verified(items) {
   const out = [];
+  const seen = new Set();
   for (const item of items) {
+    const key = `${item.title}|${item.artist}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
     const { imgFull, ...entry } = item;
     if (imgFull) {
       const size = await probe(imgFull);

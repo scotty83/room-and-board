@@ -54,6 +54,15 @@ export function feedsForLines(lines) {
   return suffixes;
 }
 
+// Union of the lines serving the chosen stops (per the stations dataset);
+// used when the user hasn't picked explicit lines.
+export function linesForStops(stations, stops) {
+  const parents = new Set(stops.map((s) => s.replace(/[NS]$/, '')));
+  const lines = new Set();
+  for (const st of stations) if (parents.has(st.id)) for (const l of st.lines) lines.add(l);
+  return [...lines].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+}
+
 // decodedFeeds: array of decodeGtfsRt() results. cfgSubway: {stops, lines}.
 // stationNames: stopId (with N/S suffix or parent) -> display name.
 export function mapSubway(decodedFeeds, cfgSubway, nowSec, stationNames = {}) {
@@ -90,25 +99,29 @@ export function mapSubway(decodedFeeds, cfgSubway, nowSec, stationNames = {}) {
 }
 
 export async function fetchData(cfg, net) {
-  const suffixes = feedsForLines(cfg.subway.lines);
+  const stations = await stationsPromise(net);
+  // Explicit line selection wins; otherwise cover all lines at the stops.
+  const lines = cfg.subway.lines.length
+    ? cfg.subway.lines
+    : linesForStops(stations, cfg.subway.stops);
+  const suffixes = feedsForLines(lines);
   const feeds = suffixes.length ? suffixes : [''];
   const decoded = await Promise.all(
     feeds.map(async (s) => decodeGtfsRt(await net.fetchBuffer(FEED_BASE + s))),
   );
-  const names = await stationNamesPromise(net);
+  const names = Object.fromEntries(stations.map((s) => [s.id, s.name]));
   const nowSec = Math.floor(Date.now() / 1000);
   return mapSubway(decoded, cfg.subway, nowSec, names);
 }
 
-let stationNamesCache = null;
-async function stationNamesPromise(net) {
-  if (!stationNamesCache) {
+let stationsCache = null;
+async function stationsPromise(net) {
+  if (!stationsCache) {
     try {
-      const list = await net.fetchJSON('data/stations-subway.json');
-      stationNamesCache = Object.fromEntries(list.map((s) => [s.id, s.name]));
+      stationsCache = await net.fetchJSON('data/stations-subway.json');
     } catch {
-      stationNamesCache = {};
+      stationsCache = [];
     }
   }
-  return stationNamesCache;
+  return stationsCache;
 }

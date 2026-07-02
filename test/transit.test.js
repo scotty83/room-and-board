@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { decodeGtfsRt } from '../site/js/gtfs.js';
-import { mapSubway, feedsForLines, FEED_FOR_ROUTE } from '../site/js/widgets/subway.js';
-import { mapLirr, trainNumFromTripId, ROUTE_NAMES } from '../site/js/widgets/lirr.js';
+import { mapSubway, feedsForLines, linesForStops, FEED_FOR_ROUTE } from '../site/js/widgets/subway.js';
+import { mapLirr, trainNumFromTripId, ROUTE_NAMES, PENN_STOP_ID } from '../site/js/widgets/lirr.js';
 
 async function decodedFixture(name) {
   return decodeGtfsRt(new Uint8Array(await readFile(new URL(`./fixtures/${name}`, import.meta.url))));
@@ -65,57 +65,87 @@ describe('trainNumFromTripId', () => {
   });
 });
 
-describe('mapLirr', () => {
-  it('lists upcoming departures from the configured origin', async () => {
-    const decoded = await decodedFixture('lirr.pb');
-    const now = decoded.timestamp;
-    // Find an origin stop present in the fixture with future departures.
-    const counts = new Map();
-    for (const t of decoded.trips)
-      for (const s of t.stops)
-        if (s.departure > now + 120) counts.set(s.stopId, (counts.get(s.stopId) ?? 0) + 1);
-    const [orig] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+describe('mapLirr (Penn Station departure board)', () => {
+  const now = 1000;
+  const synthetic = {
+    timestamp: now,
+    trips: [
+      // Penn departure, Port Washington branch
+      {
+        tripId: 'GO201_26_100',
+        routeId: '9',
+        stops: [
+          { stopId: PENN_STOP_ID, arrival: null, departure: now + 300 },
+          { stopId: '171', arrival: now + 2000, departure: now + 2000 },
+        ],
+      },
+      // Grand Central train on the same branch — must never appear
+      {
+        tripId: 'GO201_26_200',
+        routeId: '9',
+        stops: [
+          { stopId: '349', arrival: null, departure: now + 300 },
+          { stopId: '171', arrival: now + 2000, departure: now + 2000 },
+        ],
+      },
+      // Penn departure, Babylon branch
+      {
+        tripId: 'GO201_26_300',
+        routeId: '1',
+        stops: [
+          { stopId: PENN_STOP_ID, arrival: null, departure: now + 600 },
+          { stopId: '27', arrival: now + 3000, departure: now + 3000 },
+        ],
+      },
+    ],
+  };
 
-    const vm = mapLirr(decoded, null, { orig, dest: '' }, now, { [orig]: 'Origin' });
-    expect(vm.departures.length).toBeGreaterThan(0);
-    expect(vm.departures.length).toBeLessThanOrEqual(6);
+  it('shows only trains departing Penn Station', () => {
+    const vm = mapLirr(synthetic, null, { branches: [] }, now, { 171: 'Port Washington', 27: 'Babylon' });
+    expect(vm.departures.map((d) => d.trainNum)).toEqual(['100', '300']);
+    expect(vm.departures[0].dest).toBe('Port Washington');
+    expect(vm.departures[0].branch).toBe('Port Washington');
+  });
+
+  it('filters to selected branches', () => {
+    const vm = mapLirr(synthetic, null, { branches: ['1'] }, now, {});
+    expect(vm.departures.map((d) => d.trainNum)).toEqual(['300']);
+    expect(mapLirr(synthetic, null, { branches: ['9', '1'] }, now, {}).departures).toHaveLength(2);
+  });
+
+  it('merges TrainTime track assignments by train number', () => {
+    const trackJson = [{ train_num: '100', sched_track: '19', status: { held: false, canceled: false } }];
+    const vm = mapLirr(synthetic, trackJson, { branches: [] }, now, {});
+    expect(vm.departures.find((d) => d.trainNum === '100').track).toBe('19');
+    expect(vm.departures.find((d) => d.trainNum === '300').track).toBeNull();
+  });
+
+  it('never lists a fixture trip that skips Penn', async () => {
+    const decoded = await decodedFixture('lirr.pb');
+    const vm = mapLirr(decoded, null, { branches: [] }, decoded.timestamp, {});
+    const byNum = new Map(decoded.trips.map((t) => [trainNumFromTripId(t.tripId), t]));
     for (const d of vm.departures) {
-      expect(d.min).toBeGreaterThanOrEqual(1);
-      expect(typeof d.branch).toBe('string');
-      expect(d.track).toBeNull(); // no enrichment provided
+      const trip = byNum.get(d.trainNum);
+      expect(trip.stops.some((s) => s.stopId === PENN_STOP_ID)).toBe(true);
     }
     const mins = vm.departures.map((d) => d.min);
     expect([...mins].sort((a, b) => a - b)).toEqual(mins);
   });
 
-  it('merges TrainTime track assignments by train number', async () => {
-    const decoded = await decodedFixture('lirr.pb');
-    const now = decoded.timestamp;
-    const trip = decoded.trips.find(
-      (t) => trainNumFromTripId(t.tripId) && t.stops.some((s) => s.departure > now + 300),
-    );
-    const stop = trip.stops.find((s) => s.departure > now + 300);
-    const num = trainNumFromTripId(trip.tripId);
-    const trackJson = [{ train_num: num, sched_track: '19', status: { held: false, canceled: false } }];
-
-    const vm = mapLirr(decoded, trackJson, { orig: stop.stopId, dest: '' }, now, {});
-    const dep = vm.departures.find((d) => d.trainNum === num);
-    expect(dep.track).toBe('19');
-  });
-
-  it('applies destination filter when set', async () => {
-    const decoded = await decodedFixture('lirr.pb');
-    const now = decoded.timestamp;
-    const trip = decoded.trips.find((t) => t.stops.filter((s) => s.departure > now + 300).length >= 2);
-    const [origStop, ...rest] = trip.stops.filter((s) => s.departure > now + 300);
-    const destStop = rest[rest.length - 1];
-    const vm = mapLirr(decoded, null, { orig: origStop.stopId, dest: destStop.stopId }, now, {});
-    expect(vm.departures.length).toBeGreaterThan(0);
-    expect(vm.departures.every((d) => d.stopsAt.includes(destStop.stopId))).toBe(true);
-  });
-
   it('names known branches', () => {
     expect(ROUTE_NAMES['9']).toBe('Port Washington');
     expect(ROUTE_NAMES['1']).toBe('Babylon');
+  });
+});
+
+describe('linesForStops', () => {
+  const stations = [
+    { id: '631', name: 'Grand Central-42 St', borough: 'Manhattan', lines: ['4', '5', '6'] },
+    { id: 'R16', name: 'Times Sq-42 St', borough: 'Manhattan', lines: ['N', 'Q', 'R', 'W'] },
+  ];
+  it('unions the lines of the chosen stops (direction suffix stripped)', () => {
+    expect(linesForStops(stations, ['631N', 'R16S'])).toEqual(['4', '5', '6', 'N', 'Q', 'R', 'W']);
+    expect(linesForStops(stations, ['631S'])).toEqual(['4', '5', '6']);
+    expect(linesForStops(stations, ['ZZZN'])).toEqual([]);
   });
 });

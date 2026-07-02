@@ -1,11 +1,16 @@
-// LIRR departures from the official MTA GTFS-Realtime feed (browser-direct),
-// optionally enriched with track assignments from the unofficial TrainTime
-// backend. TrainTime is enhancement-only: any failure leaves track = null.
+// LIRR Penn Station departure board from the official MTA GTFS-Realtime feed
+// (browser-direct), optionally enriched with track assignments from the
+// unofficial TrainTime backend (enhancement-only: failures leave track null).
+// The origin is pinned to Penn — Grand Central Madison trains never appear —
+// and cfg.lirr.branches filters by branch (empty = all).
 
 import { decodeGtfsRt } from '../gtfs.js';
 import { escapeHtml } from '../util.js';
 
-export const meta = { id: 'lirr', title: 'LIRR', refreshMs: 60 * 1000 };
+export const meta = { id: 'lirr', title: 'LIRR · Penn Station', refreshMs: 60 * 1000 };
+
+export const PENN_STOP_ID = '237'; // LIRR static GTFS stop id for Penn Station
+const PENN_TT_CODE = 'NYK'; // TrainTime station code for Penn
 
 export function render(el, vm, _cfg) {
   el.innerHTML = vm.departures.length
@@ -59,25 +64,24 @@ export function mapLirr(decoded, trackJson, cfgLirr, nowSec, stationNames = {}) 
       if (num && track) tracks.set(String(num), String(track));
     }
   }
+  const branchFilter = cfgLirr.branches?.length ? new Set(cfgLirr.branches) : null;
 
   const departures = [];
   for (const trip of decoded.trips) {
-    const idx = trip.stops.findIndex((s) => s.stopId === cfgLirr.orig);
-    if (idx === -1) continue;
+    if (branchFilter && !branchFilter.has(trip.routeId)) continue;
+    const idx = trip.stops.findIndex((s) => s.stopId === PENN_STOP_ID);
+    if (idx === -1) continue; // Grand Central (or non-Penn) run
     const t = trip.stops[idx].departure ?? trip.stops[idx].arrival;
     if (!t || t <= nowSec) continue;
     const onward = trip.stops.slice(idx + 1);
-    if (onward.length === 0) continue; // origin is this trip's last stop
-    const stopsAt = onward.map((s) => s.stopId);
-    if (cfgLirr.dest && !stopsAt.includes(cfgLirr.dest)) continue;
-    const destId = stopsAt[stopsAt.length - 1];
+    if (onward.length === 0) continue; // terminating at Penn, not departing
+    const destId = onward[onward.length - 1].stopId;
     const trainNum = trainNumFromTripId(trip.tripId);
     departures.push({
       t,
       min: Math.max(1, Math.round((t - nowSec) / 60)),
       dest: stationNames[destId] ?? destId,
       destId,
-      stopsAt,
       branch: ROUTE_NAMES[trip.routeId] ?? '',
       trainNum,
       track: (trainNum && tracks.get(trainNum)) || null,
@@ -90,22 +94,19 @@ export function mapLirr(decoded, trackJson, cfgLirr, nowSec, stationNames = {}) 
 export async function fetchData(cfg, net) {
   const decoded = decodeGtfsRt(await net.fetchBuffer(FEED_URL));
   let trackJson = null;
-  const ttCode = await trainTimeCode(cfg.lirr.orig, net);
-  if (ttCode) {
-    try {
-      trackJson = await net.fetchJSON(TRAINTIME_BASE + ttCode, {
-        headers: { 'Accept-Version': '3.0' },
-      });
-    } catch {
-      trackJson = null;
-    }
+  try {
+    trackJson = await net.fetchJSON(TRAINTIME_BASE + PENN_TT_CODE, {
+      headers: { 'Accept-Version': '3.0' },
+    });
+  } catch {
+    trackJson = null;
   }
   const names = await stationNames(net);
   return mapLirr(decoded, trackJson, cfg.lirr, Math.floor(Date.now() / 1000), names);
 }
 
 let stationsCache = null;
-async function loadStations(net) {
+async function stationNames(net) {
   if (!stationsCache) {
     try {
       stationsCache = await net.fetchJSON('data/stations-lirr.json');
@@ -113,17 +114,5 @@ async function loadStations(net) {
       stationsCache = [];
     }
   }
-  return stationsCache;
-}
-
-async function stationNames(net) {
-  const list = await loadStations(net);
-  return Object.fromEntries(list.map((s) => [s.id, s.name]));
-}
-
-// TrainTime uses 3-letter codes (stop_code in LIRR static GTFS); config
-// stores GTFS stop ids, so translate when the station data provides one.
-async function trainTimeCode(stopId, net) {
-  const list = await loadStations(net);
-  return list.find((s) => s.id === stopId)?.tt ?? null;
+  return Object.fromEntries(stationsCache.map((s) => [s.id, s.name]));
 }

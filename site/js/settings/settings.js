@@ -97,6 +97,7 @@ const SECTIONS = [
   ['mnr', 'Metro-North'],
   ['njt', 'NJ Transit'],
   ['bus', 'MTA Bus'],
+  ['markets', 'Markets'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
@@ -132,6 +133,7 @@ function renderSection() {
     mnr: renderMnr,
     njt: renderNjt,
     bus: renderBus,
+    markets: renderMarkets,
     art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
@@ -393,6 +395,43 @@ function renderBus() {
         }
       } else if (code.length < 7) code += k;
       display.textContent = code;
+    }),
+  );
+}
+
+function renderMarkets() {
+  const symbols = state.cfg.markets.symbols;
+  const chips = symbols
+    .map((t) => `<button class="chip" data-remove-sym="${t}">${t} ✕</button>`)
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">Markets</h2>
+    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Leave empty for the default Dow Jones, Nasdaq and S&P 500. Larger cards show more tickers — the edit screen tells you how many fit.</p>
+    <div class="chips">${chips || '<span class="pane__empty">Default: Dow Jones · Nasdaq · S&P 500</span>'}</div>
+    <output class="code__display" aria-live="polite"></output>
+    <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^.-'.split('').map(
+      (k) => `<button class="key" data-key="${k}">${k}</button>`,
+    ).join('')}<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Add">Add</button></div>`;
+  pane().querySelectorAll('[data-remove-sym]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.markets.symbols = symbols.filter((t) => t !== chip.dataset.removeSym);
+      renderMarkets();
+    }),
+  );
+  let ticker = '';
+  const display = pane().querySelector('.code__display');
+  pane().querySelectorAll('[data-key]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.key;
+      if (k === '⌫') ticker = ticker.slice(0, -1);
+      else if (k === 'Add') {
+        if (/^[\^A-Z0-9.\-]{1,10}$/.test(ticker) && symbols.length < 10 && !symbols.includes(ticker)) {
+          state.cfg.markets.symbols = [...symbols, ticker];
+          renderMarkets();
+          return;
+        }
+      } else if (ticker.length < 10) ticker += k;
+      display.textContent = ticker;
     }),
   );
 }

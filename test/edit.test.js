@@ -100,6 +100,7 @@ describe('openEditMode', () => {
   it('shows size labels with minimums on every block', () => {
     openEditMode(CFG, { root, cellSize: { w: 100, h: 100 } });
     const label = root.querySelector('.edit-block[data-id="weather"] .edit-block__size');
-    expect(label.textContent).toBe('3×2 · min 2×2');
+    expect(label.textContent).toContain('3×2 · min 2×2');
+    expect(label.textContent).toContain('hourly'); // capacity impact line
   });
 });

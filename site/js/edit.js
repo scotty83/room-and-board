@@ -6,6 +6,7 @@
 // pushed positions live. The drag ghost moves via transform only.
 
 import { GRID, MIN_SIZE, firstFit, placeWithPush } from './layout.js';
+import { capacityLabel } from './capacity.js';
 import { WIDGET_IDS } from './config.js';
 
 const TITLES = {
@@ -53,6 +54,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   };
 
   const rectOf = (id) => layout.find((r) => r.id === id);
+  const capOf = (id, w, h) => capacityLabel(id, w, h, cfg) ?? '';
   const sizeLabel = (r) => {
     const [mw, mh] = MIN_SIZE[r.id] ?? [1, 1];
     return `${r.w}×${r.h} · min ${mw}×${mh}`;
@@ -102,7 +104,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
         (r) => `<div class="edit-block" data-id="${r.id}"
           style="grid-column:${r.x + 1} / span ${r.w}; grid-row:${r.y + 1} / span ${r.h}">
           <span class="edit-block__title">${TITLES[r.id] ?? r.id}</span>
-          <span class="edit-block__size">${sizeLabel(r)}</span>
+          <span class="edit-block__size">${sizeLabel(r)}${capOf(r.id, r.w, r.h) ? `<br>${capOf(r.id, r.w, r.h)}` : ''}</span>
           <button class="edit-remove" data-remove="${r.id}" aria-label="Remove ${TITLES[r.id]}">✕</button>
           <span class="edit-handle" data-resize="${r.id}" aria-label="Resize ${TITLES[r.id]}"></span>
         </div>`,
@@ -184,7 +186,9 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       } else {
         showPlaceholder(ph, target, false);
       }
-      block.querySelector('.edit-block__size').textContent = sizeLabel(target);
+      const cap = capOf(id, target.w, target.h);
+      block.querySelector('.edit-block__size').innerHTML =
+        sizeLabel(target) + (cap ? `<br>${cap}` : '');
     };
 
     const finish = () => {

@@ -19,6 +19,8 @@ describe('normalizeConfig', () => {
     expect(cfg.lirr).toEqual({ dest: '', alerts: true });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
     expect(cfg.bus).toEqual({ stops: [] });
+    expect(cfg.markets).toEqual({ symbols: [] });
+    expect(normalizeConfig({ v: 2, markets: { symbols: ['aapl', '^GSPC', 'bad ticker!', 'MSFT'] } }).markets.symbols).toEqual(['AAPL', '^GSPC', 'MSFT']);
     expect(normalizeConfig({ v: 2, bus: { stops: ['550685', 'junk', '12'] } }).bus.stops).toEqual(['550685']);
   });
 

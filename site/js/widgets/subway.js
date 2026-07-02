@@ -5,6 +5,7 @@
 
 import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'subway', title: 'Subway Status', refreshMs: 2 * 60 * 1000 };
 
@@ -28,7 +29,14 @@ export function render(el, vm, _cfg) {
     el.innerHTML = '<div class="empty">Pick your lines in Settings → Subway</div>';
     return;
   }
-  el.innerHTML = vm.lines
+  const [w, h] = cardSize(el, [2, 2]);
+  const cap = itemCapacity('subway', w, h);
+  // When truncating, alerting lines take priority over Good Service rows.
+  const rows = vm.lines.length > cap
+    ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, cap)
+    : vm.lines;
+  const hidden = vm.lines.length - rows.length;
+  el.innerHTML = rows
     .map(
       (row) => `<div class="linestatus ${row.ok ? '' : 'linestatus--alert'}">
         <span class="bullet bullet--${escapeHtml(row.line)}">${escapeHtml(row.line)}</span>
@@ -38,7 +46,7 @@ export function render(el, vm, _cfg) {
         ${row.ok ? '' : '<span class="linestatus__icon" aria-hidden="true">⚠</span>'}
       </div>`,
     )
-    .join('');
+    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more line${hidden > 1 ? 's' : ''} — enlarge the card</div>` : '');
 }
 
 export async function fetchData(cfg, net) {

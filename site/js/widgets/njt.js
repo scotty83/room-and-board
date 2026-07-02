@@ -5,13 +5,17 @@
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
 import { renderAlertRows } from '../transit-alerts.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
-  el.innerHTML = renderAlertRows(vm.alerts) + '<div class="trains">' + (vm.trains.length
-    ? vm.trains
+  const [w, h] = cardSize(el, [2, 2]);
+  const cap = Math.max(1, itemCapacity('njt', w, h) - (vm.alerts?.length ?? 0));
+  const shown = vm.trains.slice(0, cap);
+  el.innerHTML = renderAlertRows(vm.alerts) + '<div class="trains">' + (shown.length
+    ? shown
         .map(
           (t) => `<div class="train">
             <div class="train__min"><span>${t.min}</span><small>min</small></div>
@@ -32,7 +36,7 @@ export function mapNjt(payload, nowSec, showAlerts = true) {
   }
   const trains = payload.trains
     .filter((t) => Number.isFinite(t.time) && t.time > nowSec)
-    .slice(0, 6)
+    .slice(0, 12)
     .map((t) => ({
       min: Math.max(1, Math.round((t.time - nowSec) / 60)),
       dest: String(t.dest ?? ''),

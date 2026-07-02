@@ -239,8 +239,21 @@ describe('/markets', () => {
   });
 
   beforeEach(async () => {
-    await env.CODES.delete('markets:last');
-    await env.CODES.delete('markets:cachedAt');
+    await env.CODES.delete('markets:^DJI,^IXIC,^GSPC:last');
+    await env.CODES.delete('markets:^DJI,^IXIC,^GSPC:cachedAt');
+  });
+
+  it('serves custom symbols with Yahoo shortName fallback', async () => {
+    await env.CODES.delete('markets:AAPL:last');
+    await env.CODES.delete('markets:AAPL:cachedAt');
+    const y = yahoo(200, 190);
+    y.chart.result[0].meta.symbol = 'AAPL';
+    y.chart.result[0].meta.shortName = 'Apple Inc.';
+    stubFetch([{ match: /chart\/AAPL/, body: y }]);
+    const res = await call('/markets?symbols=aapl');
+    const body = await res.json();
+    expect(body.indices).toHaveLength(1);
+    expect(body.indices[0]).toMatchObject({ symbol: 'AAPL', name: 'Apple Inc.' });
   });
 
   it('aggregates the three indices', async () => {

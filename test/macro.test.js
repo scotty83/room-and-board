@@ -44,6 +44,10 @@ describe('composeUrl', () => {
 });
 
 describe('parseMsg', () => {
+  it('recognizes the reset message', () => {
+    expect(parseMsg('sgn1-reset')).toEqual({ type: 'reset' });
+  });
+
   it('accepts framed base64url configs only', () => {
     expect(parseMsg('sgn1:AbC-_1')).toEqual({ type: 'cfg', cfg: 'AbC-_1' });
     expect(parseMsg('sgn1:not valid!!')).toBeNull();

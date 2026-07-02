@@ -47,25 +47,26 @@ export function connectBridge(auth, { WS = globalThis.WebSocket, timeoutMs = 500
     };
     ws.onopen = () => {
       clearTimeout(connectTimer);
+      const sendText = (text) =>
+        new Promise((res, rej) => {
+          const id = nextId++;
+          const timer = setTimeout(() => {
+            pending.delete(id);
+            rej(new Error('bridge: send timeout'));
+          }, timeoutMs);
+          pending.set(id, { resolve: res, reject: rej, timer });
+          ws.send(
+            JSON.stringify({
+              jsonrpc: '2.0',
+              id,
+              method: 'xCommand/Message/Send',
+              params: { Text: text },
+            }),
+          );
+        });
       resolve({
-        sendConfig(encoded) {
-          return new Promise((res, rej) => {
-            const id = nextId++;
-            const timer = setTimeout(() => {
-              pending.delete(id);
-              rej(new Error('bridge: send timeout'));
-            }, timeoutMs);
-            pending.set(id, { resolve: res, reject: rej, timer });
-            ws.send(
-              JSON.stringify({
-                jsonrpc: '2.0',
-                id,
-                method: 'xCommand/Message/Send',
-                params: { Text: `sgn1:${encoded}` },
-              }),
-            );
-          });
-        },
+        sendConfig: (encoded) => sendText(`sgn1:${encoded}`),
+        sendReset: () => sendText('sgn1-reset'),
         close() {
           ws.close?.();
         },

@@ -399,15 +399,17 @@ function renderBus() {
   );
 }
 
+const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };
+
 function renderMarkets() {
   const symbols = state.cfg.markets.symbols;
   const chips = symbols
-    .map((t) => `<button class="chip" data-remove-sym="${t}">${t} ✕</button>`)
+    .map((t) => `<button class="chip" data-remove-sym="${t}">${INDEX_NAMES[t] ?? t} ✕</button>`)
     .join('');
   pane().innerHTML = `
     <h2 class="pane__title">Markets</h2>
-    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Leave empty for the default Dow Jones, Nasdaq and S&P 500. Larger cards show more tickers — the edit screen tells you how many fit.</p>
-    <div class="chips">${chips || '<span class="pane__empty">Default: Dow Jones · Nasdaq · S&P 500</span>'}</div>
+    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Remove any you don't want — the defaults are just entries like the rest. Larger cards show more tickers — the edit screen tells you how many fit.</p>
+    <div class="chips">${chips || '<span class="pane__empty">No tickers — defaults return on save</span>'}</div>
     <output class="code__display" aria-live="polite"></output>
     <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^.-'.split('').map(
       (k) => `<button class="key" data-key="${k}">${k}</button>`,

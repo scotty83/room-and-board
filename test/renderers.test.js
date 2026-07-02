@@ -32,7 +32,7 @@ const CASES = [
   ['aqi', aqi, ['66', 'Moderate', 'Waning Gibbous']],
   ['quote', quote, ['predict the future', 'Alan Kay']],
   ['markets', markets, ['Dow Jones', 'S&P 500', '0.45']],
-  ['worldclock', worldclock, ['Hyderabad', '5:43 PM', 'Hong Kong']],
+  ['worldclock', worldclock, ['Hyderabad', '5:43 PM', 'Hong Kong', '+1d']],
 ];
 
 describe('widget renderers', () => {

@@ -155,11 +155,13 @@ function renderLocation() {
   });
 }
 
+const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };
+
 function renderTickers() {
   const chips = $('#sym-chips');
   const renderChips = () => {
     chips.innerHTML = cfg.markets.symbols
-      .map((t) => `<button type="button" data-sym="${t}">${t} ✕</button>`)
+      .map((t) => `<button type="button" data-sym="${t}">${INDEX_NAMES[t] ?? t} ✕</button>`)
       .join('');
     chips.querySelectorAll('[data-sym]').forEach((b) =>
       b.addEventListener('click', () => {

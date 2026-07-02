@@ -225,7 +225,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  position: absolute; right: 28px; bottom: calc(24px + var(--safe-bottom));
+  /* Vertically centered in the ambient strip's band (strip ≈ 70px tall,
+     button 56px → 7px inset above the strip's bottom edge). */
+  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) + 7px);
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);

@@ -12,7 +12,8 @@
     "test:site": "vitest run",
     "test:worker": "vitest run -c worker/vitest.config.js",
     "deploy:worker": "wrangler deploy --cwd worker",
-    "deploy:site": "CF_PAGES_COMMIT_SHA=$(git rev-parse HEAD) node tools/stamp-version.js && wrangler pages deploy site --project-name signage --branch main --commit-dirty=true && git checkout site/version.json"
+    "deploy:site": "CF_PAGES_COMMIT_SHA=$(git rev-parse HEAD) node tools/stamp-version.js && wrangler pages deploy site --project-name signage --branch main --commit-dirty=true && git checkout site/version.json",
+    "deploy:macro": "node deploy/make-macro.js"
   },
   "keywords": [],
   "author": "",

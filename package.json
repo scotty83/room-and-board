@@ -1,0 +1,26 @@
+{
+  "name": "board-pro-digital-signage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.17.0",
+    "gtfs-realtime-bindings": "^2.0.0",
+    "happy-dom": "^20.10.6",
+    "jsxapi": "^6.0.0",
+    "qrcode-generator": "^2.0.4",
+    "vitest": "^4.1.9",
+    "wrangler": "^4.106.0"
+  }
+}

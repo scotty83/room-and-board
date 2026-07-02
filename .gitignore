@@ -1,0 +1,6 @@
+node_modules/
+.wrangler/
+.dev.vars
+deploy/devices.csv
+*.log
+.DS_Store

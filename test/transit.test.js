@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { decodeGtfsRt } from '../site/js/gtfs.js';
 import { mapSubwayStatus, SUBWAY_LINES } from '../site/js/widgets/subway.js';
 import { mapLirr, trainNumFromTripId, ROUTE_NAMES, PENN_STOP_ID } from '../site/js/widgets/lirr.js';
+import { mapMnr, GCT_STOP_ID, ROUTE_NAMES as MNR_ROUTES } from '../site/js/widgets/mnr.js';
 
 async function decodedFixture(name) {
   return decodeGtfsRt(new Uint8Array(await readFile(new URL(`./fixtures/${name}`, import.meta.url))));
@@ -114,5 +115,42 @@ describe('mapLirr (Penn Station departure board)', () => {
   it('names known branches', () => {
     expect(ROUTE_NAMES['9']).toBe('Port Washington');
     expect(ROUTE_NAMES['1']).toBe('Babylon');
+  });
+});
+
+describe('mapMnr (Grand Central departure board)', () => {
+  const now = 1000;
+  const synthetic = {
+    timestamp: now,
+    trips: [
+      { tripId: 'x1', routeId: '2', stops: [
+        { stopId: GCT_STOP_ID, arrival: null, departure: now + 300 },
+        { stopId: '54', arrival: now + 4000, departure: now + 4000 },
+      ]},
+      // inbound: GCT is the last stop -> not a departure
+      { tripId: 'x2', routeId: '1', stops: [
+        { stopId: '33', arrival: null, departure: now + 200 },
+        { stopId: GCT_STOP_ID, arrival: now + 3000, departure: null },
+      ]},
+    ],
+  };
+  it('lists outbound GCT trains with line names', () => {
+    const vm = mapMnr(synthetic, { dest: '' }, now, { 54: 'Southeast' });
+    expect(vm.departures).toHaveLength(1);
+    expect(vm.departures[0]).toMatchObject({ dest: 'Southeast', branch: 'Harlem', min: 5 });
+  });
+  it('applies the destination filter', () => {
+    expect(mapMnr(synthetic, { dest: '54' }, now, {}).departures).toHaveLength(1);
+    expect(mapMnr(synthetic, { dest: '99' }, now, {}).departures).toHaveLength(0);
+  });
+  it('every fixture departure really leaves Grand Central', async () => {
+    const decoded = await decodedFixture('mnr.pb');
+    const vm = mapMnr(decoded, { dest: '' }, decoded.timestamp, {});
+    const mins = vm.departures.map((d) => d.min);
+    expect([...mins].sort((a, b) => a - b)).toEqual(mins);
+  });
+  it('names the lines', () => {
+    expect(MNR_ROUTES['1']).toBe('Hudson');
+    expect(MNR_ROUTES['3']).toBe('New Haven');
   });
 });

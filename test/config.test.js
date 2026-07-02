@@ -17,6 +17,7 @@ describe('normalizeConfig', () => {
     expect(cfg.theme).toBe('dark');
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' });
     expect(cfg.lirr).toEqual({ dest: '', alerts: true });
+    expect(cfg.mnr).toEqual({ dest: '', alerts: true });
   });
 
   it('migrates a v1 config: widgets->layout, lirr, Midtown loc', () => {

@@ -134,7 +134,7 @@ export default {
       return cached(env, 'markets', 300, fetchMarkets);
     }
 
-    const alertsMatch = /^\/alerts\/(subway|lirr)$/.exec(path);
+    const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);
     if (alertsMatch && request.method === 'GET') {
       return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
     }

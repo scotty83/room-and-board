@@ -14,6 +14,7 @@ const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
   lirr: 'LIRR (Penn Station)',
+  mnr: 'Metro-North (Grand Central)',
   njt: 'NJ Transit',
   markets: 'Markets',
   art: 'Art slideshow',
@@ -92,6 +93,7 @@ const SECTIONS = [
   ['widgets', 'Widgets'],
   ['subway', 'Subway'],
   ['lirr', 'LIRR'],
+  ['mnr', 'Metro-North'],
   ['njt', 'NJ Transit'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
@@ -125,6 +127,7 @@ function renderSection() {
     widgets: renderWidgets,
     subway: renderSubway,
     lirr: renderLirr,
+    mnr: renderMnr,
     njt: renderNjt,
     art: renderArt,
     weather: renderWeather,
@@ -298,6 +301,37 @@ async function renderLirr() {
   pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
     state.cfg.lirr.dest = '';
     renderLirr();
+  });
+}
+
+let mnrStations = null;
+async function renderMnr() {
+  mnrStations ??= await fetchJSON('data/stations-mnr.json');
+  const byId = Object.fromEntries(mnrStations.map((s) => [s.id, s]));
+  pane().innerHTML = `
+    <h2 class="pane__title">Metro-North — Grand Central departures</h2>
+    <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station — the line shows per train.</p>
+    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station')}</b>
+      <button class="btn" data-pick-dest>Change</button>
+      ${state.cfg.mnr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${alertsToggleHtml('mnr')}
+    <div class="drill"></div>`;
+  bindAlertsToggle(renderMnr);
+  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
+    drillList(
+      'Destination station',
+      alphaSections(mnrStations).flatMap((sec) =>
+        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      ),
+      (pick) => {
+        state.cfg.mnr.dest = pick.value.id;
+        renderMnr();
+      },
+    );
+  });
+  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
+    state.cfg.mnr.dest = '';
+    renderMnr();
   });
 }
 

@@ -43,6 +43,14 @@ export const DEMO_VMS = {
       { min: 34, dest: 'Port Washington', branch: 'Port Washington', track: null, trainNum: '718' },
     ],
   },
+  mnr: {
+    alerts: [],
+    departures: [
+      { min: 6, dest: 'Southeast', branch: 'Harlem', track: null },
+      { min: 14, dest: 'Poughkeepsie', branch: 'Hudson', track: null },
+      { min: 22, dest: 'New Haven-State St', branch: 'New Haven', track: null },
+    ],
+  },
   njt: {
     updatedAt: 0,
     stale: false,

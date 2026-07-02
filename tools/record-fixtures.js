@@ -7,6 +7,7 @@ const OUT = new URL('../test/fixtures/', import.meta.url);
 const BINARY = {
   'subway.pb': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs',
   'lirr.pb': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr',
+  'mnr.pb': 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr%2Fgtfs-mnr',
 };
 
 const JSON_FIXTURES = {

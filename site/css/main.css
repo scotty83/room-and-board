@@ -440,6 +440,7 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .card--subway[data-h="2"] .card__body.has-alerts .arrival:nth-child(n+3) { display: none; }
 .card--lirr[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
 .card--njt[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
+.card--mnr[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
 
 /* ---------- subway line-status board ---------- */
 .linestatus { display: flex; align-items: center; gap: 14px; min-height: 50px; }

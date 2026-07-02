@@ -11,6 +11,10 @@ export function stripData(caches, cfg) {
     const d = caches.lirr.departures?.[0];
     if (d) transit.push({ label: `LIRR · ${d.dest}${d.track ? ` · Tk ${d.track}` : ''}`, min: d.min });
   }
+  if (enabled.has('mnr') && caches.mnr) {
+    const d = caches.mnr.departures?.[0];
+    if (d) transit.push({ label: `MNR · ${d.dest}`, min: d.min });
+  }
   if (enabled.has('njt') && caches.njt) {
     const t = caches.njt.trains?.[0];
     if (t) transit.push({ label: `NJT · ${t.dest}${t.track ? ` · Tk ${t.track}` : ''}`, min: t.min });

@@ -5,6 +5,7 @@
 const FEEDS = {
   subway: 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json',
   lirr: 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Flirr-alerts.json',
+  mnr: 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fmnr-alerts.json',
 };
 
 // GTFS-RT ServiceAlerts (JSON flavor) -> [{routes, header}], active now only.

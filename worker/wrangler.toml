@@ -6,7 +6,10 @@
 name = "signage-api"
 main = "src/index.js"
 compatibility_date = "2026-06-01"
+routes = [
+  { pattern = "signage-api.rvc.tech", custom_domain = true }
+]
 
 [[kv_namespaces]]
 binding = "CODES"
-id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
+id = "5e78a137e235456bb0b63b5660812bff"

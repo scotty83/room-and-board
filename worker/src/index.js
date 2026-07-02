@@ -53,7 +53,10 @@ async function getCode(env, code) {
   const key = `code:${code.toUpperCase()}`;
   const cfg = await env.CODES.get(key);
   if (cfg === null) return json({ error: 'not_found' }, 404);
-  await env.CODES.delete(key); // single use
+  // Best-effort single use: KV deletes are eventually consistent (~60 s
+  // globally), so a code may be redeemable more than once briefly. Codes
+  // carry non-sensitive widget prefs and expire after an hour regardless.
+  await env.CODES.delete(key);
   return json({ cfg });
 }
 

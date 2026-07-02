@@ -1,16 +1,25 @@
 // Config schema, normalization and codec. Runs in browser (Chromium >=102),
 // on user phones (setup page) and in Node >=20 (tests, tooling).
+//
+// Schema v2 (2026-07-02): the ordered `widgets` list became `layout`
+// ({id,x,y,w,h} on the 6×4 grid); `lirr` became a Penn-only branch filter;
+// the default location moved to ZIP 10001. v1 configs migrate automatically.
+// `widgets` survives as a derived convenience array (layout ids, in order).
 
-export const WIDGET_IDS = ['weather', 'subway', 'lirr', 'njt', 'art', 'history', 'aqi', 'quote', 'markets'];
+import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
+
+export const WIDGET_IDS = [
+  'weather', 'subway', 'lirr', 'njt', 'art', 'history', 'aqi', 'quote', 'markets', 'worldclock',
+];
 
 export const DEFAULT_CONFIG = Object.freeze({
-  v: 1,
+  v: 2,
   t: 0,
   name: '',
-  loc: Object.freeze({ lat: 40.754, lon: -73.984, label: 'Midtown' }),
-  widgets: Object.freeze(['weather', 'subway', 'art', 'history', 'aqi', 'quote']),
+  loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
+  layout: DEFAULT_LAYOUT,
   subway: Object.freeze({ stops: Object.freeze([]), lines: Object.freeze([]) }),
-  lirr: Object.freeze({ orig: '237', dest: '' }), // 237 = Penn Station (GTFS stop id)
+  lirr: Object.freeze({ branches: Object.freeze([]) }),
   njt: Object.freeze({ station: 'NY' }),
   mode: 'auto',
   theme: 'dark',
@@ -26,38 +35,47 @@ const num = (v, fallback) => (Number.isFinite(v) ? v : fallback);
 const strList = (v, max = 12) =>
   Array.isArray(v) ? v.filter((s) => typeof s === 'string').slice(0, max) : [];
 
+// v1 shipped with a Midtown default; migrated configs still carrying it get
+// the new 10001 default instead of a stale "chosen" location.
+function normalizeLoc(rawLoc) {
+  const d = DEFAULT_CONFIG.loc;
+  if (!rawLoc || rawLoc.label === 'Midtown') return { ...d };
+  return {
+    lat: num(rawLoc.lat, d.lat),
+    lon: num(rawLoc.lon, d.lon),
+    label: str(rawLoc.label, d.label, 40),
+  };
+}
+
 export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
     throw new TypeError('config must be an object');
   }
-  if (raw.v !== undefined && raw.v !== 1) {
+  if (raw.v !== undefined && raw.v !== 1 && raw.v !== 2) {
     throw new TypeError(`unsupported config version: ${raw.v}`);
   }
-  const d = DEFAULT_CONFIG;
-  const widgets = Array.isArray(raw.widgets)
-    ? raw.widgets.filter((w) => WIDGET_IDS.includes(w))
-    : [...d.widgets];
+  const layout =
+    Array.isArray(raw.layout) && raw.layout.length
+      ? normalizeLayout(raw.layout)
+      : Array.isArray(raw.widgets)
+        ? migrateWidgetsToLayout(raw.widgets)
+        : [...DEFAULT_LAYOUT];
+
   return {
-    v: 1,
+    v: 2,
     t: num(raw.t, 0),
-    name: str(raw.name, d.name, MAX_NAME),
-    loc: {
-      lat: num(raw.loc?.lat, d.loc.lat),
-      lon: num(raw.loc?.lon, d.loc.lon),
-      label: str(raw.loc?.label, d.loc.label, 40),
-    },
-    widgets,
+    name: str(raw.name, DEFAULT_CONFIG.name, MAX_NAME),
+    loc: normalizeLoc(raw.loc),
+    layout,
+    widgets: layout.map((r) => r.id),
     subway: {
       stops: strList(raw.subway?.stops, 8),
-      lines: strList(raw.subway?.lines, 10),
+      lines: strList(raw.subway?.lines, 24),
     },
-    lirr: {
-      orig: str(raw.lirr?.orig, d.lirr.orig, 4),
-      dest: str(raw.lirr?.dest, d.lirr.dest, 4),
-    },
-    njt: { station: str(raw.njt?.station, d.njt.station, 4) },
-    mode: MODES.includes(raw.mode) ? raw.mode : d.mode,
-    theme: THEMES.includes(raw.theme) ? raw.theme : d.theme,
+    lirr: { branches: strList(raw.lirr?.branches, 12) },
+    njt: { station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4) },
+    mode: MODES.includes(raw.mode) ? raw.mode : DEFAULT_CONFIG.mode,
+    theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
   };
 }
 
@@ -80,7 +98,9 @@ async function pipe(bytes, transform) {
 }
 
 export async function encodeConfig(cfg) {
-  const bytes = new TextEncoder().encode(JSON.stringify(cfg));
+  // `widgets` is derived from layout; keep the wire format minimal.
+  const { widgets, ...wire } = cfg;
+  const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
 

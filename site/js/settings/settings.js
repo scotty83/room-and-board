@@ -11,21 +11,27 @@ import {
   boroughs,
   linesForBorough,
   stationsForLine,
-  alphaSections,
-  moveWidget,
+  toggleIn,
 } from './pickers.js';
+import { MIN_SIZE, firstFit } from '../layout.js';
+import { ROUTE_NAMES } from '../widgets/lirr.js';
+import { FEED_FOR_ROUTE } from '../widgets/subway.js';
 
 const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
-  lirr: 'LIRR',
+  lirr: 'LIRR (Penn Station)',
   njt: 'NJ Transit',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
+  worldclock: 'World Clock',
 };
+
+// Displayed subway routes (feed variants like GS/FS/SR collapse into S).
+const SUBWAY_LINES = ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'G', 'J', 'Z', 'L', 'N', 'Q', 'R', 'W', 'S', 'SI'];
 
 const PRESET_LOCATIONS = [
   { label: 'Midtown Manhattan', lat: 40.754, lon: -73.984 },
@@ -138,36 +144,31 @@ function renderSection() {
 /* ---------- widgets ---------- */
 
 function renderWidgets() {
-  const enabled = state.cfg.widgets;
+  const layout = state.cfg.layout;
+  const placed = new Set(layout.map((r) => r.id));
   pane().innerHTML = `
     <h2 class="pane__title">Widgets</h2>
-    <p class="pane__hint">Toggle what appears on your dashboard; reorder with the arrows.</p>
+    <p class="pane__hint">Toggle what appears on your dashboard. To move or resize widgets, close settings and tap the ✎ pencil button.</p>
     <div class="rows">${WIDGET_IDS.map((id) => {
-      const on = enabled.includes(id);
+      const on = placed.has(id);
+      const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
       return `<div class="row">
-        <button class="toggle ${on ? 'is-on' : ''}" data-toggle="${id}" role="switch" aria-checked="${on}">
+        <button class="toggle ${on ? 'is-on' : ''}" data-toggle="${id}" role="switch"
+          aria-checked="${on}" ${canAdd ? '' : 'disabled'}>
           <span class="toggle__knob"></span>
         </button>
-        <span class="row__label">${WIDGET_LABELS[id]}</span>
-        ${on ? `<span class="row__actions">
-          <button class="iconbtn" data-move="${id}:-1" aria-label="Move up">↑</button>
-          <button class="iconbtn" data-move="${id}:1" aria-label="Move down">↓</button>
-        </span>` : ''}
+        <span class="row__label">${WIDGET_LABELS[id]}${canAdd ? '' : ' <small>(no room — resize others first)</small>'}</span>
       </div>`;
     }).join('')}</div>`;
   pane().querySelectorAll('[data-toggle]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const id = btn.dataset.toggle;
-      state.cfg.widgets = enabled.includes(id)
-        ? enabled.filter((w) => w !== id)
-        : [...enabled, id];
-      renderWidgets();
-    }),
-  );
-  pane().querySelectorAll('[data-move]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const [id, delta] = btn.dataset.move.split(':');
-      state.cfg.widgets = moveWidget(state.cfg.widgets, id, Number(delta));
+      if (placed.has(id)) {
+        state.cfg.layout = layout.filter((r) => r.id !== id);
+      } else {
+        const rect = firstFit(layout, id, MIN_SIZE[id]);
+        if (rect) state.cfg.layout = [...layout, rect];
+      }
       renderWidgets();
     }),
   );
@@ -192,12 +193,25 @@ async function renderSubway() {
         ${escapeHtml(parent?.name ?? stop)}${dir ? ` · ${dir}` : ''} ✕</button>`;
     })
     .join('');
+  const lineChips = SUBWAY_LINES.map((l) => {
+    const on = state.cfg.subway.lines.includes(l);
+    return `<button class="bullet bullet--${l} linechip ${on ? '' : 'linechip--off'}" data-line="${l}"
+      role="switch" aria-checked="${on}">${l}</button>`;
+  }).join('');
   pane().innerHTML = `
     <h2 class="pane__title">Subway stops</h2>
     <p class="pane__hint">Up to 4 stops appear on the Subway card.</p>
     <div class="chips">${chips || '<span class="pane__empty">No stops chosen yet</span>'}</div>
     <button class="btn btn--primary" data-add>Add a stop</button>
+    <p class="pane__hint">Lines to show at your stops — none selected means every line:</p>
+    <div class="linechips">${lineChips}</div>
     <div class="drill"></div>`;
+  pane().querySelectorAll('[data-line]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.subway.lines = toggleIn(state.cfg.subway.lines, chip.dataset.line);
+      renderSubway();
+    }),
+  );
   pane().querySelectorAll('[data-remove-stop]').forEach((chip) =>
     chip.addEventListener('click', () => {
       state.cfg.subway.stops = state.cfg.subway.stops.filter((s) => s !== chip.dataset.removeStop);
@@ -273,9 +287,6 @@ function drillDirection(station) {
     (pick) => {
       if (!state.cfg.subway.stops.includes(pick.value) && state.cfg.subway.stops.length < 4) {
         state.cfg.subway.stops = [...state.cfg.subway.stops, pick.value];
-        state.cfg.subway.lines = [
-          ...new Set([...state.cfg.subway.lines, ...station.lines]),
-        ];
       }
       state.stack = [];
       renderSubway();
@@ -285,38 +296,26 @@ function drillDirection(station) {
 
 /* ---------- LIRR / NJT ---------- */
 
-let lirrStations = null;
-async function renderLirr() {
-  lirrStations ??= await fetchJSON('data/stations-lirr.json');
-  const byId = Object.fromEntries(lirrStations.map((s) => [s.id, s]));
+function renderLirr() {
+  const branches = state.cfg.lirr.branches;
   pane().innerHTML = `
-    <h2 class="pane__title">LIRR</h2>
-    <div class="kv"><span>From</span><b>${escapeHtml(byId[state.cfg.lirr.orig]?.name ?? '—')}</b>
-      <button class="btn" data-pick="orig">Change</button></div>
-    <div class="kv"><span>Only trains stopping at</span><b>${escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Anywhere')}</b>
-      <button class="btn" data-pick="dest">Change</button>
-      ${state.cfg.lirr.dest ? '<button class="btn" data-clear-dest>Clear</button>' : ''}</div>
-    <div class="drill"></div>`;
-  pane().querySelectorAll('[data-pick]').forEach((btn) =>
+    <h2 class="pane__title">LIRR — Penn Station departures</h2>
+    <p class="pane__hint">This board always shows trains leaving Penn Station (Grand Central trains are excluded). Pick branches to show — none selected means all branches:</p>
+    <div class="rows">${Object.entries(ROUTE_NAMES).map(([routeId, name]) => {
+      const on = branches.includes(routeId);
+      return `<div class="row">
+        <button class="toggle ${on ? 'is-on' : ''}" data-branch="${routeId}" role="switch" aria-checked="${on}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">${escapeHtml(name)}</span>
+      </div>`;
+    }).join('')}</div>`;
+  pane().querySelectorAll('[data-branch]').forEach((btn) =>
     btn.addEventListener('click', () => {
-      drillList(
-        btn.dataset.pick === 'orig' ? 'Departure station' : 'Filter destination',
-        alphaSections(lirrStations).flatMap((sec) => [
-          { html: `<b class="drill__letter">${sec.letter}</b>`, header: true },
-          ...sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-        ]).filter((it) => !it.header || true),
-        (pick) => {
-          if (!pick.value) return;
-          state.cfg.lirr[btn.dataset.pick] = pick.value.id;
-          renderLirr();
-        },
-      );
+      state.cfg.lirr.branches = toggleIn(branches, btn.dataset.branch);
+      renderLirr();
     }),
   );
-  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
-    state.cfg.lirr.dest = '';
-    renderLirr();
-  });
 }
 
 async function renderNjt() {
@@ -467,7 +466,7 @@ function renderCode() {
 /* ---------- diagnostics ---------- */
 
 function renderDiag() {
-  const rows = WIDGET_IDS.filter((id) => state.cfg.widgets.includes(id)).map((id) => {
+  const rows = state.cfg.layout.map(({ id }) => {
     const cache = loadCache(id);
     const age = cache ? Math.round((Date.now() / 1000 - cache.t) / 60) : null;
     return `<div class="kv"><span>${WIDGET_LABELS[id]}</span>

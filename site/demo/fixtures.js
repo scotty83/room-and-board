@@ -93,6 +93,13 @@ export const DEMO_VMS = {
     text: 'The best way to predict the future is to invent it.',
     author: 'Alan Kay',
   },
+  worldclock: [
+    { city: 'New York', time: '8:13 AM', dayDiff: 0 },
+    { city: 'Hyderabad', time: '5:43 PM', dayDiff: 0 },
+    { city: 'London', time: '1:13 PM', dayDiff: 0 },
+    { city: 'Los Angeles', time: '5:13 AM', dayDiff: 0 },
+    { city: 'Hong Kong', time: '8:13 PM', dayDiff: 0 },
+  ],
   markets: {
     updatedAt: 0,
     stale: false,

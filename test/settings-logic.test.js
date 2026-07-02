@@ -5,6 +5,7 @@ import {
   stationsForLine,
   alphaSections,
   moveWidget,
+  toggleIn,
 } from '../site/js/settings/pickers.js';
 import { connectBridge } from '../site/js/bridge.js';
 
@@ -45,6 +46,15 @@ describe('moveWidget', () => {
     expect(moveWidget(['a', 'b', 'c'], 'b', +1)).toEqual(['a', 'c', 'b']);
     expect(moveWidget(['a', 'b', 'c'], 'a', -1)).toEqual(['a', 'b', 'c']);
     expect(moveWidget(['a', 'b', 'c'], 'zz', 1)).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('toggleIn', () => {
+  it('adds and removes without mutating', () => {
+    const list = ['4', '6'];
+    expect(toggleIn(list, '5')).toEqual(['4', '6', '5']);
+    expect(toggleIn(list, '4')).toEqual(['6']);
+    expect(list).toEqual(['4', '6']);
   });
 });
 

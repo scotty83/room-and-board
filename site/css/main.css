@@ -240,17 +240,22 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   background: var(--bg);
 }
 .settings__rail {
-  background: var(--bg-card); padding: 40px 28px;
-  display: flex; flex-direction: column; gap: 28px;
+  background: var(--bg-card); padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 18px;
+  min-height: 0; /* children may scroll; the footer must never leave view */
 }
-.settings__brand { font-size: 34px; font-weight: 700; }
-.settings__nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.settings__brand { font-size: 30px; font-weight: 700; flex: none; }
+.settings__nav {
+  display: flex; flex-direction: column; gap: 4px;
+  flex: 1; min-height: 0; overflow-y: auto; /* nav scrolls, never the footer */
+}
 .settings__navitem {
-  text-align: left; font-size: 24px; padding: 16px 18px; min-height: 60px;
-  border: none; border-radius: 12px; background: none; color: var(--ink-dim); cursor: pointer;
+  text-align: left; font-size: 22px; padding: 11px 16px; min-height: 48px;
+  border: none; border-radius: 10px; background: none; color: var(--ink-dim); cursor: pointer;
+  flex: none;
 }
 .settings__navitem.is-active { background: var(--bg-card-2); color: var(--ink); font-weight: 600; }
-.settings__railfoot { display: flex; flex-direction: column; gap: 12px; }
+.settings__railfoot { display: flex; flex-direction: column; gap: 10px; flex: none; }
 .settings__pane { padding: 44px 56px; overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }

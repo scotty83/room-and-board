@@ -38,17 +38,17 @@ export const DEMO_VMS = {
   lirr: {
     alerts: [{ header: 'Port Washington Branch trains may be delayed up to 15 minutes due to switch trouble at Woodside.' }],
     departures: [
-      { min: 8, dest: 'Port Washington', branch: 'Port Washington', track: '17', trainNum: '706' },
-      { min: 21, dest: 'Great Neck', branch: 'Port Washington', track: '19', trainNum: '712' },
-      { min: 34, dest: 'Port Washington', branch: 'Port Washington', track: null, trainNum: '718' },
+      { min: 8, t: 1783000480, dest: 'Port Washington', branch: 'Port Washington', track: '17', trainNum: '706' },
+      { min: 21, t: 1783001260, dest: 'Great Neck', branch: 'Port Washington', track: '19', trainNum: '712' },
+      { min: 34, t: 1783002040, dest: 'Port Washington', branch: 'Port Washington', track: null, trainNum: '718' },
     ],
   },
   mnr: {
     alerts: [],
     departures: [
-      { min: 6, dest: 'Southeast', branch: 'Harlem', track: null },
-      { min: 14, dest: 'Poughkeepsie', branch: 'Hudson', track: null },
-      { min: 22, dest: 'New Haven-State St', branch: 'New Haven', track: null },
+      { min: 6, t: 1783000360, dest: 'Southeast', branch: 'Harlem', track: null },
+      { min: 14, t: 1783000840, dest: 'Poughkeepsie', branch: 'Hudson', track: null },
+      { min: 22, t: 1783001320, dest: 'New Haven-State St', branch: 'New Haven', track: null },
     ],
   },
   njt: {
@@ -56,9 +56,9 @@ export const DEMO_VMS = {
     stale: false,
     alerts: [{ header: 'Northeast Corridor trains subject to 10-15 minute delays due to Amtrak signal issues.' }],
     trains: [
-      { min: 12, dest: 'Trenton', line: 'Northeast Corridor', track: '3', status: 'BOARDING' },
-      { min: 26, dest: 'Dover', line: 'Morris & Essex', track: null, status: '' },
-      { min: 41, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
+      { min: 12, time: 1783000720, dest: 'Trenton', line: 'Northeast Corridor', track: '3', status: 'BOARDING' },
+      { min: 26, time: 1783001560, dest: 'Dover', line: 'Morris & Essex', track: null, status: '' },
+      { min: 41, time: 1783002460, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
     ],
   },
   bus: {

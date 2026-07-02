@@ -25,7 +25,7 @@ describe('mapNjt', () => {
   it('computes minutes, drops past trains, keeps order', () => {
     const vm = mapNjt(payload, 1000);
     expect(vm.trains).toHaveLength(2);
-    expect(vm.trains[0]).toMatchObject({ dest: 'Dover', min: 2 });
+    expect(vm.trains[0]).toMatchObject({ dest: 'Dover', min: 2, time: 1120 });
     expect(vm.trains[1]).toMatchObject({ dest: 'Bay Head', min: 8, track: '5' });
     expect(vm.stale).toBe(false);
   });

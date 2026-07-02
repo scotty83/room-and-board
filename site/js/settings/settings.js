@@ -574,5 +574,9 @@ function renderDiag() {
     <div class="kv"><span>Config source</span><b>${window.__signage?.source ?? '—'}</b></div>
     <div class="kv"><span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b></div>
     ${rows.join('')}
-    <div class="kv"><span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b></div>`;
+    <div class="kv"><span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b></div>
+    <div class="kv"><span>Display</span>
+      <button class="btn btn--primary" data-reload>Reload display now</button>
+    </div>`;
+  pane().querySelector('[data-reload]').addEventListener('click', () => location.reload());
 }

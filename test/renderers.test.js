@@ -66,6 +66,14 @@ describe('widget renderers', () => {
     expect(host.querySelector('.alert')).toBeNull();
   });
 
+  it('train widgets show the scheduled departure time next to the line', () => {
+    for (const [mod, vm] of [[lirr, DEMO_VMS.lirr], [mnr, DEMO_VMS.mnr], [njt, DEMO_VMS.njt]]) {
+      const host = el();
+      mod.render(host, vm, CFG);
+      expect(host.querySelector('.train__line').textContent).toMatch(/\d{1,2}:\d{2}\s?(AM|PM)/);
+    }
+  });
+
   it('empty transit states render a friendly message', () => {
     const host = el();
     subway.render(host, { lines: [] }, CFG);

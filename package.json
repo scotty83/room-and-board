@@ -7,8 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run && vitest run -c worker/vitest.config.js",
+    "test:watch": "vitest",
+    "test:site": "vitest run",
+    "test:worker": "vitest run -c worker/vitest.config.js"
   },
   "keywords": [],
   "author": "",

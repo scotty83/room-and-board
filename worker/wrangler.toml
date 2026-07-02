@@ -1,0 +1,12 @@
+# Cloudflare Worker: NJT proxy + setup-code exchange + markets.
+# Deploy: npx wrangler deploy (from worker/). Secrets:
+#   npx wrangler secret put NJT_USER
+#   npx wrangler secret put NJT_PASS
+# Replace the KV id with your namespace: npx wrangler kv namespace create CODES
+name = "signage-api"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+
+[[kv_namespaces]]
+binding = "CODES"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

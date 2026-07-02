@@ -3,8 +3,26 @@
 // and caches upstream responses).
 
 import { WORKER_URL } from '../env.js';
+import { escapeHtml } from '../util.js';
 
 export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 };
+
+export function render(el, vm, _cfg) {
+  el.innerHTML = vm.trains.length
+    ? vm.trains
+        .map(
+          (t) => `<div class="train">
+            <div class="train__min"><span>${t.min}</span><small>min</small></div>
+            <div class="train__info">
+              <span class="train__dest">${escapeHtml(t.dest)}</span>
+              <span class="train__line">${escapeHtml(t.line)}${t.status ? ` · ${escapeHtml(t.status)}` : ''}</span>
+            </div>
+            ${t.track ? `<span class="train__track">Track ${escapeHtml(t.track)}</span>` : ''}
+          </div>`,
+        )
+        .join('')
+    : '<div class="empty">No departures</div>';
+}
 
 export function mapNjt(payload, nowSec) {
   if (!payload || payload.error || !Array.isArray(payload.trains)) {

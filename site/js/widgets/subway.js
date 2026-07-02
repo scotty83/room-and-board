@@ -2,8 +2,35 @@
 // (browser-direct, keyless, CORS-open; GET only — HEAD returns 403).
 
 import { decodeGtfsRt } from '../gtfs.js';
+import { escapeHtml } from '../util.js';
 
 export const meta = { id: 'subway', title: 'Subway', refreshMs: 60 * 1000 };
+
+const DIR_LABEL = { N: 'Uptown', S: 'Downtown', '': '' };
+
+export function render(el, vm, _cfg) {
+  el.innerHTML = vm.groups
+    .map((g) => {
+      const rows = g.arrivals.length
+        ? g.arrivals
+            .map(
+              (a) => `<div class="arrival">
+                <span class="bullet bullet--${escapeHtml(a.route)}">${escapeHtml(a.route)}</span>
+                <span class="arrival__min">${a.min}</span><span class="arrival__unit">min</span>
+              </div>`,
+            )
+            .join('')
+        : '<div class="empty">No arrivals</div>';
+      return `<div class="stop-group">
+        <div class="stop-group__head">
+          <span class="stop-group__name">${escapeHtml(g.stopName)}</span>
+          <span class="stop-group__dir">${DIR_LABEL[g.direction] ?? ''}</span>
+        </div>
+        <div class="stop-group__arrivals">${rows}</div>
+      </div>`;
+    })
+    .join('');
+}
 
 const FEED_BASE = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs';
 

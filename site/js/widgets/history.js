@@ -1,7 +1,20 @@
 // "This Day in History" from Wikimedia's on-this-day feed (browser-direct,
 // CORS-open, keyless). Picks five events spread across the centuries.
 
+import { escapeHtml } from '../util.js';
+
 export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
+
+export function render(el, vm, _cfg) {
+  el.innerHTML = `<div class="history">${vm.events
+    .map(
+      (e) => `<div class="history__item">
+        <span class="history__year">${e.year}</span>
+        <span class="history__text">${escapeHtml(e.text)}</span>
+      </div>`,
+    )
+    .join('')}</div>`;
+}
 
 export function mapHistory(json) {
   const events = (Array.isArray(json?.events) ? json.events : [])

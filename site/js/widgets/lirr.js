@@ -3,8 +3,26 @@
 // backend. TrainTime is enhancement-only: any failure leaves track = null.
 
 import { decodeGtfsRt } from '../gtfs.js';
+import { escapeHtml } from '../util.js';
 
 export const meta = { id: 'lirr', title: 'LIRR', refreshMs: 60 * 1000 };
+
+export function render(el, vm, _cfg) {
+  el.innerHTML = vm.departures.length
+    ? vm.departures
+        .map(
+          (d) => `<div class="train">
+            <div class="train__min"><span>${d.min}</span><small>min</small></div>
+            <div class="train__info">
+              <span class="train__dest">${escapeHtml(d.dest)}</span>
+              <span class="train__line">${escapeHtml(d.branch)}</span>
+            </div>
+            ${d.track ? `<span class="train__track">Track ${escapeHtml(d.track)}</span>` : ''}
+          </div>`,
+        )
+        .join('')
+    : '<div class="empty">No departures</div>';
+}
 
 const FEED_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr';
 const TRAINTIME_BASE = 'https://backend-unified.mylirr.org/arrivals/';

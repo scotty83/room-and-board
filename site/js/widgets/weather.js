@@ -2,6 +2,9 @@
 // plus NWS active-alert banner. All time strings stay in the device-local
 // timezone Open-Meteo returns (timezone=auto) — no Date parsing of API times.
 
+import { escapeHtml } from '../util.js';
+import { icon } from '../icons.js';
+
 export const meta = { id: 'weather', title: 'Weather', refreshMs: 10 * 60 * 1000 };
 
 // WMO weather interpretation codes → display label + icon key.
@@ -105,6 +108,39 @@ export function mapWeather(json, alertsJson) {
     sunset: json.daily.sunset[0],
     alert: pickAlert(alertsJson),
   };
+}
+
+export function render(el, vm, _cfg) {
+  const hourly = vm.hourly
+    .map(
+      (h) => `<div class="wx-hour">
+        <span class="wx-hour__label">${escapeHtml(h.h)}</span>
+        ${icon(wmoInfo(h.code).icon, 'icon--sm')}
+        <span class="wx-hour__temp">${h.temp}°</span>
+      </div>`,
+    )
+    .join('');
+  const daily = vm.daily
+    .map(
+      (d) => `<div class="wx-day">
+        <span class="wx-day__name">${escapeHtml(d.day)}</span>
+        ${icon(wmoInfo(d.code).icon, 'icon--sm')}
+        <span class="wx-day__hi">${d.hi}°</span><span class="wx-day__lo">${d.lo}°</span>
+      </div>`,
+    )
+    .join('');
+  el.innerHTML = `
+    ${vm.alert ? `<div class="alert">${icon('thunder', 'icon--sm')}<span>${escapeHtml(vm.alert.event)}</span></div>` : ''}
+    <div class="wx-now">
+      ${icon(vm.now.icon, 'icon--xl wx-now__icon')}
+      <div class="wx-now__main">
+        <span class="wx-now__temp">${vm.now.temp}°</span>
+        <span class="wx-now__label">${escapeHtml(vm.now.label)}</span>
+        <span class="wx-now__feels">Feels like ${vm.now.feels}°</span>
+      </div>
+    </div>
+    <div class="wx-hours">${hourly}</div>
+    <div class="wx-days">${daily}</div>`;
 }
 
 export async function fetchData(cfg, net) {

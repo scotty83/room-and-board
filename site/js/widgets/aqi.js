@@ -2,7 +2,31 @@
 // (browser-direct); sunrise/sunset piggyback on the weather view model;
 // moon phase is computed locally.
 
+import { escapeHtml } from '../util.js';
+import { icon } from '../icons.js';
+
 export const meta = { id: 'aqi', title: 'Air & Sky', refreshMs: 60 * 60 * 1000 };
+
+const timeOnly = (iso) => {
+  if (!iso) return '—';
+  const h = Number(iso.slice(11, 13));
+  const m = iso.slice(14, 16);
+  const hr = h % 12 === 0 ? 12 : h % 12;
+  return `${hr}:${m} ${h < 12 ? 'AM' : 'PM'}`;
+};
+
+export function render(el, vm, _cfg) {
+  el.innerHTML = `
+    <div class="sky">
+      <div class="sky__aqi sky__aqi--${vm.aqi <= 50 ? 'good' : vm.aqi <= 100 ? 'moderate' : 'bad'}">
+        <span class="sky__aqi-value">${vm.aqi}</span>
+        <span class="sky__aqi-label">AQI · ${escapeHtml(vm.category)}</span>
+      </div>
+      <div class="sky__row">${icon('sun', 'icon--sm')}<span>Sunrise ${timeOnly(vm.sunrise)}</span></div>
+      <div class="sky__row">${icon('moon', 'icon--sm')}<span>Sunset ${timeOnly(vm.sunset)}</span></div>
+      <div class="sky__row">${icon('moon', 'icon--sm')}<span>${escapeHtml(vm.moonPhase.name)}</span></div>
+    </div>`;
+}
 
 const CATEGORIES = [
   [50, 'Good'],

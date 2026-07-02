@@ -4,6 +4,7 @@
 
 import { mapYahooChart } from './markets.js';
 import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
+import { fetchMtaAlerts } from './alerts.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -131,6 +132,11 @@ export default {
 
     if (path === '/markets' && request.method === 'GET') {
       return cached(env, 'markets', 300, fetchMarkets);
+    }
+
+    const alertsMatch = /^\/alerts\/(subway|lirr)$/.exec(path);
+    if (alertsMatch && request.method === 'GET') {
+      return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
     }
 
     return json({ error: 'not_found' }, 404);

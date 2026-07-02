@@ -1,127 +1,47 @@
-// NYC Subway arrivals from the official MTA GTFS-Realtime feeds
-// (browser-direct, keyless, CORS-open; GET only — HEAD returns 403).
+// NYC Subway line-status board: one row per selected line showing Good
+// Service or the current alert (per Sean: no departure times, just alerts
+// for the lines you pick). Data is the Worker's cached digest of the MTA
+// alert feed — the raw feed runs ~800 KB, the digest ~2 KB.
 
-import { decodeGtfsRt } from '../gtfs.js';
 import { escapeHtml } from '../util.js';
+import { WORKER_URL } from '../env.js';
 
-export const meta = { id: 'subway', title: 'Subway', refreshMs: 60 * 1000 };
+export const meta = { id: 'subway', title: 'Subway Status', refreshMs: 2 * 60 * 1000 };
 
-const DIR_LABEL = { N: 'Uptown', S: 'Downtown', '': '' };
+// Kept for the settings line chips.
+export const SUBWAY_LINES = ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'G', 'J', 'Z', 'L', 'N', 'Q', 'R', 'W', 'S', 'SI'];
+
+// digest alerts: [{routes, header}]. Returns one row per selected line.
+export function mapSubwayStatus(alerts, lines) {
+  return lines.map((line) => {
+    const hits = (alerts ?? []).filter((a) => a.routes.includes(line));
+    return {
+      line,
+      ok: hits.length === 0,
+      headers: hits.slice(0, 2).map((a) => a.header),
+    };
+  });
+}
 
 export function render(el, vm, _cfg) {
-  el.innerHTML = vm.groups
-    .map((g) => {
-      const rows = g.arrivals.length
-        ? g.arrivals
-            .map(
-              (a) => `<div class="arrival">
-                <span class="bullet bullet--${escapeHtml(a.route)}">${escapeHtml(a.route)}</span>
-                <span class="arrival__min">${a.min}</span><span class="arrival__unit">min</span>
-              </div>`,
-            )
-            .join('')
-        : '<div class="empty">No arrivals</div>';
-      return `<div class="stop-group">
-        <div class="stop-group__head">
-          <span class="stop-group__name">${escapeHtml(g.stopName)}</span>
-          <span class="stop-group__dir">${DIR_LABEL[g.direction] ?? ''}</span>
-        </div>
-        <div class="stop-group__arrivals">${rows}</div>
-      </div>`;
-    })
+  if (!vm.lines?.length) {
+    el.innerHTML = '<div class="empty">Pick your lines in Settings → Subway</div>';
+    return;
+  }
+  el.innerHTML = vm.lines
+    .map(
+      (row) => `<div class="linestatus ${row.ok ? '' : 'linestatus--alert'}">
+        <span class="bullet bullet--${escapeHtml(row.line)}">${escapeHtml(row.line)}</span>
+        <span class="linestatus__text">${
+          row.ok ? 'Good Service' : escapeHtml(row.headers[0])
+        }</span>
+        ${row.ok ? '' : '<span class="linestatus__icon" aria-hidden="true">⚠</span>'}
+      </div>`,
+    )
     .join('');
 }
 
-const FEED_BASE = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs';
-
-export const FEED_FOR_ROUTE = {
-  1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', S: '', GS: '',
-  A: '-ace', C: '-ace', E: '-ace', H: '-ace', FS: '-ace', SF: '-ace', SR: '-ace',
-  B: '-bdfm', D: '-bdfm', F: '-bdfm', M: '-bdfm',
-  G: '-g',
-  J: '-jz', Z: '-jz',
-  N: '-nqrw', Q: '-nqrw', R: '-nqrw', W: '-nqrw',
-  L: '-l',
-  SI: '-si',
-};
-
-export function feedsForLines(lines) {
-  const suffixes = [];
-  for (const line of lines) {
-    const suffix = FEED_FOR_ROUTE[line];
-    if (suffix !== undefined && !suffixes.includes(suffix)) suffixes.push(suffix);
-  }
-  return suffixes;
-}
-
-// Union of the lines serving the chosen stops (per the stations dataset);
-// used when the user hasn't picked explicit lines.
-export function linesForStops(stations, stops) {
-  const parents = new Set(stops.map((s) => s.replace(/[NS]$/, '')));
-  const lines = new Set();
-  for (const st of stations) if (parents.has(st.id)) for (const l of st.lines) lines.add(l);
-  return [...lines].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
-}
-
-// decodedFeeds: array of decodeGtfsRt() results. cfgSubway: {stops, lines}.
-// stationNames: stopId (with N/S suffix or parent) -> display name.
-export function mapSubway(decodedFeeds, cfgSubway, nowSec, stationNames = {}) {
-  const groups = cfgSubway.stops.map((stopId) => ({
-    stopId,
-    stopName: stationNames[stopId] ?? stationNames[stopId.replace(/[NS]$/, '')] ?? stopId,
-    direction: /[NS]$/.test(stopId) ? stopId.slice(-1) : '',
-    arrivals: [],
-  }));
-  const byStop = new Map(groups.map((g) => [g.stopId, g]));
-  const lineFilter = cfgSubway.lines.length ? new Set(cfgSubway.lines) : null;
-
-  for (const feed of decodedFeeds) {
-    for (const trip of feed.trips) {
-      if (lineFilter && !lineFilter.has(trip.routeId)) continue;
-      for (const stop of trip.stops) {
-        const group = byStop.get(stop.stopId);
-        if (!group) continue;
-        const t = stop.departure ?? stop.arrival;
-        if (!t || t <= nowSec) continue;
-        group.arrivals.push({
-          route: trip.routeId,
-          min: Math.max(1, Math.round((t - nowSec) / 60)),
-          t,
-        });
-      }
-    }
-  }
-  for (const g of groups) {
-    g.arrivals.sort((a, b) => a.t - b.t);
-    g.arrivals = g.arrivals.slice(0, 4);
-  }
-  return { groups };
-}
-
 export async function fetchData(cfg, net) {
-  const stations = await stationsPromise(net);
-  // Explicit line selection wins; otherwise cover all lines at the stops.
-  const lines = cfg.subway.lines.length
-    ? cfg.subway.lines
-    : linesForStops(stations, cfg.subway.stops);
-  const suffixes = feedsForLines(lines);
-  const feeds = suffixes.length ? suffixes : [''];
-  const decoded = await Promise.all(
-    feeds.map(async (s) => decodeGtfsRt(await net.fetchBuffer(FEED_BASE + s))),
-  );
-  const names = Object.fromEntries(stations.map((s) => [s.id, s.name]));
-  const nowSec = Math.floor(Date.now() / 1000);
-  return mapSubway(decoded, cfg.subway, nowSec, names);
-}
-
-let stationsCache = null;
-async function stationsPromise(net) {
-  if (!stationsCache) {
-    try {
-      stationsCache = await net.fetchJSON('data/stations-subway.json');
-    } catch {
-      stationsCache = [];
-    }
-  }
-  return stationsCache;
+  const digest = await net.fetchJSON(`${WORKER_URL}/alerts/subway`);
+  return { updatedAt: digest.updatedAt, lines: mapSubwayStatus(digest.alerts, cfg.subway.lines) };
 }

@@ -6,6 +6,8 @@
 
 import { decodeGtfsRt } from '../gtfs.js';
 import { escapeHtml } from '../util.js';
+import { WORKER_URL } from '../env.js';
+import { renderAlertRows } from '../transit-alerts.js';
 
 export const meta = { id: 'lirr', title: 'LIRR · Penn Station', refreshMs: 60 * 1000 };
 
@@ -13,7 +15,8 @@ export const PENN_STOP_ID = '237'; // LIRR static GTFS stop id for Penn Station
 const PENN_TT_CODE = 'NYK'; // TrainTime station code for Penn
 
 export function render(el, vm, _cfg) {
-  el.innerHTML = vm.departures.length
+  el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
+  el.innerHTML = renderAlertRows(vm.alerts?.map((a) => ({ ...a, routes: [] })) ?? []) + '<div class="trains">' + (vm.departures.length
     ? vm.departures
         .map(
           (d) => `<div class="train">
@@ -26,7 +29,7 @@ export function render(el, vm, _cfg) {
           </div>`,
         )
         .join('')
-    : '<div class="empty">No departures</div>';
+    : '<div class="empty">No departures</div>') + '</div>';
 }
 
 const FEED_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/lirr%2Fgtfs-lirr';
@@ -102,7 +105,16 @@ export async function fetchData(cfg, net) {
     trackJson = null;
   }
   const names = await stationNames(net);
-  return mapLirr(decoded, trackJson, cfg.lirr, Math.floor(Date.now() / 1000), names);
+  const vm = mapLirr(decoded, trackJson, cfg.lirr, Math.floor(Date.now() / 1000), names);
+  if (cfg.lirr.alerts) {
+    try {
+      const digest = await net.fetchJSON(`${WORKER_URL}/alerts/lirr`);
+      vm.alerts = (digest.alerts ?? []).slice(0, 2);
+    } catch {
+      vm.alerts = [];
+    }
+  }
+  return vm;
 }
 
 let stationsCache = null;

@@ -34,19 +34,8 @@
     </section>
 
     <section class="field" id="subway-field">
-      <h2>Subway stops <small>(up to 4)</small></h2>
-      <div id="subway-chips" class="chips"></div>
-      <div class="pickrow">
-        <select id="sub-borough"></select>
-        <select id="sub-line"></select>
-        <select id="sub-station"></select>
-        <select id="sub-dir">
-          <option value="N">Uptown / North</option>
-          <option value="S">Downtown / South</option>
-        </select>
-        <button id="sub-add" type="button">Add</button>
-      </div>
-      <p class="hint">Lines to show at your stops — none checked means every line:</p>
+      <h2>Subway status</h2>
+      <p class="hint">The card shows Good Service or the current alert for each line you pick:</p>
       <div id="sub-lines" class="checks checks--lines"></div>
     </section>
 
@@ -54,11 +43,27 @@
       <h2>LIRR <small>(Penn Station departures — Grand Central trains are never shown)</small></h2>
       <label for="lirr-dest">Only trains stopping at</label>
       <select id="lirr-dest"><option value="">Any station</option></select>
+      <label class="alertcheck"><input type="checkbox" id="lirr-alerts"> Show service alerts</label>
     </section>
 
     <section class="field" id="njt-field">
       <h2>NJ Transit rail station</h2>
       <select id="njt-station"><option value="NY">New York Penn Station</option></select>
+      <label class="alertcheck"><input type="checkbox" id="njt-alerts"> Show service alerts</label>
+    </section>
+
+    <section class="field">
+      <h2>Art</h2>
+      <label for="art-every">Rotate artwork</label>
+      <select id="art-every">
+        <option value="5">Every 5 minutes</option>
+        <option value="15">Every 15 minutes</option>
+        <option value="30">Every 30 minutes</option>
+        <option value="60">Every hour</option>
+        <option value="120">Every 2 hours</option>
+      </select>
+      <p class="hint">Collections — none checked means all:</p>
+      <div id="art-cats" class="checks"></div>
     </section>
 
     <section class="field">

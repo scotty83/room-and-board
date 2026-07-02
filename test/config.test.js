@@ -16,7 +16,7 @@ describe('normalizeConfig', () => {
     expect(cfg.mode).toBe('dashboard');
     expect(cfg.theme).toBe('dark');
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' });
-    expect(cfg.lirr).toEqual({ dest: '' });
+    expect(cfg.lirr).toEqual({ dest: '', alerts: true });
   });
 
   it('migrates a v1 config: widgets->layout, lirr, Midtown loc', () => {
@@ -24,7 +24,7 @@ describe('normalizeConfig', () => {
       v: 1,
       name: 'Sean',
       widgets: ['weather', 'lirr', 'bogus'],
-      subway: { stops: ['635N'], lines: ['4', '5'] },
+      subway: { lines: ['4', '5'] },
       lirr: { orig: '237', dest: 'PWS' },
       loc: { lat: 40.754, lon: -73.984, label: 'Midtown' },
       mode: 'ambient',
@@ -33,9 +33,8 @@ describe('normalizeConfig', () => {
     expect(cfg.widgets).toEqual(['weather', 'lirr']); // unknown ids dropped
     const lirr = cfg.layout.find((r) => r.id === 'lirr');
     expect(lirr.w).toBeGreaterThanOrEqual(2);
-    expect(cfg.lirr).toEqual({ dest: 'PWS' }); // v1 dest carries into the v2 filter
+    expect(cfg.lirr).toEqual({ dest: 'PWS', alerts: true }); // v1 dest carries into the v2 filter
     expect(cfg.loc.label).toBe('New York 10001'); // old default replaced
-    expect(cfg.subway.stops).toEqual(['635N']);
     expect(cfg.mode).toBe('ambient');
   });
 
@@ -56,6 +55,22 @@ describe('normalizeConfig', () => {
     expect(cfg.layout).toHaveLength(2);
     expect(cfg.layout[1].y).toBe(0); // moved out of weather's rect
     expect(cfg.lirr.dest).toBe('171');
+  });
+
+  it('defaults transit alerts on, honors explicit opt-out', () => {
+    expect(normalizeConfig({}).njt.alerts).toBe(true);
+    const cfg = normalizeConfig({ v: 2, lirr: { dest: '', alerts: false } });
+    expect(cfg.lirr.alerts).toBe(false);
+    expect(cfg.njt.alerts).toBe(true);
+  });
+
+  it('defaults the subway status board to the Penn lines and art to 30 min', () => {
+    const cfg = normalizeConfig({});
+    expect(cfg.subway.lines).toEqual(['1', '2', '3']);
+    expect(cfg.art).toEqual({ every: 30, cats: [] });
+    const custom = normalizeConfig({ v: 2, subway: { lines: ['G'] }, art: { every: 5, cats: ['asian', 'bogus'] } });
+    expect(custom.subway.lines).toEqual(['G']);
+    expect(custom.art).toEqual({ every: 5, cats: ['asian'] });
   });
 
   it('throws on non-objects and unknown future versions', () => {
@@ -87,7 +102,7 @@ describe('encode/decode round trip', () => {
         { id: 'lirr', x: 0, y: 2, w: 3, h: 2 },
         { id: 'markets', x: 3, y: 2, w: 3, h: 2 },
       ],
-      subway: { stops: ['635N', '635S'], lines: ['4', '5', '6'] },
+      subway: { lines: ['4', '5', '6'] },
       lirr: { dest: '171' },
       njt: { station: 'NY' },
       mode: 'auto',
@@ -105,7 +120,7 @@ describe('encode/decode round trip', () => {
       v: 2,
       name: 'Maximiliano Longname',
       t: 2000000000,
-      subway: { stops: ['635N', '635S', 'R20N', 'R20S', 'A32N', 'A32S'], lines: ['4', '5', '6', 'N', 'Q', 'R'] },
+      subway: { lines: ['4', '5', '6', 'N', 'Q', 'R'] },
       lirr: { dest: '171' },
       njt: { station: 'NY' },
     });

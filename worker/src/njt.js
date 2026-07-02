@@ -50,6 +50,15 @@ export function resetNjtToken() {
   cachedToken = null;
 }
 
+// Station advisories ride along with departures; failures leave alerts [].
+export function mapNjtMessages(json) {
+  const items = Array.isArray(json) ? json : json?.STATIONMSGS ?? [];
+  return items
+    .map((m) => ({ header: String(m?.MSG_TEXT ?? m?.msg_text ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() }))
+    .filter((m) => m.header.length > 0)
+    .slice(0, 4);
+}
+
 export async function fetchNjtDepartures(env, station) {
   const getSchedule = async () => {
     if (!cachedToken) {
@@ -59,12 +68,21 @@ export async function fetchNjtDepartures(env, station) {
     }
     return form(`${BASE}/getStationSchedule`, { token: cachedToken, station });
   };
+  const withAlerts = async () => {
+    const vm = mapNjtUpstream(await getSchedule(), station);
+    try {
+      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token: cachedToken, station }));
+    } catch {
+      vm.alerts = [];
+    }
+    return vm;
+  };
   try {
-    return mapNjtUpstream(await getSchedule(), station);
+    return await withAlerts();
   } catch (err) {
     // One retry with a fresh token covers expiry-driven failures.
     cachedToken = null;
-    return mapNjtUpstream(await getSchedule(), station);
+    return withAlerts();
   }
 }
 

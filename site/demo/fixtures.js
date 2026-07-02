@@ -26,31 +26,17 @@ export const DEMO_VMS = {
     alert: { event: 'Extreme Heat Watch', headline: 'Extreme Heat Watch in effect until Saturday 9 PM' },
   },
   subway: {
-    groups: [
-      {
-        stopId: '635N',
-        stopName: 'Grand Central-42 St',
-        direction: 'N',
-        arrivals: [
-          { route: '6', min: 2 },
-          { route: '4', min: 5 },
-          { route: '6', min: 9 },
-          { route: '5', min: 12 },
-        ],
-      },
-      {
-        stopId: 'R16S',
-        stopName: 'Times Sq-42 St',
-        direction: 'S',
-        arrivals: [
-          { route: 'N', min: 3 },
-          { route: 'Q', min: 6 },
-          { route: 'R', min: 11 },
-        ],
-      },
+    updatedAt: 0,
+    lines: [
+      { line: '1', ok: true, headers: [] },
+      { line: '2', ok: true, headers: [] },
+      { line: '3', ok: false, headers: ['Downtown [3] trains are rerouted via the [2] line after 34 St-Penn Station while we address a signal problem.'] },
+      { line: 'A', ok: true, headers: [] },
+      { line: 'E', ok: false, headers: ['[E] trains are running with delays in both directions.'] },
     ],
   },
   lirr: {
+    alerts: [{ header: 'Port Washington Branch trains may be delayed up to 15 minutes due to switch trouble at Woodside.' }],
     departures: [
       { min: 8, dest: 'Port Washington', branch: 'Port Washington', track: '17', trainNum: '706' },
       { min: 21, dest: 'Great Neck', branch: 'Port Washington', track: '19', trainNum: '712' },
@@ -60,6 +46,7 @@ export const DEMO_VMS = {
   njt: {
     updatedAt: 0,
     stale: false,
+    alerts: [{ header: 'Northeast Corridor trains subject to 10-15 minute delays due to Amtrak signal issues.' }],
     trains: [
       { min: 12, dest: 'Trenton', line: 'Northeast Corridor', track: '3', status: 'BOARDING' },
       { min: 26, dest: 'Dover', line: 'Morris & Essex', track: null, status: '' },

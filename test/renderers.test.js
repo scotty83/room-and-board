@@ -20,7 +20,7 @@ const el = () => document.createElement('div');
 
 const CASES = [
   ['weather', weather, ['84', 'Mostly clear', 'Extreme Heat Watch', '9 AM']],
-  ['subway', subway, ['Grand Central-42 St', '2', '6', 'Times Sq-42 St']],
+  ['subway', subway, ['Good Service', 'rerouted', 'delays']],
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
   ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
@@ -41,11 +41,11 @@ describe('widget renderers', () => {
     });
   }
 
-  it('subway renders route bullets with line classes', () => {
+  it('subway renders route bullets and flags alerting lines', () => {
     const host = el();
     subway.render(host, DEMO_VMS.subway, CFG);
-    expect(host.querySelector('.bullet--6')).not.toBeNull();
-    expect(host.querySelector('.bullet--N')).not.toBeNull();
+    expect(host.querySelector('.bullet--1')).not.toBeNull();
+    expect(host.querySelectorAll('.linestatus--alert').length).toBe(2);
   });
 
   it('markets colors gains and losses differently', () => {
@@ -64,8 +64,8 @@ describe('widget renderers', () => {
 
   it('empty transit states render a friendly message', () => {
     const host = el();
-    subway.render(host, { groups: [{ stopId: 'X', stopName: 'X St', direction: 'N', arrivals: [] }] }, CFG);
-    expect(host.textContent).toMatch(/No arrivals/i);
+    subway.render(host, { lines: [] }, CFG);
+    expect(host.textContent).toMatch(/Pick your lines/i);
     const host2 = el();
     lirr.render(host2, { departures: [] }, CFG);
     expect(host2.textContent).toMatch(/No departures/i);

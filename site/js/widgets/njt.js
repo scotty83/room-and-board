@@ -4,11 +4,13 @@
 
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
+import { renderAlertRows } from '../transit-alerts.js';
 
 export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
-  el.innerHTML = vm.trains.length
+  el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
+  el.innerHTML = renderAlertRows(vm.alerts) + '<div class="trains">' + (vm.trains.length
     ? vm.trains
         .map(
           (t) => `<div class="train">
@@ -21,12 +23,12 @@ export function render(el, vm, _cfg) {
           </div>`,
         )
         .join('')
-    : '<div class="empty">No departures</div>';
+    : '<div class="empty">No departures</div>') + '</div>';
 }
 
-export function mapNjt(payload, nowSec) {
+export function mapNjt(payload, nowSec, showAlerts = true) {
   if (!payload || payload.error || !Array.isArray(payload.trains)) {
-    return { updatedAt: null, stale: true, trains: [] };
+    return { updatedAt: null, stale: true, trains: [], alerts: [] };
   }
   const trains = payload.trains
     .filter((t) => Number.isFinite(t.time) && t.time > nowSec)
@@ -38,12 +40,15 @@ export function mapNjt(payload, nowSec) {
       track: t.track ? String(t.track) : null,
       status: String(t.status ?? ''),
     }));
-  return { updatedAt: payload.updatedAt ?? null, stale: Boolean(payload.stale), trains };
+  const alerts = showAlerts
+    ? (payload.alerts ?? []).filter((a) => typeof a?.header === 'string').slice(0, 2)
+    : [];
+  return { updatedAt: payload.updatedAt ?? null, stale: Boolean(payload.stale), trains, alerts };
 }
 
 export async function fetchData(cfg, net) {
   const payload = await net.fetchJSON(
     `${WORKER_URL}/njt/departures?station=${encodeURIComponent(cfg.njt.station)}`,
   );
-  return mapNjt(payload, Math.floor(Date.now() / 1000));
+  return mapNjt(payload, Math.floor(Date.now() / 1000), cfg.njt.alerts);
 }

@@ -1,10 +1,11 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, DEFAULT_CONFIG } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
-import { boroughs, linesForBorough, stationsForLine, toggleIn } from './pickers.js';
+import { toggleIn } from './pickers.js';
+import { SUBWAY_LINES } from '../widgets/subway.js';
 
 const $ = (sel) => document.querySelector(sel);
 const WIDGET_LABELS = {
@@ -19,7 +20,6 @@ const WIDGET_LABELS = {
   quote: 'Quote of the Day',
   worldclock: 'World Clock',
 };
-const SUBWAY_LINES = ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'G', 'J', 'Z', 'L', 'N', 'Q', 'R', 'W', 'S', 'SI'];
 const PRESETS = [
   ['Midtown Manhattan', 40.754, -73.984],
   ['Lower Manhattan', 40.707, -74.011],
@@ -33,7 +33,6 @@ const PRESETS = [
 ];
 
 let cfg = structuredClone(DEFAULT_CONFIG);
-let subwayStations = [];
 
 async function boot() {
   // Pre-fill from a scanned board QR (#cfg=...).
@@ -52,7 +51,10 @@ async function boot() {
   renderLocation();
   await renderLirrDest();
   renderSubwayLines();
-  await Promise.all([renderSubway(), renderNjt()]);
+  renderArtPrefs();
+  bindAlertCheck('lirr-alerts', 'lirr');
+  bindAlertCheck('njt-alerts', 'njt');
+  await renderNjt();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -88,6 +90,24 @@ async function renderLirrDest() {
   $('#lirr-dest').addEventListener('change', (e) => (cfg.lirr.dest = e.target.value));
 }
 
+function bindAlertCheck(id, group) {
+  const box = $('#' + id);
+  box.checked = cfg[group].alerts;
+  box.addEventListener('change', () => (cfg[group].alerts = box.checked));
+}
+
+function renderArtPrefs() {
+  $('#art-every').value = String(cfg.art.every);
+  $('#art-every').addEventListener('change', (e) => (cfg.art.every = Number(e.target.value)));
+  $('#art-cats').innerHTML = ART_CATS.map(
+    ([id, label]) => `<label><input type="checkbox" data-c="${id}" ${cfg.art.cats.includes(id) ? 'checked' : ''}> ${label}</label>`,
+  ).join('');
+  $('#art-cats').addEventListener('change', (e) => {
+    const c = e.target.dataset.c;
+    if (c) cfg.art.cats = toggleIn(cfg.art.cats, c);
+  });
+}
+
 function renderSubwayLines() {
   $('#sub-lines').innerHTML = SUBWAY_LINES.map(
     (l) => `<label><input type="checkbox" data-l="${l}" ${cfg.subway.lines.includes(l) ? 'checked' : ''}> ${l}</label>`,
@@ -121,56 +141,6 @@ function renderLocation() {
       $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
     } else {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
-    }
-  });
-}
-
-async function renderSubway() {
-  subwayStations = await (await fetch('data/stations-subway.json')).json();
-  const boroughSel = $('#sub-borough');
-  const lineSel = $('#sub-line');
-  const stationSel = $('#sub-station');
-  boroughSel.innerHTML = boroughs(subwayStations)
-    .map((b) => `<option>${b}</option>`)
-    .join('');
-  const syncLines = () => {
-    lineSel.innerHTML = linesForBorough(subwayStations, boroughSel.value)
-      .map((l) => `<option>${l}</option>`)
-      .join('');
-    syncStations();
-  };
-  const syncStations = () => {
-    stationSel.innerHTML = stationsForLine(subwayStations, boroughSel.value, lineSel.value)
-      .map((s) => `<option value="${s.id}">${s.name}</option>`)
-      .join('');
-  };
-  boroughSel.addEventListener('change', syncLines);
-  lineSel.addEventListener('change', syncStations);
-  syncLines();
-
-  const chips = $('#subway-chips');
-  const byId = Object.fromEntries(subwayStations.map((s) => [s.id, s]));
-  const renderChips = () => {
-    chips.innerHTML = cfg.subway.stops
-      .map((stop) => {
-        const st = byId[stop.replace(/[NS]$/, '')];
-        return `<button type="button" data-stop="${stop}">${st?.name ?? stop} ${stop.endsWith('N') ? '↑' : '↓'} ✕</button>`;
-      })
-      .join('');
-    chips.querySelectorAll('[data-stop]').forEach((b) =>
-      b.addEventListener('click', () => {
-        cfg.subway.stops = cfg.subway.stops.filter((s) => s !== b.dataset.stop);
-        renderChips();
-      }),
-    );
-  };
-  renderChips();
-  $('#sub-add').addEventListener('click', () => {
-    const stop = stationSel.value + $('#sub-dir').value;
-    const station = byId[stationSel.value];
-    if (station && !cfg.subway.stops.includes(stop) && cfg.subway.stops.length < 4) {
-      cfg.subway.stops = [...cfg.subway.stops, stop];
-      renderChips();
     }
   });
 }

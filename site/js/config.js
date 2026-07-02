@@ -8,6 +8,12 @@
 
 import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
 
+export const ART_CATS = [
+  ['european', 'European'],
+  ['american', 'American'],
+  ['asian', 'Asian'],
+];
+
 export const WIDGET_IDS = [
   'weather', 'subway', 'lirr', 'njt', 'art', 'history', 'aqi', 'quote', 'markets', 'worldclock',
 ];
@@ -18,10 +24,11 @@ export const DEFAULT_CONFIG = Object.freeze({
   name: '',
   loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
   layout: DEFAULT_LAYOUT,
-  // Default stops match the 10001 default location: 34 St-Penn (1/2/3).
-  subway: Object.freeze({ stops: Object.freeze(['128N', '128S']), lines: Object.freeze([]) }),
-  lirr: Object.freeze({ dest: '' }), // Penn board destination filter ('' = all trains)
-  njt: Object.freeze({ station: 'NY' }),
+  // Status board defaults to the Penn Station lines (matches 10001 default).
+  subway: Object.freeze({ lines: Object.freeze(['1', '2', '3']) }),
+  lirr: Object.freeze({ dest: '', alerts: true }), // Penn board destination filter ('' = all trains)
+  njt: Object.freeze({ station: 'NY', alerts: true }),
+  art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   mode: 'dashboard',
   theme: 'dark',
 });
@@ -70,11 +77,23 @@ export function normalizeConfig(raw) {
     layout,
     widgets: layout.map((r) => r.id),
     subway: {
-      stops: strList(raw.subway?.stops, 8),
-      lines: strList(raw.subway?.lines, 24),
+      // Status board: lines only (stops/alerts fields from older configs drop).
+      lines: strList(raw.subway?.lines, 24).length
+        ? strList(raw.subway?.lines, 24)
+        : [...DEFAULT_CONFIG.subway.lines],
     },
-    lirr: { dest: str(raw.lirr?.dest, '', 4) }, // older branches configs fall back to all trains
-    njt: { station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4) },
+    lirr: {
+      dest: str(raw.lirr?.dest, '', 4), // older branches configs fall back to all trains
+      alerts: raw.lirr?.alerts !== false,
+    },
+    njt: {
+      station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
+      alerts: raw.njt?.alerts !== false,
+    },
+    art: {
+      every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),
+      cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
+    },
     mode: MODES.includes(raw.mode) ? raw.mode : DEFAULT_CONFIG.mode,
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
   };

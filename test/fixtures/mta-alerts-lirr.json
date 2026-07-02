@@ -1,0 +1,980 @@
+{
+ "header": {
+  "gtfs_realtime_version": "2.0",
+  "incrementality": "FULL_DATASET",
+  "timestamp": 1783004912,
+  "transit_realtime.mercury_feed_header": {
+   "mercury_version": "1.0"
+  }
+ },
+ "entity": [
+  {
+   "id": "lmm:planned_work:33016",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783432800,
+      "end": 1783450800
+     },
+     {
+      "start": 1783519200,
+      "end": 1783537200
+     },
+     {
+      "start": 1783605600,
+      "end": 1783623600
+     },
+     {
+      "start": 1783692000,
+      "end": 1783710000
+     },
+     {
+      "start": 1783951200,
+      "end": 1783969200
+     },
+     {
+      "start": 1784037600,
+      "end": 1784055600
+     },
+     {
+      "start": 1784124000,
+      "end": 1784142000
+     },
+     {
+      "start": 1784210400,
+      "end": 1784228400
+     },
+     {
+      "start": 1784296800,
+      "end": 1784314800
+     },
+     {
+      "start": 1784556000,
+      "end": 1784574000
+     },
+     {
+      "start": 1784642400,
+      "end": 1784660400
+     },
+     {
+      "start": 1784728800,
+      "end": 1784746800
+     },
+     {
+      "start": 1784815200,
+      "end": 1784833200
+     },
+     {
+      "start": 1784901600,
+      "end": 1784919600
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "359",
+      "direction_id": 1,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "89",
+      "direction_id": 1,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "175",
+      "direction_id": 1,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Westbound trains skip Elmont-UBS Arena, Queens Village, and Hollis",
+       "language": "en"
+      },
+      {
+       "text": "<p>Westbound trains skip <strong>Elmont-UBS Arena</strong>, <strong>Queens Village</strong>, and <strong>Hollis</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "MTA buses will accept LIRR tickets for travel from Queens Village and Hollis to Jamaica. View a map of your route options.\n\nElmont-UBS Arena riders should use Bellerose station instead.\n\nFollow this link for information about transferring at the Jamaica Bus Terminal.\n\nWhat's happening?\nAccessibility improvements",
+       "language": "en"
+      },
+      {
+       "text": "<p>MTA buses will accept LIRR tickets for travel from <strong>Queens Village</strong> and <strong>Hollis</strong> to <strong>Jamaica</strong>. <a title=\"\" href=\"https://www.mta.info/image/186256\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">View a map of your route options</a><a title=\"\" href=\"https://new.mta.info/sites/default/files/2024-07/LIRR%20PSC.png\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">.</a></p><p style=\"min-height:10px\"></p><p><strong>Elmont-UBS Arena</strong> riders should use <strong>Bellerose</strong> station instead.</p><p style=\"min-height:10px\"></p><p>Follow <a title=\"\" href=\"https://new.mta.info/stations/jamaica/local-buses\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">this link</a> for information about transferring at the Jamaica Bus Terminal.</p><p style=\"min-height:10px\"></p><p><strong>What's happening?</strong></p><p><a title=\"\" href=\"https://www.mta.info/article/service-changes-hollis-queens-village-and-elmont-through-2027\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">Accessibility improvements</a></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782741023,
+     "updated_at": 1782741023,
+     "alert_type": "Planned - Stops Skipped",
+     "station_alternative": [
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "359"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Use nearby Bellerose station instead.",
+          "language": "en"
+         },
+         {
+          "text": "<p>Use nearby ‌Bellerose‌ station instead.</p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      },
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "175"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Q2, Q36, or Q82 to Jamaica Bus Terminal, or Q110 to Parsons Blvd, for Q6 to Jamaica LIRR",
+          "language": "en"
+         },
+         {
+          "text": "<p><strong>Q2</strong>, <strong>Q36</strong>, or <strong>Q82</strong> to Jamaica Bus Terminal, or <strong>Q110</strong> to Parsons Blvd, for <strong>Q6</strong> to Jamaica LIRR</p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      },
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "89"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Q2 or Q3 to Jamaica Bus Terminal, or Q110 to Parsons Blvd, for Q6 to Jamaica LIRR",
+          "language": "en"
+         },
+         {
+          "text": "<p><strong>Q2</strong> or <strong>Q3</strong> to Jamaica Bus Terminal, or <strong>Q110</strong> to Parsons Blvd, for <strong>Q6</strong> to Jamaica LIRR</p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      }
+     ],
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jul 7 - 10, Jul 13 - 17, and Jul 20 - 24, Weekdays, 10:00 AM to 3:00 PM",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:33015",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783951200,
+      "end": 1783969200
+     },
+     {
+      "start": 1784037600,
+      "end": 1784055600
+     },
+     {
+      "start": 1784124000,
+      "end": 1784142000
+     },
+     {
+      "start": 1784210400,
+      "end": 1784228400
+     },
+     {
+      "start": 1784296800,
+      "end": 1784307600
+     },
+     {
+      "start": 1784556000,
+      "end": 1784574000
+     },
+     {
+      "start": 1784642400,
+      "end": 1784660400
+     },
+     {
+      "start": 1784728800,
+      "end": 1784746800
+     },
+     {
+      "start": 1784815200,
+      "end": 1784833200
+     },
+     {
+      "start": 1784901600,
+      "end": 1784912400
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "55",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "107",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "214",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "No eastbound service at Forest Hills and Kew Gardens. Eastbound trains towards Jamaica bypass Woodside",
+       "language": "en"
+      },
+      {
+       "text": "<p>No eastbound service at <strong>Forest Hills</strong> and <strong>Kew Gardens</strong>. Eastbound trains towards <strong>Jamaica</strong> bypass <strong>Woodside</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "Trains run nonstop from Manhattan to Jamaica. Port Washington Branch trains continue to stop at Woodside in both directions.\n\nThe subway will allow LIRR riders to enter the following stations at no cost:\n34 St-Penn Station [E]\n42 St-Grand Central [6][7]\nWoodside-61 St [7]\nForest Hills-71 Av [E]\nKew Gardens-Union Turnpike [E]\nPresent your LIRR ticket to the station booth agent for access to the subway system.\n\nWhat's happening?\nAccessibility improvements and track maintenance",
+       "language": "en"
+      },
+      {
+       "text": "<p>Trains run nonstop from Manhattan to <strong>Jamaica</strong>. <strong>Port Washington</strong> Branch trains continue to stop at <strong>Woodside</strong> in both directions.</p><p style=\"min-height:10px\"></p><p>The subway will allow LIRR riders to enter the following stations at no cost:</p><ul><li><p>34 St-Penn Station [E]</p></li><li><p>42 St-Grand Central [6][7]</p></li><li><p>Woodside-61 St [7]</p></li><li><p>Forest Hills-71 Av [E]</p></li><li><p>Kew Gardens-Union Turnpike [E]</p></li></ul><p>Present your LIRR ticket to the station booth agent for access to the subway system.</p><p style=\"min-height:10px\"></p><p><strong>What's happening?</strong></p><p><a title=\"\" href=\"https://www.mta.info/article/service-changes-kew-gardens-forest-hills-and-woodside-through-2027\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">Accessibility improvements</a> and track maintenance</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782740764,
+     "updated_at": 1782740764,
+     "alert_type": "Planned - Stops Skipped",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "10 AM to 3 PM Mon-Thu and 10 AM to 1 PM Fri, Jul 13 - 24",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:33014",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783432800,
+      "end": 1783450800
+     },
+     {
+      "start": 1783519200,
+      "end": 1783537200
+     },
+     {
+      "start": 1783605600,
+      "end": 1783616400
+     },
+     {
+      "start": 1783692000,
+      "end": 1783702800
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "55",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "107",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "214",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:16"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "No eastbound service at Forest Hills and Kew Gardens. Eastbound trains towards Jamaica bypass Woodside",
+       "language": "en"
+      },
+      {
+       "text": "<p>No eastbound service at <strong>Forest Hills</strong> and <strong>Kew Gardens</strong>. Eastbound trains towards <strong>Jamaica</strong> bypass <strong>Woodside</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "Trains run nonstop from Manhattan to Jamaica. Port Washington Branch trains continue to stop at Woodside in both directions.\n\nThe subway will allow LIRR riders to enter the following stations at no cost:\n34 St-Penn Station [E]\n42 St-Grand Central [6][7]\nWoodside-61 St [7]\nForest Hills-71 Av [E]\nKew Gardens-Union Turnpike [E]\nPresent your LIRR ticket to the station booth agent for access to the subway system.\n\nWhat's happening?\nAccessibility improvements and track maintenance",
+       "language": "en"
+      },
+      {
+       "text": "<p>Trains run nonstop from Manhattan to <strong>Jamaica</strong>. <strong>Port Washington</strong> Branch trains continue to stop at <strong>Woodside</strong> in both directions.</p><p style=\"min-height:10px\"></p><p>The subway will allow LIRR riders to enter the following stations at no cost:</p><ul><li><p>34 St-Penn Station [E]</p></li><li><p>42 St-Grand Central [6][7]</p></li><li><p>Woodside-61 St [7]</p></li><li><p>Forest Hills-71 Av [E]</p></li><li><p>Kew Gardens-Union Turnpike [E]</p></li></ul><p>Present your LIRR ticket to the station booth agent for access to the subway system.</p><p style=\"min-height:10px\"></p><p><strong>What's happening?</strong></p><p><a title=\"\" href=\"https://www.mta.info/article/service-changes-kew-gardens-forest-hills-and-woodside-through-2027\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">Accessibility improvements</a> and track maintenance</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782740529,
+     "updated_at": 1782740529,
+     "alert_type": "Planned - Stops Skipped",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "10 AM to 3 PM Tue-Wed and 10 AM to 1 PM Thu-Fri, Jul 7 - 10",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:32924",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783051200,
+      "end": 1783137540
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "10",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:10:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "13",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:13:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "1",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:1:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "3",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:3:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "4",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:4:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "5",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:5:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "6",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:6:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "7",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:7:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "8",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:8:5"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "9",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:9:5"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "LIRR trains run on a weekday schedule with regular fares in effect",
+       "language": "en"
+      },
+      {
+       "text": "<p>LIRR trains run on a weekday schedule with regular fares in effect</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "",
+       "language": "en"
+      },
+      {
+       "text": "<p></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782303381,
+     "updated_at": 1782306320,
+     "alert_type": "Weekday Schedule",
+     "display_before_active": 0,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Friday, July 3",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:32776",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1782403200,
+      "end": 1782442800
+     },
+     {
+      "start": 1782576000,
+      "end": 1782615600
+     },
+     {
+      "start": 1782835200,
+      "end": 1782874800
+     },
+     {
+      "start": 1783267200,
+      "end": 1783306800
+     },
+     {
+      "start": 1784476800,
+      "end": 1784516400
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "stop_id": "237",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:4"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Penn Station Access Restrictions on World Cup Match Days",
+       "language": "en"
+      },
+      {
+       "text": "<p>Penn Station Access Restrictions on World Cup Match Days</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "There are Penn Station access restrictions due to the World Cup. Traveling to the match and from out of town? Download our TrainTime app and activate your LIRR ticket. LIRR personnel in Penn Station will direct you to NJ Transit trains to the event.",
+       "language": "en"
+      },
+      {
+       "text": "<p>There are Penn Station access restrictions due to the World Cup. Traveling to the match and from out of town? Download our TrainTime app and activate your LIRR ticket. LIRR personnel in Penn Station will direct you to NJ Transit trains to the event.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1781725542,
+     "updated_at": 1782148285,
+     "alert_type": "Special Notice",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jun 22, 25, 27, 30 and Jul 5 and Jul 19, (12:00 PM to 11:00 PM)",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:32737",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1782543600,
+      "end": 1782720000
+     },
+     {
+      "start": 1783753200,
+      "end": 1783929600
+     },
+     {
+      "start": 1784358000,
+      "end": 1784534400
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "359",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "89",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "stop_id": "175",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "10",
+      "stop_id": "359",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:10:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "10",
+      "stop_id": "89",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:10:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "10",
+      "stop_id": "175",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:10:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "4",
+      "stop_id": "359",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:4:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "4",
+      "stop_id": "89",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:4:16"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "4",
+      "stop_id": "175",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:4:16"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Eastbound trains skip Hollis, Queens Village, and Elmont-UBS Arena",
+       "language": "en"
+      },
+      {
+       "text": "<p>Eastbound trains skip <strong>Hollis</strong>, <strong>Queens Village</strong>, and <strong>Elmont-UBS Arena</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "MTA buses will accept LIRR tickets for travel from Jamaica to Hollis and Queens Village. View a map of your route options.\nNICE buses will accept LIRR tickets for travel from Jamaica to Elmont-UBS Arena.\n\nFollow this link for information about transferring at the Jamaica Bus Terminal.\n\nConcert attendees traveling to and from UBS Arena may also take a westbound train via transfer at Jamaica or Mineola at no additional charge. This option will not appear in the TrainTime app.\n\nThis service change will occur on most weekends through late August as we replace and install switches near Elmont-UBS Arena.",
+       "language": "en"
+      },
+      {
+       "text": "<p>MTA buses will accept LIRR tickets for travel from <strong>Jamaica</strong> to <strong>Hollis</strong> and <strong>Queens Village</strong>. <a title=\"\" href=\"https://www.mta.info/image/186256\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">View a map of your route options</a><a title=\"\" href=\"https://new.mta.info/sites/default/files/2024-07/LIRR%20PSC.png\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">.</a></p><p>NICE buses will accept LIRR tickets for travel from <strong>Jamaica</strong> to <strong>Elmont-UBS Arena</strong>.</p><p style=\"min-height:10px\"></p><p>Follow <a title=\"\" href=\"https://new.mta.info/stations/jamaica/local-buses\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">this link</a> for information about transferring at the Jamaica Bus Terminal.</p><p style=\"min-height:10px\"></p><p>Concert attendees traveling to and from UBS Arena may also take a westbound train via transfer at <strong>Jamaica</strong> or <strong>Mineola</strong> at no additional charge. This option will not appear in the TrainTime app.</p><p style=\"min-height:10px\"></p><p><a title=\"\" href=\"https://www.mta.info/article/summer-lirr-service-changes-2026\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">This service change will occur on most weekends through late August</a> as we replace and install switches near <strong>Elmont-UBS Arena</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1781636307,
+     "updated_at": 1782147486,
+     "alert_type": "Planned - Stops Skipped",
+     "station_alternative": [
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "89"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Q6 to Parsons Blvd for Q110, or Q6, Q8, Q9, Q41 to Jamaica Bus Terminal for Q2 or Q3",
+          "language": "en"
+         },
+         {
+          "text": "<p>‌<strong>Q6</strong> to Parsons Blvd for <strong>Q110</strong>, or <strong>Q6</strong>, <strong>Q8</strong>, <strong>Q9</strong>, <strong>Q41</strong> to Jamaica Bus Terminal for <strong>Q2</strong> or <strong>Q3</strong></p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      },
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "175"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Q6, Q8, Q9, Q41 to Jamaica Bus Terminal for Q1, Q2, Q36, or Q82 to Parsons Blvd for Q110",
+          "language": "en"
+         },
+         {
+          "text": "<p><strong>Q6</strong>, <strong>Q8</strong>, <strong>Q9</strong>, <strong>Q41</strong> to Jamaica Bus Terminal for <strong>Q1</strong>, <strong>Q2</strong>, <strong>Q36</strong>, or <strong>Q82</strong> to Parsons Blvd for <strong>Q110</strong> </p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      },
+      {
+       "affected_entity": {
+        "agency_id": "LI",
+        "stop_id": "359"
+       },
+       "notes": {
+        "translation": [
+         {
+          "text": "Q6, Q8, Q9, Q41 to Jamaica Bus Terminal for NICE n24",
+          "language": "en"
+         },
+         {
+          "text": "<p>‌<strong>Q6</strong>, <strong>Q8</strong>, <strong>Q9</strong>, <strong>Q41</strong> to Jamaica Bus Terminal for NICE n24</p>",
+          "language": "en-html"
+         }
+        ]
+       }
+      }
+     ],
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jun 27 - 29, Jul 11 - 13, and Jul 18 - 20, Sat 12:30 AM to Mon 4 AM",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:32736",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1782533700,
+      "end": 1782718200
+     },
+     {
+      "start": 1783743300,
+      "end": 1783927800
+     },
+     {
+      "start": 1784348100,
+      "end": 1784532600
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "2",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:2:20"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "No Hempstead Branch trains between Manhattan and Floral Park",
+       "language": "en"
+      },
+      {
+       "text": "<p>No <strong>Hempstead</strong> Branch trains between Manhattan and <strong>Floral Park</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "Trains run between Floral Park and Hempstead only. Transfer at Floral Park for Huntington or Ronkonkoma Branch trains to and from Manhattan.\nFor Hollis and Queens Village :\nHourly westbound service will be available on Huntington trains.\nMTA buses will accept LIRR tickets for eastbound travel from Jamaica.\nFor Elmont-UBS Arena :\nWestbound service will be available on Huntington and Ronkonkoma trains.\nNICE Bus will accept LIRR tickets for eastbound travel from Jamaica\nBellerose station is closed. NICE Bus will accept LIRR tickets on the nearby n24.\nThis service change will occur on most weekends through late August as we replace and install switches near Elmont-UBS Arena.",
+       "language": "en"
+      },
+      {
+       "text": "<p>Trains run between <strong>Floral Park</strong> and <strong>Hempstead</strong> only. Transfer at <strong>Floral Park</strong> for <strong>Huntington</strong> or <strong>Ronkonkoma</strong>Branch trains to and from Manhattan.</p><ul><li><p>For <strong>Hollis</strong> and <strong>Queens Village</strong>:</p><ul><li><p>Hourly westbound service will be available on <strong>Huntington</strong> trains.</p></li><li><p>MTA buses will accept LIRR tickets for eastbound travel from <strong>Jamaica</strong>.</p></li></ul></li><li><p>For <strong>Elmont-UBS Arena</strong>:</p><ul><li><p>Westbound service will be available on <strong>Huntington</strong> and <strong>Ronkonkoma</strong>trains.</p></li><li><p>NICE Bus will accept LIRR tickets for eastbound travel from <strong>Jamaica</strong></p></li></ul><p><strong>Bellerose</strong><strong> </strong>station is closed. NICE Bus will accept LIRR tickets on the nearby n24.</p></li></ul><p><a title=\"\" href=\"https://www.mta.info/article/summer-lirr-service-changes-2026\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">This service change will occur on most weekends through late August</a> as we replace and install switches near <strong>Elmont-UBS Arena</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1781636169,
+     "updated_at": 1781636169,
+     "alert_type": "Planned - Part Suspended",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jun 27 - 29, Jul 11 - 13, and Jul 18 - 20, Sat 12:15 AM to Mon 3:30 AM",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:32735",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1782532800,
+      "end": 1782565200
+     },
+     {
+      "start": 1782619200,
+      "end": 1782651600
+     },
+     {
+      "start": 1783742400,
+      "end": 1783774800
+     },
+     {
+      "start": 1783828800,
+      "end": 1783861200
+     },
+     {
+      "start": 1784347200,
+      "end": 1784379600
+     },
+     {
+      "start": 1784433600,
+      "end": 1784466000
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "LI",
+      "route_id": "10",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:10:11"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "12",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:12:11"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "1",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:1:11"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "4",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:4:11"
+      }
+     },
+     {
+      "agency_id": "LI",
+      "route_id": "7",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "LI:7:11"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Many early-morning LIRR trains run on revised schedules",
+       "language": "en"
+      },
+      {
+       "text": "<p>Many early-morning LIRR trains run on revised schedules</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "Plan your revised trip on our TrainTime app or at mta.info/schedules.\n\nThis service change will occur on most weekends through late August as we replace and install switches near Elmont-UBS Arena.",
+       "language": "en"
+      },
+      {
+       "text": "<p>Plan your revised trip on our TrainTime app or at <a title=\"\" href=\"https://mta.info/schedules\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">mta.info/schedules</a><a title=\"\" href=\"https://mta.info/schedules.\" rel=\"noopener noreferrer nofollow\" target=\"_blank\">.</a></p><p></p><p><a title=\"\" href=\"https://www.mta.info/article/summer-lirr-service-changes-2026\" rel=\"noopener noreferrer nofollow\" data-link-auto=\"\" target=\"_blank\">This service change will occur on most weekends through late August</a> as we replace and install switches near <strong>Elmont-UBS Arena</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1781636042,
+     "updated_at": 1781636042,
+     "alert_type": "Special Schedule",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jun 27 - 28, Jul 11 - 12, and Jul 18 - 19, Sat and Sun, 12 AM to 9 AM",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

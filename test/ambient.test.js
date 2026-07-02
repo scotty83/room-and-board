@@ -81,16 +81,14 @@ describe('createSlideshow', () => {
 describe('stripData', () => {
   const caches = {
     weather: { now: { temp: 84 } },
-    subway: { groups: [{ stopName: 'Grand Central-42 St', direction: 'N', arrivals: [{ route: '6', min: 2 }, { route: '4', min: 5 }] }] },
     lirr: { departures: [{ min: 8, dest: 'Port Washington', track: '17' }] },
   };
   it('assembles temp and next departures from enabled widgets', () => {
-    const out = stripData(caches, { widgets: ['weather', 'subway', 'lirr'] });
+    const out = stripData(caches, { widgets: ['weather', 'lirr'] });
     expect(out.temp).toBe(84);
-    expect(out.transit).toHaveLength(2);
-    expect(out.transit[0].label).toContain('6');
-    expect(out.transit[0].min).toBe(2);
-    expect(out.transit[1].label).toContain('Port Washington');
+    expect(out.transit).toHaveLength(1);
+    expect(out.transit[0].label).toContain('Port Washington');
+    expect(out.transit[0].min).toBe(8);
   });
   it('omits missing/disabled sources', () => {
     const out = stripData({ weather: caches.weather }, { widgets: ['weather'] });

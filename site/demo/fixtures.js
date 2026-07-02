@@ -77,9 +77,9 @@ export const DEMO_VMS = {
   },
   sports: {
     rows: [
-      { lg: 'mlb', abbr: 'NYM', name: 'Mets', record: '48-37', state: 'in', line: '3-2 vs ATL · Bot 7th', logo: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png', lastLine: 'L 3-9 vs TOR · Final' },
-      { lg: 'nba', abbr: 'NYK', name: 'Knicks', record: '', state: 'pre', line: 'vs BOS · 10/24 - 7:30 PM', logo: 'https://a.espncdn.com/i/teamlogos/nba/500/nyk.png', lastLine: 'W 112-104 @ BOS · Final' },
-      { lg: 'nfl', abbr: 'NYJ', name: 'Jets', record: '', state: 'post', line: 'W 24-17 @ NE · Final', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png', lastLine: null },
+      { lg: 'mlb', abbr: 'NYM', name: 'Mets', record: '48-37', state: 'in', line: '3-2 vs ATL · Bot 7th', logo: 'https://a.espncdn.com/i/teamlogos/mlb/500-dark/nym.png', lastLine: 'L 3-9 vs TOR · Final' },
+      { lg: 'nba', abbr: 'NYK', name: 'Knicks', record: '', state: 'pre', line: 'vs BOS · 10/24 - 7:30 PM', logo: 'https://a.espncdn.com/i/teamlogos/nba/500-dark/nyk.png', lastLine: 'W 112-104 @ BOS · Final' },
+      { lg: 'nfl', abbr: 'NYJ', name: 'Jets', record: '', state: 'post', line: 'W 24-17 @ NE · Final', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500-dark/nyj.png', lastLine: null },
     ],
   },
   worldcup: {

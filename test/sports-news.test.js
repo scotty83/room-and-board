@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { logoUrl } from '../site/js/widgets/sports.js';
-import { mapTeamSummary, digestSchedule, LEAGUE_PATHS } from '../worker/src/sports.js';
+import { mapTeamSummary, digestSchedule, pickLogo, LEAGUE_PATHS } from '../worker/src/sports.js';
 import { mapWorldCup } from '../site/js/widgets/worldcup.js';
 import { parseRss, mergeNews, ageLabel } from '../site/js/widgets/news.js';
 
@@ -9,7 +9,10 @@ describe('mapTeamSummary', () => {
     team: {
       abbreviation: 'NYM', shortDisplayName: 'Mets',
       record: { items: [{ summary: '48-37' }] },
-      logos: [{ href: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png' }],
+      logos: [
+        { href: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png', rel: ['full', 'default'] },
+        { href: 'https://a.espncdn.com/i/teamlogos/mlb/500-dark/nym.png', rel: ['full', 'dark'] },
+      ],
       nextEvent: [{
         date: '2026-07-03T23:15Z',
         competitions: [{
@@ -26,7 +29,7 @@ describe('mapTeamSummary', () => {
     const row = mapTeamSummary(espn('pre', '7/3 - 7:15 PM EDT'), 'L 3-9 vs TOR · Final', 'mlb');
     expect(row).toMatchObject({ abbr: 'NYM', record: '48-37', state: 'pre', lastLine: 'L 3-9 vs TOR · Final' });
     expect(row.line).toBe('@ ATL · 7/3 - 7:15 PM EDT');
-    expect(row.logo).toContain('teamlogos/mlb');
+    expect(row.logo).toContain('500-dark'); // dark variant wins on dark cards
   });
   it('maps a live game with score', () => {
     const row = mapTeamSummary(espn('in', 'Bot 7th', [{ value: 3 }, { value: 2 }]), null, 'mlb');
@@ -118,5 +121,19 @@ describe('digestSchedule + logoUrl', () => {
     expect(logoUrl('https://a.espncdn.com/i/teamlogos/mlb/500/nym.png', 80))
       .toBe('https://a.espncdn.com/combiner/i?img=%2Fi%2Fteamlogos%2Fmlb%2F500%2Fnym.png&h=80&w=80');
     expect(logoUrl(null)).toBeNull();
+  });
+});
+
+describe('pickLogo', () => {
+  it('prefers the non-scoreboard dark variant, falls back sanely', () => {
+    const logos = [
+      { href: 'default.png', rel: ['full', 'default'] },
+      { href: 'sb-dark.png', rel: ['full', 'scoreboard', 'dark'] },
+      { href: 'dark.png', rel: ['full', 'dark'] },
+    ];
+    expect(pickLogo(logos)).toBe('dark.png');
+    expect(pickLogo([{ href: 'only.png', rel: ['full', 'default'] }])).toBe('only.png');
+    expect(pickLogo([])).toBeNull();
+    expect(pickLogo()).toBeNull();
   });
 });

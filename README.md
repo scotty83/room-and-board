@@ -89,6 +89,19 @@ WebSocket path, and installs + activates the SignageManager macro. Pilot on
 one board first. Recommended extras per Cisco guidance: configure
 `Time OfficeHours` so signage runs ≤ 12 h/day.
 
+### Arranging the dashboard (v1.1)
+
+Tap the ✎ pencil button: the 6×4 grid appears — drag widgets to move them,
+drag the corner handle to resize (snaps to cells, per-widget minimums),
+✕ removes, and the bottom tray re-adds anything removed. Invalid drops flash
+red and snap back. Done saves (localStorage + macro vault); Cancel discards.
+Layouts live in config v2; v1 configs migrate automatically on first load.
+
+v1.1 widget notes: **LIRR** is a Penn Station departure board (Grand Central
+trains never shown) filtered by branch chips; **Subway** has line chips
+(none selected = every line at your stops); **Weather** defaults to ZIP 10001;
+**World Clock** shows New York, Hyderabad, London, Los Angeles and Hong Kong.
+
 ### User flow
 
 1. Board shows a welcome screen → user visits `/setup` on their phone,

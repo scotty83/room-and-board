@@ -52,9 +52,17 @@ npx wrangler dev --config worker/wrangler.toml # worker on :8787
 
 ### 1. Static site → Cloudflare Pages
 
-Point a Pages project at this repo, build command none, output dir `site/`.
-Set the deployed Worker URL in `site/js/env.js` (`WORKER_URL`). Update
-`site/version.json` on deploys — boards check it hourly and self-reload.
+Point a Pages project at this repo:
+
+- **Build command:** `node tools/stamp-version.js` (stamps `version.json` with
+  the commit SHA — boards poll it hourly and self-reload after each deploy)
+- **Build output directory:** `site`
+- **Custom domain:** add your subdomain (e.g. `signage.yourdomain.com`) under
+  the project's Custom domains — DNS + TLS are automatic when the zone is in
+  the same Cloudflare account.
+
+Set the deployed Worker URL in `site/js/env.js` (`WORKER_URL`) before the
+first deploy.
 
 ### 2. Worker
 

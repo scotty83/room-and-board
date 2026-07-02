@@ -13,7 +13,7 @@ export const MIN_SIZE = {
   quote: [2, 1],
   art: [1, 1],
   aqi: [1, 1],
-  worldclock: [1, 1],
+  worldclock: [1, 2], // five fixed rows never fit a single cell
 };
 
 export const DEFAULT_LAYOUT = Object.freeze([

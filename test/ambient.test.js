@@ -6,9 +6,9 @@ import { createSlideshow } from '../site/js/widgets/art.js';
 import { stripData } from '../site/js/ambient.js';
 
 const MANIFEST = [
-  { img: 'a.jpg', title: 'A', artist: 'AA', year: '1900' },
-  { img: 'b.jpg', title: 'B', artist: 'BB', year: '1910' },
-  { img: 'c.jpg', title: 'C', artist: 'CC', year: '1920' },
+  { img: 'a.jpg', title: 'A', artist: 'AA', year: '1900', ar: 1.78 },
+  { img: 'b.jpg', title: 'B', artist: 'BB', year: '1910', ar: 1.3 },
+  { img: 'c.jpg', title: 'C', artist: 'CC', year: '1920', ar: 2.4 },
 ];
 
 describe('createSlideshow', () => {
@@ -52,6 +52,21 @@ describe('createSlideshow', () => {
     show.stop();
     await vi.advanceTimersByTimeAsync(3000);
     expect(loadedSrcs.length).toBe(7);
+  });
+
+  it('covers near-16:9 images and letterboxes the rest', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0 });
+    show.start();
+    const sizes = [];
+    for (let i = 0; i < 3; i++) {
+      await vi.advanceTimersByTimeAsync(i === 0 ? 0 : 1000);
+      const active = host.querySelector('.slide[data-active]');
+      sizes.push(`${show.current().ar}:${active.style.backgroundSize}`);
+    }
+    show.stop();
+    // Shuffle order varies; assert the aspect→size mapping regardless.
+    expect(sizes.sort()).toEqual(['1.3:contain', '1.78:cover', '2.4:contain']);
   });
 
   it('does nothing with an empty manifest', async () => {

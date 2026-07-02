@@ -140,6 +140,14 @@ the URL fragment and the dashboard returns configured.
 | Met + AIC (art) | build-time manifest | CC0 works; `node tools/build-art-manifest.js` to refresh |
 | Wikimedia (history) | direct, keyless | |
 
+**Resize-fit audit (standing policy):** widgets must fit their text at every
+supported size. After renderer/CSS changes, open `?demo=1` in Chrome and, for
+each `.card`, place it at its demo size, its `MIN_SIZE`, and a 3-tall variant
+(set `gridColumn`/`gridRow` spans + `data-w`/`data-h`), then assert
+`card__body.scrollHeight <= clientHeight + 2`. Fix overflows with measured
+`data-w`/`data-h` compact CSS variants (no container queries on gen1 Chromium).
+Ship only at zero overflow.
+
 Rebuild station data after MTA changes: `node tools/build-stations.js`.
 Refresh test fixtures: `node tools/record-fixtures.js`.
 

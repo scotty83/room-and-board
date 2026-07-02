@@ -1,359 +1,642 @@
 [
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DT375.jpg",
-  "title": "Madonna and Child",
-  "artist": "Giovanni Bellini",
-  "year": "late 1480s",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-17777-001.jpg",
-  "title": "Cardinal Fernando Niño de Guevara (1541–1609)",
-  "artist": "El Greco (Domenikos Theotokopoulos)",
-  "year": "ca. 1600",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP169640.jpg",
-  "title": "Cottage Children (The Wood Gatherers)",
-  "artist": "Thomas Gainsborough",
-  "year": "1787",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP320086.jpg",
-  "title": "Comtesse de la Châtre (Marie Charlotte Louise Perrette Aglaé Bontemps, 1762–1848)",
-  "artist": "Elisabeth Louise Vigée Le Brun",
-  "year": "1789",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-27033-001.jpg",
-  "title": "The Coronation of the Virgin",
-  "artist": "Annibale Carracci",
-  "year": "after 1595",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DT16.jpg",
-  "title": "The Holy Family with Saints Anne and Catherine of Alexandria",
-  "artist": "Jusepe de Ribera (called Lo Spagnoletto)",
-  "year": "1648",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP295025.jpg",
-  "title": "The Holy Family with the Young Saint John the Baptist",
-  "artist": "Andrea del Sarto (Andrea d'Agnolo)",
-  "year": "ca. 1528",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-1019-01.jpg",
-  "title": "Marie Emilie Coignet de Courson (1716–1806) with a Dog",
-  "artist": "Jean Honoré Fragonard",
-  "year": "ca. 1769",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP296427.jpg",
-  "title": "The Meditation on the Passion",
-  "artist": "Vittore Carpaccio",
-  "year": "ca. 1490",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP280846.jpg",
-  "title": "Virgin and Child with Saint Anne",
-  "artist": "Albrecht Dürer",
-  "year": "probably 1519",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP169218.jpg",
-  "title": "Elizabeth Farren (born about 1759, died 1829), Later Countess of Derby",
-  "artist": "Sir Thomas Lawrence",
-  "year": "1790",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP169215.jpg",
-  "title": "Captain George K. H. Coussmaker (1759–1801)",
-  "artist": "Sir Joshua Reynolds",
-  "year": "1782",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP168811.jpg",
-  "title": "Lute Player",
-  "artist": "Valentin de Boulogne",
-  "year": "ca. 1625–26",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg",
+  "ar": 1.3,
   "title": "Wheat Fields",
   "artist": "Jacob van Ruisdael",
   "year": "ca. 1670",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-24049-001.jpg",
-  "title": "The Last Communion of Saint Jerome",
-  "artist": "Botticelli (Alessandro di Mariano Filipepi)",
-  "year": "early 1490s",
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DP-13139-001.jpg",
+  "ar": 1.52,
+  "title": "The Death of Socrates",
+  "artist": "Jacques Louis David",
+  "year": "1787",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-35674-001.jpg",
-  "title": "Madame Georges Charpentier (Marguerite-Louise Lemonnier, 1848–1904) and Her Children, Georgette-Berthe (1872–1945) and Paul-Emile-Charles (1875–1895)",
-  "artist": "Auguste Renoir",
-  "year": "1878",
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP375107.jpg",
+  "ar": 1.36,
+  "title": "Fish Market",
+  "artist": "Joachim Beuckelaer",
+  "year": "1568",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP349564.jpg",
-  "title": "View of Toledo",
-  "artist": "El Greco (Domenikos Theotokopoulos)",
-  "year": "ca. 1599–1600",
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP119115.jpg",
+  "ar": 1.36,
+  "title": "The Harvesters",
+  "artist": "Pieter Bruegel the Elder",
+  "year": "1565",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP-952-001.jpg",
-  "title": "Emma Van Name",
-  "artist": "Joshua Johnson",
-  "year": "ca. 1805",
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP375450_cropped.jpg",
+  "ar": 1.5,
+  "title": "Circus Sideshow (Parade de cirque)",
+  "artist": "Georges Seurat",
+  "year": "1887–88",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP348567.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DP-23550-001.jpg",
+  "ar": 2.07,
+  "title": "The Horse Fair",
+  "artist": "Rosa Bonheur",
+  "year": "1852–55",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DT47.jpg",
+  "ar": 1.27,
+  "title": "Still Life with Apples and a Pot of Primroses",
+  "artist": "Paul Cézanne",
+  "year": "ca. 1890",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DP259921.jpg",
+  "ar": 1.48,
+  "title": "Study for \"A Sunday on La Grande Jatte\"",
+  "artist": "Georges Seurat",
+  "year": "1884",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DT2013.jpg",
+  "ar": 1.5,
+  "title": "Hagar in the Wilderness",
+  "artist": "Camille Corot",
+  "year": "1835",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-21027-001.jpg",
+  "ar": 1.38,
+  "title": "The Third-Class Carriage",
+  "artist": "Honoré Daumier",
+  "year": "1864",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DP226145.jpg",
+  "ar": 1.45,
+  "title": "The Trojan Women Setting Fire to Their Fleet",
+  "artist": "Claude Lorrain (Claude Gellée)",
+  "year": "ca. 1643",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-12952-001.jpg",
+  "ar": 1.29,
+  "title": "Broken Eggs",
+  "artist": "Jean-Baptiste Greuze",
+  "year": "1756",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-25460-001.jpg",
+  "ar": 1.25,
+  "title": "A Woman Seated beside a Vase of Flowers (Madame Paul Valpinçon?)",
+  "artist": "Edgar Degas",
+  "year": "1865",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-13360-001.jpg",
+  "ar": 1.34,
+  "title": "Whalers",
+  "artist": "Joseph Mallord William Turner",
+  "year": "ca. 1845",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DT1967.jpg",
+  "ar": 1.34,
+  "title": "Young Ladies of the Village",
+  "artist": "Gustave Courbet",
+  "year": "1851–52",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DP124093.jpg",
+  "ar": 1.29,
+  "title": "Haystacks: Autumn",
+  "artist": "Jean-François Millet",
+  "year": "ca. 1874",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/original/DT1570.jpg",
+  "ar": 1.46,
+  "title": "The Afternoon Meal (La Merienda)",
+  "artist": "Luis Meléndez",
+  "year": "ca. 1772",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-31520-001.jpg",
+  "ar": 1.46,
+  "title": "The Forest in Winter at Sunset",
+  "artist": "Théodore Rousseau",
+  "year": "ca. 1846–67",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-687-001.jpg",
+  "ar": 1.29,
+  "title": "The Musicians",
+  "artist": "Caravaggio (Michelangelo Merisi)",
+  "year": "1597",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP323394.jpg",
+  "ar": 1.36,
+  "title": "The Love Song",
+  "artist": "Sir Edward Burne-Jones",
+  "year": "1868–77",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DP348567.jpg",
+  "ar": 1.49,
   "title": "Untitled (Cracked Watermelon)",
   "artist": "Charles Ethan Porter",
   "year": "ca. 1890",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT95.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT95.jpg",
+  "ar": 1.7,
   "title": "At the Seaside",
   "artist": "William Merritt Chase",
   "year": "ca. 1892",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT62.jpg",
-  "title": "George Washington",
-  "artist": "Gilbert Stuart",
-  "year": "begun 1795",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP-20821-001.jpg",
+  "ar": 1.75,
   "title": "The Gulf Stream",
   "artist": "Winslow Homer",
   "year": "1899; reworked by 1906",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT73.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT73.jpg",
+  "ar": 1.26,
   "title": "Fur Traders Descending the Missouri",
   "artist": "George Caleb Bingham",
   "year": "1845",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT1551.jpg",
-  "title": "Repose",
-  "artist": "John White Alexander",
-  "year": "1895",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT86.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT86.jpg",
+  "ar": 1.32,
   "title": "The Champion Single Sculls (Max Schmitt in a Single Scull)",
   "artist": "Thomas Eakins",
   "year": "1871",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP215410.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DP215410.jpg",
+  "ar": 1.71,
   "title": "Washington Crossing the Delaware",
   "artist": "Emanuel Leutze",
   "year": "1851",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT58.jpg",
-  "title": "Daniel Crommelin Verplanck",
-  "artist": "John Singleton Copley",
-  "year": "1771",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP102298.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DP102298.jpg",
+  "ar": 1.58,
   "title": "The Veteran in a New Field",
   "artist": "Winslow Homer",
   "year": "1865",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT84.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT84.jpg",
+  "ar": 1.5,
   "title": "Lake George",
   "artist": "John Frederick Kensett",
   "year": "1869",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT2063.jpg",
-  "title": "Mrs. Mayer and Daughter",
-  "artist": "Ammi Phillips",
-  "year": "1835–40",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP355340.jpg",
-  "title": "Young Husband: First Marketing",
-  "artist": "Lilly Martin Spencer",
-  "year": "1854",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP-29006-001.jpg",
-  "title": "Madame X (Virginie Amélie Avegno Gautreau)",
-  "artist": "John Singer Sargent",
-  "year": "1883–84",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP-12550-001.jpg",
+  "ar": 1.48,
   "title": "View from Mount Holyoke, Northampton, Massachusetts, after a Thunderstorm—The Oxbow",
   "artist": "Thomas Cole",
   "year": "1836",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DT78.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT78.jpg",
+  "ar": 1.65,
   "title": "Heart of the Andes",
   "artist": "Frederic Edwin Church",
   "year": "1859",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP356939.jpg",
-  "title": "The Virgin of Guadalupe with the Four Apparitions",
-  "artist": "Nicolás Enríquez",
-  "year": "1773",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ad/web-large/DP-25528-001.jpg",
-  "title": "Portrait of Sor Juana de Nuestra Señora de Guadalupe",
-  "artist": "Domingo Ortiz",
-  "year": "1797",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ad/web-large/2016.135.jpg",
+  "ar": 1.51,
   "title": "Dance in a Subterranean Roundhouse at Clear Lake, California",
   "artist": "Jules Tavernier",
   "year": "1878",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/1981_4_1a.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DT82.jpg",
+  "ar": 1.64,
+  "title": "The Rocky Mountains, Lander's Peak",
+  "artist": "Albert Bierstadt",
+  "year": "1863",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ad/original/DP248013.jpg",
+  "ar": 1.37,
+  "title": "Approaching Thunder Storm",
+  "artist": "Martin Johnson Heade",
+  "year": "1859",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/as/original/1981_4_1a.jpg",
+  "ar": 1.5,
   "title": "Landscapes with poems",
   "artist": "Gong Xian",
   "year": "1688",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP-24553-001.jpg",
-  "title": "Table screen with landscape",
-  "artist": "Unknown",
-  "year": "second half 15th century",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP-15584-008.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP-15584-008.jpg",
+  "ar": 2.18,
   "title": "Gibbons in a Landscape",
   "artist": "Sesson Shūkei 雪村周継",
   "year": "ca. 1570",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/h1_25.219.4.jpg",
-  "title": "Mirror decorated with figures in a landscape",
-  "artist": "Unknown",
-  "year": "",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/LK.1999.261_DP288808R2_25B.jpg",
-  "title": "Footed Dish with Equestrian Hunting Scene",
-  "artist": "Unknown",
-  "year": "ca. 8th century",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP276037.jpg",
-  "title": "Cosmological Mandala with Mount Meru",
-  "artist": "Unknown",
-  "year": "14th century",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DT6930.jpg",
-  "title": "Wild geese descending to sandbar",
-  "artist": "Unidentified artist",
-  "year": "late 15th–early 16th century",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP105303_CRD.jpg",
-  "title": "The Kangxi Emperor's Southern Inspection Tour, Scroll Three: Ji'nan to Mount Tai",
-  "artist": "Wang Hui",
-  "year": "datable to 1698",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP167812_CRD.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP167812_CRD.jpg",
+  "ar": 2.93,
   "title": "Old Trees, Level Distance",
   "artist": "Guo Xi",
   "year": "ca. 1080",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP247676.jpg",
-  "title": "Emperor Xuanzong's flight to Shu",
-  "artist": "Unidentified artist",
-  "year": "mid-12th century",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP226465.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP226465.jpg",
+  "ar": 2.54,
   "title": "Summer Mountains",
   "artist": "Qu Ding",
   "year": "ca. 1050",
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP161547.jpg",
-  "title": "Gathering of government officials",
-  "artist": "Unidentified artist",
-  "year": "ca. 1551",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP119525.jpg",
-  "title": "Night Rain at the Double-Shelf Stand, from the series Eight Parlor Views (Zashiki hakkei)",
-  "artist": "Suzuki Harunobu",
-  "year": "ca. 1766",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP141042.jpg",
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP141042.jpg",
+  "ar": 1.5,
   "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), or The Great Wave, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)",
   "artist": "Katsushika Hokusai",
   "year": "ca. 1830–32",
   "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP222421.jpg",
+  "ar": 2.15,
+  "title": "Small Dish (Kozara) with Three Jars",
+  "artist": "Unknown",
+  "year": "1680–90s",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DT229.jpg",
+  "ar": 2.78,
+  "title": "Old Plum",
+  "artist": "Kano Sansetsu",
+  "year": "1646",
+  "source": "The Met"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/2d484387-2509-5e8e-2c43-22f9981972eb/full/1686,/0/default.jpg",
+  "ar": 1.49,
+  "title": "A Sunday on La Grande Jatte — 1884",
+  "artist": "Georges Seurat (French, 1859–1891)",
+  "year": "1884–86, border added 1888–89",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/f8fd76e9-c396-5678-36ed-6a348c904d27/full/1686,/0/default.jpg",
+  "ar": 1.29,
+  "title": "Paris Street; Rainy Day",
+  "artist": "Gustave Caillebotte (French, 1848–1894)",
+  "year": "1877",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/6644829f-f292-c5c4-a73c-0356a6fdbf0d/full/1686,/0/default.jpg",
+  "ar": 1.28,
+  "title": "The Bedroom",
+  "artist": "Vincent van Gogh (Dutch, 1853–1890)",
+  "year": "1889",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/3a34f988-f779-2e96-1786-8945b6b9c87d/full/1686,/0/default.jpg",
+  "ar": 1.26,
+  "title": "Landscape",
+  "artist": "Jean Charles Cazin (French, 1841–1901)",
+  "year": "c. 1895",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/52ac8996-3460-cf71-cb42-5c4d0aa29b74/full/1686,/0/default.jpg",
+  "ar": 1.25,
+  "title": "The Basket of Apples",
+  "artist": "Paul Cezanne (French, 1839–1906)",
+  "year": "c. 1893",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/0f1cc0e0-e42e-be16-3f71-2022da38cb93/full/1686,/0/default.jpg",
+  "ar": 1.33,
+  "title": "Arrival of the Normandy Train, Gare Saint-Lazare",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1877",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/18092196-50ae-3ff1-9205-1b3110e966c3/full/1686,/0/default.jpg",
+  "ar": 1.29,
+  "title": "Distant View of Niagara Falls",
+  "artist": "Thomas Cole (American, born England, 1801–1848)",
+  "year": "1830",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/a38e2828-ec6f-ece1-a30f-70243449197b/full/1686,/0/default.jpg",
+  "ar": 1.69,
+  "title": "Stacks of Wheat (End of Summer)",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1890–91",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/a45e5f55-d02b-ce98-8bab-3af549684f58/full/1686,/0/default.jpg",
+  "ar": 1.36,
+  "title": "Painting with Troika",
+  "artist": "Vasily Kandinsky",
+  "year": "January 18, 1911",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/95be2572-b53d-8e7b-abc9-10eb48d4fa5d/full/1686,/0/default.jpg",
+  "ar": 1.35,
+  "title": "The Beach at Sainte-Adresse",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1867",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/237c25a2-6051-a8e7-1610-a01938d4deab/full/1686,/0/default.jpg",
+  "ar": 1.36,
+  "title": "The Watermill with the Great Red Roof",
+  "artist": "Meindert Hobbema (Dutch, 1638–1709)",
+  "year": "c. 1665",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/4c364c64-2108-4e19-5fc5-1ab26ba924a7/full/1686,/0/default.jpg",
+  "ar": 1.54,
+  "title": "Stacks of Wheat (End of Day, Autumn)",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1890–91",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/4a04138f-43d8-cd9f-5ac4-478cd8828210/full/1686,/0/default.jpg",
+  "ar": 1.39,
+  "title": "Trompe-l'Oeil Still Life with a Flower Garland and a Curtain",
+  "artist": "Adriaen van der Spelt (Dutch, 1630–1673)",
+  "year": "1658",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/aa870b0d-5a1b-660a-6dc6-56c12109cf6e/full/1686,/0/default.jpg",
+  "ar": 1.35,
+  "title": "Landscape with Saint John on Patmos",
+  "artist": "Nicolas Poussin (French, 1594–1665)",
+  "year": "1640",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/fa96ef54-c3b1-8f4d-390a-219f7bc64c4a/full/1686,/0/default.jpg",
+  "ar": 1.37,
+  "title": "Man with Lance Riding through the Snow",
+  "artist": "Adolphe Schreyer (German, 1828–1899)",
+  "year": "c. 1880",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/1bc44619-6b1d-5398-cf41-f4af38f6e17f/full/1686,/0/default.jpg",
+  "ar": 1.98,
+  "title": "Tiger Resting",
+  "artist": "Pierre Andrieu (French, 1821-1892)",
+  "year": "c. 1845",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/565dd29f-6c02-3f31-3db2-46902059f047/full/1686,/0/default.jpg",
+  "ar": 1.68,
+  "title": "Wounded Lioness",
+  "artist": "Pierre Andrieu (French, 1821-1892)",
+  "year": "c. 1850",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/d4bc1723-7cbc-d36d-a9cb-f84553f2a6f6/full/1686,/0/default.jpg",
+  "ar": 1.27,
+  "title": "The Poet's Garden",
+  "artist": "Vincent van Gogh (Dutch, 1853–1890)",
+  "year": "1888",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/1d3a275d-45dd-6026-b6ed-d7d8df417a3d/full/1686,/0/default.jpg",
+  "ar": 1.33,
+  "title": "A Peasant Woman Digging in Front of Her Cottage",
+  "artist": "Vincent van Gogh (Dutch, 1853–1890)",
+  "year": "c. 1885",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/80df29cd-493f-23c0-3e51-4ddc38b3f34f/full/1686,/0/default.jpg",
+  "ar": 1.55,
+  "title": "Barks Fleeing Before the Storm",
+  "artist": "Jules Dupré (French, 1811–1889)",
+  "year": "1870–75",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/db94c894-a24c-c2e0-9db9-0506567a0152/full/1686,/0/default.jpg",
+  "ar": 1.54,
+  "title": "Poppy Field (Giverny)",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1890–91",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/c12058f4-188f-c6ed-f0fe-52b32acfb296/full/1686,/0/default.jpg",
+  "ar": 1.25,
+  "title": "Apples and Grapes",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1880",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/8641479e-c93e-f1a8-9925-19be061706da/full/1686,/0/default.jpg",
+  "ar": 1.29,
+  "title": "Fishing Boats with Hucksters Bargaining for Fish",
+  "artist": "Joseph Mallord William Turner (English, 1775–1851)",
+  "year": "1837–38",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/081be15c-8812-c174-eeb2-cf318a2e67cf/full/1686,/0/default.jpg",
+  "ar": 1.63,
+  "title": "Oil Sketch for \"A Sunday on La Grande Jatte — 1884\"",
+  "artist": "Georges Seurat (French, 1859–1891)",
+  "year": "1884",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/7a23ad22-2044-6d7d-6315-9b101dadc559/full/1686,/0/default.jpg",
+  "ar": 1.55,
+  "title": "Water Lily Pond",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1917–19",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/6f61a6fc-dcd8-e801-0ad8-5f7e561d91b6/full/1686,/0/default.jpg",
+  "ar": 1.41,
+  "title": "Waterloo Bridge, Gray Weather",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1900",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/e9ce5aca-4c34-c8dd-b8a1-91b3e3197211/full/1686,/0/default.jpg",
+  "ar": 1.92,
+  "title": "The Races at Longchamp",
+  "artist": "Édouard Manet (French, 1832–1883)",
+  "year": "1866",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/0cbe27e8-2fec-3445-bc48-ce40a8f2dc25/full/1686,/0/default.jpg",
+  "ar": 1.26,
+  "title": "Fish (Still Life)",
+  "artist": "Édouard Manet (French, 1832–1883)",
+  "year": "1864",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/caf4fa39-e2e8-344a-542c-2d9a03ec9d4b/full/1686,/0/default.jpg",
+  "ar": 1.27,
+  "title": "Seascape",
+  "artist": "Pierre-Auguste Renoir (French, 1841–1919)",
+  "year": "1879",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/827d02ef-6765-9728-c07e-52ad22b73fd3/full/1686,/0/default.jpg",
+  "ar": 1.55,
+  "title": "Waterloo Bridge, Sunlight Effect",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1903",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/27c1d720-8ca5-79a4-5e51-530bf75c1591/full/1686,/0/default.jpg",
+  "ar": 1.42,
+  "title": "Stack of Wheat",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1890–91",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/90bc0cec-0d4e-9af5-3912-52a082a428e5/full/1686,/0/default.jpg",
+  "ar": 1.26,
+  "title": "Auvers, Panoramic View",
+  "artist": "Paul Cezanne (French, 1839–1906)",
+  "year": "1873–75",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/be0d3e50-a600-6f33-ea8f-16a34d892442/full/1686,/0/default.jpg",
+  "ar": 1.55,
+  "title": "Stacks of Wheat (Sunset, Snow Effect)",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1890–91",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/65db9e21-83c3-1cc6-7240-1e1996d87f52/full/1686,/0/default.jpg",
+  "ar": 1.59,
+  "title": "Equestrienne (At the Cirque Fernando)",
+  "artist": "Henri de Toulouse-Lautrec (French, 1864–1901)",
+  "year": "1887–88",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/d9bde524-38b2-4262-3338-e4d06a50746d/full/1686,/0/default.jpg",
+  "ar": 1.53,
+  "title": "Still Life with Dead Game, Fruits, and Vegetables in a Market",
+  "artist": "Frans Snyders (Flemish, 1579-1657)",
+  "year": "1614",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/8cd4328f-da34-dec3-00f5-5810a747c8e8/full/1686,/0/default.jpg",
+  "ar": 1.46,
+  "title": "A Witches' Sabbath",
+  "artist": "Cornelis Saftleven (Dutch, 1607–1681)",
+  "year": "c. 1650",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/e72305c9-1a1c-8a36-7450-582619366338/full/1686,/0/default.jpg",
+  "ar": 1.89,
+  "title": "Flower Girl in Holland",
+  "artist": "George Hitchcock",
+  "year": "1887",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/07d8dd31-d44b-85aa-ab09-ca51ee86f631/full/1686,/0/default.jpg",
+  "ar": 1.28,
+  "title": "Sandvika, Norway",
+  "artist": "Claude Monet (French, 1840–1926)",
+  "year": "1895",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/6a676ee7-39c0-0b88-c37e-36ba0c5e3065/full/1686,/0/default.jpg",
+  "ar": 2.17,
+  "title": "The Eruption of Vesuvius",
+  "artist": "Pierre-Jacques Volaire (French, 1729–1799)",
+  "year": "1771",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "img": "https://www.artic.edu/iiif/2/f1e03813-f9c7-f4f8-fbe8-a5eeae84fda4/full/1686,/0/default.jpg",
+  "ar": 1.42,
+  "title": "The Advance-Guard, or The Military Sacrifice (The Ambush)",
+  "artist": "Frederic Remington (American, 1861–1909)",
+  "year": "1890",
+  "source": "Art Institute of Chicago"
  }
 ]

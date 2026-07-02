@@ -20,9 +20,9 @@ export const DEFAULT_CONFIG = Object.freeze({
   layout: DEFAULT_LAYOUT,
   // Default stops match the 10001 default location: 34 St-Penn (1/2/3).
   subway: Object.freeze({ stops: Object.freeze(['128N', '128S']), lines: Object.freeze([]) }),
-  lirr: Object.freeze({ branches: Object.freeze([]) }),
+  lirr: Object.freeze({ dest: '' }), // Penn board destination filter ('' = all trains)
   njt: Object.freeze({ station: 'NY' }),
-  mode: 'auto',
+  mode: 'dashboard',
   theme: 'dark',
 });
 
@@ -73,7 +73,7 @@ export function normalizeConfig(raw) {
       stops: strList(raw.subway?.stops, 8),
       lines: strList(raw.subway?.lines, 24),
     },
-    lirr: { branches: strList(raw.lirr?.branches, 12) },
+    lirr: { dest: str(raw.lirr?.dest, '', 4) }, // older branches configs fall back to all trains
     njt: { station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4) },
     mode: MODES.includes(raw.mode) ? raw.mode : DEFAULT_CONFIG.mode,
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,

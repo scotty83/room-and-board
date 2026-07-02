@@ -72,6 +72,21 @@ describe('widget renderers', () => {
   });
 });
 
+describe('art full-screen viewer', () => {
+  it('opens on card tap and closes on viewer tap', () => {
+    const host = el();
+    art.render(host, DEMO_VMS.art, CFG);
+    host.querySelector('.artwork').click();
+    const viewer = document.querySelector('#art-viewer');
+    expect(viewer).not.toBeNull();
+    expect(viewer.hidden).toBe(false);
+    expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe(DEMO_VMS.art.img);
+    expect(viewer.textContent).toContain('Wheat Fields');
+    viewer.click();
+    expect(viewer.hidden).toBe(true);
+  });
+});
+
 describe('sparkPath', () => {
   it('produces a normalized SVG path', () => {
     const d = sparkPath([0, 5, 10], 100, 30);

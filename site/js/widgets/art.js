@@ -9,13 +9,36 @@ export const meta = { id: 'art', title: 'Art', refreshMs: 6 * 60 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
   el.innerHTML = `
-    <figure class="artwork">
+    <figure class="artwork" role="button" tabindex="0" aria-label="View artwork full screen">
       <img class="artwork__img" src="${escapeHtml(vm.img)}" alt="${escapeHtml(vm.title)}" loading="lazy">
       <figcaption class="artwork__caption">
         <span class="artwork__title">${escapeHtml(vm.title)}</span>
         <span class="artwork__artist">${escapeHtml(vm.artist)}${vm.year ? ` (${escapeHtml(vm.year)})` : ''}</span>
       </figcaption>
     </figure>`;
+  el.querySelector('.artwork').addEventListener('click', () => openViewer(vm));
+}
+
+// Full-screen viewer: tap the dashboard art card to open, tap anywhere to
+// close. Stays up indefinitely (mode changes don't touch it).
+export function openViewer(vm) {
+  let viewer = document.querySelector('#art-viewer');
+  if (!viewer) {
+    viewer = document.createElement('div');
+    viewer.id = 'art-viewer';
+    viewer.className = 'art-viewer';
+    viewer.addEventListener('click', () => {
+      viewer.hidden = true;
+    });
+    document.body.appendChild(viewer);
+  }
+  viewer.innerHTML = `
+    <img class="art-viewer__img" src="${escapeHtml(vm.img)}" alt="${escapeHtml(vm.title)}">
+    <div class="slide-caption">
+      <span class="slide-caption__title">${escapeHtml(vm.title)}</span>
+      <span class="slide-caption__meta">${escapeHtml(vm.artist)}${vm.year ? ` · ${escapeHtml(vm.year)}` : ''}</span>
+    </div>`;
+  viewer.hidden = false;
 }
 
 export async function fetchData(cfg, net) {
@@ -59,6 +82,10 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   function show(item) {
     const next = layers[1 - active];
     next.style.backgroundImage = `url("${item.img}")`;
+    // Near-16:9 works fill the screen; anything else letterboxes on black
+    // rather than losing large parts of the canvas to a cover crop.
+    const nearScreen = item.ar && item.ar >= 1.55 && item.ar <= 2.1;
+    next.style.backgroundSize = nearScreen ? 'cover' : 'contain';
     next.setAttribute('data-active', '');
     layers[active].removeAttribute('data-active');
     active = 1 - active;

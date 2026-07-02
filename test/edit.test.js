@@ -48,7 +48,7 @@ describe('openEditMode', () => {
 
   it('rejects resizes below the minimum and applies valid ones', () => {
     const editor = openEditMode(CFG, { root, cellSize: { w: 100, h: 100 } });
-    expect(editor._test.resize('weather', 2, 2)).toBe(false); // min 4x4
+    expect(editor._test.resize('weather', 2, 2)).toBe(false); // min 3x4
     expect(editor._test.resize('weather', 6, 6)).toBe(true);
     expect(editor.layout().find((r) => r.id === 'weather')).toMatchObject({ w: 6, h: 6 });
     // growing over aqi pushes it aside now
@@ -100,7 +100,7 @@ describe('openEditMode', () => {
   it('shows size labels with minimums on every block', () => {
     openEditMode(CFG, { root, cellSize: { w: 100, h: 100 } });
     const label = root.querySelector('.edit-block[data-id="weather"] .edit-block__size');
-    expect(label.textContent).toContain('6×4 · min 4×4');
+    expect(label.textContent).toContain('6×4 · min 3×4');
     expect(label.textContent).toContain('hourly'); // capacity impact line
   });
 });

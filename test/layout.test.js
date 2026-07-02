@@ -32,7 +32,7 @@ describe('DEFAULT_LAYOUT', () => {
 
 describe('clampRect', () => {
   it('grows undersized rects to their minimum', () => {
-    expect(clampRect({ id: 'weather', x: 0, y: 0, w: 1, h: 1 })).toEqual({ id: 'weather', x: 0, y: 0, w: 4, h: 4 });
+    expect(clampRect({ id: 'weather', x: 0, y: 0, w: 1, h: 1 })).toEqual({ id: 'weather', x: 0, y: 0, w: 3, h: 4 });
   });
   it('pulls out-of-bounds rects back inside', () => {
     expect(clampRect({ id: 'aqi', x: 13, y: 17, w: 2, h: 2 })).toEqual({ id: 'aqi', x: 10, y: 6, w: 2, h: 2 });

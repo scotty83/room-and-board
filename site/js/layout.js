@@ -4,28 +4,30 @@
 // 12x8: cells ~135x92 logical px. v2 layouts (6x4) migrate by doubling.
 export const GRID = { cols: 12, rows: 8 };
 
-// Minimums scale the old 6×4 footprints onto the finer grid so a widget can't
-// shrink below a legible size — the extra resolution buys finer positioning
-// and in-between sizes, not sub-legible cards. The list strips (markets,
-// history, quote) get one column narrower than a pure double so they can pack
-// tighter, which is the whole point of the finer grid. Lower any other widget
-// only after the browser overflow audit clears it.
+// Minimums are the smallest size each widget still renders legibly and without
+// overflow, found empirically via the browser resize audit (see README testing
+// notes) — deliberately far below the old 6×4 footprints so many more widgets
+// fit on the board at once. Text-heavy widgets keep a 3-column floor so the
+// primary fact stays readable at 6 ft; simple ones shrink to 2×2. A few need a
+// taller floor: weather stacks a current block + hourly + daily (h≥4), bus and
+// worldclock need h≥3 for their rows to fit. Re-run the audit before lowering
+// any of these further.
 export const MIN_SIZE = {
-  weather: [4, 4],
-  subway: [4, 4],
-  lirr: [4, 4],
-  mnr: [4, 4],
-  bus: [4, 4],
-  njt: [4, 4],
+  weather: [3, 4],
+  subway: [3, 2],
+  lirr: [3, 2],
+  mnr: [3, 2],
+  bus: [3, 3],
+  njt: [3, 2],
   markets: [3, 2],
-  history: [3, 2],
-  quote: [3, 2],
+  history: [2, 2],
+  quote: [2, 2],
   art: [2, 2],
   aqi: [2, 2],
-  worldclock: [2, 4], // five fixed rows never fit a shallow card
-  sports: [4, 4],
-  worldcup: [4, 4],
-  news: [4, 4],
+  worldclock: [2, 3], // five fixed rows need at least three rows of height
+  sports: [3, 2],
+  worldcup: [3, 2],
+  news: [3, 2],
 };
 
 export const DEFAULT_LAYOUT = Object.freeze([

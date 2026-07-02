@@ -407,8 +407,10 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .card--markets.t-s .spark { height: 20px; }
 /* Markets when narrow (≤4 cols): tighten the row so the delta never clips */
 .card--markets.t-narrow .index { gap: 10px; grid-template-columns: 1fr 72px auto; }
-/* History in a shallow card: clamp each event so the rows fit without clipping */
-.card--history.t-s .history__text {
+/* History when shallow or narrow: clamp each event to two lines so the rows
+   stay bounded and never overflow (narrow cards wrap text into tall rows) */
+.card--history.t-s .history__text,
+.card--history.t-narrow .history__text {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 /* Air & Sky in a shallow card: smaller dial, drop the moon row */

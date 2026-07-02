@@ -101,28 +101,29 @@ describe('mapLirr (Penn Station departure board)', () => {
   };
 
   it('shows only trains departing Penn Station', () => {
-    const vm = mapLirr(synthetic, null, { branches: [] }, now, { 171: 'Port Washington', 27: 'Babylon' });
+    const vm = mapLirr(synthetic, null, { dest: '' }, now, { 171: 'Port Washington', 27: 'Babylon' });
     expect(vm.departures.map((d) => d.trainNum)).toEqual(['100', '300']);
     expect(vm.departures[0].dest).toBe('Port Washington');
     expect(vm.departures[0].branch).toBe('Port Washington');
   });
 
-  it('filters to selected branches', () => {
-    const vm = mapLirr(synthetic, null, { branches: ['1'] }, now, {});
-    expect(vm.departures.map((d) => d.trainNum)).toEqual(['300']);
-    expect(mapLirr(synthetic, null, { branches: ['9', '1'] }, now, {}).departures).toHaveLength(2);
+  it('filters to trains stopping at the chosen destination, any branch', () => {
+    const vm = mapLirr(synthetic, null, { dest: '171' }, now, {});
+    expect(vm.departures.map((d) => d.trainNum)).toEqual(['100']);
+    expect(mapLirr(synthetic, null, { dest: '27' }, now, {}).departures.map((d) => d.trainNum)).toEqual(['300']);
+    expect(mapLirr(synthetic, null, { dest: '999' }, now, {}).departures).toHaveLength(0);
   });
 
   it('merges TrainTime track assignments by train number', () => {
     const trackJson = [{ train_num: '100', sched_track: '19', status: { held: false, canceled: false } }];
-    const vm = mapLirr(synthetic, trackJson, { branches: [] }, now, {});
+    const vm = mapLirr(synthetic, trackJson, { dest: '' }, now, {});
     expect(vm.departures.find((d) => d.trainNum === '100').track).toBe('19');
     expect(vm.departures.find((d) => d.trainNum === '300').track).toBeNull();
   });
 
   it('never lists a fixture trip that skips Penn', async () => {
     const decoded = await decodedFixture('lirr.pb');
-    const vm = mapLirr(decoded, null, { branches: [] }, decoded.timestamp, {});
+    const vm = mapLirr(decoded, null, { dest: '' }, decoded.timestamp, {});
     const byNum = new Map(decoded.trips.map((t) => [trainNumFromTripId(t.tripId), t]));
     for (const d of vm.departures) {
       const trip = byNum.get(d.trainNum);

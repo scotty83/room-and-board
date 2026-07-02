@@ -11,11 +11,10 @@ import {
   boroughs,
   linesForBorough,
   stationsForLine,
+  alphaSections,
   toggleIn,
 } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
-import { ROUTE_NAMES } from '../widgets/lirr.js';
-import { FEED_FOR_ROUTE } from '../widgets/subway.js';
 
 const WIDGET_LABELS = {
   weather: 'Weather',
@@ -296,26 +295,33 @@ function drillDirection(station) {
 
 /* ---------- LIRR / NJT ---------- */
 
-function renderLirr() {
-  const branches = state.cfg.lirr.branches;
+let lirrStations = null;
+async function renderLirr() {
+  lirrStations ??= await fetchJSON('data/stations-lirr.json');
+  const byId = Object.fromEntries(lirrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">LIRR — Penn Station departures</h2>
-    <p class="pane__hint">This board always shows trains leaving Penn Station (Grand Central trains are excluded). Pick branches to show — none selected means all branches:</p>
-    <div class="rows">${Object.entries(ROUTE_NAMES).map(([routeId, name]) => {
-      const on = branches.includes(routeId);
-      return `<div class="row">
-        <button class="toggle ${on ? 'is-on' : ''}" data-branch="${routeId}" role="switch" aria-checked="${on}">
-          <span class="toggle__knob"></span>
-        </button>
-        <span class="row__label">${escapeHtml(name)}</span>
-      </div>`;
-    }).join('')}</div>`;
-  pane().querySelectorAll('[data-branch]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      state.cfg.lirr.branches = toggleIn(branches, btn.dataset.branch);
-      renderLirr();
-    }),
-  );
+    <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station — the branch shows per train, so multi-branch destinations just work.</p>
+    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station')}</b>
+      <button class="btn" data-pick-dest>Change</button>
+      ${state.cfg.lirr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    <div class="drill"></div>`;
+  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
+    drillList(
+      'Destination station',
+      alphaSections(lirrStations).flatMap((sec) =>
+        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      ),
+      (pick) => {
+        state.cfg.lirr.dest = pick.value.id;
+        renderLirr();
+      },
+    );
+  });
+  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
+    state.cfg.lirr.dest = '';
+    renderLirr();
+  });
 }
 
 async function renderNjt() {

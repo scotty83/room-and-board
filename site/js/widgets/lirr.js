@@ -64,17 +64,17 @@ export function mapLirr(decoded, trackJson, cfgLirr, nowSec, stationNames = {}) 
       if (num && track) tracks.set(String(num), String(track));
     }
   }
-  const branchFilter = cfgLirr.branches?.length ? new Set(cfgLirr.branches) : null;
-
   const departures = [];
   for (const trip of decoded.trips) {
-    if (branchFilter && !branchFilter.has(trip.routeId)) continue;
     const idx = trip.stops.findIndex((s) => s.stopId === PENN_STOP_ID);
     if (idx === -1) continue; // Grand Central (or non-Penn) run
     const t = trip.stops[idx].departure ?? trip.stops[idx].arrival;
     if (!t || t <= nowSec) continue;
     const onward = trip.stops.slice(idx + 1);
     if (onward.length === 0) continue; // terminating at Penn, not departing
+    // Destination filter: any train that STOPS at the chosen station counts,
+    // whatever branch it runs on — lines stay dynamic per departure row.
+    if (cfgLirr.dest && !onward.some((s) => s.stopId === cfgLirr.dest)) continue;
     const destId = onward[onward.length - 1].stopId;
     const trainNum = trainNumFromTripId(trip.tripId);
     departures.push({

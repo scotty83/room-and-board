@@ -13,10 +13,10 @@ describe('normalizeConfig', () => {
     expect(cfg.v).toBe(2);
     expect(cfg.layout).toEqual(DEFAULT_CONFIG.layout);
     expect(cfg.widgets).toEqual(cfg.layout.map((r) => r.id)); // derived
-    expect(cfg.mode).toBe('auto');
+    expect(cfg.mode).toBe('dashboard');
     expect(cfg.theme).toBe('dark');
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' });
-    expect(cfg.lirr).toEqual({ branches: [] });
+    expect(cfg.lirr).toEqual({ dest: '' });
   });
 
   it('migrates a v1 config: widgets->layout, lirr, Midtown loc', () => {
@@ -33,7 +33,7 @@ describe('normalizeConfig', () => {
     expect(cfg.widgets).toEqual(['weather', 'lirr']); // unknown ids dropped
     const lirr = cfg.layout.find((r) => r.id === 'lirr');
     expect(lirr.w).toBeGreaterThanOrEqual(2);
-    expect(cfg.lirr).toEqual({ branches: [] });
+    expect(cfg.lirr).toEqual({ dest: 'PWS' }); // v1 dest carries into the v2 filter
     expect(cfg.loc.label).toBe('New York 10001'); // old default replaced
     expect(cfg.subway.stops).toEqual(['635N']);
     expect(cfg.mode).toBe('ambient');
@@ -51,11 +51,11 @@ describe('normalizeConfig', () => {
         { id: 'weather', x: 0, y: 0, w: 3, h: 2 },
         { id: 'markets', x: 1, y: 1, w: 2, h: 1 }, // overlaps weather -> re-placed
       ],
-      lirr: { branches: ['9', '1'] },
+      lirr: { dest: '171' },
     });
     expect(cfg.layout).toHaveLength(2);
     expect(cfg.layout[1].y).toBe(0); // moved out of weather's rect
-    expect(cfg.lirr.branches).toEqual(['9', '1']);
+    expect(cfg.lirr.dest).toBe('171');
   });
 
   it('throws on non-objects and unknown future versions', () => {
@@ -68,7 +68,7 @@ describe('normalizeConfig', () => {
   it('clamps name length and invalid mode/theme', () => {
     const cfg = normalizeConfig({ name: 'x'.repeat(99), mode: 'weird', theme: 'neon' });
     expect(cfg.name.length).toBeLessThanOrEqual(24);
-    expect(cfg.mode).toBe('auto');
+    expect(cfg.mode).toBe('dashboard');
     expect(cfg.theme).toBe('dark');
   });
 });
@@ -88,7 +88,7 @@ describe('encode/decode round trip', () => {
         { id: 'markets', x: 3, y: 2, w: 3, h: 2 },
       ],
       subway: { stops: ['635N', '635S'], lines: ['4', '5', '6'] },
-      lirr: { branches: ['9'] },
+      lirr: { dest: '171' },
       njt: { station: 'NY' },
       mode: 'auto',
       theme: 'dark',
@@ -106,7 +106,7 @@ describe('encode/decode round trip', () => {
       name: 'Maximiliano Longname',
       t: 2000000000,
       subway: { stops: ['635N', '635S', 'R20N', 'R20S', 'A32N', 'A32S'], lines: ['4', '5', '6', 'N', 'Q', 'R'] },
-      lirr: { branches: ['9', '1', '2'] },
+      lirr: { dest: '171' },
       njt: { station: 'NY' },
     });
     const enc = await encodeConfig(cfg);

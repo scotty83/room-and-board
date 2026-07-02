@@ -51,6 +51,10 @@ function cardFor(mod, rect) {
   if (rect) {
     card.style.gridColumn = `${rect.x + 1} / span ${rect.w}`;
     card.style.gridRow = `${rect.y + 1} / span ${rect.h}`;
+    // Size hooks for per-size compact styling (container queries need a newer
+    // Chromium than gen1 boards have).
+    card.dataset.w = rect.w;
+    card.dataset.h = rect.h;
   }
   return card;
 }

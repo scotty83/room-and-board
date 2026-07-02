@@ -3,7 +3,6 @@
 
 import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, DEFAULT_CONFIG } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
-import { ROUTE_NAMES } from '../widgets/lirr.js';
 import { WORKER_URL } from '../env.js';
 import { boroughs, linesForBorough, stationsForLine, toggleIn } from './pickers.js';
 
@@ -51,7 +50,7 @@ async function boot() {
   $('#name').value = cfg.name;
   renderWidgets();
   renderLocation();
-  renderLirrBranches();
+  await renderLirrDest();
   renderSubwayLines();
   await Promise.all([renderSubway(), renderNjt()]);
   $('#mode').value = cfg.mode;
@@ -80,17 +79,13 @@ function renderWidgets() {
   });
 }
 
-function renderLirrBranches() {
-  $('#lirr-branches').innerHTML = Object.entries(ROUTE_NAMES)
-    .map(
-      ([routeId, name]) =>
-        `<label><input type="checkbox" data-b="${routeId}" ${cfg.lirr.branches.includes(routeId) ? 'checked' : ''}> ${name}</label>`,
-    )
-    .join('');
-  $('#lirr-branches').addEventListener('change', (e) => {
-    const b = e.target.dataset.b;
-    if (b) cfg.lirr.branches = toggleIn(cfg.lirr.branches, b);
-  });
+async function renderLirrDest() {
+  const stations = await (await fetch('data/stations-lirr.json')).json();
+  $('#lirr-dest').innerHTML =
+    `<option value="">Any station</option>` +
+    stations.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
+  $('#lirr-dest').value = cfg.lirr.dest;
+  $('#lirr-dest').addEventListener('change', (e) => (cfg.lirr.dest = e.target.value));
 }
 
 function renderSubwayLines() {

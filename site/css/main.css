@@ -377,3 +377,48 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
 }
+
+/* ---------- full-screen art viewer (tap art card to open, tap to close) ---------- */
+.art-viewer {
+  position: absolute; inset: 0; z-index: 45;
+  background: #000; cursor: pointer;
+}
+.art-viewer__img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---------- per-size compact variants (gen1 Chromium lacks container queries;
+   cards carry data-w/data-h set from the layout) ---------- */
+/* Weather at 2-wide: 6 hourly slots instead of 8 */
+.card[data-w="2"] .wx-hour:nth-child(n+7) { display: none; }
+/* History at 1-high: two events */
+.card--history[data-h="1"] .history__item:nth-child(n+3) { display: none; }
+/* Quote at 1-high: clamp long quotes */
+.card--quote[data-h="1"] .quote__text {
+  font-size: 22px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* Markets at 1-high: tighter rows */
+.card--markets[data-h="1"] .index__price { font-size: 22px; }
+.card--markets[data-h="1"] .index__name { font-size: 18px; }
+.card--markets[data-h="1"] .delta { font-size: 16px; }
+.card--markets[data-h="1"] .spark { height: 20px; }
+/* Air & Sky at 1-high: smaller dial, drop the moon row */
+.card--aqi[data-h="1"] .sky__aqi-value { font-size: 36px; }
+.card--aqi[data-h="1"] .sky__row { font-size: 18px; }
+.card--aqi[data-h="1"] .sky__row:nth-of-type(3) { display: none; }
+/* Art at 1x1: caption reduces to the title */
+.card--art[data-h="1"][data-w="1"] .artwork__artist { display: none; }
+/* Transit rows tighten when narrow */
+.card[data-w="2"] .train__track { padding: 4px 8px; font-size: 17px; }
+
+/* Measured-fit variants (from the overflow audit — see README testing notes) */
+/* Weather at 2-high: compact current block, 6 hourly slots, 3 daily rows */
+.card--weather[data-h="2"] .card__body { gap: 8px; }
+.card--weather[data-h="2"] .wx-now__temp { font-size: 64px; }
+.card--weather[data-h="2"] .wx-now__icon { width: 64px; height: 64px; }
+.card--weather[data-h="2"] .alert { padding: 5px 12px; font-size: 18px; }
+.card--weather[data-h="2"] .wx-hour:nth-child(n+7) { display: none; }
+.card--weather[data-h="2"] .wx-hours { margin-top: 2px; }
+.card--weather[data-h="2"] .wx-days { margin-top: 2px; }
+.card--weather[data-h="2"] .wx-day:nth-child(n+3) { display: none; }
+/* Subway at 2-high: three arrivals per stop */
+.card--subway[data-h="2"] .arrival:nth-child(n+4) { display: none; }

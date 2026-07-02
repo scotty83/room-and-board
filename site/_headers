@@ -1,0 +1,7 @@
+# Always revalidate app assets (etag 304s keep this cheap). The zone's
+# Browser Cache TTL must be "Respect Existing Headers" for these to stick.
+/*
+  Cache-Control: no-cache
+
+/version.json
+  Cache-Control: no-store

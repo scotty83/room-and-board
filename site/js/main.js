@@ -15,6 +15,8 @@ import * as clock from './widgets/clock.js';
 import * as weather from './widgets/weather.js';
 import * as subway from './widgets/subway.js';
 import * as lirr from './widgets/lirr.js';
+import * as mnr from './widgets/mnr.js';
+import * as bus from './widgets/bus.js';
 import * as njt from './widgets/njt.js';
 import * as art from './widgets/art.js';
 import * as history from './widgets/history.js';
@@ -23,7 +25,7 @@ import * as quote from './widgets/quote.js';
 import * as markets from './widgets/markets.js';
 import * as worldclock from './widgets/worldclock.js';
 
-const MODULES = [weather, subway, lirr, njt, art, history, aqi, quote, markets, worldclock];
+const MODULES = [weather, subway, lirr, mnr, njt, bus, art, history, aqi, quote, markets, worldclock];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer };
@@ -111,10 +113,10 @@ function startWidget(mod, rect) {
 
 function renderStrip() {
   const caches = {};
-  for (const id of ['weather', 'lirr', 'njt']) caches[id] = loadCache(id)?.data;
+  for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
   const data = DEMO
     ? stripData(
-        { weather: DEMO_VMS.weather, lirr: DEMO_VMS.lirr, njt: DEMO_VMS.njt },
+        { weather: DEMO_VMS.weather, lirr: DEMO_VMS.lirr, mnr: DEMO_VMS.mnr, njt: DEMO_VMS.njt },
         cfg,
       )
     : stripData(caches, cfg);

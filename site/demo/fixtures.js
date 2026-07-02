@@ -43,6 +43,14 @@ export const DEMO_VMS = {
       { min: 34, dest: 'Port Washington', branch: 'Port Washington', track: null, trainNum: '718' },
     ],
   },
+  mnr: {
+    alerts: [],
+    departures: [
+      { min: 6, dest: 'Southeast', branch: 'Harlem', track: null },
+      { min: 14, dest: 'Poughkeepsie', branch: 'Hudson', track: null },
+      { min: 22, dest: 'New Haven-State St', branch: 'New Haven', track: null },
+    ],
+  },
   njt: {
     updatedAt: 0,
     stale: false,
@@ -51,6 +59,20 @@ export const DEMO_VMS = {
       { min: 12, dest: 'Trenton', line: 'Northeast Corridor', track: '3', status: 'BOARDING' },
       { min: 26, dest: 'Dover', line: 'Morris & Essex', track: null, status: '' },
       { min: 41, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
+    ],
+  },
+  bus: {
+    configured: true,
+    stops: [
+      {
+        id: '550685',
+        name: 'W 34 St / 7 Av',
+        arrivals: [
+          { route: 'M34-SBS', dest: 'Javits Center', min: 3, distance: '' },
+          { route: 'M34-SBS', dest: 'Javits Center', min: 11, distance: '' },
+          { route: 'M4', dest: 'The Cloisters', min: null, distance: 'approaching' },
+        ],
+      },
     ],
   },
   art: {

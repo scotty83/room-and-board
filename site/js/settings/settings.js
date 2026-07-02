@@ -14,7 +14,9 @@ const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
   lirr: 'LIRR (Penn Station)',
+  mnr: 'Metro-North (Grand Central)',
   njt: 'NJ Transit',
+  bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
@@ -92,7 +94,9 @@ const SECTIONS = [
   ['widgets', 'Widgets'],
   ['subway', 'Subway'],
   ['lirr', 'LIRR'],
+  ['mnr', 'Metro-North'],
   ['njt', 'NJ Transit'],
+  ['bus', 'MTA Bus'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
@@ -125,7 +129,9 @@ function renderSection() {
     widgets: renderWidgets,
     subway: renderSubway,
     lirr: renderLirr,
+    mnr: renderMnr,
     njt: renderNjt,
+    bus: renderBus,
     art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
@@ -301,6 +307,37 @@ async function renderLirr() {
   });
 }
 
+let mnrStations = null;
+async function renderMnr() {
+  mnrStations ??= await fetchJSON('data/stations-mnr.json');
+  const byId = Object.fromEntries(mnrStations.map((s) => [s.id, s]));
+  pane().innerHTML = `
+    <h2 class="pane__title">Metro-North — Grand Central departures</h2>
+    <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station — the line shows per train.</p>
+    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station')}</b>
+      <button class="btn" data-pick-dest>Change</button>
+      ${state.cfg.mnr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${alertsToggleHtml('mnr')}
+    <div class="drill"></div>`;
+  bindAlertsToggle(renderMnr);
+  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
+    drillList(
+      'Destination station',
+      alphaSections(mnrStations).flatMap((sec) =>
+        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      ),
+      (pick) => {
+        state.cfg.mnr.dest = pick.value.id;
+        renderMnr();
+      },
+    );
+  });
+  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
+    state.cfg.mnr.dest = '';
+    renderMnr();
+  });
+}
+
 async function renderNjt() {
   pane().innerHTML = `
     <h2 class="pane__title">NJ Transit</h2>
@@ -322,6 +359,42 @@ async function renderNjt() {
     pane().querySelector('.drill').innerHTML =
       '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
   }
+}
+
+function renderBus() {
+  const chips = state.cfg.bus.stops
+    .map((code) => `<button class="chip" data-remove-stop="${code}">Stop ${code} ✕</button>`)
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">MTA Bus</h2>
+    <p class="pane__hint">Enter up to two 6-digit stop codes (printed on the bus stop sign):</p>
+    <div class="chips">${chips || '<span class="pane__empty">No stops yet</span>'}</div>
+    <output class="zip__display" aria-live="polite"></output>
+    <div class="keypad keypad--zip">${[1, 2, 3, 4, 5, 6, 7, 8, 9, '⌫', 0, 'Add'].map(
+      (k) => `<button class="key" data-key="${k}">${k}</button>`,
+    ).join('')}</div>`;
+  pane().querySelectorAll('[data-remove-stop]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.bus.stops = state.cfg.bus.stops.filter((c) => c !== chip.dataset.removeStop);
+      renderBus();
+    }),
+  );
+  let code = '';
+  const display = pane().querySelector('.zip__display');
+  pane().querySelectorAll('[data-key]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.key;
+      if (k === '⌫') code = code.slice(0, -1);
+      else if (k === 'Add') {
+        if (/^\d{4,7}$/.test(code) && state.cfg.bus.stops.length < 2 && !state.cfg.bus.stops.includes(code)) {
+          state.cfg.bus.stops = [...state.cfg.bus.stops, code];
+          renderBus();
+          return;
+        }
+      } else if (code.length < 7) code += k;
+      display.textContent = code;
+    }),
+  );
 }
 
 /* ---------- weather / display ---------- */

@@ -12,7 +12,9 @@ const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
   lirr: 'LIRR (Penn Station)',
+  mnr: 'Metro-North (GCT)',
   njt: 'NJ Transit',
+  bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
@@ -50,11 +52,14 @@ async function boot() {
   renderWidgets();
   renderLocation();
   await renderLirrDest();
+  await renderRailDest('mnr-dest', 'data/stations-mnr.json', 'mnr');
+  bindAlertCheck('mnr-alerts', 'mnr');
   renderSubwayLines();
   renderArtPrefs();
   bindAlertCheck('lirr-alerts', 'lirr');
   bindAlertCheck('njt-alerts', 'njt');
   await renderNjt();
+  renderBusStops();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -81,13 +86,17 @@ function renderWidgets() {
   });
 }
 
-async function renderLirrDest() {
-  const stations = await (await fetch('data/stations-lirr.json')).json();
-  $('#lirr-dest').innerHTML =
+async function renderRailDest(selectId, dataUrl, group) {
+  const stations = await (await fetch(dataUrl)).json();
+  $('#' + selectId).innerHTML =
     `<option value="">Any station</option>` +
     stations.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
-  $('#lirr-dest').value = cfg.lirr.dest;
-  $('#lirr-dest').addEventListener('change', (e) => (cfg.lirr.dest = e.target.value));
+  $('#' + selectId).value = cfg[group].dest;
+  $('#' + selectId).addEventListener('change', (e) => (cfg[group].dest = e.target.value));
+}
+
+async function renderLirrDest() {
+  return renderRailDest('lirr-dest', 'data/stations-lirr.json', 'lirr');
 }
 
 function bindAlertCheck(id, group) {
@@ -141,6 +150,30 @@ function renderLocation() {
       $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
     } else {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
+    }
+  });
+}
+
+function renderBusStops() {
+  const chips = $('#bus-chips');
+  const renderChips = () => {
+    chips.innerHTML = cfg.bus.stops
+      .map((c) => `<button type="button" data-stop="${c}">Stop ${c} ✕</button>`)
+      .join('');
+    chips.querySelectorAll('[data-stop]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cfg.bus.stops = cfg.bus.stops.filter((s) => s !== b.dataset.stop);
+        renderChips();
+      }),
+    );
+  };
+  renderChips();
+  $('#bus-add').addEventListener('click', () => {
+    const code = $('#bus-code').value.trim();
+    if (/^\d{4,7}$/.test(code) && cfg.bus.stops.length < 2 && !cfg.bus.stops.includes(code)) {
+      cfg.bus.stops = [...cfg.bus.stops, code];
+      $('#bus-code').value = '';
+      renderChips();
     }
   });
 }

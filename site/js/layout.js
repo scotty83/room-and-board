@@ -7,6 +7,8 @@ export const MIN_SIZE = {
   weather: [2, 2],
   subway: [2, 2],
   lirr: [2, 2],
+  mnr: [2, 2],
+  bus: [2, 2],
   njt: [2, 2],
   markets: [2, 1],
   history: [2, 1],

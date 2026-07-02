@@ -38,7 +38,7 @@ export function render(el, vm) {
       (row) => `<div class="wc-row">
         <span class="wc-row__city">${escapeHtml(row.city)}</span>
         <span class="wc-row__time">${escapeHtml(row.time)}${
-          row.dayDiff ? `<sup class="wc-row__day">${row.dayDiff > 0 ? '+1d' : '−1d'}</sup>` : ''
+          row.dayDiff ? `<span class="wc-row__day">${row.dayDiff > 0 ? '+1d' : '−1d'}</span>` : ''
         }</span>
       </div>`,
     )

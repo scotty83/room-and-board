@@ -225,6 +225,18 @@ describe('/bus/stops', () => {
   });
 });
 
+describe('/news', () => {
+  it('proxies whitelisted feeds and 404s unknown ids', async () => {
+    await env.CODES.delete('news:npr:last');
+    await env.CODES.delete('news:npr:cachedAt');
+    stubFetch([{ match: /feeds\.npr\.org/, body: '<rss><channel><item><title>Hi</title></item></channel></rss>' }]);
+    const res = await call('/news/npr');
+    expect(res.status).toBe(200);
+    expect((await res.json()).xml).toContain('<title>Hi</title>');
+    expect((await call('/news/evil-feed')).status).toBe(404);
+  });
+});
+
 describe('/markets', () => {
   const yahoo = (price, prev) => ({
     chart: {

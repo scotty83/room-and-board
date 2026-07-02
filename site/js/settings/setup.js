@@ -21,6 +21,9 @@ const WIDGET_LABELS = {
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
   worldclock: 'World Clock',
+  sports: 'My Teams (sports)',
+  worldcup: 'World Cup 2026',
+  news: 'Headlines',
 };
 const PRESETS = [
   ['Midtown Manhattan', 40.754, -73.984],
@@ -61,6 +64,8 @@ async function boot() {
   await renderNjt();
   renderBusStops();
   renderTickers();
+  await renderTeams();
+  await renderNewsSources();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -178,6 +183,57 @@ function renderTickers() {
       $('#sym-code').value = '';
       renderChips();
     }
+  });
+}
+
+async function renderTeams() {
+  const data = await (await fetch('data/teams.json')).json();
+  const leagueSel = $('#team-league');
+  const teamSel = $('#team-select');
+  leagueSel.innerHTML = data.leagues.map((l, i) => `<option value="${i}">${l.label}</option>`).join('');
+  const syncTeams = () => {
+    const l = data.leagues[Number(leagueSel.value)];
+    teamSel.innerHTML = l.teams.map((t) => `<option value="${t.id}">${t.name}</option>`).join('');
+  };
+  leagueSel.addEventListener('change', syncTeams);
+  syncTeams();
+  const chips = $('#team-chips');
+  const byKey = {};
+  for (const l of data.leagues) for (const t of l.teams) byKey[`${l.lg}:${t.id}`] = { ...t, label: l.label };
+  const renderChips = () => {
+    chips.innerHTML = cfg.sports.teams
+      .map((sel) => {
+        const t = byKey[`${sel.lg}:${sel.id}`];
+        return `<button type="button" data-team="${sel.lg}:${sel.id}">${t ? t.name : sel.id} ✕</button>`;
+      })
+      .join('');
+    chips.querySelectorAll('[data-team]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const [lg, id] = b.dataset.team.split(':');
+        cfg.sports.teams = cfg.sports.teams.filter((t) => !(t.lg === lg && t.id === id));
+        renderChips();
+      }),
+    );
+  };
+  renderChips();
+  $('#team-add').addEventListener('click', () => {
+    const lg = data.leagues[Number(leagueSel.value)].lg;
+    const id = teamSel.value;
+    if (!cfg.sports.teams.some((t) => t.lg === lg && t.id === id) && cfg.sports.teams.length < 6) {
+      cfg.sports.teams = [...cfg.sports.teams, { lg, id }];
+      renderChips();
+    }
+  });
+}
+
+async function renderNewsSources() {
+  const { NEWS_SOURCES } = await import('../widgets/news.js');
+  $('#news-sources').innerHTML = NEWS_SOURCES.map(
+    ([id, label, , , scope]) => `<label><input type="checkbox" data-n="${id}" ${cfg.news.sources.includes(id) ? 'checked' : ''}> ${label} <small>(${scope})</small></label>`,
+  ).join('');
+  $('#news-sources').addEventListener('change', (e) => {
+    const id = e.target.dataset.n;
+    if (id) cfg.news.sources = toggleIn(cfg.news.sources, id);
   });
 }
 

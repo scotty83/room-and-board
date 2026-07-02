@@ -15,7 +15,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'bus', 'art', 'history', 'aqi', 'quote', 'markets', 'worldclock',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'bus', 'art', 'history', 'aqi', 'quote', 'markets', 'worldclock', 'sports', 'worldcup', 'news',
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
@@ -30,6 +30,8 @@ export const DEFAULT_CONFIG = Object.freeze({
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
   bus: Object.freeze({ stops: Object.freeze([]) }), // 6-digit bus stop codes, up to 2
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
+  sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
+  news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   njt: Object.freeze({ station: 'NY', alerts: true }),
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   mode: 'dashboard',
@@ -94,6 +96,18 @@ export function normalizeConfig(raw) {
       alerts: raw.mnr?.alerts !== false,
     },
     bus: { stops: strList(raw.bus?.stops, 2).filter((c) => /^\d{4,7}$/.test(c)) },
+    sports: {
+      teams: (Array.isArray(raw.sports?.teams) ? raw.sports.teams : [])
+        .filter((t) => typeof t?.lg === 'string' && typeof t?.id === 'string')
+        .map((t) => ({ lg: t.lg, id: t.id.toLowerCase().slice(0, 8) }))
+        .slice(0, 6),
+    },
+    news: {
+      sources: (() => {
+        const list = strList(raw.news?.sources, 7);
+        return list.length ? list : [...DEFAULT_CONFIG.news.sources];
+      })(),
+    },
     markets: {
       // An empty list falls back to the defaults (a markets card with zero
       // tickers is never useful — remove the widget instead).

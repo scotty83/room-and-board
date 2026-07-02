@@ -122,16 +122,23 @@ describe('encode/decode round trip', () => {
   });
 
   it('stays small enough for URL fragments and setup flows', async () => {
+    // A maximal config must leave ample headroom inside the 2048-char
+    // signage URL (which also carries ~100 chars of bridge auth).
     const cfg = normalizeConfig({
       v: 2,
       name: 'Maximiliano Longname',
       t: 2000000000,
-      subway: { lines: ['4', '5', '6', 'N', 'Q', 'R'] },
+      subway: { lines: ['4', '5', '6', 'N', 'Q', 'R', 'A', 'C', 'E', 'L'] },
       lirr: { dest: '171' },
+      mnr: { dest: '105' },
       njt: { station: 'NY' },
+      bus: { stops: ['550685', '401234'] },
+      sports: { teams: [{ lg: 'mlb', id: 'nym' }, { lg: 'nfl', id: 'nyj' }, { lg: 'nba', id: 'nyk' }, { lg: 'nhl', id: 'nyr' }, { lg: 'mls', id: 'nyc' }, { lg: 'epl', id: 'ars' }] },
+      markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOG', 'META'] },
+      news: { sources: ['nyt-home', 'nyt-us', 'nyt-business', 'npr', 'bbc', 'nyt-nyregion', 'gothamist'] },
     });
     const enc = await encodeConfig(cfg);
-    expect(enc.length).toBeLessThan(500);
+    expect(enc.length).toBeLessThan(900);
   });
 
   it('throws on corrupt input', async () => {

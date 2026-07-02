@@ -22,6 +22,9 @@ const TITLES = {
   aqi: 'Air & Sky',
   quote: 'Quote',
   worldclock: 'World Clock',
+  sports: 'My Teams',
+  worldcup: 'World Cup',
+  news: 'Headlines',
 };
 
 export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {

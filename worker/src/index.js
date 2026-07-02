@@ -6,6 +6,7 @@ import { mapYahooChart } from './markets.js';
 import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
 import { fetchBusStops } from './bus.js';
+import { fetchNewsFeed, newsFeedUrl } from './news.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -141,6 +142,12 @@ export default {
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);
     if (alertsMatch && request.method === 'GET') {
       return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
+    }
+
+    const newsMatch = /^\/news\/([a-z0-9-]{1,24})$/.exec(path);
+    if (newsMatch && request.method === 'GET') {
+      if (!newsFeedUrl(newsMatch[1])) return json({ error: 'unknown_feed' }, 404);
+      return cached(env, `news:${newsMatch[1]}`, 600, () => fetchNewsFeed(newsMatch[1]));
     }
 
     if (path === '/bus/stops' && request.method === 'GET') {

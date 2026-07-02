@@ -19,6 +19,13 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* The hidden attribute must always win, even over rules that set display. */
+[hidden] { display: none !important; }
+
+/* RoomOS overlays a small system bar along the bottom edge in interactive
+   signage mode; keep all content and controls above it (tunable). */
+:root { --safe-bottom: 84px; }
+
 html, body {
   width: 1920px;
   height: 1080px;
@@ -29,7 +36,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-#app { position: relative; width: 100%; height: 100%; padding: 32px 40px; display: flex; flex-direction: column; }
+#app { position: relative; width: 100%; height: 100%; padding: 32px 40px; padding-bottom: var(--safe-bottom); display: flex; flex-direction: column; }
 
 /* ---------- top bar ---------- */
 .topbar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 24px; }
@@ -177,7 +184,7 @@ html, body {
 }
 .slide[data-active] { opacity: 1; }
 .slide-caption {
-  position: absolute; left: 48px; bottom: 96px;
+  position: absolute; left: 48px; bottom: calc(48px + var(--safe-bottom));
   display: flex; flex-direction: column; gap: 4px;
   background: rgba(0, 0, 0, 0.55);
   padding: 14px 22px; border-radius: 12px;
@@ -185,7 +192,7 @@ html, body {
 .slide-caption__title { font-size: 24px; font-weight: 600; }
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .strip {
-  position: absolute; left: 0; right: 0; bottom: 0;
+  position: absolute; left: 0; right: 0; bottom: var(--safe-bottom);
   display: flex; align-items: center; gap: 36px;
   padding: 18px 48px;
   background: rgba(0, 0, 0, 0.65);
@@ -198,8 +205,11 @@ html, body {
 body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- welcome ---------- */
-.welcome { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.welcome__inner { max-width: 720px; text-align: center; display: flex; flex-direction: column; gap: 22px; }
+.welcome { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--bg); }
+.welcome__inner {
+  max-width: 760px; text-align: center; display: flex; flex-direction: column; gap: 22px;
+  background: var(--bg-card); border-radius: var(--radius); padding: 48px 56px;
+}
 .welcome__inner h1 { font-size: 48px; }
 .welcome__inner p { font-size: 24px; color: var(--ink-dim); }
 .welcome__actions { display: flex; gap: 18px; justify-content: center; }
@@ -214,7 +224,7 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  position: absolute; right: 28px; bottom: 24px;
+  position: absolute; right: 28px; bottom: calc(24px + var(--safe-bottom));
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);
@@ -319,7 +329,7 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- edit mode ---------- */
 .gear--edit { right: 96px; }
-.editor { position: absolute; inset: 0; z-index: 50; background: var(--bg); display: flex; flex-direction: column; padding: 32px 40px; }
+.editor { position: absolute; inset: 0; z-index: 50; background: var(--bg); display: flex; flex-direction: column; padding: 32px 40px; padding-bottom: var(--safe-bottom); }
 .editor__stage { position: relative; flex: 1; min-height: 0; }
 .editor__cells, .editor__blocks {
   position: absolute; inset: 0;

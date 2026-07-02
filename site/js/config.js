@@ -18,7 +18,8 @@ export const DEFAULT_CONFIG = Object.freeze({
   name: '',
   loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
   layout: DEFAULT_LAYOUT,
-  subway: Object.freeze({ stops: Object.freeze([]), lines: Object.freeze([]) }),
+  // Default stops match the 10001 default location: 34 St-Penn (1/2/3).
+  subway: Object.freeze({ stops: Object.freeze(['128N', '128S']), lines: Object.freeze([]) }),
   lirr: Object.freeze({ branches: Object.freeze([]) }),
   njt: Object.freeze({ station: 'NY' }),
   mode: 'auto',

@@ -83,12 +83,12 @@ async function fromMet(perDept = 20) {
   const items = [];
   // Landscape/still-life queries bias the pool toward peopleless works.
   const departments = [
-    [11, 'landscape'], // European Paintings
-    [11, 'still life'],
-    [1, 'landscape'], // American Wing
-    [6, 'landscape'], // Asian Art
+    [11, 'landscape', 'european'], // European Paintings
+    [11, 'still life', 'european'],
+    [1, 'landscape', 'american'], // American Wing
+    [6, 'landscape', 'asian'], // Asian Art
   ];
-  for (const [dept, q] of departments) {
+  for (const [dept, q, cat] of departments) {
     const search = await getJSON(
       `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&isPublicDomain=true&isHighlight=true&departmentId=${dept}&q=${q}`,
     );
@@ -110,6 +110,7 @@ async function fromMet(perDept = 20) {
           title: obj.title,
           artist: obj.artistDisplayName || 'Unknown',
           year: obj.objectDate || '',
+          cat,
           source: 'The Met',
           dept: `${dept}:${q}`,
         });
@@ -120,6 +121,14 @@ async function fromMet(perDept = 20) {
     }
   }
   return items.map(({ dept, ...rest }) => rest);
+}
+
+// Category from AIC's artist_display ("George Inness (American, 1825-94)").
+function aicCategory(artistDisplay) {
+  if (/japanese|chinese|korean/i.test(artistDisplay) || /[\u3000-\u9fff\u30a0-\u30ff]/.test(artistDisplay)) return 'asian';
+  if (/american/i.test(artistDisplay)) return 'american';
+  if (/french|english|british|dutch|german|italian|spanish|flemish|belgian|swiss|danish|norwegian|swedish/i.test(artistDisplay)) return 'european';
+  return 'american';
 }
 
 // Art Institute of Chicago: public-domain works with IIIF images.
@@ -139,6 +148,7 @@ async function fromAic(count = 40) {
         : null;
       if (!ar || ar < MIN_ASPECT || ar > MAX_ASPECT) continue;
       items.push({
+        cat: aicCategory(a.artist_display ?? ''),
         // 1686 is the widest size AIC's public IIIF serves.
         img: `https://www.artic.edu/iiif/2/${a.image_id}/full/1686,/0/default.jpg`,
         ar: Math.round(ar * 100) / 100,

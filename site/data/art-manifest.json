@@ -5,6 +5,7 @@
   "title": "The Afternoon Meal (La Merienda)",
   "artist": "Luis Meléndez",
   "year": "ca. 1772",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -13,6 +14,7 @@
   "title": "Jalais Hill, Pontoise",
   "artist": "Camille Pissarro",
   "year": "1867",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -21,6 +23,7 @@
   "title": "Wheat Field with Cypresses",
   "artist": "Vincent van Gogh",
   "year": "1889",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -29,6 +32,7 @@
   "title": "Wheat Fields",
   "artist": "Jacob van Ruisdael",
   "year": "ca. 1670",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -37,6 +41,7 @@
   "title": "Haystacks: Autumn",
   "artist": "Jean-François Millet",
   "year": "ca. 1874",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -45,6 +50,7 @@
   "title": "The Forest in Winter at Sunset",
   "artist": "Théodore Rousseau",
   "year": "ca. 1846–67",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -53,6 +59,7 @@
   "title": "Still Life with Apples and a Pot of Primroses",
   "artist": "Paul Cézanne",
   "year": "ca. 1890",
+  "cat": "european",
   "source": "The Met"
  },
  {
@@ -61,6 +68,7 @@
   "title": "The Rocky Mountains, Lander's Peak",
   "artist": "Albert Bierstadt",
   "year": "1863",
+  "cat": "american",
   "source": "The Met"
  },
  {
@@ -69,6 +77,7 @@
   "title": "Lake George",
   "artist": "John Frederick Kensett",
   "year": "1869",
+  "cat": "american",
   "source": "The Met"
  },
  {
@@ -77,6 +86,7 @@
   "title": "Heart of the Andes",
   "artist": "Frederic Edwin Church",
   "year": "1859",
+  "cat": "american",
   "source": "The Met"
  },
  {
@@ -85,14 +95,16 @@
   "title": "Approaching Thunder Storm",
   "artist": "Martin Johnson Heade",
   "year": "1859",
+  "cat": "american",
   "source": "The Met"
  },
  {
   "img": "https://images.metmuseum.org/CRDImages/as/original/1981_4_1a.jpg",
-  "ar": 1.48,
+  "ar": 1.42,
   "title": "Landscapes with poems",
   "artist": "Gong Xian",
   "year": "1688",
+  "cat": "asian",
   "source": "The Met"
  },
  {
@@ -101,6 +113,7 @@
   "title": "Gibbons in a Landscape",
   "artist": "Sesson Shūkei 雪村周継",
   "year": "ca. 1570",
+  "cat": "asian",
   "source": "The Met"
  },
  {
@@ -109,6 +122,16 @@
   "title": "Old Trees, Level Distance",
   "artist": "Guo Xi",
   "year": "ca. 1080",
+  "cat": "asian",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/as/original/DP226465.jpg",
+  "ar": 2.54,
+  "title": "Summer Mountains",
+  "artist": "Qu Ding",
+  "year": "ca. 1050",
+  "cat": "asian",
   "source": "The Met"
  },
  {
@@ -117,9 +140,20 @@
   "title": "Small Dish (Kozara) with Three Jars",
   "artist": "Unknown",
   "year": "1680–90s",
+  "cat": "asian",
   "source": "The Met"
  },
  {
+  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DT231.jpg",
+  "ar": 2.15,
+  "title": "Irises at Yatsuhashi (Eight Bridges)",
+  "artist": "Ogata Kōrin",
+  "year": "after 1709",
+  "cat": "asian",
+  "source": "The Met"
+ },
+ {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/1e452e34-3a2b-0dca-35c3-c7236c612985/full/1686,/0/default.jpg",
   "ar": 1.41,
   "title": "Village Among the Trees",
@@ -128,6 +162,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/3a34f988-f779-2e96-1786-8945b6b9c87d/full/1686,/0/default.jpg",
   "ar": 1.26,
   "title": "Landscape",
@@ -136,6 +171,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/18092196-50ae-3ff1-9205-1b3110e966c3/full/1686,/0/default.jpg",
   "ar": 1.29,
   "title": "Distant View of Niagara Falls",
@@ -144,6 +180,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/3d2d0842-312e-8d48-708b-d6adde0777bf/full/1686,/0/default.jpg",
   "ar": 1.54,
   "title": "A Marine",
@@ -152,6 +189,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/a9546ba5-6191-4e04-e209-d22a10e7d0d7/full/1686,/0/default.jpg",
   "ar": 1.32,
   "title": "After a Summer Shower",
@@ -160,6 +198,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "asian",
   "img": "https://www.artic.edu/iiif/2/bbb6d024-f931-2e2f-eb95-750991834b1c/full/1686,/0/default.jpg",
   "ar": 1.44,
   "title": "Shower Below the Summit (Sanka hakuu), from the series \"Thirty-Six Views of Mount Fuji (Fugaku sanjurokkei)\"",
@@ -168,6 +207,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/842d212c-c755-f372-d73f-7d0581051c46/full/1686,/0/default.jpg",
   "ar": 1.51,
   "title": "Catskill Mountains",
@@ -176,14 +216,7 @@
   "source": "Art Institute of Chicago"
  },
  {
-  "img": "https://www.artic.edu/iiif/2/ebae7cd9-6813-d733-2e1c-1cf481266f91/full/1686,/0/default.jpg",
-  "ar": 1.3,
-  "title": "Old Sarum",
-  "artist": "David Lucas (English, 1802-1881)",
-  "year": "1832",
-  "source": "Art Institute of Chicago"
- },
- {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/3527f037-a9b2-9253-1a92-dcd281b54340/full/1686,/0/default.jpg",
   "ar": 1.26,
   "title": "Landscape",
@@ -192,6 +225,16 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
+  "img": "https://www.artic.edu/iiif/2/ebae7cd9-6813-d733-2e1c-1cf481266f91/full/1686,/0/default.jpg",
+  "ar": 1.3,
+  "title": "Old Sarum",
+  "artist": "David Lucas (English, 1802-1881)",
+  "year": "1832",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/6e0b42d7-da32-bdca-7853-516ccd96d57c/full/1686,/0/default.jpg",
   "ar": 1.53,
   "title": "River Stour, Suffolk",
@@ -200,6 +243,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/9c2e39ad-fc3f-356e-cd98-db0038cfe8da/full/1686,/0/default.jpg",
   "ar": 1.46,
   "title": "The Old Mill",
@@ -208,6 +252,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/09b6a369-8934-7a4d-0370-90509dde6607/full/1686,/0/default.jpg",
   "ar": 1.32,
   "title": "First View of the Yosemite Valley from the Mariposa Trail",
@@ -216,6 +261,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/4c5abec2-d94f-9afa-b689-de4dc93791f2/full/1686,/0/default.jpg",
   "ar": 1.59,
   "title": "The Coast of Labrador",
@@ -224,6 +270,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/ece76aff-3cef-c9ed-15f7-ee73b238f8fb/full/1686,/0/default.jpg",
   "ar": 1.35,
   "title": "Frontispiece, to Mr. Constable's English Landscape, East Bergholt, Suffolk",
@@ -232,6 +279,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/3192ae4d-ffca-fe91-af12-2ca681f43e13/full/1686,/0/default.jpg",
   "ar": 2,
   "title": "York Harbor, Coast of Maine",
@@ -240,6 +288,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/56a4af78-1d23-3e2a-6119-8aa47e0cf285/full/1686,/0/default.jpg",
   "ar": 1.38,
   "title": "Boats at Rest",
@@ -248,6 +297,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/30491751-fb43-fc27-51fe-d068be7b6568/full/1686,/0/default.jpg",
   "ar": 1.53,
   "title": "Mist Rising at Sunset in the Catskills",
@@ -256,6 +306,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/498e45a7-5721-25dd-e26c-09b3e5b8010b/full/1686,/0/default.jpg",
   "ar": 1.31,
   "title": "Meetinghouse Hill, Roxbury, Massachusetts",
@@ -264,6 +315,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/0e63c333-b1f9-8dae-1b63-92dea7901ad8/full/1686,/0/default.jpg",
   "ar": 1.49,
   "title": "Glebe Farm",
@@ -272,6 +324,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/28a7765b-fc38-1a56-87dd-cbcdb647fcdb/full/1686,/0/default.jpg",
   "ar": 1.37,
   "title": "Coming Squall (Nahant Beach with a Summer Shower)",
@@ -280,6 +333,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/5f663d6c-0121-a8ca-e875-896d9857a3f3/full/1686,/0/default.jpg",
   "ar": 1.47,
   "title": "Violet and Silver—The Deep Sea",
@@ -288,6 +342,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/9b6f838e-5424-d030-2d2f-c9380830d631/full/1686,/0/default.jpg",
   "ar": 1.29,
   "title": "Landscape No. 3, Cash Entry Mines, New Mexico",
@@ -296,6 +351,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/ea5875fc-48ab-037d-3eec-86ccf6e9be60/full/1686,/0/default.jpg",
   "ar": 1.89,
   "title": "Cows in a Pond at Sunset",
@@ -304,6 +360,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/de060306-b5a3-5139-cad9-57e9c274d7c3/full/1686,/0/default.jpg",
   "ar": 1.25,
   "title": "Coast of Maine",
@@ -312,6 +369,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/50f98ea2-ea74-d991-b2fc-ddbc616283bd/full/1686,/0/default.jpg",
   "ar": 2.15,
   "title": "Near Newport",
@@ -320,6 +378,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/42924282-d483-cd95-e676-52aee4bc4164/full/1686,/0/default.jpg",
   "ar": 1.66,
   "title": "Niagara Falls in Winter",
@@ -328,6 +387,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/0787ea3c-9c03-65a2-adeb-5f5343794324/full/1686,/0/default.jpg",
   "ar": 1.45,
   "title": "Spring in France",
@@ -336,6 +396,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/4cdc7a89-3bd3-704c-1c16-c35576a8615a/full/1686,/0/default.jpg",
   "ar": 1.4,
   "title": "Point Breeze, the Estate of Joseph Napoleon Bonaparte at Bordentown, New Jersey",
@@ -344,14 +405,7 @@
   "source": "Art Institute of Chicago"
  },
  {
-  "img": "https://www.artic.edu/iiif/2/4270768f-a086-209b-7ce7-b41e8849bd9d/full/1686,/0/default.jpg",
-  "ar": 1.63,
-  "title": "Spring",
-  "artist": "David Lucas (English, 1802-1881)",
-  "year": "1830",
-  "source": "Art Institute of Chicago"
- },
- {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/0f2d999d-0173-2935-a6d0-0175bb97b2a9/full/1686,/0/default.jpg",
   "ar": 1.53,
   "title": "The Home of the Heron",
@@ -360,14 +414,16 @@
   "source": "Art Institute of Chicago"
  },
  {
-  "img": "https://www.artic.edu/iiif/2/9f7b074b-61f8-cac9-7cb4-81d015758df6/full/1686,/0/default.jpg",
-  "ar": 1.34,
-  "title": "A Heath",
+  "cat": "european",
+  "img": "https://www.artic.edu/iiif/2/4270768f-a086-209b-7ce7-b41e8849bd9d/full/1686,/0/default.jpg",
+  "ar": 1.63,
+  "title": "Spring",
   "artist": "David Lucas (English, 1802-1881)",
-  "year": "1831",
+  "year": "1830",
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/c8ad372d-2aaf-2ca8-d429-0a942446ef79/full/1686,/0/default.jpg",
   "ar": 1.55,
   "title": "Landscape with a Rainbow",
@@ -376,6 +432,16 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "european",
+  "img": "https://www.artic.edu/iiif/2/9f7b074b-61f8-cac9-7cb4-81d015758df6/full/1686,/0/default.jpg",
+  "ar": 1.34,
+  "title": "A Heath",
+  "artist": "David Lucas (English, 1802-1881)",
+  "year": "1831",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/63e18e3e-35a6-699c-a824-d75228c2f1fa/full/1686,/0/default.jpg",
   "ar": 1.44,
   "title": "Solitude",
@@ -384,6 +450,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "asian",
   "img": "https://www.artic.edu/iiif/2/58d58cdf-ed3d-c641-1910-504ae64b8ce8/full/1686,/0/default.jpg",
   "ar": 3.04,
   "title": "Landscape of the Four Seasons",
@@ -392,6 +459,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/b4ee4891-5d7b-11ad-93df-2b64e34de991/full/1686,/0/default.jpg",
   "ar": 1.39,
   "title": "The Little Pond, Appledore",
@@ -400,6 +468,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "asian",
   "img": "https://www.artic.edu/iiif/2/0bdf821c-9259-c0a0-268c-9ba8e42a2a2b/full/1686,/0/default.jpg",
   "ar": 2.87,
   "title": "Bamboo-Covered Stream in Spring Rain",
@@ -408,6 +477,7 @@
   "source": "Art Institute of Chicago"
  },
  {
+  "cat": "american",
   "img": "https://www.artic.edu/iiif/2/976bc367-269d-17ff-0151-16b9c973aae4/full/1686,/0/default.jpg",
   "ar": 3.58,
   "title": "Storm in Umbria",
@@ -416,19 +486,21 @@
   "source": "Art Institute of Chicago"
  },
  {
-  "img": "https://www.artic.edu/iiif/2/38726da7-8122-dc49-9243-766a1eeba9ed/full/1686,/0/default.jpg",
-  "ar": 1.46,
-  "title": "A Mild Breeze on a Fine Day (Gaifu kaisei), from the series \"Thirty-six Views of Mount Fuji (Fugaku sanjurokkei)\"",
-  "artist": "Katsushika Hokusai 葛飾 北斎",
-  "year": "c. 1830/33",
-  "source": "Art Institute of Chicago"
- },
- {
+  "cat": "european",
   "img": "https://www.artic.edu/iiif/2/2b5a8e62-4ad6-8175-89df-da09dd3db992/full/1686,/0/default.jpg",
   "ar": 1.38,
   "title": "Landscape with Smokestacks",
   "artist": "Edgar Degas",
   "year": "c. 1890",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "asian",
+  "img": "https://www.artic.edu/iiif/2/38726da7-8122-dc49-9243-766a1eeba9ed/full/1686,/0/default.jpg",
+  "ar": 1.46,
+  "title": "A Mild Breeze on a Fine Day (Gaifu kaisei), from the series \"Thirty-six Views of Mount Fuji (Fugaku sanjurokkei)\"",
+  "artist": "Katsushika Hokusai 葛飾 北斎",
+  "year": "c. 1830/33",
   "source": "Art Institute of Chicago"
  }
 ]

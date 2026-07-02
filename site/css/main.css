@@ -422,3 +422,30 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .card--weather[data-h="2"] .wx-day:nth-child(n+3) { display: none; }
 /* Subway at 2-high: three arrivals per stop */
 .card--subway[data-h="2"] .arrival:nth-child(n+4) { display: none; }
+
+/* ---------- transit service alerts ---------- */
+.talert {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(210, 153, 34, 0.14); border-radius: 8px;
+  padding: 6px 10px; flex: none;
+}
+.talert__icon { color: var(--warn); font-size: 18px; flex: none; }
+.talert__text {
+  color: var(--warn); font-size: 20px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bullet--sm { width: 26px; height: 26px; font-size: 15px; }
+.trains { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; }
+/* When alerts occupy rows, trim list rows so nothing clips mid-text */
+.card--subway[data-h="2"] .card__body.has-alerts .arrival:nth-child(n+3) { display: none; }
+.card--lirr[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
+.card--njt[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
+
+/* ---------- subway line-status board ---------- */
+.linestatus { display: flex; align-items: center; gap: 14px; min-height: 50px; }
+.linestatus__text { font-size: 22px; color: var(--ink-dim); }
+.linestatus--alert .linestatus__text {
+  color: var(--warn); font-size: 20px; line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.linestatus__icon { color: var(--warn); font-size: 18px; margin-left: auto; flex: none; }

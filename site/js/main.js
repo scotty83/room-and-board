@@ -111,10 +111,10 @@ function startWidget(mod, rect) {
 
 function renderStrip() {
   const caches = {};
-  for (const id of ['weather', 'subway', 'lirr', 'njt']) caches[id] = loadCache(id)?.data;
+  for (const id of ['weather', 'lirr', 'njt']) caches[id] = loadCache(id)?.data;
   const data = DEMO
     ? stripData(
-        { weather: DEMO_VMS.weather, subway: DEMO_VMS.subway, lirr: DEMO_VMS.lirr, njt: DEMO_VMS.njt },
+        { weather: DEMO_VMS.weather, lirr: DEMO_VMS.lirr, njt: DEMO_VMS.njt },
         cfg,
       )
     : stripData(caches, cfg);
@@ -130,8 +130,12 @@ function renderStrip() {
 async function startSlideshow() {
   if (slideshow) return;
   try {
-    const manifest = DEMO ? [DEMO_VMS.art] : await fetchJSON('data/art-manifest.json');
-    slideshow = art.createSlideshow(manifest, $('#slideshow'));
+    const manifest = DEMO
+      ? [DEMO_VMS.art]
+      : art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+    slideshow = art.createSlideshow(manifest, $('#slideshow'), {
+      intervalMs: (cfg.art?.every ?? 30) * 60 * 1000,
+    });
     slideshow.start();
   } catch (err) {
     console.error('[signage] slideshow unavailable', err);

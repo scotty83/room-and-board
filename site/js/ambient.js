@@ -7,13 +7,6 @@ export function stripData(caches, cfg) {
   const temp = enabled.has('weather') && caches.weather ? caches.weather.now?.temp ?? null : null;
   const transit = [];
 
-  if (enabled.has('subway') && caches.subway) {
-    const g = caches.subway.groups?.find((grp) => grp.arrivals?.length);
-    if (g) {
-      const a = g.arrivals[0];
-      transit.push({ label: `${a.route} · ${g.stopName}`, min: a.min });
-    }
-  }
   if (enabled.has('lirr') && caches.lirr) {
     const d = caches.lirr.departures?.[0];
     if (d) transit.push({ label: `LIRR · ${d.dest}${d.track ? ` · Tk ${d.track}` : ''}`, min: d.min });

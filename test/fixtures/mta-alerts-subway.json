@@ -1,0 +1,448 @@
+{
+ "header": {
+  "gtfs_realtime_version": "2.0",
+  "incrementality": "FULL_DATASET",
+  "timestamp": 1783006616,
+  "transit_realtime.mercury_feed_header": {
+   "mercury_version": "1.0"
+  }
+ },
+ "entity": [
+  {
+   "id": "lmm:alert:551097",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783004945
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "A",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:A:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "C",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:C:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "A40"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "[A][C]  trains are running with delays in both directions while we address a signal malfunction near High St.",
+       "language": "en"
+      },
+      {
+       "text": "<p>[A][C]‌ trains are running with delays in both directions while we address a signal malfunction near <strong>High St</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782994062,
+     "updated_at": 1783004945,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551082",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783001866
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "L",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:L:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "L15"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "[L] trains are running with delays in both directions while we conduct track maintenance at Jefferson St.",
+       "language": "en"
+      },
+      {
+       "text": "<p>[L] trains are running with delays in both directions while we conduct track maintenance at <strong>Jefferson St</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783001866,
+     "updated_at": 1783001866,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551095",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783004601,
+      "end": 1783006817
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "4",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:4:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "406"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "[4] trains are running with delays in both directions after NYPD completed its investigation near Kingsbridge Rd.",
+       "language": "en"
+      },
+      {
+       "text": "<p>[4] trains are running with delays in both directions after NYPD completed its investigation near <strong>Kingsbridge Rd</strong>.</p><p></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "[4] trains have resumed making their scheduled stops in the Bronx.",
+       "language": "en"
+      },
+      {
+       "text": "<p>[4] trains have resumed making their scheduled stops in the Bronx.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783002211,
+     "updated_at": 1783004601,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551100",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783005241
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "1",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:1:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "103"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "[1] trains are running with delays in both directions while we address a signal problem near 238 St.",
+       "language": "en"
+      },
+      {
+       "text": "<p>[1] trains are running with delays in both directions while we address a signal problem near <strong>238 St</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783003388,
+     "updated_at": 1783005241,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551096",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783004930,
+      "end": 1783006846
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "R",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:R:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "W",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:W:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "R20"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Downtown [R][W] trains are running with delays after we addressed a mechanical problem on a train at 14 St-Union Sq.",
+       "language": "en"
+      },
+      {
+       "text": "<p>Downtown [R][W] trains are running with delays after we addressed a mechanical problem on a train at <strong>14 St-Union Sq</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783004445,
+     "updated_at": 1783004930,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551098",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783005133
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "F",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:F:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "G",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:G:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "F23"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Coney Island-bound [F] and Church Av-bound [G] trains are running with delays while we conduct track maintenance near 4 Av/9 St.",
+       "language": "en"
+      },
+      {
+       "text": "<p>Coney Island-bound [F] and Church Av-bound [G] trains are running with delays while we conduct track maintenance near <strong>4 Av/9 St</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783005133,
+     "updated_at": 1783005133,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:alert:551105",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1783006284
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:26"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "stop_id": "640"
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "Uptown [6] trains are delayed while we investigate why a train's brakes activated at Brooklyn Bridge-City Hall.",
+       "language": "en"
+      },
+      {
+       "text": "<p>Uptown [6] trains are delayed while we investigate why a train's brakes activated at <strong>Brooklyn Bridge-City Hall</strong>.</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1783006284,
+     "updated_at": 1783006284,
+     "alert_type": "Delays",
+     "display_before_active": 0
+    }
+   }
+  },
+  {
+   "id": "lmm:planned_work:33090",
+   "alert": {
+    "active_period": [
+     {
+      "start": 1782999900,
+      "end": 1783020600
+     }
+    ],
+    "informed_entity": [
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "621",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "622",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "623",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "624",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "625",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "626",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     },
+     {
+      "agency_id": "MTASBWY",
+      "route_id": "6",
+      "stop_id": "619",
+      "direction_id": 0,
+      "transit_realtime.mercury_entity_selector": {
+       "sort_order": "MTASBWY:6:13"
+      }
+     }
+    ],
+    "header_text": {
+     "translation": [
+      {
+       "text": "In the Bronx, [6] runs every 8 minutes between 3 Av/138 St and Pelham Bay Park\nThe last stop for some trains from Manhattan is 3 Av/138 St",
+       "language": "en"
+      },
+      {
+       "text": "<p>In the Bronx, [6] runs every 8 minutes between <strong>3 Av/138 St</strong> and <strong>Pelham Bay Park</strong></p><p>The last stop for some trains from Manhattan is <strong>3 Av/138 St</strong></p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "description_text": {
+     "translation": [
+      {
+       "text": "Transfer at 3 Av-138 St to a Pelham Bay Park-bound [6] to continue your trip.\nWhat's happening?\nSignal maintenance\n\n[accessibility icon] If you're on a train terminating at 3 Av-138 St, an accessible transfer is available at 125 St [accessibility icon] to the next Pelham Bay Park-bound [6].",
+       "language": "en"
+      },
+      {
+       "text": "<ul><li><p>Transfer at <strong>3 Av-138 St</strong> to a Pelham Bay Park-bound [6] to continue your trip.</p></li></ul><p><strong>What's happening?</strong></p><p>Signal maintenance</p><p></p><p>[accessibility icon] If you're on a train terminating at <strong>3 Av-138 St</strong>, an accessible transfer is available at <strong>125 St</strong> [accessibility icon] to the next Pelham Bay Park-bound [6].</p>",
+       "language": "en-html"
+      }
+     ]
+    },
+    "transit_realtime.mercury_alert": {
+     "created_at": 1782996142,
+     "updated_at": 1782996187,
+     "alert_type": "Reduced Service",
+     "display_before_active": 3600,
+     "human_readable_active_period": {
+      "translation": [
+       {
+        "text": "Jul 2, Thursday, 9:45 AM to 3:30 PM",
+        "language": "en"
+       }
+      ]
+     }
+    }
+   }
+  }
+ ]
+}

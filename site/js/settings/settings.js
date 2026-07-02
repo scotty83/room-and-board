@@ -2,18 +2,12 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
-import {
-  boroughs,
-  linesForBorough,
-  stationsForLine,
-  alphaSections,
-  toggleIn,
-} from './pickers.js';
+import { alphaSections, toggleIn } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
 const WIDGET_LABELS = {
@@ -29,8 +23,7 @@ const WIDGET_LABELS = {
   worldclock: 'World Clock',
 };
 
-// Displayed subway routes (feed variants like GS/FS/SR collapse into S).
-const SUBWAY_LINES = ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'G', 'J', 'Z', 'L', 'N', 'Q', 'R', 'W', 'S', 'SI'];
+import { SUBWAY_LINES } from '../widgets/subway.js';
 
 const PRESET_LOCATIONS = [
   { label: 'Midtown Manhattan', lat: 40.754, lon: -73.984 },
@@ -100,6 +93,7 @@ const SECTIONS = [
   ['subway', 'Subway'],
   ['lirr', 'LIRR'],
   ['njt', 'NJ Transit'],
+  ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
   ['code', 'Setup code'],
@@ -132,6 +126,7 @@ function renderSection() {
     subway: renderSubway,
     lirr: renderLirr,
     njt: renderNjt,
+    art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
     code: renderCode,
@@ -173,52 +168,85 @@ function renderWidgets() {
   );
 }
 
-/* ---------- subway ---------- */
+/* ---------- shared: service-alerts toggle ---------- */
 
-let subwayStations = null;
-async function getSubwayStations() {
-  subwayStations ??= await fetchJSON('data/stations-subway.json');
-  return subwayStations;
+function alertsToggleHtml(group) {
+  const on = state.cfg[group].alerts;
+  return `<div class="row">
+    <button class="toggle ${on ? 'is-on' : ''}" data-alerts="${group}" role="switch" aria-checked="${on}">
+      <span class="toggle__knob"></span>
+    </button>
+    <span class="row__label">Show service alerts</span>
+  </div>`;
 }
 
-async function renderSubway() {
-  const stations = await getSubwayStations();
-  const byId = Object.fromEntries(stations.map((s) => [s.id, s]));
-  const chips = state.cfg.subway.stops
-    .map((stop) => {
-      const parent = byId[stop.replace(/[NS]$/, '')];
-      const dir = stop.endsWith('N') ? 'Uptown' : stop.endsWith('S') ? 'Downtown' : '';
-      return `<button class="chip" data-remove-stop="${stop}">
-        ${escapeHtml(parent?.name ?? stop)}${dir ? ` · ${dir}` : ''} ✕</button>`;
-    })
-    .join('');
+function bindAlertsToggle(rerender) {
+  pane().querySelectorAll('[data-alerts]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const group = btn.dataset.alerts;
+      state.cfg[group].alerts = !state.cfg[group].alerts;
+      rerender();
+    }),
+  );
+}
+
+/* ---------- art ---------- */
+
+const ART_INTERVALS = [5, 15, 30, 60, 120];
+
+function renderArt() {
+  pane().innerHTML = `
+    <h2 class="pane__title">Art</h2>
+    <p class="pane__hint">How often the artwork changes (slideshow and dashboard card):</p>
+    <div class="rows">${ART_INTERVALS.map(
+      (m) => `<button class="row row--tap ${state.cfg.art.every === m ? 'is-selected' : ''}" data-every="${m}">
+        Every ${m >= 60 ? `${m / 60} hour${m > 60 ? 's' : ''}` : `${m} minutes`}</button>`,
+    ).join('')}</div>
+    <p class="pane__hint">Collections to show — none selected means all:</p>
+    <div class="rows">${ART_CATS.map(([id, label]) => {
+      const on = state.cfg.art.cats.includes(id);
+      return `<div class="row">
+        <button class="toggle ${on ? 'is-on' : ''}" data-cat="${id}" role="switch" aria-checked="${on}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">${label}</span>
+      </div>`;
+    }).join('')}</div>`;
+  pane().querySelectorAll('[data-every]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.art.every = Number(btn.dataset.every);
+      renderArt();
+    }),
+  );
+  pane().querySelectorAll('[data-cat]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.art.cats = toggleIn(state.cfg.art.cats, btn.dataset.cat);
+      renderArt();
+    }),
+  );
+}
+
+/* ---------- subway ---------- */
+
+function renderSubway() {
   const lineChips = SUBWAY_LINES.map((l) => {
     const on = state.cfg.subway.lines.includes(l);
     return `<button class="bullet bullet--${l} linechip ${on ? '' : 'linechip--off'}" data-line="${l}"
       role="switch" aria-checked="${on}">${l}</button>`;
   }).join('');
   pane().innerHTML = `
-    <h2 class="pane__title">Subway stops</h2>
-    <p class="pane__hint">Up to 4 stops appear on the Subway card.</p>
-    <div class="chips">${chips || '<span class="pane__empty">No stops chosen yet</span>'}</div>
-    <button class="btn btn--primary" data-add>Add a stop</button>
-    <p class="pane__hint">Lines to show at your stops — none selected means every line:</p>
-    <div class="linechips">${lineChips}</div>
-    <div class="drill"></div>`;
+    <h2 class="pane__title">Subway status</h2>
+    <p class="pane__hint">The card shows Good Service or the current alert for each line you pick.</p>
+    <div class="linechips">${lineChips}</div>`;
   pane().querySelectorAll('[data-line]').forEach((chip) =>
     chip.addEventListener('click', () => {
       state.cfg.subway.lines = toggleIn(state.cfg.subway.lines, chip.dataset.line);
       renderSubway();
     }),
   );
-  pane().querySelectorAll('[data-remove-stop]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      state.cfg.subway.stops = state.cfg.subway.stops.filter((s) => s !== chip.dataset.removeStop);
-      renderSubway();
-    }),
-  );
-  pane().querySelector('[data-add]').addEventListener('click', () => drillBorough(stations));
 }
+
+/* ---------- drill-down list (shared by LIRR / NJT pickers) ---------- */
 
 function drillList(title, items, onPick) {
   const drill = pane().querySelector('.drill');
@@ -240,59 +268,6 @@ function drillList(title, items, onPick) {
   );
 }
 
-function drillBorough(stations) {
-  drillList(
-    'Choose a borough',
-    boroughs(stations).map((b) => ({ html: escapeHtml(b), value: b })),
-    (pick) => {
-      state.stack.push(() => drillBorough(stations));
-      drillLine(stations, pick.value);
-    },
-  );
-}
-
-function drillLine(stations, borough) {
-  drillList(
-    `${borough} — choose a line`,
-    linesForBorough(stations, borough).map((l) => ({
-      html: `<span class="bullet bullet--${escapeHtml(l)}">${escapeHtml(l)}</span>`,
-      value: l,
-    })),
-    (pick) => {
-      state.stack.push(() => drillLine(stations, borough));
-      drillStation(stations, borough, pick.value);
-    },
-  );
-}
-
-function drillStation(stations, borough, line) {
-  drillList(
-    `${line} train — choose a station`,
-    stationsForLine(stations, borough, line).map((s) => ({ html: escapeHtml(s.name), value: s })),
-    (pick) => {
-      state.stack.push(() => drillStation(stations, borough, line));
-      drillDirection(pick.value);
-    },
-  );
-}
-
-function drillDirection(station) {
-  drillList(
-    `${station.name} — direction`,
-    [
-      { html: 'Uptown / North', value: `${station.id}N` },
-      { html: 'Downtown / South', value: `${station.id}S` },
-    ],
-    (pick) => {
-      if (!state.cfg.subway.stops.includes(pick.value) && state.cfg.subway.stops.length < 4) {
-        state.cfg.subway.stops = [...state.cfg.subway.stops, pick.value];
-      }
-      state.stack = [];
-      renderSubway();
-    },
-  );
-}
-
 /* ---------- LIRR / NJT ---------- */
 
 let lirrStations = null;
@@ -305,7 +280,9 @@ async function renderLirr() {
     <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station')}</b>
       <button class="btn" data-pick-dest>Change</button>
       ${state.cfg.lirr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${alertsToggleHtml('lirr')}
     <div class="drill"></div>`;
+  bindAlertsToggle(renderLirr);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
     drillList(
       'Destination station',
@@ -328,7 +305,9 @@ async function renderNjt() {
   pane().innerHTML = `
     <h2 class="pane__title">NJ Transit</h2>
     <div class="kv"><span>Station</span><b>${escapeHtml(state.cfg.njt.station)}</b></div>
+    ${alertsToggleHtml('njt')}
     <div class="drill"><p class="pane__hint">Loading stations…</p></div>`;
+  bindAlertsToggle(renderNjt);
   try {
     const { stations } = await fetchJSON(`${WORKER_URL}/njt/stations`);
     drillList(

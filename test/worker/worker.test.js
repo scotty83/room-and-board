@@ -177,6 +177,38 @@ describe('/njt/departures', () => {
   });
 });
 
+describe('/alerts', () => {
+  const FEED = {
+    entity: [
+      {
+        alert: {
+          informed_entity: [{ route_id: '4' }],
+          header_text: { translation: [{ text: '[4] Delays at 14 St.', language: 'en' }] },
+        },
+      },
+    ],
+  };
+  beforeEach(async () => {
+    await env.CODES.delete('alerts:subway:last');
+    await env.CODES.delete('alerts:subway:cachedAt');
+  });
+
+  it('digests and caches the subway alert feed', async () => {
+    const calls = stubFetch([{ match: /subway-alerts\.json/, body: FEED }]);
+    const res = await call('/alerts/subway');
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.alerts).toEqual([{ routes: ['4'], header: 'Delays at 14 St.' }]);
+    const before = calls.length;
+    await call('/alerts/subway'); // served from KV inside the TTL
+    expect(calls.length).toBe(before);
+  });
+
+  it('404s unknown systems', async () => {
+    expect((await call('/alerts/bus')).status).toBe(404);
+  });
+});
+
 describe('/markets', () => {
   const yahoo = (price, prev) => ({
     chart: {

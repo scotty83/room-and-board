@@ -5,7 +5,15 @@
 
 import { escapeHtml } from '../util.js';
 
-export const meta = { id: 'art', title: 'Art', refreshMs: 6 * 60 * 60 * 1000 };
+export const meta = { id: 'art', title: 'Art', refreshMs: 60 * 1000 };
+
+// [] = all categories; unknown cat fields (older manifests) always pass.
+export function filterByCats(manifest, cats) {
+  if (!cats?.length) return manifest;
+  const wanted = new Set(cats);
+  const out = manifest.filter((a) => !a.cat || wanted.has(a.cat));
+  return out.length ? out : manifest; // never filter down to an empty show
+}
 
 export function render(el, vm, _cfg) {
   el.innerHTML = `
@@ -42,9 +50,12 @@ export function openViewer(vm) {
 }
 
 export async function fetchData(cfg, net) {
-  const manifest = await net.fetchJSON('data/art-manifest.json');
-  // Rotate deterministically so refreshes don't repeat the same piece.
-  const idx = Math.floor(Date.now() / meta.refreshMs) % manifest.length;
+  const manifest = filterByCats(await net.fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+  // Rotate deterministically on the user's interval so refreshes don't
+  // repeat the same piece; the card re-renders each minute but the image
+  // only changes when the interval bucket flips.
+  const everyMs = (cfg.art?.every ?? 30) * 60 * 1000;
+  const idx = Math.floor(Date.now() / everyMs) % manifest.length;
   return manifest[idx];
 }
 

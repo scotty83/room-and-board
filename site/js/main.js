@@ -96,9 +96,8 @@ function startWidget(mod, rect) {
     markStale(card, cached.t);
   }
   const cancel = schedule(async () => {
-    const deps = mod.meta.id === 'aqi' ? { weatherVm: loadCache('weather')?.data } : undefined;
     try {
-      const vm = await mod.fetchData(cfg, net, deps);
+      const vm = await mod.fetchData(cfg, net);
       saveCache(mod.meta.id, vm);
       renderWidget(mod, vm);
       markFresh(card);

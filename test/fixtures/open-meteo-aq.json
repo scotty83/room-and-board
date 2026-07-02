@@ -1,0 +1,19 @@
+{
+ "latitude": 40.800003,
+ "longitude": -74,
+ "generationtime_ms": 0.3294944763183594,
+ "utc_offset_seconds": -14400,
+ "timezone": "America/New_York",
+ "timezone_abbreviation": "GMT-4",
+ "elevation": 28,
+ "current_units": {
+  "time": "iso8601",
+  "interval": "seconds",
+  "us_aqi": "USAQI"
+ },
+ "current": {
+  "time": "2026-07-02T02:00",
+  "interval": 3600,
+  "us_aqi": 66
+ }
+}

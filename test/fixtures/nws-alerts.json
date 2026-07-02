@@ -1,0 +1,215 @@
+{
+ "@context": [
+  "https://geojson.org/geojson-ld/geojson-context.jsonld",
+  {
+   "@version": "1.1",
+   "wx": "https://api.weather.gov/ontology#",
+   "@vocab": "https://api.weather.gov/ontology#"
+  }
+ ],
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.2",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.2",
+    "@type": "wx:Alert",
+    "id": "urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.2",
+    "areaDesc": "New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northern Queens; Southern Queens",
+    "geocode": {
+     "SAME": [
+      "036061",
+      "036005",
+      "036085",
+      "036047",
+      "036081"
+     ],
+     "UGC": [
+      "NYZ072",
+      "NYZ073",
+      "NYZ074",
+      "NYZ075",
+      "NYZ176",
+      "NYZ178"
+     ]
+    },
+    "affectedZones": [
+     "https://api.weather.gov/zones/forecast/NYZ072",
+     "https://api.weather.gov/zones/forecast/NYZ073",
+     "https://api.weather.gov/zones/forecast/NYZ074",
+     "https://api.weather.gov/zones/forecast/NYZ075",
+     "https://api.weather.gov/zones/forecast/NYZ176",
+     "https://api.weather.gov/zones/forecast/NYZ178"
+    ],
+    "references": [
+     {
+      "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.06350cf4cca2dccdb102c104fbcf95a42e870464.003.2",
+      "identifier": "urn:oid:2.49.0.1.840.0.06350cf4cca2dccdb102c104fbcf95a42e870464.003.2",
+      "sender": "w-nws.webmaster@noaa.gov",
+      "sent": "2026-07-01T15:25:00-04:00"
+     }
+    ],
+    "sent": "2026-07-01T23:07:00-04:00",
+    "effective": "2026-07-01T23:07:00-04:00",
+    "onset": "2026-07-03T21:00:00-04:00",
+    "expires": "2026-07-02T06:00:00-04:00",
+    "ends": "2026-07-04T21:00:00-04:00",
+    "status": "Actual",
+    "messageType": "Update",
+    "category": "Met",
+    "severity": "Severe",
+    "certainty": "Likely",
+    "urgency": "Future",
+    "event": "Extreme Heat Watch",
+    "sender": "w-nws.webmaster@noaa.gov",
+    "senderName": "NWS Upton NY",
+    "headline": "Extreme Heat Watch issued July 1 at 11:07PM EDT until July 4 at 9:00PM EDT by NWS Upton NY",
+    "description": "* WHAT...For the Extreme Heat Warning, dangerously hot conditions\nwith heat index values up to 113. For the Extreme Heat Watch,\ndangerously hot conditions with heat index values up to 103\npossible.\n\n* WHERE...Bronx, Kings (Brooklyn), New York (Manhattan), Northern\nQueens, Richmond (Staten Island), and Southern Queens Counties.\n\n* WHEN...For the Extreme Heat Warning, until 9 PM EDT Friday. For\nthe Extreme Heat Watch, from Friday evening through Saturday\nevening.\n\n* IMPACTS...Extreme heat and humidity will significantly increase\nthe potential for heat related illnesses, particularly for those\nworking or participating in outdoor activities.",
+    "instruction": "New York City residents should call 3 1 1 to identify cooling center\nlocations and obtain 'Beat the Heat' safety tips.\n\nAn Extreme Heat Warning means that the combination of heat and\nhumidity is expected to make it feel like it is 105 degrees or\ngreater. Take extra precautions if you work or spend time outside.\nWhen possible, reschedule strenuous activities to early morning or\nevening. Know the signs and symptoms of heat exhaustion and heat\nstroke. Wear light weight and loose fitting clothing when possible,\nand drink plenty of water.\n\nSeniors and those with chronic health problems or mental health\nconditions are at an increased risk. Homes without air conditioning\ncan be much hotter than outdoor temperatures.\n\nUse air conditioning to stay cool at home or go to a place that has\nair conditioning. If you don't have home air conditioning, continue\nto seek out cool spaces each day as long as it remains hot, and for\na few days after if your home is still hot. Check on vulnerable\nfriends, family members and neighbors.\n\nTo reduce risk during outdoor work, the Occupational Safety and\nHealth Administration recommends scheduling frequent rest breaks in\nshaded or air conditioned environments. Anyone overcome by heat\nshould be moved to a cool and shaded location. Heat stroke is an\nemergency! In cases of heat stroke call 9 1 1.",
+    "response": "Monitor",
+    "note": null,
+    "parameters": {
+     "AWIPSidentifier": [
+      "NPWOKX"
+     ],
+     "WMOidentifier": [
+      "WWUS71 KOKX 020307"
+     ],
+     "NWSheadline": [
+      "EXTREME HEAT WARNING REMAINS IN EFFECT UNTIL 9 PM EDT FRIDAY... ...EXTREME HEAT WATCH REMAINS IN EFFECT FROM FRIDAY EVENING THROUGH SATURDAY EVENING"
+     ],
+     "BLOCKCHANNEL": [
+      "EAS",
+      "NWEM",
+      "CMAS"
+     ],
+     "VTEC": [
+      "/O.CON.KOKX.XH.A.0001.260704T0100Z-260705T0100Z/"
+     ],
+     "eventEndingTime": [
+      "2026-07-04T21:00:00-04:00"
+     ],
+     "expiredReferences": [
+      "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54b8c0a99b911b6655b153218dac695ef5dc848f.003.2,2026-07-01T02:49:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6d2c429971d1c9b6e62e532f01faa36286c12c6c.003.2,2026-06-30T14:07:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2dfb7076653f2967920b351667f25cd8c4507a0b.002.2,2026-06-30T05:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c2c484285dade57bd3d1d066dff22d67c298028f.002.2,2026-06-30T02:41:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d346818d137af8c5bec7e962cba0d475b05c6f08.002.1,2026-06-29T14:30:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.f99651cec4fbc84efa6eae190ed33c3c764ab8cc.002.1,2026-06-29T02:40:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.33b825c52092c4eab52e3ef3fabc1bb12f611868.002.1,2026-06-28T15:25:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c30c4c2c5734d1b79383ee4aba5bbb48c26ed922.002.1,2026-06-28T14:12:00-04:00"
+     ]
+    },
+    "scope": "Public",
+    "code": "IPAWSv1.0",
+    "language": "en-US",
+    "web": "http://www.weather.gov",
+    "eventCode": {
+     "SAME": [
+      "NWS"
+     ],
+     "NationalWeatherService": [
+      "XHA"
+     ]
+    }
+   }
+  },
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.1",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.1",
+    "@type": "wx:Alert",
+    "id": "urn:oid:2.49.0.1.840.0.ad72d0ac76ac8831bfc72fbfd29fc53ef3f30845.003.1",
+    "areaDesc": "New York (Manhattan); Bronx; Richmond (Staten Is.); Kings (Brooklyn); Northern Queens; Southern Queens",
+    "geocode": {
+     "SAME": [
+      "036061",
+      "036005",
+      "036085",
+      "036047",
+      "036081"
+     ],
+     "UGC": [
+      "NYZ072",
+      "NYZ073",
+      "NYZ074",
+      "NYZ075",
+      "NYZ176",
+      "NYZ178"
+     ]
+    },
+    "affectedZones": [
+     "https://api.weather.gov/zones/forecast/NYZ072",
+     "https://api.weather.gov/zones/forecast/NYZ073",
+     "https://api.weather.gov/zones/forecast/NYZ074",
+     "https://api.weather.gov/zones/forecast/NYZ075",
+     "https://api.weather.gov/zones/forecast/NYZ176",
+     "https://api.weather.gov/zones/forecast/NYZ178"
+    ],
+    "references": [
+     {
+      "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.06350cf4cca2dccdb102c104fbcf95a42e870464.003.1",
+      "identifier": "urn:oid:2.49.0.1.840.0.06350cf4cca2dccdb102c104fbcf95a42e870464.003.1",
+      "sender": "w-nws.webmaster@noaa.gov",
+      "sent": "2026-07-01T15:25:00-04:00"
+     }
+    ],
+    "sent": "2026-07-01T23:07:00-04:00",
+    "effective": "2026-07-01T23:07:00-04:00",
+    "onset": "2026-07-01T23:07:00-04:00",
+    "expires": "2026-07-02T06:00:00-04:00",
+    "ends": "2026-07-03T21:00:00-04:00",
+    "status": "Actual",
+    "messageType": "Update",
+    "category": "Met",
+    "severity": "Severe",
+    "certainty": "Likely",
+    "urgency": "Expected",
+    "event": "Extreme Heat Warning",
+    "sender": "w-nws.webmaster@noaa.gov",
+    "senderName": "NWS Upton NY",
+    "headline": "Extreme Heat Warning issued July 1 at 11:07PM EDT until July 3 at 9:00PM EDT by NWS Upton NY",
+    "description": "* WHAT...For the Extreme Heat Warning, dangerously hot conditions\nwith heat index values up to 113. For the Extreme Heat Watch,\ndangerously hot conditions with heat index values up to 103\npossible.\n\n* WHERE...Bronx, Kings (Brooklyn), New York (Manhattan), Northern\nQueens, Richmond (Staten Island), and Southern Queens Counties.\n\n* WHEN...For the Extreme Heat Warning, until 9 PM EDT Friday. For\nthe Extreme Heat Watch, from Friday evening through Saturday\nevening.\n\n* IMPACTS...Extreme heat and humidity will significantly increase\nthe potential for heat related illnesses, particularly for those\nworking or participating in outdoor activities.",
+    "instruction": "New York City residents should call 3 1 1 to identify cooling center\nlocations and obtain 'Beat the Heat' safety tips.\n\nAn Extreme Heat Warning means that the combination of heat and\nhumidity is expected to make it feel like it is 105 degrees or\ngreater. Take extra precautions if you work or spend time outside.\nWhen possible, reschedule strenuous activities to early morning or\nevening. Know the signs and symptoms of heat exhaustion and heat\nstroke. Wear light weight and loose fitting clothing when possible,\nand drink plenty of water.\n\nSeniors and those with chronic health problems or mental health\nconditions are at an increased risk. Homes without air conditioning\ncan be much hotter than outdoor temperatures.\n\nUse air conditioning to stay cool at home or go to a place that has\nair conditioning. If you don't have home air conditioning, continue\nto seek out cool spaces each day as long as it remains hot, and for\na few days after if your home is still hot. Check on vulnerable\nfriends, family members and neighbors.\n\nTo reduce risk during outdoor work, the Occupational Safety and\nHealth Administration recommends scheduling frequent rest breaks in\nshaded or air conditioned environments. Anyone overcome by heat\nshould be moved to a cool and shaded location. Heat stroke is an\nemergency! In cases of heat stroke call 9 1 1.",
+    "response": "Execute",
+    "note": null,
+    "parameters": {
+     "AWIPSidentifier": [
+      "NPWOKX"
+     ],
+     "WMOidentifier": [
+      "WWUS71 KOKX 020307"
+     ],
+     "NWSheadline": [
+      "EXTREME HEAT WARNING REMAINS IN EFFECT UNTIL 9 PM EDT FRIDAY... ...EXTREME HEAT WATCH REMAINS IN EFFECT FROM FRIDAY EVENING THROUGH SATURDAY EVENING"
+     ],
+     "BLOCKCHANNEL": [
+      "EAS",
+      "NWEM",
+      "CMAS"
+     ],
+     "VTEC": [
+      "/O.CON.KOKX.XH.W.0001.000000T0000Z-260704T0100Z/"
+     ],
+     "eventEndingTime": [
+      "2026-07-03T21:00:00-04:00"
+     ],
+     "expiredReferences": [
+      "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.54b8c0a99b911b6655b153218dac695ef5dc848f.003.1,2026-07-01T02:49:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.6d2c429971d1c9b6e62e532f01faa36286c12c6c.003.1,2026-06-30T14:07:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.2dfb7076653f2967920b351667f25cd8c4507a0b.002.1,2026-06-30T05:47:00-04:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.c2c484285dade57bd3d1d066dff22d67c298028f.002.1,2026-06-30T02:41:00-04:00"
+     ]
+    },
+    "scope": "Public",
+    "code": "IPAWSv1.0",
+    "language": "en-US",
+    "web": "http://www.weather.gov",
+    "eventCode": {
+     "SAME": [
+      "NWS"
+     ],
+     "NationalWeatherService": [
+      "XHW"
+     ]
+    }
+   }
+  }
+ ],
+ "title": "Current watches, warnings, and advisories for 40.754 N, 73.984 W",
+ "updated": "2026-07-02T06:25:45+00:00"
+}

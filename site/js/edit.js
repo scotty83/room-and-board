@@ -1,16 +1,20 @@
 // Edit mode: arrange, resize, remove and re-add widgets on the 6×4 grid.
-// All geometry decisions delegate to layout.js; this module only renders the
-// overlay and translates pointer gestures into grid operations. The drag
-// ghost moves via transform only (gen1 animation budget).
+// Geometry decisions live in layout.js (placeWithPush displaces neighbors to
+// make room); this module renders the overlay and translates pointer
+// gestures. During a gesture a cell-snapped placeholder previews the target
+// (green = will commit, red = unsolvable) and neighbor blocks preview their
+// pushed positions live. The drag ghost moves via transform only.
 
-import { GRID, MIN_SIZE, canPlace, firstFit } from './layout.js';
+import { GRID, MIN_SIZE, firstFit, placeWithPush } from './layout.js';
 import { WIDGET_IDS } from './config.js';
 
 const TITLES = {
   weather: 'Weather',
   subway: 'Subway',
   lirr: 'LIRR',
+  mnr: 'Metro-North',
   njt: 'NJ Transit',
+  bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art',
   history: 'History',
@@ -48,25 +52,29 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     return { w: rect.width / GRID.cols, h: rect.height / GRID.rows };
   };
 
-  /* ----- grid operations (pure state transitions) ----- */
-
   const rectOf = (id) => layout.find((r) => r.id === id);
+  const sizeLabel = (r) => {
+    const [mw, mh] = MIN_SIZE[r.id] ?? [1, 1];
+    return `${r.w}×${r.h} · min ${mw}×${mh}`;
+  };
 
-  function move(id, x, y) {
-    const rect = { ...rectOf(id), x, y };
-    if (!canPlace(layout, rect)) return false;
-    layout = layout.map((r) => (r.id === id ? rect : r));
+  /* ----- grid operations ----- */
+
+  function commit(next) {
+    if (!next) return false;
+    layout = next;
     render();
     return true;
   }
 
-  function resize(id, w, h) {
-    const rect = { ...rectOf(id), w, h };
-    if (!canPlace(layout, rect)) return false;
-    layout = layout.map((r) => (r.id === id ? rect : r));
-    render();
-    return true;
-  }
+  const move = (id, x, y) => {
+    const start = rectOf(id);
+    return commit(placeWithPush(layout, { ...start, x, y }, { dx: x - start.x, dy: y - start.y }));
+  };
+  const resize = (id, w, h) => {
+    const start = rectOf(id);
+    return commit(placeWithPush(layout, { ...start, w, h }, { dx: w - start.w, dy: h - start.h }));
+  };
 
   function remove(id) {
     layout = layout.filter((r) => r.id !== id);
@@ -83,12 +91,18 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
 
   /* ----- rendering ----- */
 
+  function positionEl(el, r) {
+    el.style.gridColumn = `${r.x + 1} / span ${r.w}`;
+    el.style.gridRow = `${r.y + 1} / span ${r.h}`;
+  }
+
   function render() {
     blocksHost.innerHTML = layout
       .map(
         (r) => `<div class="edit-block" data-id="${r.id}"
           style="grid-column:${r.x + 1} / span ${r.w}; grid-row:${r.y + 1} / span ${r.h}">
           <span class="edit-block__title">${TITLES[r.id] ?? r.id}</span>
+          <span class="edit-block__size">${sizeLabel(r)}</span>
           <button class="edit-remove" data-remove="${r.id}" aria-label="Remove ${TITLES[r.id]}">✕</button>
           <span class="edit-handle" data-resize="${r.id}" aria-label="Resize ${TITLES[r.id]}"></span>
         </div>`,
@@ -99,8 +113,9 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       WIDGET_IDS.filter((id) => !rectOf(id))
         .map((id) => {
           const fits = firstFit(layout, id, MIN_SIZE[id]) !== null;
+          const [mw, mh] = MIN_SIZE[id];
           return `<button class="edit-tray__chip" data-add="${id}" ${fits ? '' : 'disabled'}>
-            + ${TITLES[id]}${fits ? '' : ' (no room)'}</button>`;
+            + ${TITLES[id]} <small>${mw}×${mh}</small>${fits ? '' : ' (no room)'}</button>`;
         })
         .join('');
 
@@ -117,29 +132,97 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     blocksHost.querySelectorAll('[data-resize]').forEach(bindResize);
   }
 
-  /* ----- pointer gestures ----- */
+  /* ----- live gesture preview ----- */
+
+  function placeholder() {
+    let ph = blocksHost.querySelector('.edit-placeholder');
+    if (!ph) {
+      ph = document.createElement('div');
+      ph.className = 'edit-placeholder';
+      blocksHost.prepend(ph);
+    }
+    return ph;
+  }
+
+  function showPlaceholder(ph, r, valid) {
+    positionEl(ph, {
+      x: Math.min(Math.max(r.x, 0), GRID.cols - 1),
+      y: Math.min(Math.max(r.y, 0), GRID.rows - 1),
+      w: Math.min(r.w, GRID.cols),
+      h: Math.min(r.h, GRID.rows),
+    });
+    ph.classList.toggle('edit-placeholder--invalid', !valid);
+    ph.hidden = false;
+  }
+
+  function previewPositions(preview, dragId) {
+    for (const el of blocksHost.querySelectorAll('.edit-block')) {
+      if (el.dataset.id === dragId) continue;
+      const r = preview.find((p) => p.id === el.dataset.id);
+      if (r) positionEl(el, r);
+    }
+  }
+
+  function gesture(block, start, computeTarget) {
+    const id = block.dataset.id;
+    const startLayout = layout.map((r) => ({ ...r }));
+    const ph = placeholder();
+    let lastValid = null;
+    let lastKey = '';
+
+    const update = (e) => {
+      const target = computeTarget(e);
+      const key = `${target.x},${target.y},${target.w},${target.h}`;
+      if (key === lastKey) return;
+      lastKey = key;
+      const dir = { dx: target.x - start.x + (target.w - start.w), dy: target.y - start.y + (target.h - start.h) };
+      const preview = placeWithPush(startLayout, target, dir);
+      if (preview) {
+        lastValid = preview;
+        previewPositions(preview, id);
+        showPlaceholder(ph, target, true);
+      } else {
+        showPlaceholder(ph, target, false);
+      }
+      block.querySelector('.edit-block__size').textContent = sizeLabel(target);
+    };
+
+    const finish = () => {
+      ph.hidden = true;
+      block.classList.remove('is-dragging', 'is-resizing');
+      block.style.transform = '';
+      if (lastValid) {
+        layout = lastValid;
+      }
+      render(); // restores positions when nothing valid was previewed
+    };
+    return { update, finish };
+  }
 
   function bindDrag(block) {
     block.addEventListener('pointerdown', (down) => {
       if (down.target.closest('[data-remove],[data-resize]')) return;
-      const id = block.dataset.id;
-      const start = rectOf(id);
+      const start = rectOf(block.dataset.id);
       const origin = { x: down.clientX, y: down.clientY };
       block.classList.add('is-dragging');
       block.setPointerCapture?.(down.pointerId);
-
+      const g = gesture(block, start, (e) => {
+        const { w: cw, h: ch } = cell();
+        return {
+          ...start,
+          x: start.x + Math.round((e.clientX - origin.x) / cw),
+          y: start.y + Math.round((e.clientY - origin.y) / ch),
+        };
+      });
       const onMove = (e) => {
         block.style.transform = `translate(${e.clientX - origin.x}px, ${e.clientY - origin.y}px)`;
+        g.update(e);
       };
       const onUp = (e) => {
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
-        block.classList.remove('is-dragging');
-        block.style.transform = '';
-        const { w: cw, h: ch } = cell();
-        const dx = Math.round((e.clientX - origin.x) / cw);
-        const dy = Math.round((e.clientY - origin.y) / ch);
-        if ((dx || dy) && !move(id, start.x + dx, start.y + dy)) flashInvalid(block);
+        g.update(e);
+        g.finish();
       };
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
@@ -149,27 +232,28 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   function bindResize(handle) {
     handle.addEventListener('pointerdown', (down) => {
       down.stopPropagation();
-      const id = handle.dataset.resize;
-      const start = rectOf(id);
-      const origin = { x: down.clientX, y: down.clientY };
       const block = handle.closest('.edit-block');
+      const start = rectOf(block.dataset.id);
+      const origin = { x: down.clientX, y: down.clientY };
       block.classList.add('is-resizing');
-
-      const onUp = (e) => {
-        window.removeEventListener('pointerup', onUp);
-        block.classList.remove('is-resizing');
+      const g = gesture(block, start, (e) => {
         const { w: cw, h: ch } = cell();
-        const dw = Math.round((e.clientX - origin.x) / cw);
-        const dh = Math.round((e.clientY - origin.y) / ch);
-        if ((dw || dh) && !resize(id, start.w + dw, start.h + dh)) flashInvalid(block);
+        return {
+          ...start,
+          w: start.w + Math.round((e.clientX - origin.x) / cw),
+          h: start.h + Math.round((e.clientY - origin.y) / ch),
+        };
+      });
+      const onMove = (e) => g.update(e);
+      const onUp = (e) => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        g.update(e);
+        g.finish();
       };
+      window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
     });
-  }
-
-  function flashInvalid(block) {
-    block.classList.add('is-invalid');
-    setTimeout(() => block.classList.remove('is-invalid'), 400);
   }
 
   /* ----- lifecycle ----- */

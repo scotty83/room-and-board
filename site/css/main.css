@@ -462,3 +462,22 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .card--markets[data-h="1"] .index { grid-template-columns: 1fr auto; gap: 10px; min-height: 0; }
 .card--markets[data-h="1"] .index__info { flex-direction: row; align-items: baseline; gap: 10px; }
 .card--markets[data-h="1"] .spark { display: none; }
+
+/* ---------- edit-mode gesture preview ---------- */
+.edit-placeholder {
+  border: 3px dashed var(--good);
+  border-radius: var(--radius);
+  background: rgba(63, 185, 80, 0.08);
+  pointer-events: none;
+}
+.edit-placeholder--invalid {
+  border-color: var(--bad);
+  background: rgba(248, 81, 73, 0.10);
+}
+.edit-block__size {
+  position: absolute; left: 0; right: 0; bottom: 14px;
+  text-align: center; font-size: 18px; color: var(--ink-faint);
+  pointer-events: none;
+}
+.edit-block { flex-direction: column; gap: 4px; }
+.edit-tray__chip small { color: var(--ink-dim); font-size: 17px; }

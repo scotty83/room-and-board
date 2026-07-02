@@ -9,6 +9,7 @@ import {
   firstFit,
   normalizeLayout,
   migrateWidgetsToLayout,
+  placeWithPush,
 } from '../site/js/layout.js';
 
 const area = (r) => r.w * r.h;
@@ -122,5 +123,60 @@ describe('migrateWidgetsToLayout', () => {
     expect(total).toBeLessThanOrEqual(24);
     for (let i = 0; i < out.length; i++)
       for (let j = i + 1; j < out.length; j++) expect(rectsOverlap(out[i], out[j])).toBe(false);
+  });
+});
+
+describe('placeWithPush', () => {
+  const L = (...rects) => rects.map(([id, x, y, w, h]) => ({ id, x, y, w, h }));
+
+  it('places freely when nothing collides', () => {
+    const layout = L(['aqi', 0, 0, 1, 1]);
+    const out = placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 1, h: 1 });
+    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 2, y: 0 });
+    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 0, y: 0 });
+  });
+
+  it('shifts a collider along the drag direction', () => {
+    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1]);
+    // drag art rightwards onto aqi -> aqi pushed further right
+    const out = placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'art')).toMatchObject({ x: 1, y: 0 });
+    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 2, y: 0 });
+  });
+
+  it('cascades pushes through a chain', () => {
+    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1], ['worldclock', 2, 0, 1, 2]);
+    const out = placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'aqi')).toMatchObject({ x: 2, y: 0 });
+    const wc = out.find((r) => r.id === 'worldclock');
+    expect(wc.x).toBeGreaterThanOrEqual(3); // pushed onward
+  });
+
+  it('falls back to first-fit when the direction is blocked', () => {
+    // aqi pinned against the right edge; pushing right impossible -> relocate
+    const layout = L(['history', 0, 0, 2, 1], ['aqi', 5, 0, 1, 1]);
+    const out = placeWithPush(layout, { id: 'history', x: 4, y: 0, w: 2, h: 1 }, { dx: 1, dy: 0 });
+    expect(out.find((r) => r.id === 'history')).toMatchObject({ x: 4, y: 0 });
+    const aqi = out.find((r) => r.id === 'aqi');
+    expect(canPlace(out.filter((r) => r.id !== 'aqi'), aqi)).toBe(true);
+  });
+
+  it('returns null when displaced widgets cannot fit anywhere', () => {
+    // grid completely full: pushing is unsolvable
+    const layout = L(['weather', 0, 0, 3, 2], ['subway', 3, 0, 3, 2], ['art', 0, 2, 3, 2], ['history', 3, 2, 3, 1], ['quote', 3, 3, 3, 1]);
+    const out = placeWithPush(layout, { id: 'weather', x: 1, y: 0, w: 3, h: 2 }, { dx: 1, dy: 0 });
+    expect(out).toBeNull();
+  });
+
+  it('rejects rects that violate their own minimum or the grid', () => {
+    expect(placeWithPush(L(['aqi', 0, 0, 1, 1]), { id: 'weather', x: 0, y: 2, w: 1, h: 1 })).toBeNull();
+    expect(placeWithPush([], { id: 'aqi', x: 6, y: 0, w: 1, h: 1 })).toBeNull();
+  });
+
+  it('never mutates the input layout', () => {
+    const layout = L(['art', 0, 0, 1, 1], ['aqi', 1, 0, 1, 1]);
+    const snapshot = JSON.stringify(layout);
+    placeWithPush(layout, { id: 'art', x: 1, y: 0, w: 1, h: 1 }, { dx: 1, dy: 0 });
+    expect(JSON.stringify(layout)).toBe(snapshot);
   });
 });

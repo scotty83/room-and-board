@@ -1,0 +1,51 @@
+/* Companion setup page — phones and laptops, normal responsive rules. */
+:root {
+  --bg: #0d1117;
+  --bg-card: #161c26;
+  --bg-card-2: #1b2230;
+  --ink: #e8edf4;
+  --ink-dim: #93a0b4;
+  --accent: #58a6ff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.45;
+}
+.setup { max-width: 640px; margin: 0 auto; padding: 28px 20px 80px; display: flex; flex-direction: column; gap: 28px; }
+.setup__head h1 { font-size: 1.7rem; margin-bottom: 8px; }
+.setup__head p, .hint { color: var(--ink-dim); font-size: 1rem; }
+h2 { font-size: 1.15rem; margin-bottom: 10px; }
+small { color: var(--ink-dim); font-weight: 400; }
+label { display: block; margin: 10px 0 6px; font-weight: 600; }
+
+input, select, button {
+  font: inherit; color: var(--ink);
+  background: var(--bg-card); border: 1px solid var(--bg-card-2);
+  border-radius: 10px; padding: 12px 14px; width: 100%;
+  min-height: 48px;
+}
+button { cursor: pointer; width: auto; }
+button.primary { background: var(--accent); color: #06131f; font-weight: 700; border: none; padding: 14px 28px; }
+
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.checks label {
+  display: flex; align-items: center; gap: 10px; margin: 0;
+  background: var(--bg-card); border-radius: 10px; padding: 12px 14px; font-weight: 400;
+}
+.checks input { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
+
+.pickrow, .ziprow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.pickrow select { flex: 1 1 140px; }
+.ziprow input { flex: 1; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.chips button {
+  background: var(--bg-card-2); border: none; border-radius: 20px; font-size: 0.95rem;
+}
+
+.code-out { margin-top: 18px; background: var(--bg-card); border-radius: 14px; padding: 20px; }
+.code-out output { font-size: 2.6rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 8px; }
+.code-out p { color: var(--ink-dim); }

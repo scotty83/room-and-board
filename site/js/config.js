@@ -10,7 +10,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   loc: Object.freeze({ lat: 40.754, lon: -73.984, label: 'Midtown' }),
   widgets: Object.freeze(['weather', 'subway', 'art', 'history', 'aqi', 'quote']),
   subway: Object.freeze({ stops: Object.freeze([]), lines: Object.freeze([]) }),
-  lirr: Object.freeze({ orig: 'NYK', dest: '' }),
+  lirr: Object.freeze({ orig: '237', dest: '' }), // 237 = Penn Station (GTFS stop id)
   njt: Object.freeze({ station: 'NY' }),
   mode: 'auto',
   theme: 'dark',

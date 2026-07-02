@@ -1,0 +1,637 @@
+[
+ {
+  "id": "1",
+  "name": "Albertson",
+  "tt": "ABT"
+ },
+ {
+  "id": "4",
+  "name": "Amagansett",
+  "tt": "AGT"
+ },
+ {
+  "id": "8",
+  "name": "Amityville",
+  "tt": "AVL"
+ },
+ {
+  "id": "241",
+  "name": "Atlantic Terminal",
+  "tt": "ATL"
+ },
+ {
+  "id": "2",
+  "name": "Auburndale",
+  "tt": "ADL"
+ },
+ {
+  "id": "27",
+  "name": "Babylon",
+  "tt": "BTA"
+ },
+ {
+  "id": "225",
+  "name": "Baldwin",
+  "tt": "BWN"
+ },
+ {
+  "id": "26",
+  "name": "Bay Shore",
+  "tt": "BSR"
+ },
+ {
+  "id": "25",
+  "name": "Bayside",
+  "tt": "BSD"
+ },
+ {
+  "id": "23",
+  "name": "Bellerose",
+  "tt": "BRS"
+ },
+ {
+  "id": "16",
+  "name": "Bellmore",
+  "tt": "BMR"
+ },
+ {
+  "id": "21",
+  "name": "Bellport",
+  "tt": "BPT"
+ },
+ {
+  "id": "24",
+  "name": "Belmont Park",
+  "tt": "BRT"
+ },
+ {
+  "id": "20",
+  "name": "Bethpage",
+  "tt": "BPG"
+ },
+ {
+  "id": "29",
+  "name": "Brentwood",
+  "tt": "BWD"
+ },
+ {
+  "id": "13",
+  "name": "Bridgehampton",
+  "tt": "BHN"
+ },
+ {
+  "id": "11",
+  "name": "Broadway",
+  "tt": "BDY"
+ },
+ {
+  "id": "39",
+  "name": "Carle Place",
+  "tt": "CPL"
+ },
+ {
+  "id": "32",
+  "name": "Cedarhurst",
+  "tt": "CHT"
+ },
+ {
+  "id": "33",
+  "name": "Central Islip",
+  "tt": "CI"
+ },
+ {
+  "id": "31",
+  "name": "Centre Avenue",
+  "tt": "CAV"
+ },
+ {
+  "id": "40",
+  "name": "Cold Spring Harbor",
+  "tt": "CSH"
+ },
+ {
+  "id": "38",
+  "name": "Copiague",
+  "tt": "CPG"
+ },
+ {
+  "id": "36",
+  "name": "Country Life Press",
+  "tt": "CLP"
+ },
+ {
+  "id": "44",
+  "name": "Deer Park",
+  "tt": "DPK"
+ },
+ {
+  "id": "42",
+  "name": "Douglaston",
+  "tt": "DGL"
+ },
+ {
+  "id": "48",
+  "name": "East Hampton",
+  "tt": "EHN"
+ },
+ {
+  "id": "50",
+  "name": "East New York",
+  "tt": "ENY"
+ },
+ {
+  "id": "51",
+  "name": "East Rockaway",
+  "tt": "ERY"
+ },
+ {
+  "id": "52",
+  "name": "East Williston",
+  "tt": "EWN"
+ },
+ {
+  "id": "359",
+  "name": "Elmont-UBS Arena",
+  "tt": "EMT"
+ },
+ {
+  "id": "65",
+  "name": "Far Rockaway",
+  "tt": "FRY"
+ },
+ {
+  "id": "59",
+  "name": "Farmingdale",
+  "tt": "FMD"
+ },
+ {
+  "id": "63",
+  "name": "Floral Park",
+  "tt": "FPK"
+ },
+ {
+  "id": "56",
+  "name": "Flushing Main Street",
+  "tt": "FLS"
+ },
+ {
+  "id": "55",
+  "name": "Forest Hills",
+  "tt": "FHL"
+ },
+ {
+  "id": "64",
+  "name": "Freeport",
+  "tt": "FPT"
+ },
+ {
+  "id": "68",
+  "name": "Garden City",
+  "tt": "GCY"
+ },
+ {
+  "id": "66",
+  "name": "Gibson",
+  "tt": "GBN"
+ },
+ {
+  "id": "67",
+  "name": "Glen Cove",
+  "tt": "GCV"
+ },
+ {
+  "id": "71",
+  "name": "Glen Head",
+  "tt": "GHD"
+ },
+ {
+  "id": "76",
+  "name": "Glen Street",
+  "tt": "GST"
+ },
+ {
+  "id": "349",
+  "name": "Grand Central",
+  "tt": "GCT"
+ },
+ {
+  "id": "72",
+  "name": "Great Neck",
+  "tt": "GNK"
+ },
+ {
+  "id": "74",
+  "name": "Great River",
+  "tt": "GRV"
+ },
+ {
+  "id": "78",
+  "name": "Greenlawn",
+  "tt": "GWN"
+ },
+ {
+  "id": "73",
+  "name": "Greenport",
+  "tt": "GPT"
+ },
+ {
+  "id": "77",
+  "name": "Greenvale",
+  "tt": "GVL"
+ },
+ {
+  "id": "83",
+  "name": "Hampton Bays",
+  "tt": "HBY"
+ },
+ {
+  "id": "84",
+  "name": "Hempstead",
+  "tt": "HEM"
+ },
+ {
+  "id": "85",
+  "name": "Hempstead Gardens",
+  "tt": "HGN"
+ },
+ {
+  "id": "94",
+  "name": "Hewlett",
+  "tt": "HWT"
+ },
+ {
+  "id": "92",
+  "name": "Hicksville",
+  "tt": "HVL"
+ },
+ {
+  "id": "86",
+  "name": "Hillside Facility",
+  "tt": "HIL"
+ },
+ {
+  "id": "89",
+  "name": "Hollis",
+  "tt": "HOL"
+ },
+ {
+  "id": "90",
+  "name": "Hunterspoint Avenue",
+  "tt": "HPA"
+ },
+ {
+  "id": "91",
+  "name": "Huntington",
+  "tt": "HUN"
+ },
+ {
+  "id": "101",
+  "name": "Inwood",
+  "tt": "IWD"
+ },
+ {
+  "id": "99",
+  "name": "Island Park",
+  "tt": "IPK"
+ },
+ {
+  "id": "100",
+  "name": "Islip",
+  "tt": "ISP"
+ },
+ {
+  "id": "102",
+  "name": "Jamaica",
+  "tt": "JAM"
+ },
+ {
+  "id": "107",
+  "name": "Kew Gardens",
+  "tt": "KGN"
+ },
+ {
+  "id": "111",
+  "name": "Kings Park",
+  "tt": "KPK"
+ },
+ {
+  "id": "124",
+  "name": "Lakeview",
+  "tt": "LVW"
+ },
+ {
+  "id": "122",
+  "name": "Laurelton",
+  "tt": "LTN"
+ },
+ {
+  "id": "114",
+  "name": "Lawrence",
+  "tt": "LCE"
+ },
+ {
+  "id": "117",
+  "name": "Lindenhurst",
+  "tt": "LHT"
+ },
+ {
+  "id": "120",
+  "name": "Little Neck",
+  "tt": "LNK"
+ },
+ {
+  "id": "119",
+  "name": "Locust Manor",
+  "tt": "LMR"
+ },
+ {
+  "id": "123",
+  "name": "Locust Valley",
+  "tt": "LVL"
+ },
+ {
+  "id": "113",
+  "name": "Long Beach",
+  "tt": "LBH"
+ },
+ {
+  "id": "118",
+  "name": "Long Island City",
+  "tt": "LIC"
+ },
+ {
+  "id": "125",
+  "name": "Lynbrook",
+  "tt": "LYN"
+ },
+ {
+  "id": "142",
+  "name": "Malverne",
+  "tt": "MVN"
+ },
+ {
+  "id": "131",
+  "name": "Manhasset",
+  "tt": "MHT"
+ },
+ {
+  "id": "136",
+  "name": "Massapequa",
+  "tt": "MQA"
+ },
+ {
+  "id": "135",
+  "name": "Massapequa Park",
+  "tt": "MPK"
+ },
+ {
+  "id": "140",
+  "name": "Mastic-Shirley",
+  "tt": "MSY"
+ },
+ {
+  "id": "126",
+  "name": "Mattituck",
+  "tt": "MAK"
+ },
+ {
+  "id": "129",
+  "name": "Medford",
+  "tt": "MFD"
+ },
+ {
+  "id": "127",
+  "name": "Merillon Avenue",
+  "tt": "MAV"
+ },
+ {
+  "id": "226",
+  "name": "Merrick",
+  "tt": "MRK"
+ },
+ {
+  "id": "199",
+  "name": "Mets-Willets Point",
+  "tt": "SSM"
+ },
+ {
+  "id": "132",
+  "name": "Mineola",
+  "tt": "MIN"
+ },
+ {
+  "id": "141",
+  "name": "Montauk",
+  "tt": "MTK"
+ },
+ {
+  "id": "130",
+  "name": "Murray Hill",
+  "tt": "MHL"
+ },
+ {
+  "id": "149",
+  "name": "Nassau Boulevard",
+  "tt": "NBD"
+ },
+ {
+  "id": "152",
+  "name": "New Hyde Park",
+  "tt": "NHP"
+ },
+ {
+  "id": "153",
+  "name": "Northport",
+  "tt": "NPT"
+ },
+ {
+  "id": "148",
+  "name": "Nostrand Avenue",
+  "tt": "NAV"
+ },
+ {
+  "id": "157",
+  "name": "Oakdale",
+  "tt": "ODL"
+ },
+ {
+  "id": "155",
+  "name": "Oceanside",
+  "tt": "ODE"
+ },
+ {
+  "id": "154",
+  "name": "Oyster Bay",
+  "tt": "OBY"
+ },
+ {
+  "id": "163",
+  "name": "Patchogue",
+  "tt": "PGE"
+ },
+ {
+  "id": "237",
+  "name": "Penn Station",
+  "tt": "NYK"
+ },
+ {
+  "id": "165",
+  "name": "Pinelawn",
+  "tt": "PLN"
+ },
+ {
+  "id": "162",
+  "name": "Plandome",
+  "tt": "PDM"
+ },
+ {
+  "id": "164",
+  "name": "Port Jefferson",
+  "tt": "PJN"
+ },
+ {
+  "id": "171",
+  "name": "Port Washington",
+  "tt": "PWS"
+ },
+ {
+  "id": "175",
+  "name": "Queens Village",
+  "tt": "QVG"
+ },
+ {
+  "id": "176",
+  "name": "Riverhead",
+  "tt": "RHD"
+ },
+ {
+  "id": "183",
+  "name": "Rockville Centre",
+  "tt": "RVC"
+ },
+ {
+  "id": "179",
+  "name": "Ronkonkoma",
+  "tt": "RON"
+ },
+ {
+  "id": "180",
+  "name": "Rosedale",
+  "tt": "ROS"
+ },
+ {
+  "id": "182",
+  "name": "Roslyn",
+  "tt": "RSN"
+ },
+ {
+  "id": "204",
+  "name": "Sayville",
+  "tt": "SVL"
+ },
+ {
+  "id": "185",
+  "name": "Sea Cliff",
+  "tt": "SCF"
+ },
+ {
+  "id": "187",
+  "name": "Seaford",
+  "tt": "SFD"
+ },
+ {
+  "id": "202",
+  "name": "Smithtown",
+  "tt": "STN"
+ },
+ {
+  "id": "191",
+  "name": "Southampton",
+  "tt": "SHN"
+ },
+ {
+  "id": "190",
+  "name": "Southold",
+  "tt": "SHD"
+ },
+ {
+  "id": "198",
+  "name": "Speonk",
+  "tt": "SPK"
+ },
+ {
+  "id": "184",
+  "name": "St. Albans",
+  "tt": "SAB"
+ },
+ {
+  "id": "193",
+  "name": "St. James",
+  "tt": "SJM"
+ },
+ {
+  "id": "195",
+  "name": "Stewart Manor",
+  "tt": "SMR"
+ },
+ {
+  "id": "14",
+  "name": "Stony Brook",
+  "tt": "BK"
+ },
+ {
+  "id": "205",
+  "name": "Syosset",
+  "tt": "SYT"
+ },
+ {
+  "id": "211",
+  "name": "Valley Stream",
+  "tt": "VSM"
+ },
+ {
+  "id": "215",
+  "name": "Wantagh",
+  "tt": "WGH"
+ },
+ {
+  "id": "216",
+  "name": "West Hempstead",
+  "tt": "WHD"
+ },
+ {
+  "id": "213",
+  "name": "Westbury",
+  "tt": "WBY"
+ },
+ {
+  "id": "233",
+  "name": "Westhampton",
+  "tt": "WHN"
+ },
+ {
+  "id": "219",
+  "name": "Westwood",
+  "tt": "WWD"
+ },
+ {
+  "id": "217",
+  "name": "Woodmere",
+  "tt": "WMR"
+ },
+ {
+  "id": "214",
+  "name": "Woodside",
+  "tt": "WDD"
+ },
+ {
+  "id": "220",
+  "name": "Wyandanch",
+  "tt": "WYD"
+ },
+ {
+  "id": "223",
+  "name": "Yaphank",
+  "tt": "YPK"
+ }
+]

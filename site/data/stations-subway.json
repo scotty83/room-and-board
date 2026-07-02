@@ -1,0 +1,4241 @@
+[
+ {
+  "id": "L06",
+  "name": "1 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "A18",
+  "name": "103 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "119",
+  "name": "103 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "624",
+  "name": "103 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "706",
+  "name": "103 St-Corona Plaza",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "J14",
+  "name": "104 St",
+  "borough": "Queens",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A63",
+  "name": "104 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "623",
+  "name": "110 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "227",
+  "name": "110 St-Malcolm X Plaza",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "J13",
+  "name": "111 St",
+  "borough": "Queens",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "A64",
+  "name": "111 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "705",
+  "name": "111 St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "A16",
+  "name": "116 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "622",
+  "name": "116 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "226",
+  "name": "116 St",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "117",
+  "name": "116 St-Columbia University",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "J12",
+  "name": "121 St",
+  "borough": "Queens",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A15",
+  "name": "125 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "116",
+  "name": "125 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "621",
+  "name": "125 St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "225",
+  "name": "125 St",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "A14",
+  "name": "135 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "224",
+  "name": "135 St",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "115",
+  "name": "137 St-City College",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "416",
+  "name": "138 St-Grand Concourse",
+  "borough": "Bronx",
+  "lines": [
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "A31",
+  "name": "14 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "D19",
+  "name": "14 St",
+  "borough": "Manhattan",
+  "lines": [
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "132",
+  "name": "14 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "R20",
+  "name": "14 St-Union Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "Q",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "L03",
+  "name": "14 St-Union Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "635",
+  "name": "14 St-Union Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "A12",
+  "name": "145 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "D13",
+  "name": "145 St",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "114",
+  "name": "145 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "302",
+  "name": "145 St",
+  "borough": "Manhattan",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "415",
+  "name": "149 St-Grand Concourse",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "222",
+  "name": "149 St-Grand Concourse",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "F25",
+  "name": "15 St-Prospect Park",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "A11",
+  "name": "155 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "D12",
+  "name": "155 St",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "113",
+  "name": "157 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "D11",
+  "name": "161 St-Yankee Stadium",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "414",
+  "name": "161 St-Yankee Stadium",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "A10",
+  "name": "163 St-Amsterdam Av",
+  "borough": "Manhattan",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "D10",
+  "name": "167 St",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "413",
+  "name": "167 St",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "A09",
+  "name": "168 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "112",
+  "name": "168 St-Washington Hts",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "F02",
+  "name": "169 St",
+  "borough": "Queens",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "D09",
+  "name": "170 St",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "412",
+  "name": "170 St",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "215",
+  "name": "174 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "D08",
+  "name": "174-175 Sts",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "A07",
+  "name": "175 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "410",
+  "name": "176 St",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "B19",
+  "name": "18 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "N05",
+  "name": "18 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "F30",
+  "name": "18 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "131",
+  "name": "18 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "A06",
+  "name": "181 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "111",
+  "name": "181 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "D06",
+  "name": "182-183 Sts",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "408",
+  "name": "183 St",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "A05",
+  "name": "190 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "110",
+  "name": "191 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "F14",
+  "name": "2 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "B20",
+  "name": "20 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "N06",
+  "name": "20 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "108",
+  "name": "207 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "G24",
+  "name": "21 St",
+  "borough": "Queens",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "B04",
+  "name": "21 St-Queensbridge",
+  "borough": "Queens",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "107",
+  "name": "215 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "207",
+  "name": "219 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "206",
+  "name": "225 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "R19",
+  "name": "23 St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "A30",
+  "name": "23 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "D18",
+  "name": "23 St",
+  "borough": "Manhattan",
+  "lines": [
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "130",
+  "name": "23 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "634",
+  "name": "23 St-Baruch College",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "104",
+  "name": "231 St",
+  "borough": "Bronx",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "205",
+  "name": "233 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "103",
+  "name": "238 St",
+  "borough": "Bronx",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "B22",
+  "name": "25 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "R35",
+  "name": "25 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "R18",
+  "name": "28 St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "129",
+  "name": "28 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "633",
+  "name": "28 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "L05",
+  "name": "3 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "619",
+  "name": "3 Av-138 St",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "221",
+  "name": "3 Av-149 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "R04",
+  "name": "30 Av",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "632",
+  "name": "33 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "716",
+  "name": "33 St-Rawson St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "R17",
+  "name": "34 St-Herald Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "Q",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "D17",
+  "name": "34 St-Herald Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D",
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "726",
+  "name": "34 St-Hudson Yards",
+  "borough": "Manhattan",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "A28",
+  "name": "34 St-Penn Station",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "128",
+  "name": "34 St-Penn Station",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "R06",
+  "name": "36 Av",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "R36",
+  "name": "36 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D",
+   "N",
+   "R"
+  ]
+ },
+ {
+  "id": "G20",
+  "name": "36 St",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "R08",
+  "name": "39 Av-Dutch Kills",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "R33",
+  "name": "4 Av-9 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "F23",
+  "name": "4 Av-9 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "715",
+  "name": "40 St-Lowery St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "D16",
+  "name": "42 St-Bryant Pk",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D",
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "A27",
+  "name": "42 St-Port Authority Bus Terminal",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "R39",
+  "name": "45 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "G18",
+  "name": "46 St",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "714",
+  "name": "46 St-Bliss St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "D15",
+  "name": "47-50 Sts-Rockefeller Ctr",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D",
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "R15",
+  "name": "49 St",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "724",
+  "name": "5 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "F12",
+  "name": "5 Av/53 St",
+  "borough": "Manhattan",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "R13",
+  "name": "5 Av/59 St",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "B14",
+  "name": "50 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "A25",
+  "name": "50 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "126",
+  "name": "50 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "630",
+  "name": "51 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "713",
+  "name": "52 St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "R40",
+  "name": "53 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "B15",
+  "name": "55 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "B10",
+  "name": "57 St",
+  "borough": "Manhattan",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "R14",
+  "name": "57 St-7 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "Q",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "R41",
+  "name": "59 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "N",
+   "R"
+  ]
+ },
+ {
+  "id": "629",
+  "name": "59 St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "A24",
+  "name": "59 St-Columbus Circle",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "125",
+  "name": "59 St-Columbus Circle",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "L02",
+  "name": "6 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "712",
+  "name": "61 St-Woodside",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "B16",
+  "name": "62 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "G10",
+  "name": "63 Dr-Rego Park",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "G15",
+  "name": "65 St",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "124",
+  "name": "66 St-Lincoln Center",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "G09",
+  "name": "67 Av",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "628",
+  "name": "68 St-Hunter College",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "711",
+  "name": "69 St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "D25",
+  "name": "7 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "F24",
+  "name": "7 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "D14",
+  "name": "7 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "E",
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "B17",
+  "name": "71 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "A22",
+  "name": "72 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "123",
+  "name": "72 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "Q03",
+  "name": "72 St",
+  "borough": "Manhattan",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "710",
+  "name": "74 St-Broadway",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "F07",
+  "name": "75 Av",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "J17",
+  "name": "75 St-Elderts Ln",
+  "borough": "Queens",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "R43",
+  "name": "77 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "627",
+  "name": "77 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "B18",
+  "name": "79 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "122",
+  "name": "79 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "N02",
+  "name": "8 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "L01",
+  "name": "8 Av",
+  "borough": "Manhattan",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "R21",
+  "name": "8 St-NYU",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "A59",
+  "name": "80 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "A21",
+  "name": "81 St-Museum of Natural History",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "709",
+  "name": "82 St-Jackson Hts",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "J16",
+  "name": "85 St-Forest Pkwy",
+  "borough": "Queens",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "R44",
+  "name": "86 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "N10",
+  "name": "86 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "A20",
+  "name": "86 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "121",
+  "name": "86 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "626",
+  "name": "86 St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "Q04",
+  "name": "86 St",
+  "borough": "Manhattan",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "A60",
+  "name": "88 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "B12",
+  "name": "9 Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "708",
+  "name": "90 St-Elmhurst Av",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "A19",
+  "name": "96 St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "120",
+  "name": "96 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "625",
+  "name": "96 St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "Q05",
+  "name": "96 St",
+  "borough": "Manhattan",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "J24",
+  "name": "Alabama Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "210",
+  "name": "Allerton Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "S17",
+  "name": "Annadale",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "H01",
+  "name": "Aqueduct Racetrack",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H02",
+  "name": "Aqueduct-N Conduit Av",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "S11",
+  "name": "Arthur Kill",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "636",
+  "name": "Astor Pl",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "R03",
+  "name": "Astoria Blvd",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "R01",
+  "name": "Astoria-Ditmars Blvd",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "L24",
+  "name": "Atlantic Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "R31",
+  "name": "Atlantic Av-Barclays Ctr",
+  "borough": "Brooklyn",
+  "lines": [
+   "D",
+   "N",
+   "R"
+  ]
+ },
+ {
+  "id": "D24",
+  "name": "Atlantic Av-Barclays Ctr",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "235",
+  "name": "Atlantic Av-Barclays Ctr",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3",
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "D32",
+  "name": "Avenue H",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "F31",
+  "name": "Avenue I",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "D33",
+  "name": "Avenue J",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "D34",
+  "name": "Avenue M",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "F33",
+  "name": "Avenue N",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "F34",
+  "name": "Avenue P",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "D37",
+  "name": "Avenue U",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "N09",
+  "name": "Avenue U",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "F36",
+  "name": "Avenue U",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "F38",
+  "name": "Avenue X",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "B23",
+  "name": "Bay 50 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "B21",
+  "name": "Bay Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "N07",
+  "name": "Bay Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "F32",
+  "name": "Bay Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "R42",
+  "name": "Bay Ridge Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "R45",
+  "name": "Bay Ridge-95 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "S20",
+  "name": "Bay Terrace",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "502",
+  "name": "Baychester Av",
+  "borough": "Bronx",
+  "lines": [
+   "5"
+  ]
+ },
+ {
+  "id": "H14",
+  "name": "Beach 105 St",
+  "borough": "Queens",
+  "lines": [
+   "A",
+   "S"
+  ]
+ },
+ {
+  "id": "H10",
+  "name": "Beach 25 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H09",
+  "name": "Beach 36 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H08",
+  "name": "Beach 44 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H07",
+  "name": "Beach 60 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H06",
+  "name": "Beach 67 St",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H12",
+  "name": "Beach 90 St",
+  "borough": "Queens",
+  "lines": [
+   "A",
+   "S"
+  ]
+ },
+ {
+  "id": "H13",
+  "name": "Beach 98 St",
+  "borough": "Queens",
+  "lines": [
+   "A",
+   "S"
+  ]
+ },
+ {
+  "id": "L08",
+  "name": "Bedford Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "D03",
+  "name": "Bedford Park Blvd",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "405",
+  "name": "Bedford Park Blvd-Lehman College",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "G33",
+  "name": "Bedford-Nostrand Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "F20",
+  "name": "Bergen St",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "236",
+  "name": "Bergen St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "D29",
+  "name": "Beverley Rd",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "245",
+  "name": "Beverly Rd",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "637",
+  "name": "Bleecker St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "232",
+  "name": "Borough Hall",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "423",
+  "name": "Borough Hall",
+  "borough": "Brooklyn",
+  "lines": [
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "S04",
+  "name": "Botanic Garden",
+  "borough": "Brooklyn",
+  "lines": [
+   "S"
+  ]
+ },
+ {
+  "id": "M19",
+  "name": "Bowery",
+  "borough": "Manhattan",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "420",
+  "name": "Bowling Green",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "F05",
+  "name": "Briarwood",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "D40",
+  "name": "Brighton Beach",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "H04",
+  "name": "Broad Channel",
+  "borough": "Queens",
+  "lines": [
+   "A",
+   "S"
+  ]
+ },
+ {
+  "id": "M23",
+  "name": "Broad St",
+  "borough": "Manhattan",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "R05",
+  "name": "Broadway",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "G30",
+  "name": "Broadway",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "J27",
+  "name": "Broadway Junction",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "L22",
+  "name": "Broadway Junction",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "A51",
+  "name": "Broadway Junction",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "D21",
+  "name": "Broadway-Lafayette St",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D",
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "212",
+  "name": "Bronx Park East",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "618",
+  "name": "Brook Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "640",
+  "name": "Brooklyn Bridge-City Hall",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "602",
+  "name": "Buhre Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "209",
+  "name": "Burke Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "409",
+  "name": "Burnside Av",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "L21",
+  "name": "Bushwick Av-Aberdeen St",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "R23",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "Q01",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "Q"
+  ]
+ },
+ {
+  "id": "M20",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A34",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "135",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "639",
+  "name": "Canal St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "L29",
+  "name": "Canarsie-Rockaway Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "F21",
+  "name": "Carroll St",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "607",
+  "name": "Castle Hill Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "A17",
+  "name": "Cathedral Pkwy (110 St)",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "B"
+  ]
+ },
+ {
+  "id": "118",
+  "name": "Cathedral Pkwy (110 St)",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "M10",
+  "name": "Central Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "M21",
+  "name": "Chambers St",
+  "borough": "Manhattan",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A36",
+  "name": "Chambers St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "137",
+  "name": "Chambers St",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "J28",
+  "name": "Chauncey St",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "133",
+  "name": "Christopher St-Stonewall",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "D28",
+  "name": "Church Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "F27",
+  "name": "Church Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "244",
+  "name": "Church Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "R24",
+  "name": "City Hall",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "231",
+  "name": "Clark St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "G34",
+  "name": "Classon Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "J22",
+  "name": "Cleveland St",
+  "borough": "Brooklyn",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "S28",
+  "name": "Clifton",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "A44",
+  "name": "Clinton-Washington Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "G35",
+  "name": "Clinton-Washington Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "D43",
+  "name": "Coney Island-Stillwell Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "D",
+   "F",
+   "N",
+   "Q"
+  ]
+ },
+ {
+  "id": "D30",
+  "name": "Cortelyou Rd",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "R25",
+  "name": "Cortlandt St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "G22",
+  "name": "Court Sq",
+  "borough": "Queens",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "719",
+  "name": "Court Sq",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "F09",
+  "name": "Court Sq-23 St",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "R28",
+  "name": "Court St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "J20",
+  "name": "Crescent St",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "250",
+  "name": "Crown Hts-Utica Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3",
+   "4"
+  ]
+ },
+ {
+  "id": "617",
+  "name": "Cypress Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "J19",
+  "name": "Cypress Hills",
+  "borough": "Brooklyn",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "R30",
+  "name": "DeKalb Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q",
+   "R"
+  ]
+ },
+ {
+  "id": "L16",
+  "name": "DeKalb Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "M18",
+  "name": "Delancey St-Essex St",
+  "borough": "Manhattan",
+  "lines": [
+   "M",
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "F15",
+  "name": "Delancey St-Essex St",
+  "borough": "Manhattan",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "F29",
+  "name": "Ditmas Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "S25",
+  "name": "Dongan Hills",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "A03",
+  "name": "Dyckman St",
+  "borough": "Manhattan",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "109",
+  "name": "Dyckman St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "616",
+  "name": "E 143 St-St Mary's St",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "615",
+  "name": "E 149 St",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "213",
+  "name": "E 180 St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "L28",
+  "name": "East 105 St",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "F16",
+  "name": "East Broadway",
+  "borough": "Manhattan",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "501",
+  "name": "Eastchester-Dyre Av",
+  "borough": "Bronx",
+  "lines": [
+   "5"
+  ]
+ },
+ {
+  "id": "238",
+  "name": "Eastern Pkwy-Brooklyn Museum",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "611",
+  "name": "Elder Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "G13",
+  "name": "Elmhurst Av",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "S18",
+  "name": "Eltingville",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "A55",
+  "name": "Euclid Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "H11",
+  "name": "Far Rockaway-Mott Av",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "247",
+  "name": "Flatbush Av-Brooklyn College",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "M12",
+  "name": "Flushing Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "M",
+   "J"
+  ]
+ },
+ {
+  "id": "G31",
+  "name": "Flushing Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "701",
+  "name": "Flushing-Main St",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "D05",
+  "name": "Fordham Rd",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "407",
+  "name": "Fordham Rd",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "M05",
+  "name": "Forest Av",
+  "borough": "Queens",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "G08",
+  "name": "Forest Hills-71 Av",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F",
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "B13",
+  "name": "Fort Hamilton Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "N03",
+  "name": "Fort Hamilton Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "F26",
+  "name": "Fort Hamilton Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "S01",
+  "name": "Franklin Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "S"
+  ]
+ },
+ {
+  "id": "A45",
+  "name": "Franklin Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "239",
+  "name": "Franklin Av-Medgar Evers College",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3",
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "136",
+  "name": "Franklin St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "216",
+  "name": "Freeman St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "M04",
+  "name": "Fresh Pond Rd",
+  "borough": "Queens",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "M22",
+  "name": "Fulton St",
+  "borough": "Manhattan",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A38",
+  "name": "Fulton St",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "G36",
+  "name": "Fulton St",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "229",
+  "name": "Fulton St",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "418",
+  "name": "Fulton St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "J30",
+  "name": "Gates Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "L11",
+  "name": "Graham Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "237",
+  "name": "Grand Army Plaza",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "G12",
+  "name": "Grand Av-Newtown",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "631",
+  "name": "Grand Central-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5",
+   "6"
+  ]
+ },
+ {
+  "id": "723",
+  "name": "Grand Central-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "901",
+  "name": "Grand Central-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "S"
+  ]
+ },
+ {
+  "id": "L12",
+  "name": "Grand St",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "D22",
+  "name": "Grand St",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "A57",
+  "name": "Grant Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "S23",
+  "name": "Grant City",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "S27",
+  "name": "Grasmere",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "S19",
+  "name": "Great Kills",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "G26",
+  "name": "Greenpoint Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "208",
+  "name": "Gun Hill Rd",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "503",
+  "name": "Gun Hill Rd",
+  "borough": "Bronx",
+  "lines": [
+   "5"
+  ]
+ },
+ {
+  "id": "J29",
+  "name": "Halsey St",
+  "borough": "Brooklyn",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "L19",
+  "name": "Halsey St",
+  "borough": "Queens",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "301",
+  "name": "Harlem-148 St",
+  "borough": "Manhattan",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "M14",
+  "name": "Hewes St",
+  "borough": "Brooklyn",
+  "lines": [
+   "M",
+   "J"
+  ]
+ },
+ {
+  "id": "A40",
+  "name": "High St",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "134",
+  "name": "Houston St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "H03",
+  "name": "Howard Beach-JFK Airport",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "233",
+  "name": "Hoyt St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "A42",
+  "name": "Hoyt-Schermerhorn Sts",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C",
+   "G"
+  ]
+ },
+ {
+  "id": "S16",
+  "name": "Huguenot",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "720",
+  "name": "Hunters Point Av",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "613",
+  "name": "Hunts Point Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "218",
+  "name": "Intervale Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "A02",
+  "name": "Inwood-207 St",
+  "borough": "Manhattan",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "220",
+  "name": "Jackson Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "G14",
+  "name": "Jackson Hts-Roosevelt Av",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F",
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "G05",
+  "name": "Jamaica Center-Parsons/Archer",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "F01",
+  "name": "Jamaica-179 St",
+  "borough": "Queens",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "G07",
+  "name": "Jamaica-Van Wyck",
+  "borough": "Queens",
+  "lines": [
+   "E"
+  ]
+ },
+ {
+  "id": "R29",
+  "name": "Jay St-MetroTech",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "A41",
+  "name": "Jay St-MetroTech",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C",
+   "F"
+  ]
+ },
+ {
+  "id": "S24",
+  "name": "Jefferson Av",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "L15",
+  "name": "Jefferson St",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "707",
+  "name": "Junction Blvd",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "254",
+  "name": "Junius St",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "F06",
+  "name": "Kew Gardens-Union Tpke",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "D35",
+  "name": "Kings Hwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "N08",
+  "name": "Kings Hwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "F35",
+  "name": "Kings Hwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "D04",
+  "name": "Kingsbridge Rd",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "406",
+  "name": "Kingsbridge Rd",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "249",
+  "name": "Kingston Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "A47",
+  "name": "Kingston-Throop Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "M09",
+  "name": "Knickerbocker Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "J31",
+  "name": "Kosciuszko St",
+  "borough": "Brooklyn",
+  "lines": [
+   "J"
+  ]
+ },
+ {
+  "id": "A43",
+  "name": "Lafayette Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "F11",
+  "name": "Lexington Av/53 St",
+  "borough": "Manhattan",
+  "lines": [
+   "E",
+   "F"
+  ]
+ },
+ {
+  "id": "R11",
+  "name": "Lexington Av/59 St",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "B08",
+  "name": "Lexington Av/63 St",
+  "borough": "Manhattan",
+  "lines": [
+   "M",
+   "Q"
+  ]
+ },
+ {
+  "id": "A52",
+  "name": "Liberty Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "L26",
+  "name": "Livonia Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "614",
+  "name": "Longwood Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "M13",
+  "name": "Lorimer St",
+  "borough": "Brooklyn",
+  "lines": [
+   "M",
+   "J"
+  ]
+ },
+ {
+  "id": "L10",
+  "name": "Lorimer St",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "106",
+  "name": "Marble Hill-225 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "M16",
+  "name": "Marcy Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "M",
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "G29",
+  "name": "Metropolitan Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "702",
+  "name": "Mets-Willets Point",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "M01",
+  "name": "Middle Village-Metropolitan Av",
+  "borough": "Queens",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "603",
+  "name": "Middletown Rd",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "L13",
+  "name": "Montrose Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "L14",
+  "name": "Morgan Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "505",
+  "name": "Morris Park",
+  "borough": "Bronx",
+  "lines": [
+   "5"
+  ]
+ },
+ {
+  "id": "610",
+  "name": "Morrison Av-Soundview",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "402",
+  "name": "Mosholu Pkwy",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "411",
+  "name": "Mt Eden Av",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "M11",
+  "name": "Myrtle Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "M",
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "G32",
+  "name": "Myrtle-Willoughby Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "M08",
+  "name": "Myrtle-Wyckoff Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "L17",
+  "name": "Myrtle-Wyckoff Avs",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "G28",
+  "name": "Nassau Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "G"
+  ]
+ },
+ {
+  "id": "D38",
+  "name": "Neck Rd",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "F39",
+  "name": "Neptune Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "204",
+  "name": "Nereid Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "234",
+  "name": "Nevins St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "3",
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "S22",
+  "name": "New Dorp",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "L27",
+  "name": "New Lots Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "257",
+  "name": "New Lots Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "N04",
+  "name": "New Utrecht Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "N"
+  ]
+ },
+ {
+  "id": "246",
+  "name": "Newkirk Av-Little Haiti",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "D31",
+  "name": "Newkirk Plaza",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "G16",
+  "name": "Northern Blvd",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "J21",
+  "name": "Norwood Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "D01",
+  "name": "Norwood-205 St",
+  "borough": "Bronx",
+  "lines": [
+   "D"
+  ]
+ },
+ {
+  "id": "A46",
+  "name": "Nostrand Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "248",
+  "name": "Nostrand Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "S21",
+  "name": "Oakwood Heights",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "D41",
+  "name": "Ocean Pkwy",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "S26",
+  "name": "Old Town",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "A65",
+  "name": "Ozone Park-Lefferts Blvd",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "S03",
+  "name": "Park Pl",
+  "borough": "Brooklyn",
+  "lines": [
+   "S"
+  ]
+ },
+ {
+  "id": "228",
+  "name": "Park Place",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "608",
+  "name": "Parkchester",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "D27",
+  "name": "Parkside Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "Q"
+  ]
+ },
+ {
+  "id": "F03",
+  "name": "Parsons Blvd",
+  "borough": "Queens",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "601",
+  "name": "Pelham Bay Park",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "211",
+  "name": "Pelham Pkwy",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "504",
+  "name": "Pelham Pkwy",
+  "borough": "Bronx",
+  "lines": [
+   "5"
+  ]
+ },
+ {
+  "id": "255",
+  "name": "Pennsylvania Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "S14",
+  "name": "Pleasant Plains",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "241",
+  "name": "President St-Medgar Evers College",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "R22",
+  "name": "Prince St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "S15",
+  "name": "Prince's Bay",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "R34",
+  "name": "Prospect Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "219",
+  "name": "Prospect Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "D26",
+  "name": "Prospect Park",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q",
+   "S"
+  ]
+ },
+ {
+  "id": "G21",
+  "name": "Queens Plaza",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "F",
+   "R"
+  ]
+ },
+ {
+  "id": "R09",
+  "name": "Queensboro Plaza",
+  "borough": "Queens",
+  "lines": [
+   "N",
+   "W"
+  ]
+ },
+ {
+  "id": "718",
+  "name": "Queensboro Plaza",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "A49",
+  "name": "Ralph Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "R26",
+  "name": "Rector St",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "139",
+  "name": "Rector St",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "S13",
+  "name": "Richmond Valley",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "A50",
+  "name": "Rockaway Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "253",
+  "name": "Rockaway Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "A61",
+  "name": "Rockaway Blvd",
+  "borough": "Queens",
+  "lines": [
+   "A"
+  ]
+ },
+ {
+  "id": "H15",
+  "name": "Rockaway Park-Beach 116 St",
+  "borough": "Queens",
+  "lines": [
+   "A",
+   "S"
+  ]
+ },
+ {
+  "id": "B06",
+  "name": "Roosevelt Island",
+  "borough": "Manhattan",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "252",
+  "name": "Saratoga Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "M06",
+  "name": "Seneca Av",
+  "borough": "Queens",
+  "lines": [
+   "M"
+  ]
+ },
+ {
+  "id": "D39",
+  "name": "Sheepshead Bay",
+  "borough": "Brooklyn",
+  "lines": [
+   "B",
+   "Q"
+  ]
+ },
+ {
+  "id": "A54",
+  "name": "Shepherd Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "217",
+  "name": "Simpson St",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "F22",
+  "name": "Smith-9 Sts",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "G"
+  ]
+ },
+ {
+  "id": "142",
+  "name": "South Ferry",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "A33",
+  "name": "Spring St",
+  "borough": "Manhattan",
+  "lines": [
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "638",
+  "name": "Spring St",
+  "borough": "Manhattan",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "S31",
+  "name": "St George",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "609",
+  "name": "St Lawrence Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "S29",
+  "name": "Stapleton",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "G19",
+  "name": "Steinway St",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "242",
+  "name": "Sterling St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "F04",
+  "name": "Sutphin Blvd",
+  "borough": "Queens",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "G06",
+  "name": "Sutphin Blvd-Archer Av-JFK Airport",
+  "borough": "Queens",
+  "lines": [
+   "E",
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "L25",
+  "name": "Sutter Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "251",
+  "name": "Sutter Av-Rutland Rd",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "R16",
+  "name": "Times Sq-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "N",
+   "Q",
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "127",
+  "name": "Times Sq-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "1",
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "725",
+  "name": "Times Sq-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "902",
+  "name": "Times Sq-42 St",
+  "borough": "Manhattan",
+  "lines": [
+   "S"
+  ]
+ },
+ {
+  "id": "S30",
+  "name": "Tompkinsville",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "S09",
+  "name": "Tottenville",
+  "borough": "Staten Island",
+  "lines": [
+   "SIR"
+  ]
+ },
+ {
+  "id": "D07",
+  "name": "Tremont Av",
+  "borough": "Bronx",
+  "lines": [
+   "B",
+   "D"
+  ]
+ },
+ {
+  "id": "R32",
+  "name": "Union St",
+  "borough": "Brooklyn",
+  "lines": [
+   "R"
+  ]
+ },
+ {
+  "id": "A48",
+  "name": "Utica Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "A",
+   "C"
+  ]
+ },
+ {
+  "id": "101",
+  "name": "Van Cortlandt Park-242 St",
+  "borough": "Bronx",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "J23",
+  "name": "Van Siclen Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "A53",
+  "name": "Van Siclen Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "C"
+  ]
+ },
+ {
+  "id": "256",
+  "name": "Van Siclen Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "3"
+  ]
+ },
+ {
+  "id": "721",
+  "name": "Vernon Blvd-Jackson Av",
+  "borough": "Queens",
+  "lines": [
+   "7"
+  ]
+ },
+ {
+  "id": "A32",
+  "name": "W 4 St-Wash Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "A",
+   "C",
+   "E"
+  ]
+ },
+ {
+  "id": "D20",
+  "name": "W 4 St-Wash Sq",
+  "borough": "Manhattan",
+  "lines": [
+   "B",
+   "D",
+   "F",
+   "M"
+  ]
+ },
+ {
+  "id": "D42",
+  "name": "W 8 St-NY Aquarium",
+  "borough": "Brooklyn",
+  "lines": [
+   "F",
+   "Q"
+  ]
+ },
+ {
+  "id": "201",
+  "name": "Wakefield-241 St",
+  "borough": "Bronx",
+  "lines": [
+   "2"
+  ]
+ },
+ {
+  "id": "230",
+  "name": "Wall St",
+  "borough": "Manhattan",
+  "lines": [
+   "2",
+   "3"
+  ]
+ },
+ {
+  "id": "419",
+  "name": "Wall St",
+  "borough": "Manhattan",
+  "lines": [
+   "4",
+   "5"
+  ]
+ },
+ {
+  "id": "214",
+  "name": "West Farms Sq-E Tremont Av",
+  "borough": "Bronx",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "604",
+  "name": "Westchester Sq-E Tremont Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "R27",
+  "name": "Whitehall St-South Ferry",
+  "borough": "Manhattan",
+  "lines": [
+   "R",
+   "W"
+  ]
+ },
+ {
+  "id": "612",
+  "name": "Whitlock Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ },
+ {
+  "id": "L20",
+  "name": "Wilson Av",
+  "borough": "Brooklyn",
+  "lines": [
+   "L"
+  ]
+ },
+ {
+  "id": "243",
+  "name": "Winthrop St",
+  "borough": "Brooklyn",
+  "lines": [
+   "2",
+   "5"
+  ]
+ },
+ {
+  "id": "J15",
+  "name": "Woodhaven Blvd",
+  "borough": "Queens",
+  "lines": [
+   "J",
+   "Z"
+  ]
+ },
+ {
+  "id": "G11",
+  "name": "Woodhaven Blvd",
+  "borough": "Queens",
+  "lines": [
+   "M",
+   "R"
+  ]
+ },
+ {
+  "id": "401",
+  "name": "Woodlawn",
+  "borough": "Bronx",
+  "lines": [
+   "4"
+  ]
+ },
+ {
+  "id": "E01",
+  "name": "World Trade Center",
+  "borough": "Manhattan",
+  "lines": [
+   "E"
+  ]
+ },
+ {
+  "id": "138",
+  "name": "WTC Cortlandt",
+  "borough": "Manhattan",
+  "lines": [
+   "1"
+  ]
+ },
+ {
+  "id": "F18",
+  "name": "York St",
+  "borough": "Brooklyn",
+  "lines": [
+   "F"
+  ]
+ },
+ {
+  "id": "606",
+  "name": "Zerega Av",
+  "borough": "Bronx",
+  "lines": [
+   "6"
+  ]
+ }
+]

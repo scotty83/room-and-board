@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up your office display</title>
+<link rel="stylesheet" href="css/setup.css">
+</head>
+<body>
+  <main class="setup">
+    <header class="setup__head">
+      <h1>Set up your office display</h1>
+      <p>Pick what you want on your board, get a code, and type it on the board's screen (Settings → Setup code). Codes last one hour.</p>
+    </header>
+
+    <section class="field">
+      <label for="name">Your first name <small>(for the greeting — optional)</small></label>
+      <input id="name" type="text" maxlength="24" autocomplete="given-name" placeholder="Sean">
+    </section>
+
+    <section class="field">
+      <h2>Widgets</h2>
+      <div id="widgets" class="checks"></div>
+    </section>
+
+    <section class="field">
+      <h2>Weather location</h2>
+      <select id="loc-preset"></select>
+      <div class="ziprow">
+        <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
+        <button id="zip-go" type="button">Use ZIP</button>
+      </div>
+      <p id="loc-current" class="hint"></p>
+    </section>
+
+    <section class="field" id="subway-field">
+      <h2>Subway stops <small>(up to 4)</small></h2>
+      <div id="subway-chips" class="chips"></div>
+      <div class="pickrow">
+        <select id="sub-borough"></select>
+        <select id="sub-line"></select>
+        <select id="sub-station"></select>
+        <select id="sub-dir">
+          <option value="N">Uptown / North</option>
+          <option value="S">Downtown / South</option>
+        </select>
+        <button id="sub-add" type="button">Add</button>
+      </div>
+    </section>
+
+    <section class="field" id="lirr-field">
+      <h2>LIRR</h2>
+      <label for="lirr-orig">Departure station</label>
+      <select id="lirr-orig"></select>
+      <label for="lirr-dest">Only trains stopping at <small>(optional)</small></label>
+      <select id="lirr-dest"><option value="">Anywhere</option></select>
+    </section>
+
+    <section class="field" id="njt-field">
+      <h2>NJ Transit rail station</h2>
+      <select id="njt-station"><option value="NY">New York Penn Station</option></select>
+    </section>
+
+    <section class="field">
+      <h2>Display mode</h2>
+      <select id="mode">
+        <option value="auto">Auto — dashboard at commute times, art otherwise</option>
+        <option value="dashboard">Always dashboard</option>
+        <option value="ambient">Always art</option>
+      </select>
+    </section>
+
+    <footer class="setup__foot">
+      <button id="get-code" type="button" class="primary">Get my setup code</button>
+      <div id="code-out" class="code-out" hidden>
+        <output id="code"></output>
+        <p>On your board: tap the gear → <b>Setup code</b> → enter this code, then Save. Expires in 1 hour.</p>
+      </div>
+    </footer>
+  </main>
+  <script type="module" src="js/settings/setup.js"></script>
+</body>
+</html>

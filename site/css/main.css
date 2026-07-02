@@ -218,3 +218,95 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);
 }
+
+/* ---------- settings overlay ---------- */
+.settings {
+  position: absolute; inset: 0; z-index: 40;
+  display: grid; grid-template-columns: 380px 1fr;
+  background: var(--bg);
+}
+.settings__rail {
+  background: var(--bg-card); padding: 40px 28px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.settings__brand { font-size: 34px; font-weight: 700; }
+.settings__nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.settings__navitem {
+  text-align: left; font-size: 24px; padding: 16px 18px; min-height: 60px;
+  border: none; border-radius: 12px; background: none; color: var(--ink-dim); cursor: pointer;
+}
+.settings__navitem.is-active { background: var(--bg-card-2); color: var(--ink); font-weight: 600; }
+.settings__railfoot { display: flex; flex-direction: column; gap: 12px; }
+.settings__pane { padding: 44px 56px; overflow-y: auto; }
+.pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
+.pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
+.pane__empty { font-size: 21px; color: var(--ink-faint); }
+.pane__rule { border: none; border-top: 1px solid var(--bg-card-2); margin: 28px 0; }
+
+.rows { display: flex; flex-direction: column; gap: 8px; max-width: 860px; }
+.row {
+  display: flex; align-items: center; gap: 18px;
+  min-height: 64px; padding: 8px 18px;
+  background: var(--bg-card); border-radius: 12px;
+}
+.row__label { font-size: 24px; flex: 1; }
+.row__actions { display: flex; gap: 10px; }
+.row--tap { border: none; color: var(--ink); font-size: 23px; text-align: left; cursor: pointer; }
+.row--tap.is-selected { outline: 2px solid var(--accent); }
+
+.toggle {
+  width: 76px; height: 44px; border-radius: 22px; border: none; cursor: pointer;
+  background: var(--bg-card-2); position: relative; flex: none;
+  transition: background 0.2s;
+}
+.toggle__knob {
+  position: absolute; top: 4px; left: 4px; width: 36px; height: 36px;
+  border-radius: 50%; background: var(--ink-faint);
+  transition: transform 0.2s ease-out, background 0.2s;
+}
+.toggle.is-on { background: rgba(88, 166, 255, 0.35); }
+.toggle.is-on .toggle__knob { transform: translateX(32px); background: var(--accent); }
+
+.iconbtn {
+  width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;
+  background: var(--bg-card-2); color: var(--ink); font-size: 26px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
+.chip {
+  font-size: 22px; padding: 14px 20px; min-height: 56px;
+  border: none; border-radius: 28px; cursor: pointer;
+  background: var(--bg-card-2); color: var(--ink);
+}
+.kv { display: flex; align-items: center; gap: 16px; min-height: 60px; font-size: 23px; }
+.kv span { color: var(--ink-dim); min-width: 260px; }
+.kv__small { font-size: 20px; font-weight: 400; color: var(--ink-dim); }
+
+.drill { margin-top: 22px; max-width: 860px; }
+.drill__head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+.drill__head h3 { font-size: 26px; }
+.drill__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; max-height: 640px; overflow-y: auto; }
+.drill__item {
+  min-height: 64px; font-size: 23px; padding: 10px 16px;
+  border: none; border-radius: 12px; cursor: pointer;
+  background: var(--bg-card); color: var(--ink);
+  display: flex; align-items: center; gap: 12px;
+}
+.drill__letter { color: var(--accent); }
+
+.code__display, .zip__display {
+  display: block; font-size: 52px; letter-spacing: 0.35em;
+  font-variant-numeric: tabular-nums; margin: 16px 0; min-height: 64px;
+}
+.keypad { display: grid; gap: 10px; max-width: 640px; }
+.keypad--zip { grid-template-columns: repeat(3, 1fr); max-width: 320px; }
+.keypad--code { grid-template-columns: repeat(8, 1fr); }
+.key {
+  min-height: 64px; font-size: 26px; font-weight: 600;
+  border: none; border-radius: 12px; cursor: pointer;
+  background: var(--bg-card); color: var(--ink);
+}
+.key:active { background: var(--bg-card-2); }
+.key--wide { grid-column: span 2; }
+.code__status, .zip__status { font-size: 22px; color: var(--warn); margin-top: 14px; min-height: 30px; }
+.qr { margin-top: 20px; }
+.qr svg { background: #fff; border-radius: 12px; }

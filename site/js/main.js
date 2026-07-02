@@ -253,10 +253,16 @@ async function boot() {
   if (source === 'fragment') await saveConfig(cfg); // repair wiped storage
   startRuntime();
 
-  // Vault sync runs opportunistically after first paint.
+  // Vault sync runs opportunistically after first paint; settings uses the
+  // connection to mirror saves into the macro vault.
   if (fragment.auth) {
-    import('./bridge.js').then(({ connectBridge }) => {
-      connectBridge?.(fragment.auth).catch(() => {});
+    import('./bridge.js').then(async ({ connectBridge }) => {
+      try {
+        window.__signage.bridge = await connectBridge(fragment.auth);
+        window.__signage.vault = 'connected';
+      } catch {
+        window.__signage.vault = 'offline';
+      }
     });
   }
 }

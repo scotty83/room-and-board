@@ -90,6 +90,11 @@ describe('connectBridge', () => {
     expect(ws.sent[0].params.Text).toBe('sgn1:ENCODEDCFG');
     ws.onmessage({ data: JSON.stringify({ jsonrpc: '2.0', id: ws.sent[0].id, result: {} }) });
     await expect(sendP).resolves.toBeUndefined();
+
+    const resetP = bridge.sendReset();
+    expect(ws.sent[1].params.Text).toBe('sgn1-reset');
+    ws.onmessage({ data: JSON.stringify({ jsonrpc: '2.0', id: ws.sent[1].id, result: {} }) });
+    await expect(resetP).resolves.toBeUndefined();
   });
 
   it('rejects the connect on timeout', async () => {

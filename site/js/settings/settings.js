@@ -579,6 +579,39 @@ function renderDiag() {
     <div class="kv"><span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b></div>
     <div class="kv"><span>Display</span>
       <button class="btn btn--primary" data-reload>Reload display now</button>
-    </div>`;
+    </div>
+    <div class="kv"><span>Storage</span>
+      <button class="btn" data-clear>Clear web storage (test vault recovery)</button>
+      <button class="btn" data-reset>Reset this display</button>
+    </div>
+    <p class="pane__hint">Clear wipes this page's saved data — on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
   pane().querySelector('[data-reload]').addEventListener('click', () => location.reload());
+  const confirmThen = (btn, action) => {
+    btn.addEventListener('click', async () => {
+      if (btn.dataset.armed) {
+        await action();
+        return;
+      }
+      btn.dataset.armed = '1';
+      const original = btn.textContent;
+      btn.textContent = 'Tap again to confirm';
+      setTimeout(() => {
+        delete btn.dataset.armed;
+        btn.textContent = original;
+      }, 4000);
+    });
+  };
+  confirmThen(pane().querySelector('[data-clear]'), async () => {
+    window.localStorage.clear();
+    location.reload();
+  });
+  confirmThen(pane().querySelector('[data-reset]'), async () => {
+    try {
+      await window.__signage?.bridge?.sendReset();
+    } catch {
+      // no bridge: local reset only
+    }
+    window.localStorage.clear();
+    location.reload();
+  });
 }

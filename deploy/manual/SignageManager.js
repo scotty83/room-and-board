@@ -74,6 +74,7 @@ export function composeUrl(site, cfg, auth) {
 }
 
 export function parseMsg(text) {
+  if (text === 'sgn1-reset') return { type: 'reset' };
   if (typeof text === 'string' && text.startsWith(MSG_PREFIX)) {
     const cfg = text.slice(MSG_PREFIX.length);
     if (/^[A-Za-z0-9_-]+$/.test(cfg)) return { type: 'cfg', cfg };
@@ -145,7 +146,7 @@ async function init() {
   xapi.Event.Message.Send.on(async (event) => {
     const msg = parseMsg(event.Text);
     if (!msg) return;
-    vault.cfg = msg.cfg;
+    vault.cfg = msg.type === 'reset' ? null : msg.cfg;
     await writeVault(vault);
     await applySignageUrl(vault, auth);
     await xapi.Command.Message.Send({ Text: 'sgn1-ack' });

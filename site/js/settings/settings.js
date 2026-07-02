@@ -503,12 +503,47 @@ function renderDisplay() {
       ${opt('mode', 'dashboard', 'Always dashboard')}
       ${opt('mode', 'ambient', 'Always art')}
     </div>
-    <p class="pane__hint">Greeting name: <b>${escapeHtml(state.cfg.name || 'not set')}</b> — set it from the companion page (Setup code section).</p>`;
+    <p class="pane__hint">Greeting name</p>
+    <div class="kv"><span>Shown as</span><b>${escapeHtml(state.cfg.name || 'not set')}</b>
+      <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
+      ${state.cfg.name ? '<button class="btn" data-clear-name>Remove</button>' : ''}</div>
+    <div class="namepad" hidden>
+      <output class="code__display" aria-live="polite"></output>
+      <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(
+        (k) => `<button class="key" data-nkey="${k}">${k}</button>`,
+      ).join('')}<button class="key key--wide" data-nkey="Space">␣</button><button class="key" data-nkey="⌫">⌫</button><button class="key key--wide" data-nkey="Done">Done</button></div>
+    </div>`;
   pane().querySelectorAll('[data-set]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const [group, value] = btn.dataset.set.split(':');
       state.cfg[group] = value;
       renderDisplay();
+    }),
+  );
+  pane().querySelector('[data-clear-name]')?.addEventListener('click', () => {
+    state.cfg.name = '';
+    renderDisplay();
+  });
+  const pad = pane().querySelector('.namepad');
+  const display = pad.querySelector('.code__display');
+  // Typed lowercase, shown/saved title-cased ("sean scott" -> "Sean Scott").
+  const titleCase = (raw) => raw.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  let raw = state.cfg.name.toLowerCase();
+  pane().querySelector('[data-edit-name]').addEventListener('click', () => {
+    pad.hidden = !pad.hidden;
+    display.textContent = titleCase(raw);
+  });
+  pad.querySelectorAll('[data-nkey]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.nkey;
+      if (k === '⌫') raw = raw.slice(0, -1);
+      else if (k === 'Space') { if (raw && !raw.endsWith(' ') && raw.length < 23) raw += ' '; }
+      else if (k === 'Done') {
+        state.cfg.name = titleCase(raw.trim());
+        renderDisplay();
+        return;
+      } else if (raw.length < 24) raw += k.toLowerCase();
+      display.textContent = titleCase(raw) || '·';
     }),
   );
 }

@@ -184,7 +184,8 @@ html, body {
 }
 .slide[data-active] { opacity: 1; }
 .slide-caption {
-  position: absolute; left: 48px; bottom: calc(48px + var(--safe-bottom));
+  /* Clear the info strip (~70px tall at bottom: var(--safe-bottom)) plus a gap. */
+  position: absolute; left: 48px; bottom: calc(var(--safe-bottom) + 96px);
   display: flex; flex-direction: column; gap: 4px;
   background: rgba(0, 0, 0, 0.55);
   padding: 14px 22px; border-radius: 12px;

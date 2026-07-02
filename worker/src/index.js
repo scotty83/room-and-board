@@ -87,19 +87,16 @@ async function cached(env, key, ttlS, fetcher) {
 
 const YAHOO_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
-const INDICES = [
-  ['^DJI', 'Dow Jones'],
-  ['^IXIC', 'Nasdaq'],
-  ['^GSPC', 'S&P 500'],
-];
+const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };
+const DEFAULT_SYMBOLS = Object.keys(INDEX_NAMES);
 
-async function fetchMarkets() {
+async function fetchMarkets(symbols) {
   const indices = await Promise.all(
-    INDICES.map(async ([symbol, name]) => {
+    symbols.map(async (symbol) => {
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=15m`;
       const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA } });
       if (!res.ok) throw new Error(`yahoo ${res.status}`);
-      return mapYahooChart(await res.json(), name);
+      return mapYahooChart(await res.json(), INDEX_NAMES[symbol]);
     }),
   );
   return { updatedAt: Math.floor(Date.now() / 1000), stale: false, indices };
@@ -132,7 +129,13 @@ export default {
     }
 
     if (path === '/markets' && request.method === 'GET') {
-      return cached(env, 'markets', 300, fetchMarkets);
+      const requested = (url.searchParams.get('symbols') ?? '')
+        .split(',')
+        .map((t) => t.trim().toUpperCase())
+        .filter((t) => /^[\^A-Z0-9.\-]{1,10}$/.test(t))
+        .slice(0, 10);
+      const symbols = requested.length ? requested : DEFAULT_SYMBOLS;
+      return cached(env, `markets:${symbols.join(',')}`, 300, () => fetchMarkets(symbols));
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);

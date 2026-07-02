@@ -29,14 +29,14 @@ describe('mapNjt', () => {
     expect(vm.trains[1]).toMatchObject({ dest: 'Bay Head', min: 8, track: '5' });
     expect(vm.stale).toBe(false);
   });
-  it('caps at six and passes stale through', () => {
+  it('caps at twelve (renderers slice further by card capacity) and passes stale through', () => {
     const many = {
       ...payload,
       stale: true,
-      trains: Array.from({ length: 9 }, (_, i) => ({ time: 2000 + i * 60, dest: `D${i}`, line: 'L', track: null, status: '' })),
+      trains: Array.from({ length: 15 }, (_, i) => ({ time: 2000 + i * 60, dest: `D${i}`, line: 'L', track: null, status: '' })),
     };
     const vm = mapNjt(many, 1000);
-    expect(vm.trains).toHaveLength(6);
+    expect(vm.trains).toHaveLength(12);
     expect(vm.stale).toBe(true);
   });
   it('handles unconfigured/error payloads as empty', () => {
@@ -46,12 +46,13 @@ describe('mapNjt', () => {
 });
 
 describe('mapHistory', () => {
-  it('picks 5 events spread across years from the fixture', async () => {
+  it('picks spread events from the fixture (9 for capacity, 5 on request)', async () => {
+    expect(mapHistory(await fixture('wikimedia-onthisday.json'), 5).events).toHaveLength(5);
     const vm = mapHistory(await fixture('wikimedia-onthisday.json'));
-    expect(vm.events).toHaveLength(5);
+    expect(vm.events).toHaveLength(9);
     const years = vm.events.map((e) => e.year);
     expect([...years].sort((a, b) => a - b)).toEqual(years); // ascending
-    expect(new Set(years).size).toBe(5); // distinct
+    expect(new Set(years).size).toBe(9); // distinct
     for (const e of vm.events) expect(e.text.length).toBeGreaterThan(10);
   });
   it('handles few events gracefully', () => {

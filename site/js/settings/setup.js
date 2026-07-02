@@ -60,6 +60,7 @@ async function boot() {
   bindAlertCheck('njt-alerts', 'njt');
   await renderNjt();
   renderBusStops();
+  renderTickers();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -150,6 +151,30 @@ function renderLocation() {
       $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
     } else {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
+    }
+  });
+}
+
+function renderTickers() {
+  const chips = $('#sym-chips');
+  const renderChips = () => {
+    chips.innerHTML = cfg.markets.symbols
+      .map((t) => `<button type="button" data-sym="${t}">${t} ✕</button>`)
+      .join('');
+    chips.querySelectorAll('[data-sym]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cfg.markets.symbols = cfg.markets.symbols.filter((t) => t !== b.dataset.sym);
+        renderChips();
+      }),
+    );
+  };
+  renderChips();
+  $('#sym-add').addEventListener('click', () => {
+    const t = $('#sym-code').value.trim().toUpperCase();
+    if (/^[\^A-Z0-9.\-]{1,10}$/.test(t) && cfg.markets.symbols.length < 10 && !cfg.markets.symbols.includes(t)) {
+      cfg.markets.symbols = [...cfg.markets.symbols, t];
+      $('#sym-code').value = '';
+      renderChips();
     }
   });
 }

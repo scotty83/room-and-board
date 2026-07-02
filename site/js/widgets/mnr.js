@@ -6,6 +6,7 @@ import { decodeGtfsRt } from '../gtfs.js';
 import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'mnr', title: 'Metro-North · Grand Central', refreshMs: 60 * 1000 };
 
@@ -44,15 +45,19 @@ export function mapMnr(decoded, cfgMnr, nowSec, stationNames = {}) {
     });
   }
   departures.sort((a, b) => a.t - b.t);
-  return { departures: departures.slice(0, 6) };
+  return { departures: departures.slice(0, 12) };
 }
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
+  const [w, h] = cardSize(el, [2, 2]);
+  // Each alert banner costs roughly one train row of space.
+  const cap = Math.max(1, itemCapacity('mnr', w, h) - (vm.alerts?.length ?? 0));
+  const shown = vm.departures.slice(0, cap);
   el.innerHTML =
     renderAlertRows(vm.alerts?.map((a) => ({ ...a, routes: [] })) ?? []) +
     '<div class="trains">' +
-    (vm.departures.length
+    (shown.length
       ? vm.departures
           .map(
             (d) => `<div class="train">

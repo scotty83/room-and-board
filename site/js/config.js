@@ -29,6 +29,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   lirr: Object.freeze({ dest: '', alerts: true }), // Penn board destination filter ('' = all trains)
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
   bus: Object.freeze({ stops: Object.freeze([]) }), // 6-digit bus stop codes, up to 2
+  markets: Object.freeze({ symbols: Object.freeze([]) }), // [] = Dow/Nasdaq/S&P; else custom tickers
   njt: Object.freeze({ station: 'NY', alerts: true }),
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   mode: 'dashboard',
@@ -93,6 +94,11 @@ export function normalizeConfig(raw) {
       alerts: raw.mnr?.alerts !== false,
     },
     bus: { stops: strList(raw.bus?.stops, 2).filter((c) => /^\d{4,7}$/.test(c)) },
+    markets: {
+      symbols: strList(raw.markets?.symbols, 10)
+        .map((t) => t.toUpperCase())
+        .filter((t) => /^[\^A-Z0-9.\-]{1,10}$/.test(t)),
+    },
     njt: {
       station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
       alerts: raw.njt?.alerts !== false,

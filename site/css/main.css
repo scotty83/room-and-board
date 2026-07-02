@@ -389,8 +389,6 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
    cards carry data-w/data-h set from the layout) ---------- */
 /* Weather at 2-wide: 6 hourly slots instead of 8 */
 .card[data-w="2"] .wx-hour:nth-child(n+7) { display: none; }
-/* History at 1-high: two events */
-.card--history[data-h="1"] .history__item:nth-child(n+3) { display: none; }
 /* Quote at 1-high: clamp long quotes */
 .card--quote[data-h="1"] .quote__text {
   font-size: 22px;
@@ -436,11 +434,6 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .bullet--sm { width: 26px; height: 26px; font-size: 15px; }
 .trains { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; }
-/* When alerts occupy rows, trim list rows so nothing clips mid-text */
-.card--subway[data-h="2"] .card__body.has-alerts .arrival:nth-child(n+3) { display: none; }
-.card--lirr[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
-.card--njt[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
-.card--mnr[data-h="2"] .card__body.has-alerts .trains .train:nth-child(n+5) { display: none; }
 
 /* ---------- subway line-status board ---------- */
 .linestatus { display: flex; align-items: center; gap: 14px; min-height: 50px; }
@@ -481,3 +474,5 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .edit-block { flex-direction: column; gap: 4px; }
 .edit-tray__chip small { color: var(--ink-dim); font-size: 17px; }
+
+.more-hint { font-size: 18px; color: var(--ink-faint); padding-top: 2px; }

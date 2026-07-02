@@ -4,6 +4,7 @@
 
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
 
@@ -24,8 +25,12 @@ export function sparkPath(values, w, h) {
 const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export function render(el, vm, _cfg) {
-  el.innerHTML = vm.indices.length
-    ? vm.indices
+  const [w, h] = cardSize(el, [2, 1]);
+  const cap = itemCapacity('markets', w, h);
+  const shown = vm.indices.slice(0, cap);
+  const hidden = vm.indices.length - shown.length;
+  el.innerHTML = shown.length
+    ? shown
         .map((ix) => {
           const up = ix.change >= 0;
           return `<div class="index">
@@ -39,7 +44,7 @@ export function render(el, vm, _cfg) {
             <span class="delta ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))} (${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;
         })
-        .join('')
+        .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card to see them</div>` : '')
     : '<div class="empty">Market data unavailable</div>';
 }
 
@@ -60,5 +65,7 @@ export function mapMarkets(payload) {
 }
 
 export async function fetchData(cfg, net) {
-  return mapMarkets(await net.fetchJSON(`${WORKER_URL}/markets`));
+  const symbols = cfg.markets?.symbols ?? [];
+  const query = symbols.length ? `?symbols=${symbols.join(',')}` : '';
+  return mapMarkets(await net.fetchJSON(`${WORKER_URL}/markets${query}`));
 }

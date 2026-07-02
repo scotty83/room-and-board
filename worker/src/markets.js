@@ -11,7 +11,7 @@ export function mapYahooChart(json, name) {
   const closes = (result.indicators?.quote?.[0]?.close ?? []).filter((n) => Number.isFinite(n));
   return {
     symbol: meta.symbol,
-    name,
+    name: name ?? meta.shortName ?? meta.symbol,
     price,
     change: price - prev,
     changePct: ((price - prev) / prev) * 100,

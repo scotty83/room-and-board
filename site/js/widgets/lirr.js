@@ -8,6 +8,7 @@ import { decodeGtfsRt } from '../gtfs.js';
 import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'lirr', title: 'LIRR · Penn Station', refreshMs: 60 * 1000 };
 
@@ -16,8 +17,12 @@ const PENN_TT_CODE = 'NYK'; // TrainTime station code for Penn
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
-  el.innerHTML = renderAlertRows(vm.alerts?.map((a) => ({ ...a, routes: [] })) ?? []) + '<div class="trains">' + (vm.departures.length
-    ? vm.departures
+  const [w, h] = cardSize(el, [2, 2]);
+  // Each alert banner costs roughly one train row of space.
+  const cap = Math.max(1, itemCapacity('lirr', w, h) - (vm.alerts?.length ?? 0));
+  const shown = vm.departures.slice(0, cap);
+  el.innerHTML = renderAlertRows(vm.alerts?.map((a) => ({ ...a, routes: [] })) ?? []) + '<div class="trains">' + (shown.length
+    ? shown
         .map(
           (d) => `<div class="train">
             <div class="train__min"><span>${d.min}</span><small>min</small></div>
@@ -91,7 +96,7 @@ export function mapLirr(decoded, trackJson, cfgLirr, nowSec, stationNames = {}) 
     });
   }
   departures.sort((a, b) => a.t - b.t);
-  return { departures: departures.slice(0, 6) };
+  return { departures: departures.slice(0, 12) };
 }
 
 export async function fetchData(cfg, net) {

@@ -2,11 +2,14 @@
 // CORS-open, keyless). Picks five events spread across the centuries.
 
 import { escapeHtml } from '../util.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
-  el.innerHTML = `<div class="history">${vm.events
+  const [w, h] = cardSize(el, [3, 1]);
+  const cap = itemCapacity('history', w, h);
+  el.innerHTML = `<div class="history">${vm.events.slice(0, cap)
     .map(
       (e) => `<div class="history__item">
         <span class="history__year">${e.year}</span>
@@ -16,27 +19,27 @@ export function render(el, vm, _cfg) {
     .join('')}</div>`;
 }
 
-export function mapHistory(json) {
+export function mapHistory(json, count = 9) {
   const events = (Array.isArray(json?.events) ? json.events : [])
     .filter((e) => Number.isFinite(e?.year) && typeof e?.text === 'string')
     .sort((a, b) => a.year - b.year);
-  if (events.length <= 5) {
+  if (events.length <= count) {
     return { events: events.map((e) => ({ year: e.year, text: e.text })) };
   }
   // Spread picks evenly across the sorted list for a mix of eras.
   const picked = [];
-  for (let i = 0; i < 5; i++) {
-    const idx = Math.round((i * (events.length - 1)) / 4);
+  for (let i = 0; i < count; i++) {
+    const idx = Math.round((i * (events.length - 1)) / (count - 1));
     picked.push(events[idx]);
   }
   const unique = [...new Map(picked.map((e) => [e.year, e])).values()];
   // Backfill if rounding collapsed picks onto the same year.
   for (const e of events) {
-    if (unique.length >= 5) break;
+    if (unique.length >= count) break;
     if (!unique.some((u) => u.year === e.year)) unique.push(e);
   }
   unique.sort((a, b) => a.year - b.year);
-  return { events: unique.slice(0, 5).map((e) => ({ year: e.year, text: e.text })) };
+  return { events: unique.slice(0, count).map((e) => ({ year: e.year, text: e.text })) };
 }
 
 export async function fetchData(cfg, net) {

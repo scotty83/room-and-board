@@ -1,0 +1,37 @@
+// "This Day in History" from Wikimedia's on-this-day feed (browser-direct,
+// CORS-open, keyless). Picks five events spread across the centuries.
+
+export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
+
+export function mapHistory(json) {
+  const events = (Array.isArray(json?.events) ? json.events : [])
+    .filter((e) => Number.isFinite(e?.year) && typeof e?.text === 'string')
+    .sort((a, b) => a.year - b.year);
+  if (events.length <= 5) {
+    return { events: events.map((e) => ({ year: e.year, text: e.text })) };
+  }
+  // Spread picks evenly across the sorted list for a mix of eras.
+  const picked = [];
+  for (let i = 0; i < 5; i++) {
+    const idx = Math.round((i * (events.length - 1)) / 4);
+    picked.push(events[idx]);
+  }
+  const unique = [...new Map(picked.map((e) => [e.year, e])).values()];
+  // Backfill if rounding collapsed picks onto the same year.
+  for (const e of events) {
+    if (unique.length >= 5) break;
+    if (!unique.some((u) => u.year === e.year)) unique.push(e);
+  }
+  unique.sort((a, b) => a.year - b.year);
+  return { events: unique.slice(0, 5).map((e) => ({ year: e.year, text: e.text })) };
+}
+
+export async function fetchData(cfg, net) {
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const json = await net.fetchJSON(
+    `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/${mm}/${dd}`,
+  );
+  return mapHistory(json);
+}

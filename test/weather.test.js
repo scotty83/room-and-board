@@ -53,22 +53,31 @@ describe('wmoInfo', () => {
 });
 
 describe('mapAqi', () => {
-  it('maps AQI value and category', async () => {
-    const weatherVm = mapWeather(await fixture('open-meteo-forecast.json'), null);
-    const vm = mapAqi(await fixture('open-meteo-aq.json'), weatherVm, new Date('2026-07-02T12:00:00'));
+  it('maps AQI value, category and its own sun times', async () => {
+    // Sun times come from the widget's own forecast call, not the weather
+    // widget's cache (which may not exist or may be disabled entirely).
+    const sunJson = await fixture('open-meteo-forecast.json');
+    const vm = mapAqi(await fixture('open-meteo-aq.json'), sunJson, new Date('2026-07-02T12:00:00'));
     expect(vm.aqi).toBe(66);
     expect(vm.category).toBe('Moderate');
     expect(vm.sunrise).toBe('2026-07-02T05:28');
+    expect(vm.sunset).toBe('2026-07-02T20:30');
     expect(vm.moonPhase.name).toBeTypeOf('string');
+  });
+
+  it('degrades to null sun times when the forecast call fails', async () => {
+    const vm = mapAqi(await fixture('open-meteo-aq.json'), null, new Date('2026-07-02T12:00:00'));
+    expect(vm.aqi).toBe(66);
+    expect(vm.sunrise).toBeNull();
+    expect(vm.sunset).toBeNull();
   });
 
   it('categorizes boundaries', async () => {
     const aq = (v) => ({ current: { us_aqi: v } });
-    const w = { sunrise: 'x', sunset: 'y' };
     const d = new Date('2026-07-02');
-    expect(mapAqi(aq(50), w, d).category).toBe('Good');
-    expect(mapAqi(aq(101), w, d).category).toBe('Unhealthy for Sensitive Groups');
-    expect(mapAqi(aq(250), w, d).category).toBe('Very Unhealthy');
+    expect(mapAqi(aq(50), null, d).category).toBe('Good');
+    expect(mapAqi(aq(101), null, d).category).toBe('Unhealthy for Sensitive Groups');
+    expect(mapAqi(aq(250), null, d).category).toBe('Very Unhealthy');
   });
 });
 

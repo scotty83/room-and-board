@@ -64,21 +64,30 @@ export function moonPhase(date) {
   return { name: PHASE_NAMES[index], fraction };
 }
 
-export function mapAqi(aqJson, weatherVm, now) {
+export function mapAqi(aqJson, sunJson, now) {
   const aqi = Math.round(aqJson.current.us_aqi);
   return {
     aqi,
     category: aqiCategory(aqi),
-    sunrise: weatherVm?.sunrise ?? null,
-    sunset: weatherVm?.sunset ?? null,
+    sunrise: sunJson?.daily?.sunrise?.[0] ?? null,
+    sunset: sunJson?.daily?.sunset?.[0] ?? null,
     moonPhase: moonPhase(now),
   };
 }
 
-export async function fetchData(cfg, net, deps = {}) {
+export async function fetchData(cfg, net) {
   const { lat, lon } = cfg.loc;
-  const aq = await net.fetchJSON(
-    `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi&timezone=auto`,
-  );
-  return mapAqi(aq, deps.weatherVm ?? null, new Date());
+  const [aq, sun] = await Promise.all([
+    net.fetchJSON(
+      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=us_aqi&timezone=auto`,
+    ),
+    // Own tiny forecast call for sun times — no dependency on the weather
+    // widget being enabled or having fetched first.
+    net
+      .fetchJSON(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset&forecast_days=1&timezone=auto`,
+      )
+      .catch(() => null),
+  ]);
+  return mapAqi(aq, sun, new Date());
 }

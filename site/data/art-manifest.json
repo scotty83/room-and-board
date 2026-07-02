@@ -14,13 +14,6 @@
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-15762-001.jpg",
-  "title": "Clothing the Naked",
-  "artist": "Michiel Sweerts",
-  "year": "ca. 1661",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP169640.jpg",
   "title": "Cottage Children (The Wood Gatherers)",
   "artist": "Thomas Gainsborough",
@@ -32,20 +25,6 @@
   "title": "Comtesse de la Châtre (Marie Charlotte Louise Perrette Aglaé Bontemps, 1762–1848)",
   "artist": "Elisabeth Louise Vigée Le Brun",
   "year": "1789",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-14344-001.jpg",
-  "title": "The Abduction of Rebecca",
-  "artist": "Eugène Delacroix",
-  "year": "1846",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP148490.jpg",
-  "title": "Blind Orion Searching for the Rising Sun",
-  "artist": "Nicolas Poussin",
-  "year": "1658",
   "source": "The Met"
  },
  {
@@ -74,13 +53,6 @@
   "title": "Marie Emilie Coignet de Courson (1716–1806) with a Dog",
   "artist": "Jean Honoré Fragonard",
   "year": "ca. 1769",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP167124.jpg",
-  "title": "Mars and Venus United by Love",
-  "artist": "Paolo Veronese (Paolo Caliari)",
-  "year": "1570s",
   "source": "The Met"
  },
  {
@@ -119,24 +91,31 @@
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-29324-001.jpg",
-  "title": "The Abduction of the Sabine Women",
-  "artist": "Nicolas Poussin",
-  "year": "probably 1633–34",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-19299-001.jpg",
-  "title": "Venus and Adonis",
-  "artist": "Titian (Tiziano Vecellio)",
-  "year": "1550s",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg",
   "title": "Wheat Fields",
   "artist": "Jacob van Ruisdael",
   "year": "ca. 1670",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-24049-001.jpg",
+  "title": "The Last Communion of Saint Jerome",
+  "artist": "Botticelli (Alessandro di Mariano Filipepi)",
+  "year": "early 1490s",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-35674-001.jpg",
+  "title": "Madame Georges Charpentier (Marguerite-Louise Lemonnier, 1848–1904) and Her Children, Georgette-Berthe (1872–1945) and Paul-Emile-Charles (1875–1895)",
+  "artist": "Auguste Renoir",
+  "year": "1878",
+  "source": "The Met"
+ },
+ {
+  "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP349564.jpg",
+  "title": "View of Toledo",
+  "artist": "El Greco (Domenikos Theotokopoulos)",
+  "year": "ca. 1599–1600",
   "source": "The Met"
  },
  {
@@ -375,48 +354,6 @@
   "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), or The Great Wave, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)",
   "artist": "Katsushika Hokusai",
   "year": "ca. 1830–32",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP-36421-001.jpg",
-  "title": "Evening bell from mist-shrouded temple (left); Autumn moon over Lake Dongting (right)",
-  "artist": "An Gyeon",
-  "year": "ca. 1450–1500",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP-19459-002.jpg",
-  "title": "Woods and Valleys of Mount Yu",
-  "artist": "Ni Zan",
-  "year": "dated 1372",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP108452.jpg",
-  "title": "Amitabha, the Buddha of the Western Pure Land (Sukhavati)",
-  "artist": "Unknown",
-  "year": "ca. 1700",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP153157.jpg",
-  "title": "The Gopis Plead with Krishna to Return Their Clothing: Folio from \"Isarda\" Bhagavata Purana",
-  "artist": "Master of the \"Isarda\" Bhagavata Purana",
-  "year": "ca. 1560–65",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP222421.jpg",
-  "title": "Small Dish (Kozara) with Three Jars",
-  "artist": "Unknown",
-  "year": "1680–90s",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DP244667_CRD.jpg",
-  "title": "Illustrated Legends of the Kitano Tenjin Shrine (Kitano Tenjin engi emaki)",
-  "artist": "Unknown",
-  "year": "late 13th century",
   "source": "The Met"
  }
 ]

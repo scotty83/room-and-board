@@ -8,7 +8,7 @@
   --bg-card-2: #1b2230;
   --ink: #e8edf4;
   --ink-dim: #93a0b4;
-  --ink-faint: #5b6778;
+  --ink-faint: #74849a;
   --accent: #58a6ff;
   --good: #3fb950;
   --bad: #f85149;
@@ -59,7 +59,7 @@ html, body {
 }
 .card__title { font-size: 20px; font-weight: 600; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
 .card__body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
-.card__stamp { position: absolute; top: 24px; right: 26px; font-size: 16px; color: var(--warn); }
+.card__stamp { position: absolute; top: 24px; right: 26px; font-size: 20px; color: var(--warn); }
 .card.is-stale { opacity: 0.75; }
 
 .card--weather { grid-column: span 2; grid-row: span 2; }
@@ -78,7 +78,7 @@ html, body {
 .wx-now__label { font-size: 26px; color: var(--ink-dim); }
 .wx-now__feels { font-size: 20px; color: var(--ink-faint); }
 .wx-hours { display: flex; justify-content: space-between; margin-top: 8px; }
-.wx-hour { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 18px; color: var(--ink-dim); }
+.wx-hour { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 21px; color: var(--ink-dim); }
 .wx-hour__temp { color: var(--ink); font-weight: 600; }
 .wx-days { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
 .wx-day { display: grid; grid-template-columns: 70px 34px 1fr auto; align-items: center; gap: 12px; font-size: 20px; }
@@ -94,11 +94,11 @@ html, body {
 .stop-group { display: flex; flex-direction: column; gap: 8px; }
 .stop-group__head { display: flex; justify-content: space-between; align-items: baseline; }
 .stop-group__name { font-size: 22px; font-weight: 600; }
-.stop-group__dir { font-size: 17px; color: var(--ink-faint); }
+.stop-group__dir { font-size: 20px; color: var(--ink-faint); }
 .stop-group__arrivals { display: flex; flex-direction: column; gap: 6px; }
 .arrival { display: flex; align-items: center; gap: 12px; font-size: 24px; }
 .arrival__min { font-weight: 700; font-variant-numeric: tabular-nums; }
-.arrival__unit { color: var(--ink-faint); font-size: 18px; }
+.arrival__unit { color: var(--ink-faint); font-size: 21px; }
 
 .bullet {
   width: 36px; height: 36px; border-radius: 50%;
@@ -122,28 +122,28 @@ html, body {
 .train { display: flex; align-items: center; gap: 16px; font-size: 22px; }
 .train__min { display: flex; align-items: baseline; gap: 4px; min-width: 76px; }
 .train__min span { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.train__min small { color: var(--ink-faint); font-size: 16px; }
+.train__min small { color: var(--ink-faint); font-size: 20px; }
 .train__info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .train__dest { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.train__line { font-size: 17px; color: var(--ink-dim); }
-.train__track { background: var(--bg-card-2); border-radius: 8px; padding: 6px 10px; font-size: 17px; color: var(--accent); white-space: nowrap; }
+.train__line { font-size: 20px; color: var(--ink-dim); }
+.train__track { background: var(--bg-card-2); border-radius: 8px; padding: 6px 10px; font-size: 20px; color: var(--accent); white-space: nowrap; }
 
 /* ---------- art card ---------- */
 .artwork { display: flex; flex-direction: column; height: 100%; gap: 10px; }
 .artwork__img { flex: 1; min-height: 0; width: 100%; object-fit: cover; border-radius: 10px; background: var(--bg-card-2); }
 .artwork__caption { display: flex; flex-direction: column; gap: 2px; }
-.artwork__title { font-size: 19px; font-weight: 600; }
-.artwork__artist { font-size: 16px; color: var(--ink-dim); }
+.artwork__title { font-size: 22px; font-weight: 600; }
+.artwork__artist { font-size: 20px; color: var(--ink-dim); }
 
 /* ---------- history / quote / sky / markets ---------- */
 .history { display: flex; flex-direction: column; gap: 10px; }
-.history__item { display: grid; grid-template-columns: 76px 1fr; gap: 14px; font-size: 19px; align-items: baseline; }
+.history__item { display: grid; grid-template-columns: 76px 1fr; gap: 14px; font-size: 22px; align-items: baseline; }
 .history__year { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
 .history__text { color: var(--ink-dim); }
 
 .quote { display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 12px; }
 .quote__text { font-size: 24px; line-height: 1.4; font-style: italic; }
-.quote__author { font-size: 18px; color: var(--ink-dim); text-align: right; }
+.quote__author { font-size: 21px; color: var(--ink-dim); text-align: right; }
 
 .sky { display: flex; flex-direction: column; gap: 12px; }
 .sky__aqi { display: flex; align-items: baseline; gap: 12px; }
@@ -151,17 +151,17 @@ html, body {
 .sky__aqi--good .sky__aqi-value { color: var(--good); }
 .sky__aqi--moderate .sky__aqi-value { color: var(--warn); }
 .sky__aqi--bad .sky__aqi-value { color: var(--bad); }
-.sky__aqi-label { font-size: 19px; color: var(--ink-dim); }
+.sky__aqi-label { font-size: 22px; color: var(--ink-dim); }
 .sky__row { display: flex; align-items: center; gap: 10px; font-size: 20px; color: var(--ink-dim); }
 
 .index { display: grid; grid-template-columns: 1fr 90px auto; align-items: center; gap: 14px; }
 .index__info { display: flex; flex-direction: column; }
-.index__name { font-size: 18px; color: var(--ink-dim); }
+.index__name { font-size: 21px; color: var(--ink-dim); }
 .index__price { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .spark { width: 90px; height: 28px; }
 .spark--up { color: var(--good); }
 .spark--down { color: var(--bad); }
-.delta { font-size: 18px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.delta { font-size: 21px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .delta--up { color: var(--good); }
 .delta--down { color: var(--bad); }
 
@@ -182,7 +182,7 @@ html, body {
   padding: 14px 22px; border-radius: 12px;
 }
 .slide-caption__title { font-size: 24px; font-weight: 600; }
-.slide-caption__meta { font-size: 18px; color: var(--ink-dim); }
+.slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .strip {
   position: absolute; left: 0; right: 0; bottom: 0;
   display: flex; align-items: center; gap: 36px;
@@ -202,7 +202,7 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .welcome__inner h1 { font-size: 48px; }
 .welcome__inner p { font-size: 24px; color: var(--ink-dim); }
 .welcome__actions { display: flex; gap: 18px; justify-content: center; }
-.welcome__hint { font-size: 18px !important; color: var(--ink-faint) !important; }
+.welcome__hint { font-size: 21px !important; color: var(--ink-faint) !important; }
 
 .btn {
   font-size: 24px; padding: 16px 34px; border-radius: 14px;

@@ -22,7 +22,7 @@ const CASES = [
   ['subway', subway, ['Grand Central-42 St', '2', '6', 'Times Sq-42 St']],
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
-  ['art', art, ['Wheat Field with Cypresses', 'Vincent van Gogh']],
+  ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
   ['history', history, ['1776', 'Continental Congress']],
   ['aqi', aqi, ['66', 'Moderate', 'Waning Gibbous']],
   ['quote', quote, ['predict the future', 'Alan Kay']],

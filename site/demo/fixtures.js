@@ -67,10 +67,10 @@ export const DEMO_VMS = {
     ],
   },
   art: {
-    img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DT1567.jpg',
-    title: 'Wheat Field with Cypresses',
-    artist: 'Vincent van Gogh',
-    year: '1889',
+    img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg',
+    title: 'Wheat Fields',
+    artist: 'Jacob van Ruisdael',
+    year: 'ca. 1670',
     source: 'The Met',
   },
   history: {

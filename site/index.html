@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1920, initial-scale=1">
+<title>Office Signage</title>
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body class="theme-dark">
+  <main id="app">
+    <header id="topbar" class="topbar"></header>
+    <section id="grid" class="grid" aria-live="polite"></section>
+    <section id="ambient" class="ambient" hidden>
+      <div id="slideshow" class="slideshow"></div>
+      <div id="strip" class="strip"></div>
+    </section>
+    <section id="welcome" class="welcome" hidden></section>
+    <button id="gear" class="gear" aria-label="Settings">⚙</button>
+    <div id="settings-root"></div>
+  </main>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

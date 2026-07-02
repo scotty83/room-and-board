@@ -80,6 +80,57 @@ export function normalizeLayout(raw) {
   return out.length ? out : [...DEFAULT_LAYOUT];
 }
 
+// Place rect, displacing colliders to make room ("push"). Each collider is
+// shifted along the drag direction until clear; if that runs off the grid,
+// it relocates first-fit. Cascades through chains. Returns a fresh layout,
+// or null when the arrangement is unsolvable. Never mutates the input.
+export function placeWithPush(layout, rect, dir = { dx: 0, dy: 0 }) {
+  const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
+  if (rect.w < mw || rect.h < mh) return null;
+  if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
+    return null;
+  }
+  const placed = [{ ...rect }];
+  const pending = layout.filter((r) => r.id !== rect.id).map((r) => ({ ...r }));
+
+  // Colliders shift in the dominant drag direction (default: down).
+  const step = { x: Math.sign(dir.dx ?? 0), y: Math.sign(dir.dy ?? 0) };
+  if (!step.x && !step.y) step.y = 1;
+
+  let guard = 64; // cascade safety valve far above any real chain
+  while (pending.length) {
+    if (guard-- <= 0) return null;
+    const idx = pending.findIndex((r) => placed.some((p) => rectsOverlap(p, r)));
+    if (idx === -1) {
+      placed.push(...pending);
+      break;
+    }
+    const [collider] = pending.splice(idx, 1);
+    // Try sliding along the push direction until clear of placed rects.
+    let slid = null;
+    for (
+      let x = collider.x + step.x, y = collider.y + step.y;
+      x >= 0 && y >= 0 && x + collider.w <= GRID.cols && y + collider.h <= GRID.rows;
+      x += step.x, y += step.y
+    ) {
+      const candidate = { ...collider, x, y };
+      if (!placed.some((p) => rectsOverlap(p, candidate))) {
+        slid = candidate;
+        break;
+      }
+    }
+    // Fall back to first-fit against everything already settled.
+    const settled = [...placed, ...pending];
+    const spot = slid ?? firstFit(settled, collider.id, [collider.w, collider.h]);
+    if (!spot) return null;
+    placed.push({ ...collider, x: spot.x, y: spot.y });
+  }
+  // Preserve the original ordering for stable rendering.
+  const byId = new Map(placed.map((r) => [r.id, r]));
+  const order = layout.some((r) => r.id === rect.id) ? layout : [...layout, rect];
+  return order.map((r) => byId.get(r.id)).filter(Boolean);
+}
+
 // v1 configs carried an ordered widget-id list; give known ids their template
 // slot and pack the rest first-fit at minimum size.
 export function migrateWidgetsToLayout(ids) {

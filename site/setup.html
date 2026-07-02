@@ -46,14 +46,14 @@
         </select>
         <button id="sub-add" type="button">Add</button>
       </div>
+      <p class="hint">Lines to show at your stops — none checked means every line:</p>
+      <div id="sub-lines" class="checks checks--lines"></div>
     </section>
 
     <section class="field" id="lirr-field">
-      <h2>LIRR</h2>
-      <label for="lirr-orig">Departure station</label>
-      <select id="lirr-orig"></select>
-      <label for="lirr-dest">Only trains stopping at <small>(optional)</small></label>
-      <select id="lirr-dest"><option value="">Anywhere</option></select>
+      <h2>LIRR <small>(Penn Station departures — Grand Central trains are never shown)</small></h2>
+      <p class="hint">Branches to show — leave all unchecked for every branch:</p>
+      <div id="lirr-branches" class="checks"></div>
     </section>
 
     <section class="field" id="njt-field">

@@ -311,3 +311,8 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .code__status, .zip__status { font-size: 22px; color: var(--warn); margin-top: 14px; min-height: 30px; }
 .qr { margin-top: 20px; }
 .qr svg { background: #fff; border-radius: 12px; }
+
+/* ---------- line chips (subway settings) ---------- */
+.linechips { display: flex; flex-wrap: wrap; gap: 12px; max-width: 720px; margin-bottom: 16px; }
+.linechip { width: 56px; height: 56px; font-size: 24px; border: none; cursor: pointer; }
+.linechip--off { opacity: 0.25; }

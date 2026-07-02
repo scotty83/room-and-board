@@ -30,6 +30,11 @@ export function alphaSections(stations) {
   return sections;
 }
 
+// Toggle membership of value in a list, returning a new list.
+export function toggleIn(list, value) {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+}
+
 export function moveWidget(ids, id, delta) {
   const from = ids.indexOf(id);
   const to = from + delta;

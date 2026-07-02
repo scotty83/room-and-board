@@ -110,7 +110,7 @@ export const DEMO_VMS = {
     { city: 'Hong Kong', time: '12:13 AM', dayDiff: 1 },
   ],
   markets: {
-    updatedAt: 0,
+    updatedAt: 1783000500,
     stale: false,
     indices: [
       { symbol: '^DJI', name: 'Dow Jones', price: 52147.83, change: 231.44, changePct: 0.45, spark: [51900, 51950, 52020, 51980, 52080, 52147] },

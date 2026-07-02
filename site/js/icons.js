@@ -13,6 +13,10 @@ const P = {
   thunder: '<path d="M7 13h9.5a3.5 3.5 0 0 0 .6-6.95A5.5 5.5 0 0 0 6.5 7 3.5 3.5 0 0 0 7 13z"/><path d="M13 13l-3 4.5h3L11 22"/>',
   fog: '<path d="M5 10h14M4 13.5h16M6 17h12M8 20.5h8"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+  settings:
+    '<path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h9M17 17h3"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="17" r="2"/>',
+  pencil:
+    '<path d="M14.5 5.5l4 4L8 20l-4.6 1 1-4.6L14.5 5.5zM12.5 7.5l4 4"/>',
 };
 P.clear = P.sun;
 P.cloudy = P.cloud;

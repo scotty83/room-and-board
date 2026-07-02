@@ -476,3 +476,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .edit-tray__chip small { color: var(--ink-dim); font-size: 17px; }
 
 .more-hint { font-size: 18px; color: var(--ink-faint); padding-top: 2px; }
+
+.icon--btn { width: 28px; height: 28px; display: block; margin: 0 auto; }
+.gear { display: flex; align-items: center; justify-content: center; color: var(--ink-dim); }
+.card__title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.card__asof { font-size: 17px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-faint); white-space: nowrap; }
+.card.is-stale .card__asof { visibility: hidden; } /* the amber stale stamp takes over */

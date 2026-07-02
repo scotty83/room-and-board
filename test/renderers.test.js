@@ -99,6 +99,20 @@ describe('art full-screen viewer', () => {
   });
 });
 
+describe('markets freshness note', () => {
+  it('writes an as-of time into the card header', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--markets';
+    card.innerHTML = '<h2 class="card__title">Markets</h2><div class="card__body"></div>';
+    document.body.appendChild(card);
+    markets.render(card.querySelector('.card__body'), DEMO_VMS.markets, CFG);
+    const asof = card.querySelector('.card__title .card__asof');
+    expect(asof).not.toBeNull();
+    expect(asof.textContent).toMatch(/^as of \d{1,2}:\d{2}\s?(AM|PM)$/);
+    card.remove();
+  });
+});
+
 describe('sparkPath', () => {
   it('produces a normalized SVG path', () => {
     const d = sparkPath([0, 5, 10], 100, 30);

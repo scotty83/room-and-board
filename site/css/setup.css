@@ -51,3 +51,23 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 .code-out p { color: var(--ink-dim); }
 .alertcheck { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-weight: 400; }
 .alertcheck input { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
+
+/* MTA line bullets (mirrors the board settings) */
+.linechips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.bullet {
+  width: 40px; height: 40px; min-height: 0; padding: 0; border: none; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px; color: #fff; background: #808183; cursor: pointer;
+}
+.linechip--off { opacity: 0.25; }
+.bullet--1, .bullet--2, .bullet--3 { background: #ee352e; }
+.bullet--4, .bullet--5, .bullet--6 { background: #00933c; }
+.bullet--7 { background: #b933ad; }
+.bullet--A, .bullet--C, .bullet--E { background: #0039a6; }
+.bullet--B, .bullet--D, .bullet--F, .bullet--M { background: #ff6319; }
+.bullet--G { background: #6cbe45; }
+.bullet--J, .bullet--Z { background: #996633; }
+.bullet--L { background: #a7a9ac; }
+.bullet--N, .bullet--Q, .bullet--R, .bullet--W { background: #fccc0a; color: #111; }
+.bullet--S { background: #808183; }
+.bullet--SI { background: #0f3d92; }

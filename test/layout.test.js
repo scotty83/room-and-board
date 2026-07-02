@@ -100,11 +100,14 @@ describe('normalizeLayout', () => {
 });
 
 describe('migrateWidgetsToLayout', () => {
-  it('maps the v1 default widget list onto template slots', () => {
+  it('maps known ids onto template slots and first-fits the rest', () => {
     const out = migrateWidgetsToLayout(['weather', 'subway', 'art', 'history', 'aqi', 'quote']);
     for (const rect of out) {
-      expect(rect).toEqual(DEFAULT_LAYOUT.find((d) => d.id === rect.id));
+      const slot = DEFAULT_LAYOUT.find((d) => d.id === rect.id);
+      if (slot) expect(rect).toEqual(slot); // weather/subway/art keep template spots
     }
+    // history/aqi/quote have no template slot anymore -> placed first-fit
+    expect(out.map((r) => r.id)).toEqual(expect.arrayContaining(['history', 'aqi', 'quote']));
     expect(out.map((r) => r.id)).not.toContain('worldclock');
   });
   it('keeps template slots for known ids and first-fits extras', () => {

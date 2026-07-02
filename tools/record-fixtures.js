@@ -18,6 +18,15 @@ const JSON_FIXTURES = {
   'wikimedia-onthisday.json':
     'https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/07/02',
   'traintime-nyk.json': 'https://backend-unified.mylirr.org/arrivals/NYK',
+  'yahoo-gspc.json':
+    'https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=15m',
+};
+
+const EXTRA_HEADERS = {
+  'traintime-nyk.json': { 'Accept-Version': '3.0' },
+  'yahoo-gspc.json': {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+  },
 };
 
 await mkdir(OUT, { recursive: true });
@@ -30,7 +39,7 @@ for (const [name, url] of Object.entries(BINARY)) {
 }
 
 for (const [name, url] of Object.entries(JSON_FIXTURES)) {
-  const headers = name.startsWith('traintime') ? { 'Accept-Version': '3.0' } : {};
+  const headers = EXTRA_HEADERS[name] ?? {};
   try {
     const res = await fetch(url, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

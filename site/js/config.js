@@ -1,7 +1,7 @@
 // Config schema, normalization and codec. Runs in browser (Chromium >=102),
 // on user phones (setup page) and in Node >=20 (tests, tooling).
 
-export const WIDGET_IDS = ['weather', 'subway', 'lirr', 'njt', 'art', 'history', 'aqi', 'quote'];
+export const WIDGET_IDS = ['weather', 'subway', 'lirr', 'njt', 'art', 'history', 'aqi', 'quote', 'markets'];
 
 export const DEFAULT_CONFIG = Object.freeze({
   v: 1,

@@ -225,6 +225,27 @@ describe('/bus/stops', () => {
   });
 });
 
+describe('/sports/team', () => {
+  it('validates league and id, composes team + schedule digest', async () => {
+    expect((await call('/sports/team?lg=xfl&id=abc')).status).toBe(400);
+    await env.CODES.delete('sports:mlb:21:last');
+    await env.CODES.delete('sports:mlb:21:cachedAt');
+    await env.CODES.delete('sched:mlb:21:at');
+    await env.CODES.delete('sched:mlb:21:line');
+    stubFetch([
+      { match: /teams\/21$/, body: { team: { abbreviation: 'NYM', shortDisplayName: 'Mets', logos: [{ href: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png' }], record: { items: [{ summary: '48-37' }] }, nextEvent: [] } } },
+      { match: /teams\/21\/schedule/, body: { events: [{ competitions: [{ status: { type: { state: 'post', shortDetail: 'Final' } }, competitors: [
+        { homeAway: 'away', team: { abbreviation: 'NYM' }, score: { value: 3 } },
+        { homeAway: 'home', team: { abbreviation: 'TOR' }, score: { value: 9 } },
+      ]}]}]} },
+    ]);
+    const res = await call('/sports/team?lg=mlb&id=21');
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.row).toMatchObject({ abbr: 'NYM', record: '48-37', lastLine: 'L 3-9 @ TOR · Final' });
+  });
+});
+
 describe('/news', () => {
   it('proxies whitelisted feeds and 404s unknown ids', async () => {
     await env.CODES.delete('news:npr:last');

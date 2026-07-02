@@ -19,7 +19,7 @@ const MODELS = {
   njt: listCapacity(80, 56),
   bus: listCapacity(80, 56),
   history: listCapacity(64, 54),
-  sports: listCapacity(76, 60),
+  sports: listCapacity(94, 70),
   worldcup: listCapacity(60, 46),
   news: listCapacity(68, 48),
 };

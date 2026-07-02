@@ -18,6 +18,8 @@ describe('normalizeConfig', () => {
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' });
     expect(cfg.lirr).toEqual({ dest: '', alerts: true });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
+    expect(cfg.bus).toEqual({ stops: [] });
+    expect(normalizeConfig({ v: 2, bus: { stops: ['550685', 'junk', '12'] } }).bus.stops).toEqual(['550685']);
   });
 
   it('migrates a v1 config: widgets->layout, lirr, Midtown loc', () => {

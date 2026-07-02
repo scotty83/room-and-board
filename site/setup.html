@@ -59,6 +59,15 @@
       <label class="alertcheck"><input type="checkbox" id="njt-alerts"> Show service alerts</label>
     </section>
 
+    <section class="field" id="bus-field">
+      <h2>MTA Bus <small>(up to two 6-digit stop codes from the bus stop sign)</small></h2>
+      <div id="bus-chips" class="chips"></div>
+      <div class="ziprow">
+        <input id="bus-code" type="text" inputmode="numeric" pattern="[0-9]{4,7}" placeholder="e.g. 550685">
+        <button id="bus-add" type="button">Add stop</button>
+      </div>
+    </section>
+
     <section class="field">
       <h2>Art</h2>
       <label for="art-every">Rotate artwork</label>

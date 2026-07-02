@@ -16,6 +16,7 @@ const WIDGET_LABELS = {
   lirr: 'LIRR (Penn Station)',
   mnr: 'Metro-North (Grand Central)',
   njt: 'NJ Transit',
+  bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
@@ -95,6 +96,7 @@ const SECTIONS = [
   ['lirr', 'LIRR'],
   ['mnr', 'Metro-North'],
   ['njt', 'NJ Transit'],
+  ['bus', 'MTA Bus'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
@@ -129,6 +131,7 @@ function renderSection() {
     lirr: renderLirr,
     mnr: renderMnr,
     njt: renderNjt,
+    bus: renderBus,
     art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
@@ -356,6 +359,42 @@ async function renderNjt() {
     pane().querySelector('.drill').innerHTML =
       '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
   }
+}
+
+function renderBus() {
+  const chips = state.cfg.bus.stops
+    .map((code) => `<button class="chip" data-remove-stop="${code}">Stop ${code} ✕</button>`)
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">MTA Bus</h2>
+    <p class="pane__hint">Enter up to two 6-digit stop codes (printed on the bus stop sign):</p>
+    <div class="chips">${chips || '<span class="pane__empty">No stops yet</span>'}</div>
+    <output class="zip__display" aria-live="polite"></output>
+    <div class="keypad keypad--zip">${[1, 2, 3, 4, 5, 6, 7, 8, 9, '⌫', 0, 'Add'].map(
+      (k) => `<button class="key" data-key="${k}">${k}</button>`,
+    ).join('')}</div>`;
+  pane().querySelectorAll('[data-remove-stop]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.bus.stops = state.cfg.bus.stops.filter((c) => c !== chip.dataset.removeStop);
+      renderBus();
+    }),
+  );
+  let code = '';
+  const display = pane().querySelector('.zip__display');
+  pane().querySelectorAll('[data-key]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.key;
+      if (k === '⌫') code = code.slice(0, -1);
+      else if (k === 'Add') {
+        if (/^\d{4,7}$/.test(code) && state.cfg.bus.stops.length < 2 && !state.cfg.bus.stops.includes(code)) {
+          state.cfg.bus.stops = [...state.cfg.bus.stops, code];
+          renderBus();
+          return;
+        }
+      } else if (code.length < 7) code += k;
+      display.textContent = code;
+    }),
+  );
 }
 
 /* ---------- weather / display ---------- */

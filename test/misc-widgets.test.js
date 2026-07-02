@@ -4,6 +4,8 @@ import { mapNjt } from '../site/js/widgets/njt.js';
 import { mapHistory } from '../site/js/widgets/history.js';
 import { quoteOfDay } from '../site/js/widgets/quote.js';
 import { mapMarkets } from '../site/js/widgets/markets.js';
+import { mapBus } from '../site/js/widgets/bus.js';
+import { mapSiriStop } from '../worker/src/bus.js';
 import { mapYahooChart } from '../worker/src/markets.js';
 
 const fixture = async (name) =>
@@ -113,5 +115,50 @@ describe('mapMarkets (page side)', () => {
   it('returns empty for error payloads', () => {
     expect(mapMarkets(null).indices).toEqual([]);
     expect(mapMarkets({ error: 'boom' }).indices).toEqual([]);
+  });
+});
+
+describe('mapSiriStop (worker side)', () => {
+  const siri = {
+    Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ MonitoredStopVisit: [
+      { MonitoredVehicleJourney: {
+        PublishedLineName: 'M34-SBS', DestinationName: 'JAVITS CENTER',
+        MonitoredCall: { StopPointName: 'W 34 ST/7 AV', ExpectedArrivalTime: '2026-07-02T12:03:00.000-04:00',
+          Extensions: { Distances: { PresentableDistance: '0.4 miles away' } } },
+      }},
+      { MonitoredVehicleJourney: {
+        PublishedLineName: 'M4', DestinationName: 'THE CLOISTERS',
+        MonitoredCall: { StopPointName: 'W 34 ST/7 AV',
+          Extensions: { Distances: { PresentableDistance: 'approaching' } } },
+      }},
+    ]}]}},
+  };
+  it('maps visits to compact arrivals', () => {
+    const out = mapSiriStop(siri, '550685');
+    expect(out.name).toBe('W 34 ST/7 AV');
+    expect(out.arrivals).toHaveLength(2);
+    expect(out.arrivals[0]).toMatchObject({ route: 'M34-SBS', dest: 'JAVITS CENTER' });
+    expect(out.arrivals[0].time).toBe(Math.floor(Date.parse('2026-07-02T12:03:00.000-04:00') / 1000));
+    expect(out.arrivals[1]).toMatchObject({ route: 'M4', time: null, distance: 'approaching' });
+  });
+  it('tolerates empty deliveries', () => {
+    expect(mapSiriStop({}, '1').arrivals).toEqual([]);
+  });
+});
+
+describe('mapBus (page side)', () => {
+  it('computes minutes and keeps distance-only rows', () => {
+    const vm = mapBus({ stops: [{ id: '1', name: 'X', arrivals: [
+      { route: 'M4', dest: 'A', time: 1120, distance: '' },
+      { route: 'M4', dest: 'B', time: null, distance: '2 stops away' },
+      { route: 'M4', dest: 'C', time: 900, distance: '' }, // past -> dropped
+    ]}]}, 1000);
+    expect(vm.configured).toBe(true);
+    expect(vm.stops[0].arrivals).toHaveLength(2);
+    expect(vm.stops[0].arrivals[0]).toMatchObject({ min: 2 });
+    expect(vm.stops[0].arrivals[1]).toMatchObject({ min: null, distance: '2 stops away' });
+  });
+  it('flags the unconfigured state', () => {
+    expect(mapBus({ error: 'bus_not_configured' }, 0).configured).toBe(false);
   });
 });

@@ -5,6 +5,7 @@
 import { mapYahooChart } from './markets.js';
 import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
+import { fetchBusStops } from './bus.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -137,6 +138,17 @@ export default {
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);
     if (alertsMatch && request.method === 'GET') {
       return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
+    }
+
+    if (path === '/bus/stops' && request.method === 'GET') {
+      if (!env.MTA_BUS_KEY) return json({ error: 'bus_not_configured' }, 503);
+      const ids = (url.searchParams.get('ids') ?? '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => /^\d{4,7}$/.test(s))
+        .slice(0, 2);
+      if (!ids.length) return json({ error: 'bad_stop_ids' }, 400);
+      return cached(env, `bus:${ids.join(',')}`, 30, () => fetchBusStops(env, ids));
     }
 
     return json({ error: 'not_found' }, 404);

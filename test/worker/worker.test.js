@@ -209,6 +209,22 @@ describe('/alerts', () => {
   });
 });
 
+describe('/bus/stops', () => {
+  it('503s without a key and validates stop ids', async () => {
+    expect((await call('/bus/stops?ids=550685')).status).toBe(503);
+    expect((await call('/bus/stops?ids=abc', {}, { MTA_BUS_KEY: 'k' })).status).toBe(400);
+  });
+  it('proxies SIRI per stop', async () => {
+    await env.CODES.delete('bus:550685:last');
+    await env.CODES.delete('bus:550685:cachedAt');
+    stubFetch([{ match: /bustime\.mta\.info/, body: { Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ MonitoredStopVisit: [] }] } } } }]);
+    const res = await call('/bus/stops?ids=550685', {}, { MTA_BUS_KEY: 'k' });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.stops).toEqual([{ id: '550685', name: '', arrivals: [] }]);
+  });
+});
+
 describe('/markets', () => {
   const yahoo = (price, prev) => ({
     chart: {

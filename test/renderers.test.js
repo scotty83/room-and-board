@@ -7,6 +7,7 @@ import * as weather from '../site/js/widgets/weather.js';
 import * as subway from '../site/js/widgets/subway.js';
 import * as lirr from '../site/js/widgets/lirr.js';
 import * as mnr from '../site/js/widgets/mnr.js';
+import * as busw from '../site/js/widgets/bus.js';
 import * as njt from '../site/js/widgets/njt.js';
 import * as art from '../site/js/widgets/art.js';
 import * as history from '../site/js/widgets/history.js';
@@ -24,6 +25,7 @@ const CASES = [
   ['subway', subway, ['Good Service', 'rerouted', 'delays']],
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
+  ['bus', busw, ['M34-SBS', 'Javits Center', 'approaching']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
   ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
   ['history', history, ['1776', 'Continental Congress']],

@@ -61,6 +61,20 @@ export const DEMO_VMS = {
       { min: 41, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
     ],
   },
+  bus: {
+    configured: true,
+    stops: [
+      {
+        id: '550685',
+        name: 'W 34 St / 7 Av',
+        arrivals: [
+          { route: 'M34-SBS', dest: 'Javits Center', min: 3, distance: '' },
+          { route: 'M34-SBS', dest: 'Javits Center', min: 11, distance: '' },
+          { route: 'M4', dest: 'The Cloisters', min: null, distance: 'approaching' },
+        ],
+      },
+    ],
+  },
   art: {
     img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg',
     title: 'Wheat Fields',

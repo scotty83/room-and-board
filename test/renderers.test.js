@@ -29,7 +29,7 @@ const CASES = [
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
   ['bus', busw, ['M34-SBS', 'Javits Center', 'approaching']],
-  ['sports', sports, ['NYM', 'Bot 7th', 'W 24-17']],
+  ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:']],
   ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],

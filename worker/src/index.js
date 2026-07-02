@@ -7,6 +7,7 @@ import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
 import { fetchBusStops } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
+import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -142,6 +143,13 @@ export default {
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);
     if (alertsMatch && request.method === 'GET') {
       return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
+    }
+
+    if (path === '/sports/team' && request.method === 'GET') {
+      const lg = url.searchParams.get('lg');
+      const id = (url.searchParams.get('id') ?? '').toLowerCase();
+      if (!SPORTS_LEAGUES[lg] || !/^[a-z0-9]{1,8}$/.test(id)) return json({ error: 'bad_team' }, 400);
+      return cached(env, `sports:${lg}:${id}`, 120, () => fetchTeamSummary(env, lg, id));
     }
 
     const newsMatch = /^\/news\/([a-z0-9-]{1,24})$/.exec(path);

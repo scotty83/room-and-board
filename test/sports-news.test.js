@@ -1,13 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { mapTeamRow, LEAGUE_PATHS } from '../site/js/widgets/sports.js';
+import { logoUrl } from '../site/js/widgets/sports.js';
+import { mapTeamSummary, digestSchedule, LEAGUE_PATHS } from '../worker/src/sports.js';
 import { mapWorldCup } from '../site/js/widgets/worldcup.js';
 import { parseRss, mergeNews, ageLabel } from '../site/js/widgets/news.js';
 
-describe('mapTeamRow', () => {
+describe('mapTeamSummary', () => {
   const espn = (state, detail, scores) => ({
     team: {
       abbreviation: 'NYM', shortDisplayName: 'Mets',
       record: { items: [{ summary: '48-37' }] },
+      logos: [{ href: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png' }],
       nextEvent: [{
         date: '2026-07-03T23:15Z',
         competitions: [{
@@ -21,21 +23,22 @@ describe('mapTeamRow', () => {
     },
   });
   it('maps an upcoming game', () => {
-    const row = mapTeamRow(espn('pre', '7/3 - 7:15 PM EDT'), 'mlb');
-    expect(row).toMatchObject({ abbr: 'NYM', record: '48-37', state: 'pre' });
+    const row = mapTeamSummary(espn('pre', '7/3 - 7:15 PM EDT'), 'L 3-9 vs TOR · Final', 'mlb');
+    expect(row).toMatchObject({ abbr: 'NYM', record: '48-37', state: 'pre', lastLine: 'L 3-9 vs TOR · Final' });
     expect(row.line).toBe('@ ATL · 7/3 - 7:15 PM EDT');
+    expect(row.logo).toContain('teamlogos/mlb');
   });
   it('maps a live game with score', () => {
-    const row = mapTeamRow(espn('in', 'Bot 7th', [{ value: 3 }, { value: 2 }]), 'mlb');
+    const row = mapTeamSummary(espn('in', 'Bot 7th', [{ value: 3 }, { value: 2 }]), null, 'mlb');
     expect(row.line).toBe('3-2 @ ATL · Bot 7th');
     expect(row.state).toBe('in');
   });
   it('maps a final with W/L', () => {
-    expect(mapTeamRow(espn('post', 'Final', [{ value: 5 }, { value: 2 }]), 'mlb').line).toBe('W 5-2 @ ATL · Final');
-    expect(mapTeamRow(espn('post', 'Final', [{ value: 1 }, { value: 2 }]), 'mlb').line).toBe('L 1-2 @ ATL · Final');
+    expect(mapTeamSummary(espn('post', 'Final', [{ value: 5 }, { value: 2 }]), null, 'mlb').line).toBe('W 5-2 @ ATL · Final');
+    expect(mapTeamSummary(espn('post', 'Final', [{ value: 1 }, { value: 2 }]), null, 'mlb').line).toBe('L 1-2 @ ATL · Final');
   });
   it('survives teams with no scheduled events and covers all leagues', () => {
-    expect(mapTeamRow({ team: { abbreviation: 'X', shortDisplayName: 'X' } }, 'nfl').line).toBe('No scheduled games');
+    expect(mapTeamSummary({ team: { abbreviation: 'X', shortDisplayName: 'X' } }, null, 'nfl').line).toBe('No scheduled games');
     expect(Object.keys(LEAGUE_PATHS)).toEqual(['mlb', 'nfl', 'nba', 'nhl', 'mls', 'epl']);
   });
 });
@@ -96,5 +99,24 @@ describe('news parsing', () => {
     expect(ageLabel(now - 3 * 3600e3, now)).toBe('3h');
     expect(ageLabel(now - 2 * 86400e3, now)).toBe('2d');
     expect(ageLabel(0, now)).toBe('');
+  });
+});
+
+describe('digestSchedule + logoUrl', () => {
+  it('extracts the last completed game as a W/L line', () => {
+    const sched = { events: [
+      { competitions: [{ status: { type: { state: 'post', shortDetail: 'Final' } }, competitors: [
+        { homeAway: 'away', team: { abbreviation: 'NYM' }, score: { value: 3 } },
+        { homeAway: 'home', team: { abbreviation: 'TOR' }, score: { value: 9 } },
+      ]}]},
+      { competitions: [{ status: { type: { state: 'pre' } }, competitors: [] }] },
+    ]};
+    expect(digestSchedule(sched, 'NYM')).toBe('L 3-9 @ TOR · Final');
+    expect(digestSchedule({ events: [] }, 'NYM')).toBeNull();
+  });
+  it('builds right-sized combiner urls', () => {
+    expect(logoUrl('https://a.espncdn.com/i/teamlogos/mlb/500/nym.png', 80))
+      .toBe('https://a.espncdn.com/combiner/i?img=%2Fi%2Fteamlogos%2Fmlb%2F500%2Fnym.png&h=80&w=80');
+    expect(logoUrl(null)).toBeNull();
   });
 });

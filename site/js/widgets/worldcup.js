@@ -4,6 +4,7 @@
 // ordering. Rolling window: 3 days back, 5 days ahead.
 
 import { escapeHtml, fmtTime } from '../util.js';
+import { logoUrl } from './sports.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'worldcup', title: 'World Cup 2026', refreshMs: 60 * 1000 };
@@ -25,6 +26,8 @@ export function mapWorldCup(json, nowMs) {
       detail: status.shortDetail ?? '',
       home: home.team?.abbreviation ?? '?',
       away: away.team?.abbreviation ?? '?',
+      hf: home.team?.logo ?? null, // country flag PNGs on ESPN's CDN
+      af: away.team?.logo ?? null,
       hs: home.score ?? null,
       as: away.score ?? null,
       note: comp.notes?.[0]?.headline ?? '',
@@ -44,15 +47,18 @@ const dayLabel = (t, nowMs) => {
   return `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${fmtTime(t / 1000)}`;
 };
 
+const flagImg = (href) =>
+  href ? `<img class="wc-flag" src="${escapeHtml(logoUrl(href, 56))}" alt="">` : '';
+
 function matchRow(m, nowMs) {
   if (m.state === 'pre') {
     return `<div class="wc-match">
-      <span class="wc-match__teams">${escapeHtml(m.home)} vs ${escapeHtml(m.away)}</span>
+      <span class="wc-match__teams">${flagImg(m.hf)}${escapeHtml(m.home)} vs ${flagImg(m.af)}${escapeHtml(m.away)}</span>
       <span class="wc-match__meta">${escapeHtml(dayLabel(m.t, nowMs))}</span>
     </div>`;
   }
   return `<div class="wc-match ${m.state === 'in' ? 'wc-match--live' : ''}">
-    <span class="wc-match__teams">${escapeHtml(m.home)} <b>${m.hs ?? '–'}–${m.as ?? '–'}</b> ${escapeHtml(m.away)}</span>
+    <span class="wc-match__teams">${flagImg(m.hf)}${escapeHtml(m.home)} <b>${m.hs ?? '–'}–${m.as ?? '–'}</b> ${flagImg(m.af)}${escapeHtml(m.away)}</span>
     <span class="wc-match__meta">${m.state === 'in' ? '<b class="team__livedot">●</b> ' : ''}${escapeHtml(m.detail)}</span>
   </div>${m.note ? `<div class="wc-match__note">${escapeHtml(m.note)}</div>` : ''}`;
 }

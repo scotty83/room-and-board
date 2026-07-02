@@ -3,7 +3,7 @@
 // and caches upstream responses).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml } from '../util.js';
+import { escapeHtml, fmtTime } from '../util.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -21,7 +21,7 @@ export function render(el, vm, _cfg) {
             <div class="train__min"><span>${t.min}</span><small>min</small></div>
             <div class="train__info">
               <span class="train__dest">${escapeHtml(t.dest)}</span>
-              <span class="train__line">${escapeHtml(t.line)}${t.status ? ` · ${escapeHtml(t.status)}` : ''}</span>
+              <span class="train__line">${escapeHtml(t.line)} · ${fmtTime(t.time)}${t.status ? ` · ${escapeHtml(t.status)}` : ''}</span>
             </div>
             ${t.track ? `<span class="train__track">Track ${escapeHtml(t.track)}</span>` : ''}
           </div>`,
@@ -38,6 +38,7 @@ export function mapNjt(payload, nowSec, showAlerts = true) {
     .filter((t) => Number.isFinite(t.time) && t.time > nowSec)
     .slice(0, 12)
     .map((t) => ({
+      time: t.time,
       min: Math.max(1, Math.round((t.time - nowSec) / 60)),
       dest: String(t.dest ?? ''),
       line: String(t.line ?? ''),

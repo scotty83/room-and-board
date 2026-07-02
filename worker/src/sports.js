@@ -42,6 +42,11 @@ export function digestSchedule(schedJson, ourAbbr) {
   return eventLine(last.competitions[0], ourAbbr, { withWL: true });
 }
 
+export function pickLogo(logos = []) {
+  const dark = logos.find((l) => l.rel?.includes('dark') && !l.rel?.includes('scoreboard'));
+  return (dark ?? logos[0])?.href ?? null;
+}
+
 export function mapTeamSummary(teamJson, lastLine, lg) {
   const team = teamJson?.team;
   if (!team) return null;
@@ -50,7 +55,9 @@ export function mapTeamSummary(teamJson, lastLine, lg) {
     abbr: team.abbreviation ?? '',
     name: team.shortDisplayName ?? team.displayName ?? '',
     record: team.record?.items?.[0]?.summary ?? '',
-    logo: team.logos?.[0]?.href ?? null,
+    // Prefer the dark-background variant (light marks) — default logos like
+    // the Yankees' navy NY disappear on the dashboard's dark cards.
+    logo: pickLogo(team.logos),
     state: 'none',
     line: 'No scheduled games',
     lastLine: lastLine ?? null,

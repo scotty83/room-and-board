@@ -133,10 +133,10 @@ export const DEMO_VMS = {
     author: 'Alan Kay',
   },
   worldclock: [
+    { city: 'San Francisco', time: '5:13 AM', dayDiff: 0 },
     { city: 'New York', time: '8:13 AM', dayDiff: 0 },
-    { city: 'Hyderabad', time: '5:43 PM', dayDiff: 0 },
     { city: 'London', time: '1:13 PM', dayDiff: 0 },
-    { city: 'Los Angeles', time: '5:13 AM', dayDiff: 0 },
+    { city: 'Hyderabad', time: '5:43 PM', dayDiff: 0 },
     { city: 'Hong Kong', time: '12:13 AM', dayDiff: 1 },
   ],
   markets: {

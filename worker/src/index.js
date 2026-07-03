@@ -64,25 +64,34 @@ async function getCode(env, code) {
   return json({ cfg });
 }
 
-// Fresh-or-stale KV caching shared by /njt/departures and /markets: serve the
-// stored copy while it is younger than ttlS; otherwise refetch, falling back
-// to the stored copy (flagged stale) when upstream fails.
-async function cached(env, key, ttlS, fetcher) {
-  const [cachedAt, last] = await Promise.all([
-    env.CODES.get(`${key}:cachedAt`),
-    env.CODES.get(`${key}:last`, 'json'),
-  ]);
-  const age = cachedAt ? Date.now() / 1000 - Number(cachedAt) : Infinity;
-  if (last && age < ttlS) return json(last);
+// Fresh-or-stale response cache shared by the upstream-proxy routes. Uses the
+// Cache API, NOT KV: KV's free tier caps writes at 1000/day, and the boards
+// polling these short-TTL routes exhausted it — which then broke the setup-code
+// writes that share the CODES namespace. The Cache API has no such write limit.
+// Serves the fresh copy while it is younger than ttlS; otherwise refetches,
+// falling back to a longer-lived stale copy (flagged stale) when upstream fails.
+// Keys live under the worker's own origin so put() stays same-zone; a second
+// day-long entry survives past ttlS to serve as that stale backup.
+const STALE_TTL_S = 24 * 3600;
+
+async function cached(origin, key, ttlS, fetcher) {
+  const cache = caches.default;
+  const freshKey = new Request(`${origin}/__cache/fresh/${encodeURIComponent(key)}`);
+  const staleKey = new Request(`${origin}/__cache/stale/${encodeURIComponent(key)}`);
+  const hit = await cache.match(freshKey);
+  if (hit) return json(await hit.json());
   try {
     const fresh = await fetcher();
-    await Promise.all([
-      env.CODES.put(`${key}:last`, JSON.stringify(fresh)),
-      env.CODES.put(`${key}:cachedAt`, String(Math.floor(Date.now() / 1000))),
-    ]);
+    const body = JSON.stringify(fresh);
+    const entry = (ttl) =>
+      new Response(body, {
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': `max-age=${ttl}` },
+      });
+    await Promise.all([cache.put(freshKey, entry(ttlS)), cache.put(staleKey, entry(STALE_TTL_S))]);
     return json(fresh);
   } catch (err) {
-    if (last) return json({ ...last, stale: true });
+    const stale = await cache.match(staleKey);
+    if (stale) return json({ ...(await stale.json()), stale: true });
     return json({ error: 'upstream_failed', detail: String(err) }, 502);
   }
 }
@@ -120,12 +129,12 @@ export default {
       const station = url.searchParams.get('station');
       if (!station || !/^[A-Za-z0-9]{2,4}$/.test(station)) return json({ error: 'bad_station' }, 400);
       const st = station.toUpperCase();
-      return cached(env, `njt:${st}`, 60, () => fetchNjtDepartures(env, st));
+      return cached(url.origin, `njt:${st}`, 60, () => fetchNjtDepartures(env, st));
     }
 
     if (path === '/njt/stations' && request.method === 'GET') {
       if (!env.NJT_USER || !env.NJT_PASS) return json({ error: 'njt_not_configured' }, 503);
-      return cached(env, 'njtstations', 24 * 3600, async () => ({
+      return cached(url.origin, 'njtstations', 24 * 3600, async () => ({
         stations: await fetchNjtStations(env),
       }));
     }
@@ -137,25 +146,25 @@ export default {
         .filter((t) => /^[\^A-Z0-9.\-]{1,10}$/.test(t))
         .slice(0, 10);
       const symbols = requested.length ? requested : DEFAULT_SYMBOLS;
-      return cached(env, `markets:${symbols.join(',')}`, 300, () => fetchMarkets(symbols));
+      return cached(url.origin, `markets:${symbols.join(',')}`, 300, () => fetchMarkets(symbols));
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);
     if (alertsMatch && request.method === 'GET') {
-      return cached(env, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
+      return cached(url.origin, `alerts:${alertsMatch[1]}`, 120, () => fetchMtaAlerts(alertsMatch[1]));
     }
 
     if (path === '/sports/team' && request.method === 'GET') {
       const lg = url.searchParams.get('lg');
       const id = (url.searchParams.get('id') ?? '').toLowerCase();
       if (!SPORTS_LEAGUES[lg] || !/^[a-z0-9]{1,8}$/.test(id)) return json({ error: 'bad_team' }, 400);
-      return cached(env, `sports:${lg}:${id}`, 120, () => fetchTeamSummary(env, lg, id));
+      return cached(url.origin, `sports:${lg}:${id}`, 120, () => fetchTeamSummary(lg, id));
     }
 
     const newsMatch = /^\/news\/([a-z0-9-]{1,24})$/.exec(path);
     if (newsMatch && request.method === 'GET') {
       if (!newsFeedUrl(newsMatch[1])) return json({ error: 'unknown_feed' }, 404);
-      return cached(env, `news:${newsMatch[1]}`, 600, () => fetchNewsFeed(newsMatch[1]));
+      return cached(url.origin, `news:${newsMatch[1]}`, 600, () => fetchNewsFeed(newsMatch[1]));
     }
 
     if (path === '/bus/stops' && request.method === 'GET') {
@@ -166,7 +175,7 @@ export default {
         .filter((s) => /^\d{4,7}$/.test(s))
         .slice(0, 2);
       if (!ids.length) return json({ error: 'bad_stop_ids' }, 400);
-      return cached(env, `bus:${ids.join(',')}`, 30, () => fetchBusStops(env, ids));
+      return cached(url.origin, `bus:${ids.join(',')}`, 30, () => fetchBusStops(env, ids));
     }
 
     return json({ error: 'not_found' }, 404);

@@ -9,6 +9,13 @@ const call = (path, init, extraEnv = {}) =>
 
 const NJT_ENV = { NJT_USER: 'user', NJT_PASS: 'pass' };
 
+// The upstream-proxy cache lives in the Cache API now (not KV). Keys mirror
+// cached() in worker/src/index.js: `${origin}/__cache/{fresh,stale}/{key}`,
+// with the test origin https://api.test.
+const cacheKey = (kind, key) => new Request(`https://api.test/__cache/${kind}/${encodeURIComponent(key)}`);
+const clearCache = (key) =>
+  Promise.all([caches.default.delete(cacheKey('fresh', key)), caches.default.delete(cacheKey('stale', key))]);
+
 // Route-based fetch stub: routes = [{match: RegExp, status, body}], each entry
 // consumed in order per matching URL; records calls for assertions.
 function stubFetch(routes) {
@@ -97,10 +104,7 @@ const SCHEDULE_RESPONSE = {
 };
 
 describe('/njt/departures', () => {
-  beforeEach(async () => {
-    await env.CODES.delete('njt:NY:last');
-    await env.CODES.delete('njt:NY:cachedAt');
-  });
+  beforeEach(() => clearCache('njt:NY'));
 
   it('503s when secrets are not configured', async () => {
     const res = await call('/njt/departures?station=NY');
@@ -126,7 +130,12 @@ describe('/njt/departures', () => {
     // 08:15 AM America/New_York on 2026-07-02 is 12:15 UTC (EDT).
     expect(train.time).toBe(Date.UTC(2026, 6, 2, 12, 15, 0) / 1000);
 
-    // Second call inside the TTL is served from KV without touching upstream.
+    // Cached in the Cache API, not KV — KV's daily write cap is reserved for
+    // setup codes, so nothing cache-related should land in the CODES namespace.
+    expect(await env.CODES.get('njt:NY:last')).toBeNull();
+    expect(await caches.default.match(cacheKey('fresh', 'njt:NY'))).toBeTruthy();
+
+    // Second call inside the TTL is served from cache without touching upstream.
     const before = calls.length;
     const res2 = await call('/njt/departures?station=NY', {}, NJT_ENV);
     expect(res2.status).toBe(200);
@@ -151,7 +160,7 @@ describe('/njt/departures', () => {
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
     ]);
     await call('/njt/departures?station=NY', {}, NJT_ENV);
-    await env.CODES.delete('njt:NY:cachedAt'); // force refetch
+    await caches.default.delete(cacheKey('fresh', 'njt:NY')); // expire fresh, keep stale backup
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'err', status: 500, times: 2 },
@@ -188,10 +197,7 @@ describe('/alerts', () => {
       },
     ],
   };
-  beforeEach(async () => {
-    await env.CODES.delete('alerts:subway:last');
-    await env.CODES.delete('alerts:subway:cachedAt');
-  });
+  beforeEach(() => clearCache('alerts:subway'));
 
   it('digests and caches the subway alert feed', async () => {
     const calls = stubFetch([{ match: /subway-alerts\.json/, body: FEED }]);
@@ -200,7 +206,7 @@ describe('/alerts', () => {
     const body = await res.json();
     expect(body.alerts).toEqual([{ routes: ['4'], header: 'Delays at 14 St.' }]);
     const before = calls.length;
-    await call('/alerts/subway'); // served from KV inside the TTL
+    await call('/alerts/subway'); // served from the Cache API inside the TTL
     expect(calls.length).toBe(before);
   });
 
@@ -215,8 +221,7 @@ describe('/bus/stops', () => {
     expect((await call('/bus/stops?ids=abc', {}, { MTA_BUS_KEY: 'k' })).status).toBe(400);
   });
   it('proxies SIRI per stop', async () => {
-    await env.CODES.delete('bus:550685:last');
-    await env.CODES.delete('bus:550685:cachedAt');
+    await clearCache('bus:550685');
     stubFetch([{ match: /bustime\.mta\.info/, body: { Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ MonitoredStopVisit: [] }] } } } }]);
     const res = await call('/bus/stops?ids=550685', {}, { MTA_BUS_KEY: 'k' });
     expect(res.status).toBe(200);
@@ -228,10 +233,7 @@ describe('/bus/stops', () => {
 describe('/sports/team', () => {
   it('validates league and id, composes team + schedule digest', async () => {
     expect((await call('/sports/team?lg=xfl&id=abc')).status).toBe(400);
-    await env.CODES.delete('sports:mlb:21:last');
-    await env.CODES.delete('sports:mlb:21:cachedAt');
-    await env.CODES.delete('sched:mlb:21:at');
-    await env.CODES.delete('sched:mlb:21:line');
+    await clearCache('sports:mlb:21');
     stubFetch([
       { match: /teams\/21$/, body: { team: { abbreviation: 'NYM', shortDisplayName: 'Mets', logos: [{ href: 'https://a.espncdn.com/i/teamlogos/mlb/500/nym.png' }], record: { items: [{ summary: '48-37' }] }, nextEvent: [] } } },
       { match: /teams\/21\/schedule/, body: { events: [{ competitions: [{ status: { type: { state: 'post', shortDetail: 'Final' } }, competitors: [
@@ -248,8 +250,7 @@ describe('/sports/team', () => {
 
 describe('/news', () => {
   it('proxies whitelisted feeds and 404s unknown ids', async () => {
-    await env.CODES.delete('news:npr:last');
-    await env.CODES.delete('news:npr:cachedAt');
+    await clearCache('news:npr');
     stubFetch([{ match: /feeds\.npr\.org/, body: '<rss><channel><item><title>Hi</title></item></channel></rss>' }]);
     const res = await call('/news/npr');
     expect(res.status).toBe(200);
@@ -271,14 +272,10 @@ describe('/markets', () => {
     },
   });
 
-  beforeEach(async () => {
-    await env.CODES.delete('markets:^DJI,^IXIC,^GSPC:last');
-    await env.CODES.delete('markets:^DJI,^IXIC,^GSPC:cachedAt');
-  });
+  beforeEach(() => clearCache('markets:^DJI,^IXIC,^GSPC'));
 
   it('serves custom symbols with Yahoo shortName fallback', async () => {
-    await env.CODES.delete('markets:AAPL:last');
-    await env.CODES.delete('markets:AAPL:cachedAt');
+    await clearCache('markets:AAPL');
     const y = yahoo(200, 190);
     y.chart.result[0].meta.symbol = 'AAPL';
     y.chart.result[0].meta.shortName = 'Apple Inc.';

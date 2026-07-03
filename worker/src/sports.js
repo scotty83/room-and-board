@@ -70,28 +70,23 @@ export function mapTeamSummary(teamJson, lastLine, lg) {
   return row;
 }
 
-export async function fetchTeamSummary(env, lg, id) {
+export async function fetchTeamSummary(lg, id) {
   const base = `https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/teams/${id}`;
   const teamRes = await fetch(base);
   if (!teamRes.ok) throw new Error(`espn team ${teamRes.status}`);
   const teamJson = await teamRes.json();
   const abbr = teamJson?.team?.abbreviation ?? '';
 
-  // Schedule digest: 30-min KV cache, best-effort.
+  // Last-game line from the schedule feed, best-effort. The /sports/team route
+  // wraps this whole summary in the 120s Cache-API layer, so no separate cache
+  // is needed here (this used to keep a 30-min KV cache of its own, which added
+  // to the KV writes that exhausted the daily cap).
   let lastLine = null;
-  const key = `sched:${lg}:${id}`;
-  const cachedAt = await env.CODES.get(`${key}:at`);
-  if (cachedAt && Date.now() / 1000 - Number(cachedAt) < 1800) {
-    lastLine = await env.CODES.get(`${key}:line`);
-  } else {
-    try {
-      const schedRes = await fetch(`${base}/schedule`);
-      if (schedRes.ok) lastLine = digestSchedule(await schedRes.json(), abbr);
-      await env.CODES.put(`${key}:line`, lastLine ?? '');
-      await env.CODES.put(`${key}:at`, String(Math.floor(Date.now() / 1000)));
-    } catch {
-      lastLine = null;
-    }
+  try {
+    const schedRes = await fetch(`${base}/schedule`);
+    if (schedRes.ok) lastLine = digestSchedule(await schedRes.json(), abbr);
+  } catch {
+    lastLine = null;
   }
   return { updatedAt: Math.floor(Date.now() / 1000), stale: false, row: mapTeamSummary(teamJson, lastLine || null, lg) };
 }

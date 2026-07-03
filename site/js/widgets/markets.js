@@ -75,6 +75,20 @@ export function mapMarkets(payload) {
   return { updatedAt: payload.updatedAt ?? null, stale: Boolean(payload.stale), indices };
 }
 
+// True when the quote source recognizes the symbol. Both settings surfaces
+// validate adds with this — a syntactically-valid unknown ticker otherwise
+// saves fine and then silently never appears on the card.
+export async function symbolKnown(symbol, fetchFn = fetch) {
+  try {
+    const res = await fetchFn(`${WORKER_URL}/markets?symbols=${encodeURIComponent(symbol)}`);
+    if (!res.ok) return false;
+    const payload = await res.json();
+    return Array.isArray(payload.indices) && payload.indices.some((ix) => ix.symbol === symbol);
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchData(cfg, net) {
   const symbols = cfg.markets?.symbols ?? [];
   const query = symbols.length ? `?symbols=${symbols.join(',')}` : '';

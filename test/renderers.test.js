@@ -119,6 +119,22 @@ describe('markets freshness note', () => {
   });
 });
 
+describe('symbolKnown', () => {
+  const ok = (body) => ({ ok: true, json: async () => body });
+  it('accepts a symbol the quote source returns', async () => {
+    const fetchFn = async (url) => {
+      expect(url).toContain('/markets?symbols=AAPL');
+      return ok({ indices: [{ symbol: 'AAPL', name: 'Apple Inc.' }] });
+    };
+    expect(await markets.symbolKnown('AAPL', fetchFn)).toBe(true);
+  });
+  it('rejects unknown symbols, upstream failures and network errors', async () => {
+    expect(await markets.symbolKnown('FLKJSDF', async () => ({ ok: false }))).toBe(false); // worker 502
+    expect(await markets.symbolKnown('FLKJSDF', async () => ok({ indices: [] }))).toBe(false);
+    expect(await markets.symbolKnown('AAPL', async () => { throw new Error('offline'); })).toBe(false);
+  });
+});
+
 describe('sparkPath', () => {
   it('produces a normalized SVG path', () => {
     const d = sparkPath([0, 5, 10], 100, 30);

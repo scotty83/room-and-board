@@ -7,6 +7,7 @@ import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
 import { zipLookup } from '../geo.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
+import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -219,13 +220,21 @@ function renderTickers() {
     );
   };
   renderChips();
-  $('#sym-add').addEventListener('click', () => {
+  $('#sym-add').addEventListener('click', async () => {
     const t = $('#sym-code').value.trim().toUpperCase();
-    if (/^[\^A-Z0-9.\-]{1,10}$/.test(t) && cfg.markets.symbols.length < 10 && !cfg.markets.symbols.includes(t)) {
+    if (!(/^[\^A-Z0-9.\-]{1,10}$/.test(t) && cfg.markets.symbols.length < 10 && !cfg.markets.symbols.includes(t))) return;
+    const btn = $('#sym-add');
+    btn.disabled = true;
+    $('#sym-status').textContent = 'Checking…';
+    if (await symbolKnown(t)) {
       cfg.markets.symbols = [...cfg.markets.symbols, t];
       $('#sym-code').value = '';
+      $('#sym-status').textContent = '';
       renderChips();
+    } else {
+      $('#sym-status').textContent = `${t} isn't a known ticker — check the symbol.`;
     }
+    btn.disabled = false;
   });
 }
 

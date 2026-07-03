@@ -31,6 +31,7 @@ const WIDGET_LABELS = {
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
+import { symbolKnown } from '../widgets/markets.js';
 
 const PRESET_LOCATIONS = [
   { label: 'Midtown Manhattan', lat: 40.754, lon: -73.984 },
@@ -424,7 +425,8 @@ function renderMarkets() {
     <output class="code__display" aria-live="polite"></output>
     <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^.-'.split('').map(
       (k) => `<button class="key" data-key="${k}">${k}</button>`,
-    ).join('')}<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Add">Add</button></div>`;
+    ).join('')}<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Add">Add</button></div>
+    <p class="code__status"></p>`;
   pane().querySelectorAll('[data-remove-sym]').forEach((chip) =>
     chip.addEventListener('click', () => {
       state.cfg.markets.symbols = symbols.filter((t) => t !== chip.dataset.removeSym);
@@ -433,16 +435,20 @@ function renderMarkets() {
   );
   let ticker = '';
   const display = pane().querySelector('.code__display');
+  const status = pane().querySelector('.code__status');
   pane().querySelectorAll('[data-key]').forEach((btn) =>
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const k = btn.dataset.key;
       if (k === '⌫') ticker = ticker.slice(0, -1);
       else if (k === 'Add') {
-        if (/^[\^A-Z0-9.\-]{1,10}$/.test(ticker) && symbols.length < 10 && !symbols.includes(ticker)) {
+        if (!(/^[\^A-Z0-9.\-]{1,10}$/.test(ticker) && symbols.length < 10 && !symbols.includes(ticker))) return;
+        status.textContent = 'Checking…';
+        if (await symbolKnown(ticker)) {
           state.cfg.markets.symbols = [...symbols, ticker];
           renderMarkets();
           return;
         }
+        status.textContent = `${ticker} isn't a known ticker — check the symbol.`;
       } else if (ticker.length < 10) ticker += k;
       display.textContent = ticker;
     }),

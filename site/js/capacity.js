@@ -28,6 +28,8 @@ const MODELS = {
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).
   news: listCapacity(75, 57),
+  // Single-line 44px rows + 10px gap; min height is 3 rows so tier s never applies.
+  worldclock: listCapacity(54, 54),
 };
 
 export function itemCapacity(id, w, h) {
@@ -62,6 +64,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `${n} matches`;
     case 'news':
       return `${n} headlines`;
+    case 'worldclock':
+      return ofTotal(Math.min(n, cfg.worldclock?.cities?.length ?? n), cfg.worldclock?.cities?.length, 'cities');
     case 'weather':
       return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
     default:

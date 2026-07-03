@@ -24,7 +24,7 @@ export const MIN_SIZE = {
   quote: [2, 2],
   art: [2, 2],
   aqi: [2, 2],
-  worldclock: [2, 3], // five fixed rows need at least three rows of height
+  worldclock: [2, 3], // shortest card that fits a useful clock list (rows slice to fit)
   sports: [3, 2],
   worldcup: [3, 2],
   news: [3, 2],

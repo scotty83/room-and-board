@@ -13,10 +13,12 @@ describe('itemCapacity', () => {
     expect(itemCapacity('subway', 4, 4)).toBe(5);
     expect(itemCapacity('history', 4, 2)).toBe(2);
     expect(itemCapacity('history', 4, 4)).toBe(5);
+    expect(itemCapacity('worldclock', 2, 3)).toBe(4);
+    expect(itemCapacity('worldclock', 3, 4)).toBe(6);
+    expect(itemCapacity('worldclock', 3, 8)).toBe(14);
   });
   it('returns null for widgets without a primary list', () => {
     expect(itemCapacity('art', 2, 2)).toBeNull();
-    expect(itemCapacity('worldclock', 2, 4)).toBeNull();
   });
 });
 
@@ -24,6 +26,7 @@ describe('capacityLabel', () => {
   const cfg = {
     markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA'] },
     subway: { lines: ['1', '2', '3', 'A'] },
+    worldclock: { cities: Array.from({ length: 8 }, (_, i) => ({ label: `C${i}`, zone: 'UTC' })) },
   };
   it('describes markets as shown-of-total tickers', () => {
     expect(capacityLabel('markets', 4, 2, cfg)).toBe('shows 2 of 7 tickers');
@@ -32,6 +35,10 @@ describe('capacityLabel', () => {
   it('describes subway lines against the selection', () => {
     expect(capacityLabel('subway', 4, 2, cfg)).toBe('shows 2 of 4 lines');
     expect(capacityLabel('subway', 4, 4, cfg)).toBe('shows all 4 lines');
+  });
+  it('describes worldclock cities against the selection', () => {
+    expect(capacityLabel('worldclock', 2, 3, cfg)).toBe('shows 4 of 8 cities');
+    expect(capacityLabel('worldclock', 3, 8, cfg)).toBe('shows all 8 cities');
   });
   it('describes trains and events plainly', () => {
     expect(capacityLabel('lirr', 4, 4, cfg)).toBe('next 4 trains');

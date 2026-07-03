@@ -3,6 +3,7 @@
 // D. E. Shaw offices; any IANA zone can be added. Pure Intl math, no network.
 
 import { escapeHtml } from '../util.js';
+import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'worldclock', title: 'World Clock', refreshMs: 30 * 1000 };
 
@@ -55,7 +56,11 @@ export async function fetchData(cfg) {
 }
 
 export function render(el, vm) {
-  el.innerHTML = vm
+  const [w, h] = cardSize(el, [3, 4]);
+  const cap = itemCapacity('worldclock', w, h);
+  const shown = vm.slice(0, cap);
+  const hidden = vm.length - shown.length;
+  el.innerHTML = shown
     .map(
       (row) => `<div class="wc-row">
         <span class="wc-row__city">${escapeHtml(row.city)}</span>
@@ -64,5 +69,5 @@ export function render(el, vm) {
         }</span>
       </div>`,
     )
-    .join('');
+    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
 }

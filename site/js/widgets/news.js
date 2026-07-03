@@ -50,10 +50,20 @@ export function parseRss(xml, sourceLabel) {
 }
 
 export function mergeNews(perSource, nowMs, max = 30) {
+  // Overlapping feeds (e.g. NYT Top Stories + NYT New York) carry the same
+  // story; dedupe by normalized title after the newest-first sort so the
+  // freshest copy wins and rows are never wasted on repeats.
+  const seen = new Set();
   return perSource
     .flat()
     .filter((i) => i.t === 0 || i.t <= nowMs + 3600e3) // drop clock-skewed future items
     .sort((a, b) => b.t - a.t)
+    .filter((i) => {
+      const key = i.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .slice(0, max);
 }
 
@@ -73,13 +83,17 @@ export function render(el, vm, _cfg) {
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('news', w, h);
   const nowMs = vm.nowMs ?? Date.now();
+  // Source + age stack above the full-width headline so neither ever
+  // squeezes the other (at 3 cols the old side-by-side row truncated both).
   el.innerHTML = vm.items
     .slice(0, cap)
     .map(
       (i) => `<div class="headline">
-        <span class="headline__src">${escapeHtml(i.source)}</span>
+        <div class="headline__meta">
+          <span class="headline__src">${escapeHtml(i.source)}</span>
+          <span class="headline__age">${escapeHtml(ageLabel(i.t, nowMs))}</span>
+        </div>
         <span class="headline__title">${escapeHtml(i.title)}</span>
-        <span class="headline__age">${escapeHtml(ageLabel(i.t, nowMs))}</span>
       </div>`,
     )
     .join('');

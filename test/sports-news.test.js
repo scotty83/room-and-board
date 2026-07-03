@@ -96,6 +96,19 @@ describe('news parsing', () => {
     expect(merged[0].title).toBe('fresh');
     expect(merged.some((i) => i.title === 'future skew')).toBe(false);
   });
+  it('dedupes the same story carried by overlapping feeds, keeping the newest', () => {
+    const now = Date.parse('2026-07-02T13:00:00Z');
+    const merged = mergeNews([
+      [{ title: 'How the Heat Is Upending Plans', t: now - 3600e3, source: 'NYT Top Stories' }],
+      [
+        { title: 'How the Heat Is Upending Plans', t: now - 1800e3, source: 'NYT New York' },
+        { title: 'A different story', t: now - 60e3, source: 'NYT New York' },
+      ],
+    ], now);
+    expect(merged).toHaveLength(2);
+    const dupe = merged.find((i) => i.title.startsWith('How the Heat'));
+    expect(dupe.source).toBe('NYT New York'); // newest copy wins
+  });
   it('labels ages compactly', () => {
     const now = 1783000000000;
     expect(ageLabel(now - 5 * 60e3, now)).toBe('5m');

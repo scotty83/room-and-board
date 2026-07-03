@@ -511,10 +511,15 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .wc-match__note { font-size: 17px; color: var(--ink-faint); margin-top: -4px; }
 
 /* ---------- headlines ---------- */
-.headline { display: flex; align-items: baseline; gap: 12px; min-height: 52px; }
-.headline__src { font-size: 15px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; flex: none; max-width: 132px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Source + age on a small meta line above the full-width headline; the
+   headline clamps to two lines (one in shallow cards) — no marquee, per the
+   calm-motion rule. */
+.headline { display: flex; flex-direction: column; gap: 3px; }
+.headline__meta { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.headline__src { font-size: 15px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.headline__age { font-size: 15px; color: var(--ink-faint); flex: none; }
 .headline__title { font-size: 21px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-width: 0; }
-.headline__age { font-size: 17px; color: var(--ink-faint); flex: none; }
+.card--news.t-s .headline__title { -webkit-line-clamp: 1; }
 
 .team__logo { width: 44px; height: 44px; object-fit: contain; flex: none; background: rgba(232, 237, 244, 0.08); border-radius: 50%; padding: 4px; }
 .team__last { font-size: 17px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

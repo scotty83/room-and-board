@@ -25,7 +25,9 @@ const MODELS = {
   history: listCapacity(64, 54),
   sports: listCapacity(94, 70),
   worldcup: listCapacity(60, 46),
-  news: listCapacity(68, 48),
+  // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
+  // shallow cards clamp titles to 1 line (47.4px + gap).
+  news: listCapacity(75, 57),
 };
 
 export function itemCapacity(id, w, h) {

@@ -6,6 +6,7 @@ import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
 import { zipLookup } from '../geo.js';
+import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -65,6 +66,7 @@ async function boot() {
   await renderNjt();
   renderBusStops();
   renderTickers();
+  renderWorldclockPrefs();
   await renderTeams();
   await renderNewsSources();
   $('#mode').value = cfg.mode;
@@ -163,6 +165,42 @@ function renderLocation() {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
     }
   });
+}
+
+function renderWorldclockPrefs() {
+  const has = (label, zone) => cfg.worldclock.cities.some((c) => c.label === label && c.zone === zone);
+  const rerender = () => {
+    $('#wc-chips').innerHTML = cfg.worldclock.cities
+      .map((c, i) => `<button type="button" data-wc-rm="${i}">${c.label} ✕</button>`).join('');
+    $('#wc-chips').querySelectorAll('[data-wc-rm]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cfg.worldclock.cities = cfg.worldclock.cities.filter((_, i) => i !== Number(b.dataset.wcRm));
+        rerender();
+      }));
+    $('#wc-offices').innerHTML = OFFICES.map(([label, zone], i) =>
+      `<label><input type="checkbox" data-wc-office="${i}" ${has(label, zone) ? 'checked' : ''}> ${label}</label>`).join('');
+    $('#wc-offices').querySelectorAll('[data-wc-office]').forEach((box) =>
+      box.addEventListener('change', () => {
+        const [label, zone] = OFFICES[Number(box.dataset.wcOffice)];
+        cfg.worldclock.cities = box.checked && cfg.worldclock.cities.length < 10
+          ? [...cfg.worldclock.cities, { label, zone }]
+          : cfg.worldclock.cities.filter((c) => !(c.label === label && c.zone === zone));
+        rerender();
+      }));
+  };
+  const zones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
+  $('#wc-zone').innerHTML = zones.map((z) => `<option value="${z}">${zoneLabel(z)} — ${z}</option>`).join('');
+  if (!zones.length) { $('#wc-zone').hidden = true; $('#wc-add').hidden = true; }
+  $('#wc-add').addEventListener('click', () => {
+    const zone = $('#wc-zone').value;
+    if (!zone) return;
+    const label = zoneLabel(zone);
+    if (!has(label, zone) && cfg.worldclock.cities.length < 10) {
+      cfg.worldclock.cities = [...cfg.worldclock.cities, { label, zone }];
+      rerender();
+    }
+  });
+  rerender();
 }
 
 const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };

@@ -1,45 +1,65 @@
 import { describe, it, expect } from 'vitest';
-import { worldTimes, CITIES } from '../site/js/widgets/worldclock.js';
+import { worldTimes, zoneLabel, OFFICES } from '../site/js/widgets/worldclock.js';
 
-// Reference formatter mirroring the widget's Intl usage, so expectations are
-// timezone-independent for the test runner.
-const timeIn = (date, zone) =>
-  new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(date);
+const FIVE = [
+  { label: 'New York', zone: 'America/New_York' },
+  { label: 'San Francisco', zone: 'America/Los_Angeles' },
+  { label: 'London', zone: 'Europe/London' },
+  { label: 'Hyderabad', zone: 'Asia/Kolkata' },
+  { label: 'Hong Kong', zone: 'Asia/Hong_Kong' },
+];
 
 describe('worldTimes', () => {
-  it('covers exactly the five fixed cities in order', () => {
-    const rows = worldTimes(new Date('2026-01-15T03:30:00Z'));
-    expect(rows.map((r) => r.city)).toEqual(['New York', 'Hyderabad', 'London', 'Los Angeles', 'Hong Kong']);
-    expect(CITIES).toHaveLength(5);
+  it('sorts earliest to latest local time (2026-01-15T15:30Z)', () => {
+    // SF 7:30 AM < NY 10:30 AM < London 3:30 PM < Hyderabad 9:00 PM < HK 11:30 PM
+    const rows = worldTimes(new Date('2026-01-15T15:30:00Z'), FIVE);
+    expect(rows.map((r) => r.city)).toEqual(['San Francisco', 'New York', 'London', 'Hyderabad', 'Hong Kong']);
+    expect(rows.map((r) => r.time)).toEqual(['7:30 AM', '10:30 AM', '3:30 PM', '9:00 PM', '11:30 PM']);
   });
 
-  it('formats winter times correctly (2026-01-15T03:30Z)', () => {
-    const instant = new Date('2026-01-15T03:30:00Z');
-    const rows = Object.fromEntries(worldTimes(instant).map((r) => [r.city, r]));
-    expect(rows['New York'].time).toBe('10:30 PM');
-    expect(rows['London'].time).toBe('3:30 AM');
-    expect(rows['Hyderabad'].time).toBe('9:00 AM'); // UTC+5:30
-    expect(rows['Los Angeles'].time).toBe('7:30 PM');
-    expect(rows['Hong Kong'].time).toBe('11:30 AM');
+  it('sorts across a day boundary (2026-01-15T03:30Z)', () => {
+    // NY is still Jan 14 evening while Asia is Jan 15 morning; day counts
+    // before hour in the sort, so the US West/East rows lead.
+    const rows = worldTimes(new Date('2026-01-15T03:30:00Z'), FIVE);
+    const idx = (c) => rows.findIndex((r) => r.city === c);
+    expect(idx('San Francisco')).toBeLessThan(idx('New York'));  // 7:30 PM < 10:30 PM (Jan 14)
+    expect(idx('New York')).toBeLessThan(idx('London'));         // London is already Jan 15
+    expect(idx('London')).toBeLessThan(idx('Hyderabad'));        // 3:30 AM < 9:00 AM
+    expect(idx('Hyderabad')).toBeLessThan(idx('Hong Kong'));     // 9:00 AM < 11:30 AM
   });
 
-  it('handles the DST split window (US on DST, Europe not: 2026-03-20T12:00Z)', () => {
-    const instant = new Date('2026-03-20T12:00:00Z');
-    const rows = Object.fromEntries(worldTimes(instant).map((r) => [r.city, r]));
-    expect(rows['New York'].time).toBe('8:00 AM');  // EDT, UTC-4
-    expect(rows['London'].time).toBe('12:00 PM');   // still GMT
+  it('formats winter times and the DST-split window correctly', () => {
+    const jan = Object.fromEntries(worldTimes(new Date('2026-01-15T03:30:00Z'), FIVE).map((r) => [r.city, r]));
+    expect(jan['New York'].time).toBe('10:30 PM');
+    expect(jan['Hyderabad'].time).toBe('9:00 AM'); // UTC+5:30
+    const mar = Object.fromEntries(worldTimes(new Date('2026-03-20T12:00:00Z'), FIVE).map((r) => [r.city, r]));
+    expect(mar['New York'].time).toBe('8:00 AM');  // EDT
+    expect(mar['London'].time).toBe('12:00 PM');   // still GMT
   });
 
   it('computes day offsets relative to the runner-local date', () => {
     const instant = new Date('2026-01-15T03:30:00Z');
     const localDay = new Intl.DateTimeFormat('en-CA', { dateStyle: 'short' }).format(instant);
-    for (const row of worldTimes(instant)) {
-      const zoneDay = new Intl.DateTimeFormat('en-CA', {
-        timeZone: CITIES.find(([c]) => c === row.city)[1],
-        dateStyle: 'short',
-      }).format(instant);
-      const expected = zoneDay === localDay ? 0 : zoneDay > localDay ? 1 : -1;
-      expect(row.dayDiff).toBe(expected);
+    for (const row of worldTimes(instant, FIVE)) {
+      const zone = FIVE.find((c) => c.label === row.city).zone;
+      const zoneDay = new Intl.DateTimeFormat('en-CA', { timeZone: zone, dateStyle: 'short' }).format(instant);
+      expect(row.dayDiff).toBe(zoneDay === localDay ? 0 : zoneDay > localDay ? 1 : -1);
     }
+  });
+});
+
+describe('OFFICES + zoneLabel', () => {
+  it('lists the 14 D.E. Shaw offices with valid zones', () => {
+    expect(OFFICES).toHaveLength(14);
+    for (const [label, zone] of OFFICES) {
+      expect(label.length).toBeGreaterThan(0);
+      expect(() => new Intl.DateTimeFormat('en-US', { timeZone: zone })).not.toThrow();
+    }
+    expect(OFFICES.map(([l]) => l)).toContain('Bermuda');
+  });
+  it('derives readable labels from zone ids', () => {
+    expect(zoneLabel('America/New_York')).toBe('New York');
+    expect(zoneLabel('America/Indiana/Indianapolis')).toBe('Indianapolis');
+    expect(zoneLabel('UTC')).toBe('UTC');
   });
 });

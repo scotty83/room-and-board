@@ -10,6 +10,7 @@ import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
 import { stripData } from './ambient.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
+import { initTextViewer } from './textviewer.js';
 import { icon } from './icons.js';
 
 import * as clock from './widgets/clock.js';
@@ -255,6 +256,7 @@ async function boot() {
   document.body.classList.add('theme-dark');
   $('#gear').innerHTML = icon('settings', 'icon--btn');
   $('#edit').innerHTML = icon('pencil', 'icon--btn');
+  initTextViewer($('#grid'));
   const fragment = parseFragment(location.hash);
   window.__signage = { fragment, source: null }; // diagnostics surface
 

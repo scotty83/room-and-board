@@ -392,6 +392,18 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .art-viewer__img { width: 100%; height: 100%; object-fit: contain; }
 
+/* ---------- full-screen text viewer (tap truncated text) ---------- */
+.text-viewer {
+  position: fixed; inset: 0; z-index: 46; /* above the art viewer's 45 */
+  background: rgba(13, 17, 23, 0.96);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.text-viewer__panel { max-width: 1400px; padding: 60px; display: flex; flex-direction: column; gap: 26px; }
+.text-viewer__title { font-size: 24px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-dim); }
+.text-viewer__body { font-size: 42px; line-height: 1.45; color: var(--ink); text-wrap: pretty; }
+.text-viewer__hint { font-size: 20px; color: var(--ink-faint); }
+
 /* ---------- per-size compact variants (gen1 Chromium lacks container queries;
    cards carry data-w/data-h and the tier classes t-s/t-m/t-l/t-narrow that
    main.js derives from the layout: t-s when h≤2, t-narrow when w≤4) ---------- */

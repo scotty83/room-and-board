@@ -79,6 +79,30 @@ describe('normalizeConfig', () => {
     expect(custom.art).toEqual({ every: 5, cats: ['asian'] });
   });
 
+  it('defaults worldclock to the five offices and validates custom cities', () => {
+    const cfg = normalizeConfig({});
+    expect(cfg.worldclock.cities).toHaveLength(5);
+    expect(cfg.worldclock.cities[0]).toEqual({ label: 'New York', zone: 'America/New_York' });
+    expect(cfg.worldclock.cities.map((c) => c.label)).toContain('San Francisco');
+
+    const custom = normalizeConfig({ v: 3, worldclock: { cities: [
+      { label: 'Tokyo', zone: 'Asia/Tokyo' },
+      { label: 'Nowhere', zone: 'Fake/Zone' },          // invalid zone -> dropped
+      { label: 'Tokyo', zone: 'Asia/Tokyo' },            // dupe -> dropped
+      { label: '', zone: 'Europe/Paris' },               // empty label -> dropped
+      { label: 'A very very long label over 24 chars!!', zone: 'Europe/Paris' },
+    ] } });
+    expect(custom.worldclock.cities).toEqual([
+      { label: 'Tokyo', zone: 'Asia/Tokyo' },
+      { label: 'A very very long label o', zone: 'Europe/Paris' },
+    ]);
+
+    const many = normalizeConfig({ v: 3, worldclock: { cities: Array.from({ length: 14 }, (_, i) => ({ label: `City ${i}`, zone: 'Asia/Tokyo' })) } });
+    expect(many.worldclock.cities).toHaveLength(10);
+
+    expect(normalizeConfig({ v: 3, worldclock: { cities: [] } }).worldclock.cities).toHaveLength(5); // empty -> defaults
+  });
+
   it('throws on non-objects and unknown future versions', () => {
     expect(() => normalizeConfig(null)).toThrow(TypeError);
     expect(() => normalizeConfig('x')).toThrow(TypeError);
@@ -136,9 +160,19 @@ describe('encode/decode round trip', () => {
       sports: { teams: [{ lg: 'mlb', id: 'nym' }, { lg: 'nfl', id: 'nyj' }, { lg: 'nba', id: 'nyk' }, { lg: 'nhl', id: 'nyr' }, { lg: 'mls', id: 'nyc' }, { lg: 'epl', id: 'ars' }] },
       markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOG', 'META'] },
       news: { sources: ['nyt-home', 'nyt-us', 'nyt-business', 'npr', 'bbc', 'nyt-nyregion', 'gothamist'] },
+      worldclock: { cities: [
+        { label: 'New York', zone: 'America/New_York' }, { label: 'San Francisco', zone: 'America/Los_Angeles' },
+        { label: 'Kansas City', zone: 'America/Chicago' }, { label: 'Bermuda', zone: 'Atlantic/Bermuda' },
+        { label: 'London', zone: 'Europe/London' }, { label: 'Luxembourg', zone: 'Europe/Luxembourg' },
+        { label: 'Hyderabad', zone: 'Asia/Kolkata' }, { label: 'Hong Kong', zone: 'Asia/Hong_Kong' },
+        { label: 'Shanghai', zone: 'Asia/Shanghai' }, { label: 'Singapore', zone: 'Asia/Singapore' },
+      ] },
     });
     const enc = await encodeConfig(cfg);
-    expect(enc.length).toBeLessThan(900);
+    // 2048-char URL minus ~100 chars of bridge auth leaves ~1900 for the
+    // fragment; the fully-maxed config (10 tickers, 10 clock cities, 7 feeds)
+    // measures 916, so 1000 still guards roughly 2x headroom.
+    expect(enc.length).toBeLessThan(1000);
   });
 
   it('throws on corrupt input', async () => {

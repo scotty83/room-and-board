@@ -25,6 +25,13 @@ export const DEFAULT_CONFIG = Object.freeze({
   name: '',
   loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
   layout: DEFAULT_LAYOUT,
+  worldclock: Object.freeze({ cities: Object.freeze([
+    { label: 'New York', zone: 'America/New_York' },
+    { label: 'San Francisco', zone: 'America/Los_Angeles' },
+    { label: 'London', zone: 'Europe/London' },
+    { label: 'Hyderabad', zone: 'Asia/Kolkata' },
+    { label: 'Hong Kong', zone: 'Asia/Hong_Kong' },
+  ].map(Object.freeze)) }),
   // Status board defaults to the Penn Station lines (matches 10001 default).
   subway: Object.freeze({ lines: Object.freeze(['1', '2', '3']) }),
   lirr: Object.freeze({ dest: '', alerts: true }), // Penn board destination filter ('' = all trains)
@@ -46,6 +53,9 @@ const MAX_NAME = 24;
 const str = (v, fallback, max = 64) =>
   typeof v === 'string' ? v.slice(0, max) : fallback;
 const num = (v, fallback) => (Number.isFinite(v) ? v : fallback);
+const isZone = (z) => {
+  try { new Intl.DateTimeFormat('en-US', { timeZone: z }); return true; } catch { return false; }
+};
 const strList = (v, max = 12) =>
   Array.isArray(v) ? v.filter((s) => typeof s === 'string').slice(0, max) : [];
 
@@ -132,6 +142,17 @@ export function normalizeConfig(raw) {
     art: {
       every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),
       cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
+    },
+    worldclock: {
+      cities: (() => {
+        const seen = new Set();
+        const list = (Array.isArray(raw.worldclock?.cities) ? raw.worldclock.cities : [])
+          .filter((c) => typeof c?.label === 'string' && typeof c?.zone === 'string' && isZone(c.zone))
+          .map((c) => ({ label: c.label.trim().slice(0, 24), zone: c.zone }))
+          .filter((c) => c.label && !seen.has(`${c.label}|${c.zone}`) && !!seen.add(`${c.label}|${c.zone}`))
+          .slice(0, 10);
+        return list.length ? list : DEFAULT_CONFIG.worldclock.cities.map((c) => ({ ...c }));
+      })(),
     },
     mode: MODES.includes(raw.mode) ? raw.mode : DEFAULT_CONFIG.mode,
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,

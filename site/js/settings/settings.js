@@ -640,6 +640,13 @@ function renderCode() {
     ).join('')}<button class="key key--wide" data-key="⌫">⌫</button></div>
     <p class="code__status"></p>
     <hr class="pane__rule">
+    <p class="pane__hint">Share this board's setup: get a code to write down, then enter it on another board (Settings → Setup code) or at <b>${location.host}/setup</b>.</p>
+    <button class="btn" data-export>Get a code for this board</button>
+    <div class="code-export" hidden>
+      <output class="code__display" aria-live="polite"></output>
+      <p class="pane__hint code-export__note"></p>
+    </div>
+    <hr class="pane__rule">
     <p class="pane__hint">Or move this board's setup to your phone:</p>
     <button class="btn" data-qr>Show QR of current config</button>
     <div class="qr"></div>`;
@@ -674,6 +681,30 @@ function renderCode() {
     qr.addData(`https://${location.host}/setup#cfg=${encoded}`);
     qr.make();
     pane().querySelector('.qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
+  });
+  pane().querySelector('[data-export]').addEventListener('click', async () => {
+    const btn = pane().querySelector('[data-export]');
+    const box = pane().querySelector('.code-export');
+    const codeEl = box.querySelector('.code__display');
+    const note = box.querySelector('.code-export__note');
+    const label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Getting code…';
+    try {
+      const encoded = await encodeConfig(normalizeConfig(state.cfg));
+      const res = await fetch(`${WORKER_URL}/code`, { method: 'POST', body: JSON.stringify({ cfg: encoded }) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { code } = await res.json();
+      codeEl.textContent = code;
+      note.textContent = `Write it down. Enter it on another board (Settings → Setup code) or at ${location.host}/setup — expires in 1 hour.`;
+    } catch (err) {
+      codeEl.textContent = '—';
+      note.textContent = `Couldn't reach the code service (${err.message}). Check that the Worker is deployed.`;
+    } finally {
+      box.hidden = false;
+      btn.disabled = false;
+      btn.textContent = label;
+    }
   });
 }
 

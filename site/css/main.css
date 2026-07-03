@@ -215,6 +215,7 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .welcome__inner p { font-size: 24px; color: var(--ink-dim); }
 .welcome__actions { display: flex; gap: 18px; justify-content: center; }
 .welcome__hint { font-size: 21px !important; color: var(--ink-faint) !important; }
+.welcome__qr { display: flex; justify-content: center; margin-top: 10px; }
 
 .btn {
   font-size: 24px; padding: 16px 34px; border-radius: 14px;

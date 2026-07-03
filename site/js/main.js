@@ -181,13 +181,25 @@ function showWelcome() {
   welcome.innerHTML = `
     <div class="welcome__inner">
       <h1>Welcome to your office display</h1>
-      <p>Set it up from your phone or laptop, or start with sensible defaults and fine-tune later.</p>
+      <p>Set it up from your phone or desktop, or start with sensible defaults and fine-tune later.</p>
       <div class="welcome__actions">
         <button class="btn btn--primary" data-action="quick-start">Quick start</button>
         <button class="btn" data-action="enter-code">I have a setup code</button>
       </div>
-      <p class="welcome__hint">Build a setup code at <b>/setup</b> on this site from any device.</p>
+      <div class="qr welcome__qr"></div>
+      <p class="welcome__hint">Scan to build a setup code on your phone — or visit <b>${location.host}/setup</b>.</p>
     </div>`;
+  // The board's URL isn't visible to the person standing in front of it, so a
+  // /setup hint alone can't get them there — the QR carries the full address.
+  // Best-effort: if the QR module fails to load, the text hint still names the host.
+  import('./vendor/qrcode.js')
+    .then(({ default: qrcode }) => {
+      const qr = qrcode(0, 'M');
+      qr.addData(`https://${location.host}/setup`);
+      qr.make();
+      welcome.querySelector('.welcome__qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 3 });
+    })
+    .catch(() => {});
   welcome.querySelector('[data-action="quick-start"]').addEventListener('click', async () => {
     cfg = normalizeConfig({ ...DEFAULT_CONFIG, t: Math.floor(Date.now() / 1000) });
     await saveConfig(cfg);

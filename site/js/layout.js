@@ -30,13 +30,18 @@ export const MIN_SIZE = {
   news: [3, 2],
 };
 
+// Nine widgets in four 3-wide columns, tiling all 96 cells (Sean's board
+// arrangement, 2026-07-03). Every size is overflow-audited.
 export const DEFAULT_LAYOUT = Object.freeze([
-  { id: 'weather', x: 0, y: 0, w: 4, h: 4 },
-  { id: 'subway', x: 4, y: 0, w: 6, h: 4 },
-  { id: 'worldclock', x: 10, y: 0, w: 2, h: 4 },
-  { id: 'art', x: 0, y: 4, w: 4, h: 4 },
-  { id: 'markets', x: 4, y: 4, w: 4, h: 4 },
-  { id: 'news', x: 8, y: 4, w: 4, h: 4 },
+  { id: 'weather', x: 0, y: 0, w: 3, h: 4 },
+  { id: 'worldcup', x: 3, y: 0, w: 3, h: 3 },
+  { id: 'worldclock', x: 6, y: 0, w: 3, h: 4 },
+  { id: 'subway', x: 9, y: 0, w: 3, h: 5 },
+  { id: 'sports', x: 3, y: 3, w: 3, h: 3 },
+  { id: 'markets', x: 0, y: 4, w: 3, h: 4 },
+  { id: 'art', x: 6, y: 4, w: 3, h: 4 },
+  { id: 'lirr', x: 9, y: 5, w: 3, h: 3 },
+  { id: 'history', x: 3, y: 6, w: 3, h: 2 },
 ].map(Object.freeze));
 
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);

@@ -15,7 +15,7 @@ import {
 const area = (r) => r.w * r.h;
 
 describe('DEFAULT_LAYOUT', () => {
-  it('tiles the full 6x4 grid with no overlaps', () => {
+  it('tiles the full 12x8 grid with no overlaps', () => {
     expect(DEFAULT_LAYOUT.reduce((s, r) => s + area(r), 0)).toBe(GRID.cols * GRID.rows);
     for (let i = 0; i < DEFAULT_LAYOUT.length; i++)
       for (let j = i + 1; j < DEFAULT_LAYOUT.length; j++)

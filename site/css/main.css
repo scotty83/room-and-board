@@ -145,8 +145,10 @@ html, body {
 
 /* ---------- history / quote / sky / markets ---------- */
 .history { display: flex; flex-direction: column; gap: 10px; }
-.history__item { display: grid; grid-template-columns: 76px 1fr; gap: 14px; font-size: 22px; align-items: baseline; }
-.history__year { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+/* Year column hugs four tabular digits; right-aligned so short years ("324")
+   end where long ones do and the text column starts sooner. */
+.history__item { display: grid; grid-template-columns: 54px 1fr; gap: 10px; font-size: 22px; align-items: baseline; }
+.history__year { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; text-align: right; }
 .history__text { color: var(--ink-dim); }
 
 .quote { display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 12px; }

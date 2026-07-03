@@ -30,6 +30,7 @@ const WIDGET_LABELS = {
 };
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
+import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 
 const PRESET_LOCATIONS = [
   { label: 'Midtown Manhattan', lat: 40.754, lon: -73.984 },
@@ -104,6 +105,7 @@ const SECTIONS = [
   ['markets', 'Markets'],
   ['sports', 'My Teams'],
   ['news', 'Headlines'],
+  ['worldclock', 'World Clock'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
@@ -142,6 +144,7 @@ function renderSection() {
     markets: renderMarkets,
     sports: renderSports,
     news: renderNews,
+    worldclock: renderWorldclock,
     art: renderArt,
     weather: renderWeather,
     display: renderDisplay,
@@ -520,6 +523,37 @@ async function renderNews() {
 }
 
 /* ---------- weather / display ---------- */
+
+function renderWorldclock() {
+  const cities = () => state.cfg.worldclock.cities;
+  const has = (label, zone) => cities().some((c) => c.label === label && c.zone === zone);
+  const zonesApi = typeof Intl.supportedValuesOf === 'function';
+  pane().innerHTML = `
+    <h2 class="pane__title">World Clock</h2>
+    <p class="pane__hint">Cities display in order of their current time. Tap an office to add or remove it (up to 10).</p>
+    <div class="chips">${cities().map((c, i) => `<button class="chip" data-rm="${i}">${escapeHtml(c.label)} ✕</button>`).join('')}</div>
+    <p class="pane__hint">Offices:</p>
+    <div class="chips">${OFFICES.map(([label, zone], i) =>
+      `<button class="chip ${has(label, zone) ? 'chip--on' : ''}" data-office="${i}">${label}</button>`).join('')}</div>
+    ${zonesApi ? `<p class="pane__hint">Or any time zone:</p>
+    <div class="drill"><div class="drill__list">${Intl.supportedValuesOf('timeZone')
+      .map((z) => `<button class="drill__item" data-zone="${z}"><span class="drill__letter">${escapeHtml(zoneLabel(z))}</span> <small>${escapeHtml(z)}</small></button>`)
+      .join('')}</div></div>` : ''}`;
+  const set = (list) => { state.cfg.worldclock.cities = list.slice(0, 10); renderWorldclock(); };
+  pane().querySelectorAll('[data-rm]').forEach((b) =>
+    b.addEventListener('click', () => set(cities().filter((_, i) => i !== Number(b.dataset.rm)))));
+  pane().querySelectorAll('[data-office]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const [label, zone] = OFFICES[Number(b.dataset.office)];
+      set(has(label, zone) ? cities().filter((c) => !(c.label === label && c.zone === zone)) : [...cities(), { label, zone }]);
+    }));
+  pane().querySelectorAll('[data-zone]').forEach((b) =>
+    b.addEventListener('click', () => {
+      const zone = b.dataset.zone;
+      const label = zoneLabel(zone);
+      if (!has(label, zone)) set([...cities(), { label, zone }]);
+    }));
+}
 
 function renderWeather() {
   pane().innerHTML = `

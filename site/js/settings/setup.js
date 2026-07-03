@@ -5,6 +5,7 @@ import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS, DEFA
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
+import { zipLookup } from '../geo.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 
 const $ = (sel) => document.querySelector(sel);
@@ -153,14 +154,12 @@ function renderLocation() {
   $('#zip-go').addEventListener('click', async () => {
     const zip = $('#zip').value.trim();
     if (!/^\d{5}$/.test(zip)) return;
-    const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${zip}&count=1&language=en&format=json&countryCode=US`,
-    );
-    const hit = (await res.json()).results?.[0];
-    if (hit) {
-      cfg.loc = { lat: hit.latitude, lon: hit.longitude, label: hit.name };
+    try {
+      const loc = await zipLookup(zip);
+      if (!loc) throw new Error('no match');
+      cfg.loc = loc;
       $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
-    } else {
+    } catch {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
     }
   });

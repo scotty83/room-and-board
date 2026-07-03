@@ -7,6 +7,7 @@ import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
+import { zipLookup } from '../geo.js';
 import { alphaSections, toggleIn } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
@@ -555,12 +556,9 @@ function renderWeather() {
         if (zip.length !== 5) return;
         status.textContent = 'Looking up…';
         try {
-          const geo = await fetchJSON(
-            `https://geocoding-api.open-meteo.com/v1/search?name=${zip}&count=1&language=en&format=json&countryCode=US`,
-          );
-          const hit = geo.results?.[0];
-          if (!hit) throw new Error('no match');
-          state.cfg.loc = { lat: hit.latitude, lon: hit.longitude, label: hit.name };
+          const loc = await zipLookup(zip);
+          if (!loc) throw new Error('no match');
+          state.cfg.loc = loc;
           renderWeather();
           return;
         } catch {

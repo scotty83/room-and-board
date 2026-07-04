@@ -5,7 +5,7 @@
 
 import { escapeHtml, fmtTime } from '../util.js';
 import { WORKER_URL } from '../env.js';
-import { itemCapacity, cardSize } from '../capacity.js';
+import { itemCapacity, cardSize, sizeTier } from '../capacity.js';
 
 export const meta = { id: 'path', title: 'PATH', refreshMs: 60 * 1000 };
 
@@ -57,22 +57,36 @@ export function render(el, vm, _cfg) {
   const [w, h] = cardSize(el, [4, 4]);
   const sections = vm.sections ?? [];
   const both = sections.length > 1;
-  // The two direction labels together cost roughly one train row.
-  const cap = Math.max(both ? 2 : 1, (itemCapacity('path', w, h) ?? 4) - (both ? 1 : 0));
-  const per = both ? Math.max(1, Math.floor(cap / 2)) : cap;
-  const row = (r) => `<div class="train train--path">
+  const shallow = sizeTier(h) === 's';
+  const row = (r, dirShort) => `<div class="train train--path">
       <div class="train__min"><span>${r.min}</span><small>min</small></div>
       <div class="train__info">
         <span class="train__dest">${r.colors
           .map((c) => `<i class="pathdot" style="background:#${c}"></i>`)
           .join('')}${escapeHtml(r.dest)}</span>
-        <span class="train__line">${fmtTime(r.t)}</span>
+        <span class="train__line">${dirShort ? `${dirShort} · ` : ''}${fmtTime(r.t)}</span>
       </div>
     </div>`;
+  // Shallow cards can't afford section headers: flatten both directions into
+  // one time-sorted list with the direction inline on each row instead.
+  if (both && shallow) {
+    const cap = Math.max(1, itemCapacity('path', w, h) ?? 2);
+    const flat = sections
+      .flatMap((s) => s.rows.map((r) => ({ ...r, dirShort: s.dir === 'ToNY' ? 'To NY' : 'To NJ' })))
+      .sort((a, b) => a.t - b.t)
+      .slice(0, cap);
+    el.innerHTML = flat.length
+      ? flat.map((r) => row(r, r.dirShort)).join('')
+      : '<div class="empty">No trains</div>';
+    return;
+  }
+  // The two direction labels together cost roughly one train row.
+  const cap = Math.max(both ? 2 : 1, (itemCapacity('path', w, h) ?? 4) - (both ? 1 : 0));
+  const per = both ? Math.max(1, Math.floor(cap / 2)) : cap;
   el.innerHTML = sections
     .map((s) => `<div class="path-section">
       ${both ? `<div class="path-section__label">${escapeHtml(s.label)}</div>` : ''}
-      ${s.rows.length ? s.rows.slice(0, per).map(row).join('') : '<div class="empty">No trains</div>'}
+      ${s.rows.length ? s.rows.slice(0, per).map((r) => row(r)).join('') : '<div class="empty">No trains</div>'}
     </div>`)
     .join('');
 }

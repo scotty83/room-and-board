@@ -86,6 +86,29 @@ describe('widget renderers', () => {
     }
   });
 
+  it('path flattens both directions into a timed list in shallow cards', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--path';
+    card.dataset.w = '6';
+    card.dataset.h = '2';
+    card.innerHTML = '<div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    const vmBoth = { station: '33S', sections: [
+      { dir: 'ToNY', label: 'To New York', rows: [{ min: 4, t: 1783000240, dest: '33rd Street', colors: [] }] },
+      { dir: 'ToNJ', label: 'To New Jersey', rows: [{ min: 3, t: 1783000180, dest: 'Journal Square', colors: [] }] },
+    ] };
+    pathw.render(body, vmBoth, {});
+    expect(body.querySelector('.path-section__label')).toBeNull();
+    expect(body.textContent).toContain('To NJ ·');
+    // Sorted by time across directions: the sooner NJ-bound train leads.
+    expect(body.querySelector('.train__dest').textContent).toContain('Journal Square');
+    card.dataset.h = '4';
+    pathw.render(body, vmBoth, {});
+    expect(body.querySelectorAll('.path-section__label')).toHaveLength(2);
+    card.remove();
+  });
+
   it('wotd hides the example sentence in shallow cards', () => {
     const card = document.createElement('article');
     card.className = 'card card--wotd';

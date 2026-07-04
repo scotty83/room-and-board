@@ -482,6 +482,31 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .train__dist { color: var(--ink-dim); font-size: 18px; line-height: 1.1; display: inline-block; max-width: 76px; }
 
+/* ---------- PATH ---------- */
+.path-section { display: flex; flex-direction: column; gap: 8px; }
+.path-section + .path-section { margin-top: 8px; }
+.path-section__label { font-size: 17px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.pathdot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.pathdot + .pathdot { margin-left: -2px; }
+
+/* ---------- NYC Ferry ---------- */
+.ferryroute { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 8px; vertical-align: -1px; }
+
+/* ---------- word of the day ---------- */
+.wotd { display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 8px; }
+.wotd__word { font-size: 40px; font-weight: 700; letter-spacing: -0.01em; }
+.wotd__meta { font-size: 20px; color: var(--ink-dim); }
+.wotd__def { font-size: 22px; line-height: 1.35; }
+.wotd__ex { font-size: 20px; color: var(--ink-dim); font-style: italic; }
+/* Shallow cards: smaller word, clamp the definition */
+.card--wotd.t-s .wotd__word { font-size: 30px; }
+.card--wotd.t-s .wotd__def { font-size: 19px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* Narrow cards: smaller word, clamped definition and example, so even
+   worst-case entries (long word + long pronunciation) never scroll */
+.card--wotd.t-narrow .wotd__word { font-size: 32px; }
+.card--wotd.t-narrow .wotd__def { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.card--wotd.t-narrow .wotd__ex { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
 /* ---------- edit-mode gesture preview ---------- */
 .edit-placeholder {
   border: 3px dashed var(--good);

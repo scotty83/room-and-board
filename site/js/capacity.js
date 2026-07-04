@@ -30,8 +30,9 @@ const MODELS = {
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).
   news: listCapacity(75, 57),
-  // Single-line 44px rows + 10px gap; min height is 3 rows so tier s never applies.
-  worldclock: listCapacity(54, 54),
+  // Single-line 35px rows + 10px gap (shrunk so five zones fit a 3-tall
+  // card); min height is 3 rows so tier s never applies.
+  worldclock: listCapacity(45, 45),
 };
 
 export function itemCapacity(id, w, h) {

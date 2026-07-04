@@ -13,9 +13,9 @@ describe('itemCapacity', () => {
     expect(itemCapacity('subway', 4, 4)).toBe(5);
     expect(itemCapacity('history', 4, 2)).toBe(2);
     expect(itemCapacity('history', 4, 4)).toBe(5);
-    expect(itemCapacity('worldclock', 2, 3)).toBe(4);
-    expect(itemCapacity('worldclock', 3, 4)).toBe(6);
-    expect(itemCapacity('worldclock', 3, 8)).toBe(14);
+    expect(itemCapacity('worldclock', 2, 3)).toBe(5);
+    expect(itemCapacity('worldclock', 3, 4)).toBe(7);
+    expect(itemCapacity('worldclock', 3, 8)).toBe(17);
   });
   it('returns null for widgets without a primary list', () => {
     expect(itemCapacity('art', 2, 2)).toBeNull();
@@ -37,7 +37,7 @@ describe('capacityLabel', () => {
     expect(capacityLabel('subway', 4, 4, cfg)).toBe('shows all 4 lines');
   });
   it('describes worldclock cities against the selection', () => {
-    expect(capacityLabel('worldclock', 2, 3, cfg)).toBe('shows 4 of 8 cities');
+    expect(capacityLabel('worldclock', 2, 3, cfg)).toBe('shows 5 of 8 cities');
     expect(capacityLabel('worldclock', 3, 8, cfg)).toBe('shows all 8 cities');
   });
   it('describes trains and events plainly', () => {

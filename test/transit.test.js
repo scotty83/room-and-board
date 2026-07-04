@@ -4,6 +4,8 @@ import { decodeGtfsRt } from '../site/js/gtfs.js';
 import { mapSubwayStatus, SUBWAY_LINES } from '../site/js/widgets/subway.js';
 import { mapLirr, trainNumFromTripId, ROUTE_NAMES, PENN_STOP_ID } from '../site/js/widgets/lirr.js';
 import { mapMnr, GCT_STOP_ID, ROUTE_NAMES as MNR_ROUTES } from '../site/js/widgets/mnr.js';
+import { mapPath, PATH_STATIONS } from '../site/js/widgets/path.js';
+import { mapFerry } from '../site/js/widgets/ferry.js';
 
 async function decodedFixture(name) {
   return decodeGtfsRt(new Uint8Array(await readFile(new URL(`./fixtures/${name}`, import.meta.url))));
@@ -152,5 +154,71 @@ describe('mapMnr (Grand Central departure board)', () => {
   it('names the lines', () => {
     expect(MNR_ROUTES['1']).toBe('Hudson');
     expect(MNR_ROUTES['3']).toBe('New Haven');
+  });
+});
+
+describe('mapPath', () => {
+  const digest = { stations: { '33S': {
+    ToNY: [],
+    ToNJ: [
+      { t: 1045, headSign: 'Hoboken', lineColors: ['4D92FB', 'FF9900'] },
+      { t: 1120, headSign: 'Journal Square', lineColors: ['FF9900'] },
+      { t: 400, headSign: 'Departed', lineColors: [] }, // in the past -> dropped
+    ],
+  } } };
+  it('filters direction, computes minutes, drops departed trains', () => {
+    const vm = mapPath(digest, { station: '33S', dir: 'ToNJ' }, 1000);
+    expect(vm.sections).toHaveLength(1);
+    expect(vm.sections[0].label).toBe('To New Jersey');
+    expect(vm.sections[0].rows).toEqual([
+      { min: 1, t: 1045, dest: 'Hoboken', colors: ['4D92FB', 'FF9900'] },
+      { min: 2, t: 1120, dest: 'Journal Square', colors: ['FF9900'] },
+    ]);
+  });
+  it('renders both directions as two sections', () => {
+    const vm = mapPath(digest, { station: '33S', dir: 'both' }, 1000);
+    expect(vm.sections.map((s) => s.dir)).toEqual(['ToNY', 'ToNJ']);
+  });
+  it('handles unknown stations and missing digests as empty sections', () => {
+    expect(mapPath({}, { station: 'WTC', dir: 'both' }, 0).sections.every((s) => s.rows.length === 0)).toBe(true);
+    expect(Object.keys(PATH_STATIONS)).toHaveLength(13);
+  });
+});
+
+describe('mapFerry', () => {
+  const data = {
+    stops: [{ id: '17', name: 'East 34th Street' }, { id: '4', name: 'Hunters Point South' }, { id: '87', name: 'Wall St/Pier 11' }],
+    trips: { '52': ['ER', 'Wall St./Pier 11'] },
+    routes: { ER: { name: 'East River', color: '00839C' } },
+  };
+  const digest = { trips: [
+    { tripId: '52', stops: [{ stopId: '17', t: 1300 }, { stopId: '4', t: 1900 }, { stopId: '87', t: 2500 }] },
+    { tripId: '999', stops: [{ stopId: '4', t: 1400 }, { stopId: '17', t: 2000 }] }, // unknown trip id
+    { tripId: '53', stops: [{ stopId: '87', t: 1200 }, { stopId: '17', t: 1800 }] }, // terminates at landing
+    { tripId: '54', stops: [{ stopId: '17', t: 900 }, { stopId: '87', t: 1500 }] },  // already departed
+  ] };
+  it('lists future departures from the landing with route info', () => {
+    const vm = mapFerry(digest, data, '17', 1000);
+    expect(vm.landingName).toBe('East 34th Street');
+    expect(vm.departures[0]).toEqual({
+      min: 5, t: 1300, dest: 'Wall St./Pier 11', route: { name: 'East River', color: '00839C' },
+    });
+  });
+  it('falls back to the final stop name when the trips map is stale', () => {
+    const vm = mapFerry(digest, data, '17', 1000);
+    const unknown = vm.departures.find((d) => d.t === 2000);
+    expect(unknown).toBeUndefined(); // trip 999 TERMINATES at 17 -> arrival, excluded
+    const vm4 = mapFerry(digest, data, '4', 1000);
+    const fallback = vm4.departures.find((d) => d.t === 1400);
+    expect(fallback.dest).toBe('East 34th Street'); // last onward stop's name
+    expect(fallback.route).toBeNull();
+  });
+  it('excludes terminating and departed trips', () => {
+    const vm = mapFerry(digest, data, '17', 1000);
+    expect(vm.departures.map((d) => d.t)).toEqual([1300]);
+  });
+  it('survives missing static data', () => {
+    const vm = mapFerry(digest, null, '17', 1000);
+    expect(vm.departures[0].dest).toBe('Ferry');
   });
 });

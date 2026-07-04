@@ -12,6 +12,9 @@ import * as sports from '../site/js/widgets/sports.js';
 import * as worldcup from '../site/js/widgets/worldcup.js';
 import * as news from '../site/js/widgets/news.js';
 import * as njt from '../site/js/widgets/njt.js';
+import * as pathw from '../site/js/widgets/path.js';
+import * as ferry from '../site/js/widgets/ferry.js';
+import * as wotd from '../site/js/widgets/wotd.js';
 import * as art from '../site/js/widgets/art.js';
 import * as history from '../site/js/widgets/history.js';
 import * as aqi from '../site/js/widgets/aqi.js';
@@ -33,6 +36,9 @@ const CASES = [
   ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
+  ['path', pathw, ['Journal Square', 'Hoboken', 'min']],
+  ['ferry', ferry, ['Wall St./Pier 11', 'East River', 'min']],
+  ['wotd', wotd, ['petrichor', 'PET-rih-kor', 'noun', 'earthy smell']],
   ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
   ['history', history, ['1776', 'Continental Congress']],
   ['aqi', aqi, ['66', 'Moderate', 'Waning Gibbous']],
@@ -78,6 +84,22 @@ describe('widget renderers', () => {
       mod.render(host, vm, CFG);
       expect(host.querySelector('.train__line').textContent).toMatch(/\d{1,2}:\d{2}\s?(AM|PM)/);
     }
+  });
+
+  it('wotd hides the example sentence in shallow cards', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--wotd';
+    card.dataset.w = '3';
+    card.dataset.h = '2';
+    card.innerHTML = '<div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    wotd.render(body, DEMO_VMS.wotd, CFG);
+    expect(body.textContent).not.toContain('first storm');
+    card.dataset.h = '4';
+    wotd.render(body, DEMO_VMS.wotd, CFG);
+    expect(body.textContent).toContain('first storm');
+    card.remove();
   });
 
   it('empty transit states render a friendly message', () => {

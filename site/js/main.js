@@ -20,17 +20,20 @@ import * as lirr from './widgets/lirr.js';
 import * as mnr from './widgets/mnr.js';
 import * as bus from './widgets/bus.js';
 import * as njt from './widgets/njt.js';
+import * as pathw from './widgets/path.js';
+import * as ferry from './widgets/ferry.js';
 import * as art from './widgets/art.js';
 import * as history from './widgets/history.js';
 import * as aqi from './widgets/aqi.js';
 import * as quote from './widgets/quote.js';
+import * as wotd from './widgets/wotd.js';
 import * as markets from './widgets/markets.js';
 import * as worldclock from './widgets/worldclock.js';
 import * as sports from './widgets/sports.js';
 import * as worldcup from './widgets/worldcup.js';
 import * as news from './widgets/news.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, bus, art, history, aqi, quote, markets, worldclock, sports, worldcup, news];
+const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer };

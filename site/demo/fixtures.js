@@ -61,6 +61,36 @@ export const DEMO_VMS = {
       { min: 41, time: 1783002460, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
     ],
   },
+  path: {
+    station: '33S',
+    sections: [
+      {
+        dir: 'ToNJ',
+        label: 'To New Jersey',
+        rows: [
+          { min: 3, t: 1783000180, dest: 'Journal Square', colors: ['FF9900'] },
+          { min: 9, t: 1783000540, dest: 'Hoboken', colors: ['4D92FB'] },
+          { min: 16, t: 1783000960, dest: 'Newark', colors: ['D93A30'] },
+        ],
+      },
+    ],
+  },
+  ferry: {
+    landing: '17',
+    landingName: 'East 34th Street',
+    departures: [
+      { min: 5, t: 1783000300, dest: 'Wall St./Pier 11', route: { name: 'East River', color: '00839C' } },
+      { min: 18, t: 1783001080, dest: 'Hunters Point South', route: { name: 'East River', color: '00839C' } },
+      { min: 33, t: 1783001980, dest: 'Soundview', route: { name: 'Soundview', color: '4E008E' } },
+    ],
+  },
+  wotd: {
+    w: 'petrichor',
+    pr: 'PET-rih-kor',
+    pos: 'noun',
+    def: 'The pleasant, earthy smell that follows rain on dry ground.',
+    ex: 'The first storm of the season filled the street with petrichor.',
+  },
   bus: {
     configured: true,
     stops: [

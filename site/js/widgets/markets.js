@@ -3,7 +3,7 @@
 // widget hides itself when the payload is unusable).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
@@ -26,16 +26,7 @@ const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFr
 
 export function render(el, vm, _cfg) {
   // Freshness note in the card header (worker fetch time, not render time).
-  const title = el.closest?.('.card')?.querySelector('.card__title');
-  if (title && vm.updatedAt) {
-    let asof = title.querySelector('.card__asof');
-    if (!asof) {
-      asof = document.createElement('span');
-      asof.className = 'card__asof';
-      title.appendChild(asof);
-    }
-    asof.textContent = `as of ${fmtTime(vm.updatedAt)}`;
-  }
+  if (vm.updatedAt) setCardNote(el, `as of ${fmtTime(vm.updatedAt)}`);
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);

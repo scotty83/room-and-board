@@ -172,6 +172,26 @@ describe('markets freshness note', () => {
   });
 });
 
+describe('setCardNote', () => {
+  it('creates, updates and removes the title note', async () => {
+    const { setCardNote } = await import('../site/js/util.js');
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = '<h2 class="card__title">X</h2><div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    setCardNote(body, 'stops at Mineola');
+    expect(card.querySelector('.card__title .card__asof').textContent).toBe('stops at Mineola');
+    setCardNote(body, 'stops at Rye');
+    expect(card.querySelectorAll('.card__asof')).toHaveLength(1);
+    expect(card.querySelector('.card__asof').textContent).toBe('stops at Rye');
+    setCardNote(body, null);
+    expect(card.querySelector('.card__asof')).toBeNull();
+    setCardNote(document.createElement('div'), 'orphan'); // no card ancestor: no throw
+    card.remove();
+  });
+});
+
 describe('symbolKnown', () => {
   const ok = (body) => ({ ok: true, json: async () => body });
   it('accepts a symbol the quote source returns', async () => {

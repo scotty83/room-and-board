@@ -29,7 +29,11 @@ function eventLine(comp, ourAbbr, { withWL = false } = {}) {
   const wl = withWL && status.state === 'post'
     ? (Number(usS) > Number(themS) ? 'W ' : Number(usS) < Number(themS) ? 'L ' : 'T ')
     : '';
-  return `${wl}${usS ?? '–'}-${themS ?? '–'} ${vsAt} ${opp} · ${status.shortDetail ?? ''}`.trim();
+  // ESPN's team endpoint nulls scores mid-game (the scoreboard join below
+  // usually fills them); a scoreless live line drops the score fragment
+  // rather than printing dashes.
+  const scores = usS === null && themS === null ? '' : `${usS ?? '–'}-${themS ?? '–'} `;
+  return `${wl}${scores}${vsAt} ${opp} · ${status.shortDetail ?? ''}`.trim();
 }
 
 // Most recent completed game from a schedule payload -> compact line.
@@ -47,7 +51,7 @@ export function pickLogo(logos = []) {
   return (dark ?? logos[0])?.href ?? null;
 }
 
-export function mapTeamSummary(teamJson, lastLine, lg) {
+export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null) {
   const team = teamJson?.team;
   if (!team) return null;
   const row = {
@@ -62,7 +66,7 @@ export function mapTeamSummary(teamJson, lastLine, lg) {
     line: 'No scheduled games',
     lastLine: lastLine ?? null,
   };
-  const comp = team.nextEvent?.[0]?.competitions?.[0];
+  const comp = liveComp ?? team.nextEvent?.[0]?.competitions?.[0];
   if (comp) {
     row.state = comp.status?.type?.state ?? 'pre';
     row.line = eventLine(comp, team.abbreviation, { withWL: row.state === 'post' });
@@ -88,5 +92,22 @@ export async function fetchTeamSummary(lg, id) {
   } catch {
     lastLine = null;
   }
-  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, row: mapTeamSummary(teamJson, lastLine || null, lg) };
+  // The team endpoint nulls competitor scores while a game is live; only the
+  // league scoreboard carries them (verified 2026-07-03). Join by event id,
+  // Worker-side only — the ~250 KB scoreboard never reaches a board, and it's
+  // fetched solely while a followed team is actually playing.
+  let liveComp = null;
+  const nextEv = teamJson?.team?.nextEvent?.[0];
+  if (nextEv?.competitions?.[0]?.status?.type?.state === 'in') {
+    try {
+      const sbRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/scoreboard`);
+      if (sbRes.ok) {
+        const sb = await sbRes.json();
+        liveComp = (sb.events ?? []).find((e) => e.id === nextEv.id)?.competitions?.[0] ?? null;
+      }
+    } catch {
+      liveComp = null; // scoreless live line still renders cleanly
+    }
+  }
+  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, row: mapTeamSummary(teamJson, lastLine || null, lg, liveComp) };
 }

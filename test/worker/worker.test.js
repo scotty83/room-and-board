@@ -252,6 +252,57 @@ describe('/sports/team', () => {
   });
 });
 
+describe('/sports/team live scores', () => {
+  const TEAM_LIVE = { team: {
+    id: '10', abbreviation: 'NYY', shortDisplayName: 'Yankees',
+    logos: [{ href: 'https://a.espncdn.com/i/teamlogos/mlb/500-dark/nyy.png', rel: ['full', 'dark'] }],
+    record: { items: [{ summary: '48-38' }] },
+    nextEvent: [{ id: '401816004', competitions: [{
+      status: { type: { state: 'in', shortDetail: 'Mid 5th' } },
+      competitors: [
+        { homeAway: 'home', team: { abbreviation: 'NYY' }, score: null },
+        { homeAway: 'away', team: { abbreviation: 'MIN' }, score: null },
+      ],
+    }] }],
+  } };
+  const SCOREBOARD = { events: [
+    { id: '999', competitions: [{ status: { type: { state: 'in', shortDetail: 'Bot 3rd' } }, competitors: [] }] },
+    { id: '401816004', competitions: [{
+      status: { type: { state: 'in', shortDetail: 'Mid 5th' } },
+      competitors: [
+        { homeAway: 'home', team: { abbreviation: 'NYY' }, score: '3' },
+        { homeAway: 'away', team: { abbreviation: 'MIN' }, score: '2' },
+      ],
+    }] },
+  ] };
+
+  it('joins live scores from the league scoreboard by event id', async () => {
+    await clearCache('sports:mlb:10');
+    stubFetch([
+      { match: /teams\/10$/, body: TEAM_LIVE },
+      { match: /teams\/10\/schedule/, body: { events: [] } },
+      { match: /scoreboard/, body: SCOREBOARD },
+    ]);
+    const res = await call('/sports/team?lg=mlb&id=10');
+    const body = await res.json();
+    expect(body.row.line).toBe('3-2 vs MIN · Mid 5th');
+    expect(body.row.state).toBe('in');
+  });
+
+  it('degrades to a scoreless live line when the scoreboard is unavailable', async () => {
+    await clearCache('sports:mlb:10');
+    stubFetch([
+      { match: /teams\/10$/, body: TEAM_LIVE },
+      { match: /teams\/10\/schedule/, body: { events: [] } },
+      { match: /scoreboard/, body: 'down', status: 500 },
+    ]);
+    const res = await call('/sports/team?lg=mlb&id=10');
+    const body = await res.json();
+    expect(body.row.line).toBe('vs MIN · Mid 5th');
+    expect(body.row.line).not.toContain('\u2013');
+  });
+});
+
 describe('/news', () => {
   it('proxies whitelisted feeds and 404s unknown ids', async () => {
     await clearCache('news:npr');

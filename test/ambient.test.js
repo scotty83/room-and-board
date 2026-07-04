@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createSlideshow } from '../site/js/widgets/art.js';
-import { stripData } from '../site/js/ambient.js';
+import { stripData, stripHtml } from '../site/js/ambient.js';
 
 const MANIFEST = [
   { img: 'a.jpg', title: 'A', artist: 'AA', year: '1900', ar: 1.78 },
@@ -95,5 +95,19 @@ describe('stripData', () => {
     expect(out.temp).toBe(84);
     expect(out.transit).toEqual([]);
     expect(stripData({}, { widgets: [] }).temp).toBeNull();
+  });
+});
+
+describe('stripHtml', () => {
+  const now = new Date('2026-07-03T21:30:00');
+  it('always renders the clock, and temp/transit only when present', () => {
+    const bare = stripHtml({ temp: null, transit: [] }, now);
+    expect(bare).toContain('strip__time');
+    expect(bare).toContain('9:30 PM');
+    expect(bare).not.toContain('strip__temp');
+    const full = stripHtml({ temp: 84, transit: [{ label: 'LIRR · Mineola', min: 8 }] }, now);
+    expect(full).toContain('84°');
+    expect(full).toContain('LIRR · Mineola');
+    expect(full).toContain('<b>8 min</b>');
   });
 });

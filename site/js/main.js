@@ -8,7 +8,7 @@ import { resolveMode } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
 import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
-import { stripData } from './ambient.js';
+import { stripData, stripHtml } from './ambient.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
 import { initTextViewer } from './textviewer.js';
 import { icon } from './icons.js';
@@ -132,13 +132,7 @@ function renderStrip() {
         cfg,
       )
     : stripData(caches, cfg);
-  const now = new Date();
-  $('#strip').innerHTML = `
-    <span class="strip__time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
-    ${data.temp !== null ? `<span class="strip__temp">${data.temp}°</span>` : ''}
-    ${data.transit
-      .map((t) => `<span class="strip__transit">${t.label} <b>${t.min} min</b></span>`)
-      .join('')}`;
+  $('#strip').innerHTML = stripHtml(data, new Date());
 }
 
 async function startSlideshow() {

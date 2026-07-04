@@ -21,3 +21,13 @@ export function stripData(caches, cfg) {
   }
   return { temp, transit };
 }
+
+// Strip markup shared by ambient mode (#strip) and the art viewer's overlay.
+export function stripHtml(data, now) {
+  return `
+    <span class="strip__time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
+    ${data.temp !== null ? `<span class="strip__temp">${data.temp}°</span>` : ''}
+    ${data.transit
+      .map((t) => `<span class="strip__transit">${t.label} <b>${t.min} min</b></span>`)
+      .join('')}`;
+}

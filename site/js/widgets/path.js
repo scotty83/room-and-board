@@ -3,7 +3,7 @@
 // (two colors = a train serving a joint line, e.g. HOB-33 via JSQ). The
 // direction filter 'both' renders two labeled sections.
 
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize, sizeTier } from '../capacity.js';
 
@@ -54,6 +54,7 @@ export function mapPath(digest, cfgPath, nowSec) {
 }
 
 export function render(el, vm, _cfg) {
+  setCardNote(el, PATH_STATIONS[vm.station] ?? null);
   const [w, h] = cardSize(el, [4, 4]);
   const sections = vm.sections ?? [];
   const both = sections.length > 1;

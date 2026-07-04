@@ -5,7 +5,7 @@
 // trip's final stop name and the route chip is omitted — labels degrade,
 // correctness doesn't.
 
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -35,6 +35,7 @@ export function mapFerry(digest, data, landing, nowSec) {
 }
 
 export function render(el, vm, _cfg) {
+  setCardNote(el, vm.landingName || null);
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('ferry', w, h) ?? 4;
   const shown = (vm.departures ?? []).slice(0, cap);

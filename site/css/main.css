@@ -535,7 +535,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 .icon--btn { width: 28px; height: 28px; display: block; margin: 0 auto; }
 .gear { display: flex; align-items: center; justify-content: center; color: var(--ink-dim); }
-.card__title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+/* nowrap: the widget name never wraps to a second line — the corner note
+   (min-width 0) shrinks and ellipsizes first on narrow cards */
+.card__title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; white-space: nowrap; }
 .card__asof { font-size: 17px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-faint); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .card.is-stale .card__asof { visibility: hidden; } /* the amber stale stamp takes over */
 

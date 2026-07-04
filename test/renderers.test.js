@@ -109,6 +109,21 @@ describe('widget renderers', () => {
     card.remove();
   });
 
+  it('path and ferry title-note their station/landing', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--path';
+    card.innerHTML = '<h2 class="card__title">PATH</h2><div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    pathw.render(body, DEMO_VMS.path, CFG);
+    expect(card.querySelector('.card__asof').textContent).toBe('33rd Street');
+    ferry.render(body, DEMO_VMS.ferry, CFG);
+    expect(card.querySelector('.card__asof').textContent).toBe('East 34th Street');
+    ferry.render(body, { ...DEMO_VMS.ferry, landingName: '' }, CFG);
+    expect(card.querySelector('.card__asof')).toBeNull();
+    card.remove();
+  });
+
   it('mnr slices departures to card capacity like lirr (regression)', () => {
     const card = document.createElement('article');
     card.className = 'card card--mnr';

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
 import { resetNjtToken } from '../../worker/src/njt.js';
+import { mapRidePath } from '../../worker/src/path.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -300,5 +301,55 @@ describe('/markets', () => {
     stubFetch([{ match: /query1\.finance\.yahoo\.com/, body: 'nope', status: 500, times: 3 }]);
     const res = await call('/markets');
     expect(res.status).toBe(502);
+  });
+});
+
+describe('/path/realtime', () => {
+  const RIDEPATH = {
+    results: [
+      {
+        consideredStation: '33S',
+        destinations: [
+          {
+            label: 'ToNJ',
+            messages: [
+              { target: '33S', secondsToArrival: '120', arrivalTimeMessage: '2 min', lineColor: 'FF9900', headSign: 'Journal Square', lastUpdated: '2026-07-03T20:04:57-04:00' },
+              { target: '33S', secondsToArrival: '45', arrivalTimeMessage: '0 min', lineColor: '4D92FB,FF9900', headSign: 'Hoboken', lastUpdated: '2026-07-03T20:04:57-04:00' },
+            ],
+          },
+          { label: 'ToNY', messages: [] },
+        ],
+      },
+    ],
+  };
+  beforeEach(() => clearCache('path'));
+
+  it('maps the feed into a per-station, per-direction digest with projected epochs', () => {
+    const digest = mapRidePath(RIDEPATH, 1000);
+    const st = digest.stations['33S'];
+    expect(st.ToNY).toEqual([]);
+    expect(st.ToNJ).toHaveLength(2);
+    // Sorted by projected time: the 45 s Hoboken train first.
+    expect(st.ToNJ[0]).toEqual({ t: 1045, headSign: 'Hoboken', lineColors: ['4D92FB', 'FF9900'] });
+    expect(st.ToNJ[1]).toEqual({ t: 1120, headSign: 'Journal Square', lineColors: ['FF9900'] });
+  });
+
+  it('drops malformed rows and bad colors instead of failing', () => {
+    const digest = mapRidePath({ results: [{ consideredStation: 'WTC', destinations: [{ label: 'ToNJ', messages: [
+      { secondsToArrival: 'soon', headSign: 'Newark', lineColor: 'D93A30' },
+      { secondsToArrival: '60', headSign: 'Newark', lineColor: 'red;evil' },
+    ] }] }] }, 0);
+    expect(digest.stations.WTC.ToNJ).toEqual([{ t: 60, headSign: 'Newark', lineColors: [] }]);
+  });
+
+  it('serves and caches the digest', async () => {
+    const calls = stubFetch([{ match: /ridepath\.json/, body: RIDEPATH }]);
+    const res = await call('/path/realtime');
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.stations['33S'].ToNJ).toHaveLength(2);
+    const before = calls.length;
+    await call('/path/realtime'); // Cache API hit inside the 30 s TTL
+    expect(calls.length).toBe(before);
   });
 });

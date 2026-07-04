@@ -8,6 +8,7 @@ import { fetchMtaAlerts } from './alerts.js';
 import { fetchBusStops } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
 import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
+import { fetchPathRealtime } from './path.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -147,6 +148,10 @@ export default {
         .slice(0, 10);
       const symbols = requested.length ? requested : DEFAULT_SYMBOLS;
       return cached(url.origin, `markets:${symbols.join(',')}`, 300, () => fetchMarkets(symbols));
+    }
+
+    if (path === '/path/realtime' && request.method === 'GET') {
+      return cached(url.origin, 'path', 30, () => fetchPathRealtime());
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);

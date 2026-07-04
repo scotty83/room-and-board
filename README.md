@@ -1,10 +1,11 @@
 # Board Pro Digital Signage
 
 A lightweight, personal signage dashboard for Cisco Board Pro devices (gen1 + gen2)
-in private offices: weather, NYC Subway / LIRR / NJ Transit departures, market
-indices, public-domain art, and daily extras. Hosted entirely on the public
-internet, personalized per device **without authentication**, with preferences
-that survive reboots, RoomOS upgrades, and even web-storage wipes.
+in private offices: weather, NYC-area transit boards (Subway status, LIRR,
+Metro-North, NJ Transit, PATH, NYC Ferry, MTA Bus), market tickers, sports
+scores, headlines, public-domain art, and daily extras. Hosted entirely on the
+public internet, personalized per device **without authentication**, with
+preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
 
 Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 
@@ -18,7 +19,11 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 ┌─ Cloudflare Worker (worker/) ────────────────────────────────┐
 │ /code            setup-code exchange (KV, 1h TTL, single-use)│
 │ /njt/*           NJ Transit proxy (their ToS requires one)   │
-│ /markets         Dow/Nasdaq/S&P via Yahoo, cached 5 min      │
+│ /markets         tickers via Yahoo, cached 5 min             │
+│ /alerts/*        MTA service-alert digests (subway/lirr/mnr) │
+│ /sports/team     ESPN digest + live scoreboard score join    │
+│ /news/*, /bus/stops    RSS whitelist proxy · SIRI bus proxy  │
+│ /path/realtime, /ferry/departures   PATH + NYC Ferry digests │
 └──────────────────────────────────────────────────────────────┘
 ┌─ Each Board Pro ─────────────────────────────────────────────┐
 │ SignageManager macro + Signage_Storage vault (inactive macro)│
@@ -27,10 +32,11 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 └──────────────────────────────────────────────────────────────┘
 ```
 
-- Weather/AQI (Open-Meteo), NWS alerts, subway + LIRR GTFS-RT (decoded by a
-  ~120-line protobuf reader, oracle-tested against `gtfs-realtime-bindings`),
+- Weather/AQI (Open-Meteo), NWS alerts, LIRR + Metro-North GTFS-RT (decoded by
+  a ~120-line protobuf reader, oracle-tested against `gtfs-realtime-bindings`),
   art (Met/AIC), and history (Wikimedia) are fetched **directly from the
-  browser** — all verified CORS-open and keyless.
+  browser** — all verified CORS-open and keyless. Everything else (subway alert
+  digests, PATH, ferry, sports, news, bus) rides the Worker's Cache-API layer.
 - Config is deflate+base64url JSON (~200 chars). localStorage is primary;
   every save is mirrored to the macro vault over the device's own WebSocket
   xAPI, and the macro re-seeds the page through the URL fragment after a wipe.
@@ -40,7 +46,7 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 ```bash
 npm install
 npm test                # site+logic suites, then worker suite
-python3 -m http.server 8087 --directory site   # or any static server
+npx http-server site -c-1 -p 8087   # -c-1 matters: Chrome heuristic-caches ES modules otherwise
 open 'http://localhost:8087/?demo=1'           # full dashboard, canned data
 open 'http://localhost:8087/?demo=1&mode=ambient'
 npx wrangler dev --config worker/wrangler.toml # worker on :8787
@@ -97,18 +103,22 @@ WebSocket path, and installs + activates the SignageManager macro. Pilot on
 one board first. Recommended extras per Cisco guidance: configure
 `Time OfficeHours` so signage runs ≤ 12 h/day.
 
-### Arranging the dashboard (v1.1)
+### Arranging the dashboard
 
-Tap the ✎ pencil button: the 6×4 grid appears — drag widgets to move them,
-drag the corner handle to resize (snaps to cells, per-widget minimums),
-✕ removes, and the bottom tray re-adds anything removed. Invalid drops flash
-red and snap back. Done saves (localStorage + macro vault); Cancel discards.
-Layouts live in config v2; v1 configs migrate automatically on first load.
+Tap the ✎ pencil button: the 12×8 grid appears — drag widgets to move them
+(colliders are pushed aside live), drag the corner handle to resize (snaps to
+cells, per-widget minimums), ✕ removes, and the bottom tray re-adds anything
+removed. Invalid drops flash red and snap back. Done saves (localStorage +
+macro vault); Cancel discards. Layouts live in config v3; v1/v2 configs
+migrate automatically on first load.
 
-v1.1 widget notes: **LIRR** is a Penn Station departure board (Grand Central
-trains never shown) filtered by branch chips; **Subway** has line chips
-(none selected = every line at your stops); **Weather** defaults to ZIP 10001;
-**World Clock** shows New York, Hyderabad, London, Los Angeles and Hong Kong.
+Widget notes: **LIRR** / **Metro-North** are Penn Station / Grand Central
+departure boards with an optional stops-at-station filter (named in the card
+corner when set); **Subway** is a line-status board — Good Service or the
+current alert per chosen line; **PATH** / **NYC Ferry** show one chosen
+station/landing (named in the card corner); **Weather** defaults to ZIP 10001;
+**World Clock** holds up to 10 cities (defaults: New York, San Francisco,
+London, Hyderabad, Hong Kong).
 
 ### User flow
 
@@ -133,7 +143,11 @@ the URL fragment and the dashboard returns configured.
 |---|---|---|
 | Open-Meteo (weather, AQI) | direct, keyless | free tier is "non-commercial" — buy their inexpensive key if strictness matters |
 | api.weather.gov (alerts) | direct, keyless | enhancement-only |
-| MTA subway + LIRR GTFS-RT | direct, keyless | GET only (HEAD returns 403); 60 s jittered polling |
+| MTA LIRR + MNR GTFS-RT | direct, keyless | GET only (HEAD returns 403); 60 s jittered polling |
+| MTA alert feeds (camsys) | Worker digest | raw subway feed ~800 KB → ~2 KB digest shared fleet-wide |
+| MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
+| ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
+| NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | TrainTime (LIRR tracks) | direct, unofficial | feature-detected; drops silently if the host vanishes |
 | NJ Transit RailData | Worker + credentials | their ToS **requires** serving from a non-NJT server |
 | Yahoo Finance (markets) | Worker, unofficial | browser UA + 5 min cache; widget hides if it breaks |
@@ -161,7 +175,7 @@ Refresh test fixtures: `node tools/record-fixtures.js`.
 
 ```
 site/       static app (no framework, no bundler; ES modules)
-worker/     Cloudflare Worker (code exchange, NJT proxy, markets)
+worker/     Cloudflare Worker (code exchange + cached upstream digests)
 macro/      SignageManager RoomOS macro (vault + bridge + signage URL)
 deploy/     provision.js fleet setup over jsxapi
 tools/      data builders (stations, art manifest, fixtures)

@@ -8,7 +8,9 @@ import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-export const meta = { id: 'mnr', title: 'Metro-North · Grand Central', refreshMs: 60 * 1000 };
+// Title is just "Metro-North" — the card is GCT-only by design (context lives
+// in settings copy) and the short title leaves the corner note room to breathe.
+export const meta = { id: 'mnr', title: 'Metro-North', refreshMs: 60 * 1000 };
 
 export const GCT_STOP_ID = '1'; // MNR static GTFS stop id for Grand Central
 

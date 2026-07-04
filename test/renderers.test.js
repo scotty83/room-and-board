@@ -72,6 +72,14 @@ describe('widget renderers', () => {
     expect(host.querySelectorAll('svg.spark').length).toBe(3);
   });
 
+  it('markets rows live in one shared grid so spark/delta columns align', () => {
+    const host = el();
+    markets.render(host, DEMO_VMS.markets, CFG);
+    const wrap = host.querySelector('.indexes');
+    expect(wrap).not.toBeNull();
+    expect(wrap.querySelectorAll('.index')).toHaveLength(3);
+  });
+
   it('weather omits the alert banner when there is none', () => {
     const host = el();
     weather.render(host, { ...DEMO_VMS.weather, alert: null }, CFG);

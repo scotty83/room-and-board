@@ -164,7 +164,10 @@ html, body {
 .sky__aqi-label { font-size: 22px; color: var(--ink-dim); }
 .sky__row { display: flex; align-items: center; gap: 10px; font-size: 20px; color: var(--ink-dim); }
 
-.index { display: grid; grid-template-columns: 1fr 90px auto; align-items: center; gap: 14px; }
+/* One shared grid for all rows (rows are display:contents) so the spark and
+   delta columns align down the card; the auto track fits the widest delta. */
+.indexes { display: grid; grid-template-columns: 1fr 90px auto; align-items: center; column-gap: 14px; row-gap: 10px; }
+.index { display: contents; }
 .index__info { display: flex; flex-direction: column; }
 .index__name { font-size: 21px; color: var(--ink-dim); }
 .index__price { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -416,15 +419,17 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   font-size: 22px;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-/* Markets in a shallow card: tighter rows */
+/* Markets in a shallow card: single-line rows (name beside price) — stacked
+   rows plus the +N hint clip a 2-tall body (measured: 141px into 121px) */
+.card--markets.t-s .index__info { flex-direction: row; align-items: baseline; gap: 8px; min-width: 0; }
 .card--markets.t-s .index__price { font-size: 22px; }
-.card--markets.t-s .index__name { font-size: 18px; }
+.card--markets.t-s .index__name { font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card--markets.t-s .delta { font-size: 16px; }
 .card--markets.t-s .spark { height: 20px; }
 /* Markets when narrow (≤4 cols): tighten the row so the delta never clips.
    The sparkline must shrink WITH its column — at 90px it bleeds into the
    delta triangle (viewBox scales, preserveAspectRatio=none). */
-.card--markets.t-narrow .index { gap: 10px; grid-template-columns: 1fr 72px auto; }
+.card--markets.t-narrow .indexes { column-gap: 10px; grid-template-columns: 1fr 72px auto; }
 .card--markets.t-narrow .spark { width: 72px; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */

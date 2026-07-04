@@ -40,8 +40,11 @@ export function render(el, vm, _cfg) {
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);
   const hidden = vm.indices.length - shown.length;
+  // Rows render display:contents inside one .indexes grid so every row shares
+  // the same column tracks — otherwise the auto-sized delta column would shift
+  // each row's sparkline independently (594.83 vs 0.01 wide deltas).
   el.innerHTML = shown.length
-    ? shown
+    ? '<div class="indexes">' + shown
         .map((ix) => {
           const up = ix.change >= 0;
           return `<div class="index">
@@ -55,7 +58,7 @@ export function render(el, vm, _cfg) {
             <span class="delta ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))} (${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;
         })
-        .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card to see them</div>` : '')
+        .join('') + '</div>' + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card to see them</div>` : '')
     : '<div class="empty">Market data unavailable</div>';
 }
 

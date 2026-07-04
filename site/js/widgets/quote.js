@@ -1,6 +1,6 @@
 // Quote of the day from the bundled curated list — zero API dependency.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, dailyPick } from '../util.js';
 
 export const meta = { id: 'quote', title: 'Quote of the Day', refreshMs: 24 * 60 * 60 * 1000 };
 
@@ -12,12 +12,8 @@ export function render(el, vm, _cfg) {
     </blockquote>`;
 }
 
-export function quoteOfDay(quotes, date) {
-  const start = Date.UTC(date.getFullYear(), 0, 0);
-  const dayOfYear = Math.floor((Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - start) / 86400000);
-  const index = (date.getFullYear() * 366 + dayOfYear) % quotes.length;
-  return quotes[index];
-}
+// The shared day index keeps quote and word-of-the-day on one calendar.
+export const quoteOfDay = dailyPick;
 
 export async function fetchData(cfg, net) {
   const quotes = await net.fetchJSON('data/quotes.json');

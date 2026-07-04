@@ -46,6 +46,8 @@ Transform/opacity only (gen1 web-engine budget). Art crossfade 2.5 s ease-in-out
 - **Card**: `article.card > h2.card__title + .card__body + .card__stamp`; stale = `.is-stale` (dim to 0.75 + amber "as of HH:MM" stamp).
 - **Bullet**: 36 px circle, route letter inside (color never the only signal).
 - **Train row**: big tabular minutes + destination/line stack + track chip (`--bg-card-2` well, accent text).
+- **Line marks**: PATH = 14 px color dot(s) before the destination (two dots = joint line); Ferry = 14 px rounded-square route chip. Feed-borne colors, always paired with a text label.
+- **Word card**: 40 px word / dim pron+POS meta / 22 px definition; italic example only on m/l tiers, clamps instead of scrolling.
 - **Delta**: ▲/▼ + value + percent, `--good`/`--bad`.
 - **Empty state**: `.empty` — quiet sentence, never a blank card.
 - **Buttons**: `.btn` 24 px text, 16/34 px padding, 14 px radius; `.btn--primary` accent fill, dark text.

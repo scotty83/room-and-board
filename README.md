@@ -139,6 +139,9 @@ the URL fragment and the dashboard returns configured.
 | Yahoo Finance (markets) | Worker, unofficial | browser UA + 5 min cache; widget hides if it breaks |
 | Met + AIC (art) | build-time manifest | CC0 works; `node tools/build-art-manifest.js` to refresh |
 | Wikimedia (history) | direct, keyless | |
+| PANYNJ RidePATH (PATH) | Worker, keyless | no CORS upstream; 30 s cached digest, projected epochs |
+| NYC Ferry GTFS-RT | Worker, keyless | protobuf decoded Worker-side; trip/route names from bundled `data/ferry.json` |
+| Bundled words.json (word of the day) | none | curated 366+ list, zero network — shares `dailyPick` with quotes |
 
 **Resize-fit audit (standing policy):** widgets must fit their text at every
 supported size. After renderer/CSS changes, open `?demo=1` in Chrome and, for
@@ -149,6 +152,9 @@ each `.card`, place it at its demo size, its `MIN_SIZE`, and a 3-tall variant
 Ship only at zero overflow.
 
 Rebuild station data after MTA changes: `node tools/build-stations.js`.
+Rebuild ferry landings/trips after NYC Ferry schedule changes:
+`node tools/build-ferry-data.js` (a stale trips map only degrades ferry
+destination labels — the widget falls back to each trip's last stop name).
 Refresh test fixtures: `node tools/record-fixtures.js`.
 
 ## Repo map

@@ -3,7 +3,7 @@
 // to Grand Central, optional destination filter, branch shown per train.
 
 import { decodeGtfsRt } from '../gtfs.js';
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
@@ -49,6 +49,7 @@ export function mapMnr(decoded, cfgMnr, nowSec, stationNames = {}) {
 }
 
 export function render(el, vm, _cfg) {
+  setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
   const [w, h] = cardSize(el, [4, 4]);
   // Each alert banner costs roughly one train row of space.
@@ -58,7 +59,7 @@ export function render(el, vm, _cfg) {
     renderAlertRows(vm.alerts?.map((a) => ({ ...a, routes: [] })) ?? []) +
     '<div class="trains">' +
     (shown.length
-      ? vm.departures
+      ? shown
           .map(
             (d) => `<div class="train">
               <div class="train__min"><span>${d.min}</span><small>min</small></div>
@@ -79,6 +80,7 @@ export async function fetchData(cfg, net) {
   const decoded = decodeGtfsRt(await net.fetchBuffer(FEED_URL));
   const names = await stationNames(net);
   const vm = mapMnr(decoded, cfg.mnr, Math.floor(Date.now() / 1000), names);
+  vm.destName = (cfg.mnr.dest && names[cfg.mnr.dest]) || null;
   if (cfg.mnr.alerts) {
     try {
       const digest = await net.fetchJSON(`${WORKER_URL}/alerts/mnr`);

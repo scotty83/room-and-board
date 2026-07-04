@@ -5,7 +5,7 @@
 // and cfg.lirr.branches filters by branch (empty = all).
 
 import { decodeGtfsRt } from '../gtfs.js';
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
@@ -16,6 +16,7 @@ export const PENN_STOP_ID = '237'; // LIRR static GTFS stop id for Penn Station
 const PENN_TT_CODE = 'NYK'; // TrainTime station code for Penn
 
 export function render(el, vm, _cfg) {
+  setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
   const [w, h] = cardSize(el, [4, 4]);
   // Each alert banner costs roughly one train row of space.
@@ -111,6 +112,7 @@ export async function fetchData(cfg, net) {
   }
   const names = await stationNames(net);
   const vm = mapLirr(decoded, trackJson, cfg.lirr, Math.floor(Date.now() / 1000), names);
+  vm.destName = (cfg.lirr.dest && names[cfg.lirr.dest]) || null;
   if (cfg.lirr.alerts) {
     try {
       const digest = await net.fetchJSON(`${WORKER_URL}/alerts/lirr`);

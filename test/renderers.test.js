@@ -94,6 +94,34 @@ describe('widget renderers', () => {
     }
   });
 
+  it('lirr/mnr title-note the destination filter, and clear it when unset', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--lirr';
+    card.innerHTML = '<h2 class="card__title">LIRR</h2><div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    lirr.render(body, { ...DEMO_VMS.lirr, destName: 'Mineola' }, CFG);
+    expect(card.querySelector('.card__asof').textContent).toBe('stops at Mineola');
+    lirr.render(body, { ...DEMO_VMS.lirr, destName: null }, CFG);
+    expect(card.querySelector('.card__asof')).toBeNull();
+    mnr.render(body, { ...DEMO_VMS.mnr, destName: 'Rye' }, CFG);
+    expect(card.querySelector('.card__asof').textContent).toBe('stops at Rye');
+    card.remove();
+  });
+
+  it('mnr slices departures to card capacity like lirr (regression)', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--mnr';
+    card.dataset.w = '3';
+    card.dataset.h = '2';
+    card.innerHTML = '<div class="card__body"></div>';
+    document.body.appendChild(card);
+    const many = { departures: Array.from({ length: 12 }, (_, i) => ({ min: i + 2, t: 1783000000 + i * 300, dest: `D${i}`, branch: 'Harlem', track: null })) };
+    mnr.render(card.querySelector('.card__body'), many, CFG);
+    expect(card.querySelectorAll('.train').length).toBe(2); // itemCapacity('mnr', 3, 2)
+    card.remove();
+  });
+
   it('path flattens both directions into a timed list in shallow cards', () => {
     const card = document.createElement('article');
     card.className = 'card card--path';

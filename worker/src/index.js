@@ -9,6 +9,7 @@ import { fetchBusStops } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
 import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
 import { fetchPathRealtime } from './path.js';
+import { fetchFerryDepartures } from './ferry.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -152,6 +153,10 @@ export default {
 
     if (path === '/path/realtime' && request.method === 'GET') {
       return cached(url.origin, 'path', 30, () => fetchPathRealtime());
+    }
+
+    if (path === '/ferry/departures' && request.method === 'GET') {
+      return cached(url.origin, 'ferry', 60, () => fetchFerryDepartures());
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);

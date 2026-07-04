@@ -3,6 +3,8 @@ import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
 import { resetNjtToken } from '../../worker/src/njt.js';
 import { mapRidePath } from '../../worker/src/path.js';
+import GtfsRt from 'gtfs-realtime-bindings';
+import { mapFerryFeed } from '../../worker/src/ferry.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -28,8 +30,9 @@ function stubFetch(routes) {
     if (!route) throw new Error(`unmocked fetch: ${url}`);
     route.times = (route.times ?? 1) - 1;
     return new Response(
-      typeof route.body === 'string' ? route.body : JSON.stringify(route.body),
-      { status: route.status ?? 200, headers: { 'Content-Type': 'application/json' } },
+      route.raw ? route.body
+        : typeof route.body === 'string' ? route.body : JSON.stringify(route.body),
+      { status: route.status ?? 200, headers: { 'Content-Type': route.raw ? 'application/x-protobuf' : 'application/json' } },
     );
   });
   vi.stubGlobal('fetch', stub);
@@ -351,5 +354,44 @@ describe('/path/realtime', () => {
     const before = calls.length;
     await call('/path/realtime'); // Cache API hit inside the 30 s TTL
     expect(calls.length).toBe(before);
+  });
+});
+
+describe('/ferry/departures', () => {
+  const { FeedMessage } = GtfsRt.transit_realtime;
+  const FERRY_BUF = FeedMessage.encode(
+    FeedMessage.create({
+      header: { gtfsRealtimeVersion: '2.0', timestamp: 1783123914 },
+      entity: [
+        { id: '1', tripUpdate: { trip: { tripId: '52' }, stopTimeUpdate: [
+          { stopId: '88', departure: { time: 1783123756 } },
+          { stopId: '118', arrival: { time: 1783126301 } },
+        ] } },
+        { id: '2', tripUpdate: { trip: { tripId: '96' }, stopTimeUpdate: [] } }, // no stops -> dropped
+      ],
+    }),
+  ).finish();
+  beforeEach(() => clearCache('ferry'));
+
+  it('decodes the protobuf and returns a JSON trip digest', async () => {
+    stubFetch([{ match: /gtfsrealtime\.aspx/, body: FERRY_BUF, raw: true }]);
+    const res = await call('/ferry/departures');
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.updatedAt).toBe(1783123914);
+    expect(body.trips).toEqual([
+      { tripId: '52', stops: [{ stopId: '88', t: 1783123756 }, { stopId: '118', t: 1783126301 }] },
+    ]);
+  });
+
+  it('mapFerryFeed prefers departure over arrival and drops timeless stops', () => {
+    const out = mapFerryFeed({ timestamp: null, trips: [
+      { tripId: '9', routeId: '', stops: [
+        { stopId: '4', arrival: 100, departure: 110 },
+        { stopId: '8', arrival: null, departure: null },
+      ] },
+    ] }, 500);
+    expect(out.updatedAt).toBe(500); // header timestamp fallback
+    expect(out.trips).toEqual([{ tripId: '9', stops: [{ stopId: '4', t: 110 }] }]);
   });
 });

@@ -21,6 +21,8 @@ const MODELS = {
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),
   njt: listCapacity(80, 56),
+  path: listCapacity(58, 44), // single-line rows, subway-like density
+  ferry: listCapacity(80, 56), // two-line train rows
   bus: listCapacity(80, 56),
   history: listCapacity(64, 54),
   sports: listCapacity(94, 70),
@@ -56,6 +58,10 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `next ${n} trains`;
     case 'bus':
       return `next ${n} buses`;
+    case 'path':
+      return `next ${n} trains`;
+    case 'ferry':
+      return `next ${n} ferries`;
     case 'history':
       return `${n} events`;
     case 'sports':

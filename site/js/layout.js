@@ -19,9 +19,12 @@ export const MIN_SIZE = {
   mnr: [3, 2],
   bus: [3, 3],
   njt: [3, 2],
+  path: [3, 2],
+  ferry: [3, 2],
   markets: [3, 2],
   history: [2, 2],
   quote: [2, 2],
+  wotd: [2, 2],
   art: [2, 2],
   aqi: [2, 2],
   worldclock: [2, 3], // shortest card that fits a useful clock list (rows slice to fit)

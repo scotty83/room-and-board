@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'bus', 'art', 'history', 'aqi', 'quote', 'markets', 'worldclock', 'sports', 'worldcup', 'news',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news',
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
@@ -41,6 +41,8 @@ export const DEFAULT_CONFIG = Object.freeze({
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   njt: Object.freeze({ station: 'NY', alerts: true }),
+  path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
+  ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   mode: 'dashboard',
   theme: 'dark',
@@ -138,6 +140,13 @@ export function normalizeConfig(raw) {
     njt: {
       station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
       alerts: raw.njt?.alerts !== false,
+    },
+    path: {
+      station: /^[A-Z0-9]{3}$/.test(raw.path?.station ?? '') ? raw.path.station : DEFAULT_CONFIG.path.station,
+      dir: ['both', 'ToNY', 'ToNJ'].includes(raw.path?.dir) ? raw.path.dir : DEFAULT_CONFIG.path.dir,
+    },
+    ferry: {
+      landing: /^\d{1,4}$/.test(raw.ferry?.landing ?? '') ? raw.ferry.landing : DEFAULT_CONFIG.ferry.landing,
     },
     art: {
       every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),

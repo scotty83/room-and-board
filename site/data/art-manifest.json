@@ -3,7 +3,7 @@
   "img": "https://images.metmuseum.org/CRDImages/ep/original/DT1570.jpg",
   "ar": 1.46,
   "title": "The Afternoon Meal (La Merienda)",
-  "artist": "Luis Meléndez",
+  "artist": "Luis Mel\u00e9ndez",
   "year": "ca. 1772",
   "cat": "european",
   "source": "The Met"
@@ -39,7 +39,7 @@
   "img": "https://images.metmuseum.org/CRDImages/ep/original/DP124093.jpg",
   "ar": 1.29,
   "title": "Haystacks: Autumn",
-  "artist": "Jean-François Millet",
+  "artist": "Jean-Fran\u00e7ois Millet",
   "year": "ca. 1874",
   "cat": "european",
   "source": "The Met"
@@ -48,8 +48,8 @@
   "img": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-31520-001.jpg",
   "ar": 1.46,
   "title": "The Forest in Winter at Sunset",
-  "artist": "Théodore Rousseau",
-  "year": "ca. 1846–67",
+  "artist": "Th\u00e9odore Rousseau",
+  "year": "ca. 1846\u201367",
   "cat": "european",
   "source": "The Met"
  },
@@ -57,7 +57,7 @@
   "img": "https://images.metmuseum.org/CRDImages/ep/original/DT47.jpg",
   "ar": 1.27,
   "title": "Still Life with Apples and a Pot of Primroses",
-  "artist": "Paul Cézanne",
+  "artist": "Paul C\u00e9zanne",
   "year": "ca. 1890",
   "cat": "european",
   "source": "The Met"
@@ -100,7 +100,7 @@
  },
  {
   "img": "https://images.metmuseum.org/CRDImages/as/original/1981_4_1a.jpg",
-  "ar": 1.42,
+  "ar": 1.51,
   "title": "Landscapes with poems",
   "artist": "Gong Xian",
   "year": "1688",
@@ -111,7 +111,7 @@
   "img": "https://images.metmuseum.org/CRDImages/as/original/DP-15584-008.jpg",
   "ar": 2.18,
   "title": "Gibbons in a Landscape",
-  "artist": "Sesson Shūkei 雪村周継",
+  "artist": "Sesson Sh\u016bkei \u96ea\u6751\u5468\u7d99",
   "year": "ca. 1570",
   "cat": "asian",
   "source": "The Met"
@@ -126,29 +126,11 @@
   "source": "The Met"
  },
  {
-  "img": "https://images.metmuseum.org/CRDImages/as/original/DP226465.jpg",
-  "ar": 2.54,
-  "title": "Summer Mountains",
-  "artist": "Qu Ding",
-  "year": "ca. 1050",
-  "cat": "asian",
-  "source": "The Met"
- },
- {
   "img": "https://images.metmuseum.org/CRDImages/as/original/DP222421.jpg",
   "ar": 2.15,
   "title": "Small Dish (Kozara) with Three Jars",
   "artist": "Unknown",
-  "year": "1680–90s",
-  "cat": "asian",
-  "source": "The Met"
- },
- {
-  "img": "https://images.metmuseum.org/CRDImages/as/web-large/DT231.jpg",
-  "ar": 2.15,
-  "title": "Irises at Yatsuhashi (Eight Bridges)",
-  "artist": "Ogata Kōrin",
-  "year": "after 1709",
+  "year": "1680\u201390s",
   "cat": "asian",
   "source": "The Met"
  },
@@ -166,7 +148,7 @@
   "img": "https://www.artic.edu/iiif/2/3a34f988-f779-2e96-1786-8945b6b9c87d/full/1686,/0/default.jpg",
   "ar": 1.26,
   "title": "Landscape",
-  "artist": "Jean Charles Cazin (French, 1841–1901)",
+  "artist": "Jean Charles Cazin (French, 1841\u20131901)",
   "year": "c. 1895",
   "source": "Art Institute of Chicago"
  },
@@ -175,7 +157,7 @@
   "img": "https://www.artic.edu/iiif/2/18092196-50ae-3ff1-9205-1b3110e966c3/full/1686,/0/default.jpg",
   "ar": 1.29,
   "title": "Distant View of Niagara Falls",
-  "artist": "Thomas Cole (American, born England, 1801–1848)",
+  "artist": "Thomas Cole (American, born England, 1801\u20131848)",
   "year": "1830",
   "source": "Art Institute of Chicago"
  },
@@ -184,8 +166,8 @@
   "img": "https://www.artic.edu/iiif/2/3d2d0842-312e-8d48-708b-d6adde0777bf/full/1686,/0/default.jpg",
   "ar": 1.54,
   "title": "A Marine",
-  "artist": "George Inness (American, 1825–1894)",
-  "year": "c. 1874–75",
+  "artist": "George Inness (American, 1825\u20131894)",
+  "year": "c. 1874\u201375",
   "source": "Art Institute of Chicago"
  },
  {
@@ -193,7 +175,7 @@
   "img": "https://www.artic.edu/iiif/2/a9546ba5-6191-4e04-e209-d22a10e7d0d7/full/1686,/0/default.jpg",
   "ar": 1.32,
   "title": "After a Summer Shower",
-  "artist": "George Inness (American, 1825–1894)",
+  "artist": "George Inness (American, 1825\u20131894)",
   "year": "1894",
   "source": "Art Institute of Chicago"
  },
@@ -202,7 +184,7 @@
   "img": "https://www.artic.edu/iiif/2/bbb6d024-f931-2e2f-eb95-750991834b1c/full/1686,/0/default.jpg",
   "ar": 1.44,
   "title": "Shower Below the Summit (Sanka hakuu), from the series \"Thirty-Six Views of Mount Fuji (Fugaku sanjurokkei)\"",
-  "artist": "Katsushika Hokusai 葛飾 北斎 ",
+  "artist": "Katsushika Hokusai \u845b\u98fe \u5317\u658e ",
   "year": "c. 1830/33",
   "source": "Art Institute of Chicago"
  },
@@ -211,17 +193,8 @@
   "img": "https://www.artic.edu/iiif/2/842d212c-c755-f372-d73f-7d0581051c46/full/1686,/0/default.jpg",
   "ar": 1.51,
   "title": "Catskill Mountains",
-  "artist": "George Inness (American, 1825–1894)",
+  "artist": "George Inness (American, 1825\u20131894)",
   "year": "1870",
-  "source": "Art Institute of Chicago"
- },
- {
-  "cat": "european",
-  "img": "https://www.artic.edu/iiif/2/3527f037-a9b2-9253-1a92-dcd281b54340/full/1686,/0/default.jpg",
-  "ar": 1.26,
-  "title": "Landscape",
-  "artist": "Théodore Rousseau (French, 1812–1867)",
-  "year": "c. 1850",
   "source": "Art Institute of Chicago"
  },
  {
@@ -231,6 +204,15 @@
   "title": "Old Sarum",
   "artist": "David Lucas (English, 1802-1881)",
   "year": "1832",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "european",
+  "img": "https://www.artic.edu/iiif/2/3527f037-a9b2-9253-1a92-dcd281b54340/full/1686,/0/default.jpg",
+  "ar": 1.26,
+  "title": "Landscape",
+  "artist": "Th\u00e9odore Rousseau (French, 1812\u20131867)",
+  "year": "c. 1850",
   "source": "Art Institute of Chicago"
  },
  {
@@ -247,7 +229,7 @@
   "img": "https://www.artic.edu/iiif/2/9c2e39ad-fc3f-356e-cd98-db0038cfe8da/full/1686,/0/default.jpg",
   "ar": 1.46,
   "title": "The Old Mill",
-  "artist": "George Inness (American, 1825–1894)",
+  "artist": "George Inness (American, 1825\u20131894)",
   "year": "1849",
   "source": "Art Institute of Chicago"
  },
@@ -265,7 +247,7 @@
   "img": "https://www.artic.edu/iiif/2/4c5abec2-d94f-9afa-b689-de4dc93791f2/full/1686,/0/default.jpg",
   "ar": 1.59,
   "title": "The Coast of Labrador",
-  "artist": "William Bradford (American, 1823–1892)",
+  "artist": "William Bradford (American, 1823\u20131892)",
   "year": "1866",
   "source": "Art Institute of Chicago"
  },
@@ -283,7 +265,7 @@
   "img": "https://www.artic.edu/iiif/2/3192ae4d-ffca-fe91-af12-2ca681f43e13/full/1686,/0/default.jpg",
   "ar": 2,
   "title": "York Harbor, Coast of Maine",
-  "artist": "Martin Johnson Heade (American, 1819–1904)",
+  "artist": "Martin Johnson Heade (American, 1819\u20131904)",
   "year": "1877",
   "source": "Art Institute of Chicago"
  },
@@ -292,7 +274,7 @@
   "img": "https://www.artic.edu/iiif/2/56a4af78-1d23-3e2a-6119-8aa47e0cf285/full/1686,/0/default.jpg",
   "ar": 1.38,
   "title": "Boats at Rest",
-  "artist": "Arthur Wesley Dow (American, 1857–1922)",
+  "artist": "Arthur Wesley Dow (American, 1857\u20131922)",
   "year": "c. 1895",
   "source": "Art Institute of Chicago"
  },
@@ -301,7 +283,7 @@
   "img": "https://www.artic.edu/iiif/2/30491751-fb43-fc27-51fe-d068be7b6568/full/1686,/0/default.jpg",
   "ar": 1.53,
   "title": "Mist Rising at Sunset in the Catskills",
-  "artist": "Sanford Robinson Gifford (American, 1823–1880)",
+  "artist": "Sanford Robinson Gifford (American, 1823\u20131880)",
   "year": "c. 1861",
   "source": "Art Institute of Chicago"
  },
@@ -310,7 +292,7 @@
   "img": "https://www.artic.edu/iiif/2/498e45a7-5721-25dd-e26c-09b3e5b8010b/full/1686,/0/default.jpg",
   "ar": 1.31,
   "title": "Meetinghouse Hill, Roxbury, Massachusetts",
-  "artist": "John Ritto Penniman (American, c. 1782–1841)",
+  "artist": "John Ritto Penniman (American, c. 1782\u20131841)",
   "year": "1799",
   "source": "Art Institute of Chicago"
  },
@@ -336,8 +318,8 @@
   "cat": "american",
   "img": "https://www.artic.edu/iiif/2/5f663d6c-0121-a8ca-e875-896d9857a3f3/full/1686,/0/default.jpg",
   "ar": 1.47,
-  "title": "Violet and Silver—The Deep Sea",
-  "artist": "James McNeill Whistler (American, 1834–1903)",
+  "title": "Violet and Silver\u2014The Deep Sea",
+  "artist": "James McNeill Whistler (American, 1834\u20131903)",
   "year": "1893",
   "source": "Art Institute of Chicago"
  },
@@ -346,7 +328,7 @@
   "img": "https://www.artic.edu/iiif/2/9b6f838e-5424-d030-2d2f-c9380830d631/full/1686,/0/default.jpg",
   "ar": 1.29,
   "title": "Landscape No. 3, Cash Entry Mines, New Mexico",
-  "artist": "Marsden Hartley (American, 1877–1943)",
+  "artist": "Marsden Hartley (American, 1877\u20131943)",
   "year": "1920",
   "source": "Art Institute of Chicago"
  },
@@ -355,7 +337,7 @@
   "img": "https://www.artic.edu/iiif/2/ea5875fc-48ab-037d-3eec-86ccf6e9be60/full/1686,/0/default.jpg",
   "ar": 1.89,
   "title": "Cows in a Pond at Sunset",
-  "artist": "Sanford Robinson Gifford (American, 1823–1880)",
+  "artist": "Sanford Robinson Gifford (American, 1823\u20131880)",
   "year": "1860",
   "source": "Art Institute of Chicago"
  },
@@ -364,7 +346,7 @@
   "img": "https://www.artic.edu/iiif/2/de060306-b5a3-5139-cad9-57e9c274d7c3/full/1686,/0/default.jpg",
   "ar": 1.25,
   "title": "Coast of Maine",
-  "artist": "Winslow Homer (American, 1836–1910)",
+  "artist": "Winslow Homer (American, 1836\u20131910)",
   "year": "1893",
   "source": "Art Institute of Chicago"
  },
@@ -400,8 +382,17 @@
   "img": "https://www.artic.edu/iiif/2/4cdc7a89-3bd3-704c-1c16-c35576a8615a/full/1686,/0/default.jpg",
   "ar": 1.4,
   "title": "Point Breeze, the Estate of Joseph Napoleon Bonaparte at Bordentown, New Jersey",
-  "artist": "Attributed to Charles Lawrence (American, active 1813–1837)",
-  "year": "1817–20",
+  "artist": "Attributed to Charles Lawrence (American, active 1813\u20131837)",
+  "year": "1817\u201320",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "european",
+  "img": "https://www.artic.edu/iiif/2/c8ad372d-2aaf-2ca8-d429-0a942446ef79/full/1686,/0/default.jpg",
+  "ar": 1.55,
+  "title": "Landscape with a Rainbow",
+  "artist": "Charles Fran\u00e7ois Daubigny",
+  "year": "c. 1871",
   "source": "Art Institute of Chicago"
  },
  {
@@ -409,7 +400,7 @@
   "img": "https://www.artic.edu/iiif/2/0f2d999d-0173-2935-a6d0-0175bb97b2a9/full/1686,/0/default.jpg",
   "ar": 1.53,
   "title": "The Home of the Heron",
-  "artist": "George Inness (American, 1825–1894)",
+  "artist": "George Inness (American, 1825\u20131894)",
   "year": "1893",
   "source": "Art Institute of Chicago"
  },
@@ -420,15 +411,6 @@
   "title": "Spring",
   "artist": "David Lucas (English, 1802-1881)",
   "year": "1830",
-  "source": "Art Institute of Chicago"
- },
- {
-  "cat": "european",
-  "img": "https://www.artic.edu/iiif/2/c8ad372d-2aaf-2ca8-d429-0a942446ef79/full/1686,/0/default.jpg",
-  "ar": 1.55,
-  "title": "Landscape with a Rainbow",
-  "artist": "Charles François Daubigny",
-  "year": "c. 1871",
   "source": "Art Institute of Chicago"
  },
  {
@@ -445,7 +427,7 @@
   "img": "https://www.artic.edu/iiif/2/63e18e3e-35a6-699c-a824-d75228c2f1fa/full/1686,/0/default.jpg",
   "ar": 1.44,
   "title": "Solitude",
-  "artist": "Joshua Shaw (American, born England, c. 1777–1860)",
+  "artist": "Joshua Shaw (American, born England, c. 1777\u20131860)",
   "year": "1818",
   "source": "Art Institute of Chicago"
  },
@@ -463,7 +445,7 @@
   "img": "https://www.artic.edu/iiif/2/b4ee4891-5d7b-11ad-93df-2b64e34de991/full/1686,/0/default.jpg",
   "ar": 1.39,
   "title": "The Little Pond, Appledore",
-  "artist": "Childe Hassam (American, 1859–1935)",
+  "artist": "Childe Hassam (American, 1859\u20131935)",
   "year": "1890",
   "source": "Art Institute of Chicago"
  },
@@ -473,7 +455,7 @@
   "ar": 2.87,
   "title": "Bamboo-Covered Stream in Spring Rain",
   "artist": "Xia Chang (Chinese, 1388-1470)",
-  "year": "Ming dynasty (1368–1644), dated 1441",
+  "year": "Ming dynasty (1368\u20131644), dated 1441",
   "source": "Art Institute of Chicago"
  },
  {
@@ -481,7 +463,7 @@
   "img": "https://www.artic.edu/iiif/2/976bc367-269d-17ff-0151-16b9c973aae4/full/1686,/0/default.jpg",
   "ar": 3.58,
   "title": "Storm in Umbria",
-  "artist": "Elihu Vedder (American, 1836–1923)",
+  "artist": "Elihu Vedder (American, 1836\u20131923)",
   "year": "1875",
   "source": "Art Institute of Chicago"
  },
@@ -499,8 +481,341 @@
   "img": "https://www.artic.edu/iiif/2/38726da7-8122-dc49-9243-766a1eeba9ed/full/1686,/0/default.jpg",
   "ar": 1.46,
   "title": "A Mild Breeze on a Fine Day (Gaifu kaisei), from the series \"Thirty-six Views of Mount Fuji (Fugaku sanjurokkei)\"",
-  "artist": "Katsushika Hokusai 葛飾 北斎",
+  "artist": "Katsushika Hokusai \u845b\u98fe \u5317\u658e",
   "year": "c. 1830/33",
   "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "asian",
+  "img": "https://www.artic.edu/iiif/2/180dae61-d73b-4834-3492-6cb20582ef09/full/1686,/0/default.jpg",
+  "ar": 1.46,
+  "title": "Ink Landscape",
+  "artist": "Attributed to Kano Motonobu",
+  "year": "17th century",
+  "source": "Art Institute of Chicago"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/2014.12/2014.12_print.jpg",
+  "ar": 1.83,
+  "title": "Vale of Kashmir",
+  "artist": "Robert S. Duncanson",
+  "year": "1867",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1984.59/1984.59_web.jpg",
+  "ar": 1.31,
+  "title": "Rocky, Wooded Landscape with a Dell and Weir",
+  "artist": "Thomas Gainsborough",
+  "year": "c. 1782\u20131783",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1967.19/1967.19_web.jpg",
+  "ar": 1.39,
+  "title": "Landscape with a Windmill",
+  "artist": "Jacob van Ruisdael",
+  "year": "1646",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1967.63/1967.63_web.jpg",
+  "ar": 1.33,
+  "title": "Low Waterfall in a Wooded Landscape with a Dead Beech Tree",
+  "artist": "Jacob van Ruisdael",
+  "year": "c. 1660\u201370",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1965.233/1965.233_print.jpg",
+  "ar": 1.6,
+  "title": "Twilight in the Wilderness",
+  "artist": "Frederic Edwin Church",
+  "year": "1860",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1966.367/1966.367_web.jpg",
+  "ar": 2.12,
+  "title": "Spring Landscape",
+  "artist": "Kuncan",
+  "year": "1666",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1976.92/1976.92_print.jpg",
+  "ar": 1.68,
+  "title": "Landscape of the Four Seasons",
+  "artist": "Yi Sumun",
+  "year": "late 1400s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1916.823/1916.823_web.jpg",
+  "ar": 1.27,
+  "title": "Landscape with Travelers",
+  "artist": "Herman van Swanevelt",
+  "year": "1630s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1946.73/1946.73_web.jpg",
+  "ar": 1.38,
+  "title": "Italian Landscape",
+  "artist": "Claude Lorrain",
+  "year": "c. 1630",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1970.162/1970.162_print.jpg",
+  "ar": 1.78,
+  "title": "A Home in the Wilderness",
+  "artist": "Sanford Robinson Gifford",
+  "year": "1866",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1955.37.4/1955.37.4_web.jpg",
+  "ar": 1.27,
+  "title": "Landscape Album in Various Styles: The Stream of Wuling",
+  "artist": "Zha Shibiao",
+  "year": "1684",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1961.39/1961.39_print.jpg",
+  "ar": 1.62,
+  "title": "View of Florence",
+  "artist": "Thomas Cole",
+  "year": "1837",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1917.1335/1917.1335_web.jpg",
+  "ar": 1.63,
+  "title": "View of Schroon Mountain, Essex County, New York, After a Storm",
+  "artist": "Thomas Cole",
+  "year": "1838",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1971.102/1971.102_web.jpg",
+  "ar": 1.41,
+  "title": "The Kiss of Peace and Justice",
+  "artist": "Laurent de La Hyre",
+  "year": "1654",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1963.91/1963.91_web.jpg",
+  "ar": 1.39,
+  "title": "La Cervara, the Roman Campagna",
+  "artist": "Jean Baptiste Camille Corot",
+  "year": "c. 1830\u201331",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1994.106/1994.106_web.jpg",
+  "ar": 1.41,
+  "title": "A Calm Watering Place--Extensive and Boundless Scene with Cattle",
+  "artist": "Alvan Fisher",
+  "year": "1816",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1975.78/1975.78_print.jpg",
+  "ar": 1.47,
+  "title": "Landscape Near Paris",
+  "artist": "Georges Michel",
+  "year": "c. 1840",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1964.279.2/1964.279.2_print.jpg",
+  "ar": 2.17,
+  "title": "Chinese Landscape",
+  "artist": "Unknown",
+  "year": "1500s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1968.21/1968.21_print.jpg",
+  "ar": 1.46,
+  "title": "Trees on a Rocky Hillside",
+  "artist": "Asher B. Durand",
+  "year": "c. 1849",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/2015.518/2015.518_print.jpg",
+  "ar": 1.67,
+  "title": "Landscape",
+  "artist": "Kano Motonobu",
+  "year": "mid-1500s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/2010.19/2010.19_print.jpg",
+  "ar": 1.53,
+  "title": "Landscape with Rider on White Horse",
+  "artist": "Jean Achille Benouville",
+  "year": "1846",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1975.20/1975.20_web.jpg",
+  "ar": 1.94,
+  "title": "Landscape with Haywain",
+  "artist": "Worthington Whittredge",
+  "year": "1861",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1996.256/1996.256_print.jpg",
+  "ar": 1.98,
+  "title": "Gibbons in a Landscape",
+  "artist": "Unknown",
+  "year": "early 1900s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1942.637/1942.637_web.jpg",
+  "ar": 1.55,
+  "title": "Travelers in Hilly Countryside",
+  "artist": "Aelbert Cuyp",
+  "year": "c. 1650",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1955.37.8/1955.37.8_web.jpg",
+  "ar": 1.3,
+  "title": "Landscape Album in Various Styles: Landscape after Mi Fei",
+  "artist": "Zha Shibiao",
+  "year": "1684",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1980.262/1980.262_web.jpg",
+  "ar": 1.39,
+  "title": "Alpine Landscape:  The Handegg, Switzerland",
+  "artist": "Jean-L\u00e9on G\u00e9r\u00f4me",
+  "year": "1850s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1970.161/1970.161_web.jpg",
+  "ar": 1.8,
+  "title": "Point Judith, Rhode Island",
+  "artist": "Martin Johnson Heade",
+  "year": "1867\u201368",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1999.216/1999.216_print.jpg",
+  "ar": 1.27,
+  "title": "Herdboys and Buffalo in Landscapes",
+  "artist": "Guo Min",
+  "year": "1200s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/2015.467/2015.467_print.jpg",
+  "ar": 1.49,
+  "title": "Chinese Literatus in an Autumn Landscape",
+  "artist": "Josui S\u014den",
+  "year": "late 1400s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/2015.482.1/2015.482.1_print.jpg",
+  "ar": 2.3,
+  "title": "Moonlit Landscape (one of a pair)",
+  "artist": "Unknown",
+  "year": "late 1500s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1955.37.2/1955.37.2_web.jpg",
+  "ar": 1.28,
+  "title": "Landscape Album in Various Styles: Spring Plowing",
+  "artist": "Zha Shibiao",
+  "year": "1684",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "asian",
+  "img": "https://openaccess-cdn.clevelandart.org/1958.476/1958.476_print.jpg",
+  "ar": 2.83,
+  "title": "Winter and Spring Landscape",
+  "artist": "Tensh\u014d Sh\u016bbun",
+  "year": "early to mid-1400s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1989.248/1989.248_web.jpg",
+  "ar": 1.31,
+  "title": "Mercury and Argus in a Landscape",
+  "artist": "Dirck van der Lisse",
+  "year": "c. 1635",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "european",
+  "img": "https://openaccess-cdn.clevelandart.org/1944.80/1944.80_web.jpg",
+  "ar": 1.7,
+  "title": "Pond at Ville-d'Avray",
+  "artist": "Jean Baptiste Camille Corot",
+  "year": "late 1860s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/1927.389/1927.389_web.jpg",
+  "ar": 1.52,
+  "title": "Arkville Landscape",
+  "artist": "Alexander H. Wyant",
+  "year": "1880s",
+  "source": "Cleveland Museum of Art"
+ },
+ {
+  "cat": "american",
+  "img": "https://openaccess-cdn.clevelandart.org/2004.35/2004.35_print.jpg",
+  "ar": 1.62,
+  "title": "Harbor of Boston, with the City in the Distance",
+  "artist": "Fitz Henry Lane",
+  "year": "c. 1846\u20131847",
+  "source": "Cleveland Museum of Art"
  }
 ]

@@ -151,7 +151,7 @@ the URL fragment and the dashboard returns configured.
 | TrainTime (LIRR tracks) | direct, unofficial | feature-detected; drops silently if the host vanishes |
 | NJ Transit RailData | Worker + credentials | their ToS **requires** serving from a non-NJT server |
 | Yahoo Finance (markets) | Worker, unofficial | browser UA + 5 min cache; widget hides if it breaks |
-| Met + AIC (art) | build-time manifest | CC0 works; `node tools/build-art-manifest.js` to refresh |
+| Met + AIC + Cleveland (art) | build-time manifest | CC0 works; `node tools/build-art-manifest.js` to refresh |
 | Wikimedia (history) | direct, keyless | |
 | PANYNJ RidePATH (PATH) | Worker, keyless | no CORS upstream; 30 s cached digest, projected epochs |
 | NYC Ferry GTFS-RT | Worker, keyless | protobuf decoded Worker-side; trip/route names from bundled `data/ferry.json` |

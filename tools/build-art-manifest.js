@@ -1,5 +1,6 @@
-// Builds site/data/art-manifest.json from The Met and Art Institute of
-// Chicago open-access APIs (CC0 works only). Run: node tools/build-art-manifest.js
+// Builds site/data/art-manifest.json from The Met, Art Institute of Chicago
+// and Cleveland Museum of Art open-access APIs (CC0 works only).
+// Run: node tools/build-art-manifest.js
 import { writeFile } from 'node:fs/promises';
 
 const OUT = new URL('../site/data/art-manifest.json', import.meta.url);
@@ -123,11 +124,13 @@ async function fromMet(perDept = 20) {
   return items.map(({ dept, ...rest }) => rest);
 }
 
-// Category from AIC's artist_display ("George Inness (American, 1825-94)").
-function aicCategory(artistDisplay) {
-  if (/japanese|chinese|korean/i.test(artistDisplay) || /[\u3000-\u9fff\u30a0-\u30ff]/.test(artistDisplay)) return 'asian';
-  if (/american/i.test(artistDisplay)) return 'american';
-  if (/french|english|british|dutch|german|italian|spanish|flemish|belgian|swiss|danish|norwegian|swedish/i.test(artistDisplay)) return 'european';
+// Category from nationality/culture text \u2014 AIC artist_display strings like
+// "George Inness (American, 1825-94)" and CMA culture strings like
+// "Japan, Edo period" or "America, 19th century".
+function categoryFrom(text) {
+  if (/japan|chin(?:a|ese)|korea|\bindia\b|tibet|nepal/i.test(text) || /[\u3000-\u9fff\u30a0-\u30ff]/.test(text)) return 'asian';
+  if (/americ/i.test(text)) return 'american';
+  if (/french|france|english|england|british|britain|dutch|netherlands|german|italian|italy|spanish|spain|flemish|belgian|swiss|danish|denmark|norwegian|swedish|austrian|russian/i.test(text)) return 'european';
   return 'american';
 }
 
@@ -148,7 +151,7 @@ async function fromAic(count = 40) {
         : null;
       if (!ar || ar < MIN_ASPECT || ar > MAX_ASPECT) continue;
       items.push({
-        cat: aicCategory(a.artist_display ?? ''),
+        cat: categoryFrom(a.artist_display ?? ''),
         // 1686 is the widest size AIC's public IIIF serves.
         img: `https://www.artic.edu/iiif/2/${a.image_id}/full/1686,/0/default.jpg`,
         ar: Math.round(ar * 100) / 100,
@@ -158,6 +161,46 @@ async function fromAic(count = 40) {
         source: 'Art Institute of Chicago',
       });
     }
+  }
+  return items;
+}
+
+// Cleveland Museum of Art: CC0 paintings on their open-access CDN. The web
+// rendition (~900 px) is the base image; images.print upgrades through the
+// same probe path as Met originals when it fits gen1 decode limits.
+async function fromCma(count = 40) {
+  const items = [];
+  for (let skip = 0; items.length < count && skip < 600; skip += 50) {
+    const res = await getJSON(
+      `https://openaccess-api.clevelandart.org/api/artworks/?cc0=1&has_image=1&type=Painting&q=landscape&limit=50&skip=${skip}`,
+    );
+    const page = res.data ?? [];
+    if (!page.length) break;
+    for (const a of page) {
+      if (items.length >= count) break;
+      const web = a.images?.web;
+      if (!web?.url) continue;
+      const title = String(a.title ?? '').trim(); // CMA titles can carry \r\n
+      const culture = a.culture ?? [];
+      if (!isOfficeSafe(title, culture) || !passesReview(title)) continue;
+      const w = Number(web.width);
+      const h = Number(web.height);
+      const ar = w > 0 && h > 0 ? w / h : null;
+      if (!ar || ar < MIN_ASPECT || ar > MAX_ASPECT) continue;
+      const creator = a.creators?.[0]?.description ?? '';
+      items.push({
+        cat: categoryFrom(`${culture.join(' ')} ${creator}`),
+        img: web.url,
+        imgFull: a.images?.print?.url ?? null,
+        ar: Math.round(ar * 100) / 100,
+        title,
+        // "John Singleton Copley (American, 1738-1815)" -> name only.
+        artist: creator ? creator.replace(/\s*\(.*$/, '') : 'Unknown',
+        year: a.creation_date ?? '',
+        source: 'Cleveland Museum of Art',
+      });
+    }
+    await sleep(150);
   }
   return items;
 }
@@ -206,8 +249,8 @@ async function verified(items) {
   return out;
 }
 
-const [met, aic] = await Promise.all([fromMet(), fromAic()]);
-const manifest = await verified([...met, ...aic]);
+const [met, aic, cma] = await Promise.all([fromMet(), fromAic(), fromCma()]);
+const manifest = await verified([...met, ...aic, ...cma]);
 if (manifest.length < 20) throw new Error(`manifest too small: ${manifest.length}`);
 await writeFile(OUT, JSON.stringify(manifest, null, 1));
-console.log(`wrote ${manifest.length} artworks (${met.length} Met candidates, ${aic.length} AIC)`);
+console.log(`wrote ${manifest.length} artworks (candidates: ${met.length} Met, ${aic.length} AIC, ${cma.length} CMA)`);

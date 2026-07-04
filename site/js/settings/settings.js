@@ -17,12 +17,15 @@ const WIDGET_LABELS = {
   lirr: 'LIRR (Penn Station)',
   mnr: 'Metro-North (Grand Central)',
   njt: 'NJ Transit',
+  path: 'PATH',
+  ferry: 'NYC Ferry',
   bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
+  wotd: 'Word of the Day',
   worldclock: 'World Clock',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
@@ -30,6 +33,7 @@ const WIDGET_LABELS = {
 };
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
+import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 
@@ -102,6 +106,8 @@ const SECTIONS = [
   ['lirr', 'LIRR'],
   ['mnr', 'Metro-North'],
   ['njt', 'NJ Transit'],
+  ['path', 'PATH'],
+  ['ferry', 'NYC Ferry'],
   ['bus', 'MTA Bus'],
   ['markets', 'Markets'],
   ['sports', 'My Teams'],
@@ -141,6 +147,8 @@ function renderSection() {
     lirr: renderLirr,
     mnr: renderMnr,
     njt: renderNjt,
+    path: renderPath,
+    ferry: renderFerry,
     bus: renderBus,
     markets: renderMarkets,
     sports: renderSports,
@@ -372,6 +380,56 @@ async function renderNjt() {
   } catch {
     pane().querySelector('.drill').innerHTML =
       '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
+  }
+}
+
+function renderPath() {
+  pane().innerHTML = `
+    <h2 class="pane__title">PATH</h2>
+    <p class="pane__hint">Station</p>
+    <div class="rows">${Object.entries(PATH_STATIONS).map(([code, name]) =>
+      `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
+    ).join('')}</div>
+    <p class="pane__hint">Direction</p>
+    <div class="rows">${PATH_DIRS.map(([id, label]) =>
+      `<button class="row row--tap ${state.cfg.path.dir === id ? 'is-selected' : ''}" data-dir="${id}">${label}</button>`,
+    ).join('')}</div>`;
+  pane().querySelectorAll('[data-station]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.path.station = btn.dataset.station;
+      renderPath();
+    }),
+  );
+  pane().querySelectorAll('[data-dir]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.path.dir = btn.dataset.dir;
+      renderPath();
+    }),
+  );
+}
+
+let ferryStops = null;
+async function renderFerry() {
+  pane().innerHTML = `
+    <h2 class="pane__title">NYC Ferry</h2>
+    <div class="kv"><span>Landing</span><b>Loading…</b></div>
+    <div class="drill"></div>`;
+  try {
+    ferryStops ??= (await fetchJSON('data/ferry.json')).stops;
+    const byId = Object.fromEntries(ferryStops.map((s) => [s.id, s]));
+    pane().querySelector('.kv b').textContent =
+      byId[state.cfg.ferry.landing]?.name ?? state.cfg.ferry.landing;
+    drillList(
+      'Choose a landing',
+      ferryStops.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      (pick) => {
+        state.cfg.ferry.landing = pick.value.id;
+        renderFerry();
+      },
+    );
+  } catch {
+    pane().querySelector('.drill').innerHTML =
+      '<p class="pane__empty">Landing list unavailable — redeploy the site data.</p>';
   }
 }
 

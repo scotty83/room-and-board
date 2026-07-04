@@ -9,6 +9,7 @@ import { zipLookup } from '../geo.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
+import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 
 const $ = (sel) => document.querySelector(sel);
 const WIDGET_LABELS = {
@@ -17,12 +18,15 @@ const WIDGET_LABELS = {
   lirr: 'LIRR (Penn Station)',
   mnr: 'Metro-North (GCT)',
   njt: 'NJ Transit',
+  path: 'PATH',
+  ferry: 'NYC Ferry',
   bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
+  wotd: 'Word of the Day',
   worldclock: 'World Clock',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
@@ -65,6 +69,8 @@ async function boot() {
   bindAlertCheck('lirr-alerts', 'lirr');
   bindAlertCheck('njt-alerts', 'njt');
   await renderNjt();
+  renderPath();
+  await renderFerry();
   renderBusStops();
   renderTickers();
   renderWorldclockPrefs();
@@ -324,6 +330,29 @@ async function renderNjt() {
   }
   $('#njt-station').value = cfg.njt.station;
   $('#njt-station').addEventListener('change', (e) => (cfg.njt.station = e.target.value));
+}
+
+function renderPath() {
+  $('#path-station').innerHTML = Object.entries(PATH_STATIONS)
+    .map(([code, name]) => `<option value="${code}">${name}</option>`).join('');
+  $('#path-station').value = cfg.path.station;
+  $('#path-station').addEventListener('change', (e) => (cfg.path.station = e.target.value));
+  $('#path-dir').innerHTML = PATH_DIRS
+    .map(([id, label]) => `<option value="${id}">${label}</option>`).join('');
+  $('#path-dir').value = cfg.path.dir;
+  $('#path-dir').addEventListener('change', (e) => (cfg.path.dir = e.target.value));
+}
+
+async function renderFerry() {
+  try {
+    const { stops } = await (await fetch('data/ferry.json')).json();
+    $('#ferry-landing').innerHTML = stops
+      .map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
+  } catch {
+    $('#ferry-landing').innerHTML = '<option value="17">East 34th Street</option>';
+  }
+  $('#ferry-landing').value = cfg.ferry.landing;
+  $('#ferry-landing').addEventListener('change', (e) => (cfg.ferry.landing = e.target.value));
 }
 
 async function getCode() {

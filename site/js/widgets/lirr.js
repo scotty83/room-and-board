@@ -10,7 +10,9 @@ import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-export const meta = { id: 'lirr', title: 'LIRR · Penn Station', refreshMs: 60 * 1000 };
+// Title is just "LIRR" — the card is Penn-only by design (context lives in
+// settings copy) and the short title leaves the corner note room to breathe.
+export const meta = { id: 'lirr', title: 'LIRR', refreshMs: 60 * 1000 };
 
 export const PENN_STOP_ID = '237'; // LIRR static GTFS stop id for Penn Station
 const PENN_TT_CODE = 'NYK'; // TrainTime station code for Penn

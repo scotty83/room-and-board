@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createSlideshow } from '../site/js/widgets/art.js';
+import { createSlideshow, swipeAction } from '../site/js/widgets/art.js';
 import { stripData, stripHtml } from '../site/js/ambient.js';
 
 const MANIFEST = [
@@ -109,5 +109,16 @@ describe('stripHtml', () => {
     expect(full).toContain('84°');
     expect(full).toContain('LIRR · Mineola');
     expect(full).toContain('<b>8 min</b>');
+  });
+});
+
+describe('swipeAction', () => {
+  it('classifies swipes, taps and ambiguous drags', () => {
+    expect(swipeAction(-80, 10)).toBe('next');
+    expect(swipeAction(120, -20)).toBe('prev');
+    expect(swipeAction(-59, 0)).toBe(null);   // under distance threshold
+    expect(swipeAction(-80, 50)).toBe(null);  // too diagonal (|dx| < 2|dy|)
+    expect(swipeAction(4, -6)).toBe('tap');
+    expect(swipeAction(30, 4)).toBe(null);    // drag, neither tap nor swipe
   });
 });

@@ -34,11 +34,11 @@ export function saveCache(id, data, t = Math.floor(Date.now() / 1000)) {
 }
 
 export function loadCache(id) {
-  const raw = storage().getItem(CACHE_PREFIX + id);
-  if (!raw) return null;
   try {
+    const raw = storage().getItem(CACHE_PREFIX + id);
+    if (!raw) return null;
     return JSON.parse(raw);
   } catch {
-    return null;
+    return null; // storage unavailable — best-effort, mirroring saveCache
   }
 }

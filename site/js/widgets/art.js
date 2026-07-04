@@ -4,6 +4,8 @@
 // transition only (gen1-safe) and preloads the next image before switching.
 
 import { escapeHtml } from '../util.js';
+import { stripData, stripHtml } from '../ambient.js';
+import { loadCache } from '../store.js';
 
 export const meta = { id: 'art', title: 'Art', refreshMs: 60 * 1000 };
 
@@ -15,7 +17,7 @@ export function filterByCats(manifest, cats) {
   return out.length ? out : manifest; // never filter down to an empty show
 }
 
-export function render(el, vm, _cfg) {
+export function render(el, vm, cfg) {
   el.innerHTML = `
     <figure class="artwork" role="button" tabindex="0" aria-label="View artwork full screen">
       <img class="artwork__img" src="${escapeHtml(vm.img)}" alt="${escapeHtml(vm.title)}" loading="lazy">
@@ -24,19 +26,48 @@ export function render(el, vm, _cfg) {
         <span class="artwork__artist">${escapeHtml(vm.artist)}${vm.year ? ` (${escapeHtml(vm.year)})` : ''}</span>
       </figcaption>
     </figure>`;
-  el.querySelector('.artwork').addEventListener('click', () => openViewer(vm));
+  el.querySelector('.artwork').addEventListener('click', () => openViewer(vm, cfg));
 }
 
+// Pointer-gesture classifier for the viewer: horizontal drags navigate,
+// small movements are taps (close), anything ambiguous is ignored.
+export function swipeAction(dx, dy) {
+  if (Math.abs(dx) >= 60 && Math.abs(dx) >= 2 * Math.abs(dy)) return dx < 0 ? 'next' : 'prev';
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return 'tap';
+  return null;
+}
+
+let stripTimer = null;
+let viewerManifest = null; // cats-filtered list for the open viewer session
+let viewerIndex = -1;
+
 // Full-screen viewer: tap the dashboard art card to open, tap anywhere to
-// close. Stays up indefinitely (mode changes don't touch it).
-export function openViewer(vm) {
+// close, swipe left/right to browse the (category-filtered) manifest. Shows
+// the ambient info strip so the clock stays visible. Stays up indefinitely
+// (mode changes don't touch it).
+export function openViewer(vm, cfg) {
   let viewer = document.querySelector('#art-viewer');
   if (!viewer) {
     viewer = document.createElement('div');
     viewer.id = 'art-viewer';
     viewer.className = 'art-viewer';
-    viewer.addEventListener('click', () => {
+    // Close on tap, navigate on swipe. The trailing click is classified by
+    // its own coordinates against the gesture origin — no suppression state,
+    // so a swipe that never produces a click can't swallow the next tap.
+    let downX = 0;
+    let downY = 0;
+    viewer.addEventListener('pointerdown', (e) => {
+      downX = e.clientX;
+      downY = e.clientY;
+    });
+    viewer.addEventListener('pointerup', (e) => {
+      const action = swipeAction(e.clientX - downX, e.clientY - downY);
+      if (action === 'next' || action === 'prev') step(viewer, action === 'next' ? 1 : -1);
+    });
+    viewer.addEventListener('click', (e) => {
+      if (swipeAction(e.clientX - downX, e.clientY - downY) !== 'tap') return;
       viewer.hidden = true;
+      clearInterval(stripTimer);
     });
     document.body.appendChild(viewer);
   }
@@ -45,8 +76,49 @@ export function openViewer(vm) {
     <div class="slide-caption">
       <span class="slide-caption__title">${escapeHtml(vm.title)}</span>
       <span class="slide-caption__meta">${escapeHtml(vm.artist)}${vm.year ? ` · ${escapeHtml(vm.year)}` : ''}</span>
-    </div>`;
+    </div>
+    <div class="strip"></div>`;
+  const strip = viewer.querySelector('.strip');
+  const refreshStrip = () => {
+    const caches = {};
+    for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
+    strip.innerHTML = stripHtml(stripData(caches, cfg ?? { widgets: [] }), new Date());
+  };
+  refreshStrip();
+  clearInterval(stripTimer);
+  stripTimer = setInterval(refreshStrip, 30 * 1000);
+  loadViewerManifest(vm, cfg);
   viewer.hidden = false;
+}
+
+// Swap in place: preload first (slideshow pattern), then update img + caption.
+function step(viewer, dir) {
+  if (!viewerManifest?.length) return;
+  viewerIndex = (viewerIndex + dir + viewerManifest.length) % viewerManifest.length;
+  const item = viewerManifest[viewerIndex];
+  const img = new Image();
+  const swap = () => {
+    const imgEl = viewer.querySelector('.art-viewer__img');
+    imgEl.src = item.img;
+    imgEl.alt = item.title;
+    viewer.querySelector('.slide-caption').innerHTML = `
+      <span class="slide-caption__title">${escapeHtml(item.title)}</span>
+      <span class="slide-caption__meta">${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}</span>`;
+  };
+  img.onload = swap;
+  img.onerror = swap; // show anyway; <img> will retry like the slideshow does
+  img.src = item.img;
+}
+
+async function loadViewerManifest(vm, cfg) {
+  try {
+    const res = await fetch('data/art-manifest.json');
+    const all = res.ok ? await res.json() : [];
+    viewerManifest = filterByCats(all, cfg?.art?.cats);
+  } catch {
+    viewerManifest = []; // swipes inert; tap-close still works
+  }
+  viewerIndex = viewerManifest.findIndex((a) => a.img === vm.img);
 }
 
 export async function fetchData(cfg, net) {

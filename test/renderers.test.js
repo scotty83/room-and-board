@@ -1,7 +1,7 @@
 /**
  * @vitest-environment happy-dom
  */
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { DEMO_VMS } from '../site/demo/fixtures.js';
 import * as weather from '../site/js/widgets/weather.js';
 import * as subway from '../site/js/widgets/subway.js';
@@ -197,6 +197,51 @@ describe('art full-screen viewer', () => {
     expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe(DEMO_VMS.art.img);
     expect(viewer.textContent).toContain('Wheat Fields');
     viewer.click();
+    expect(viewer.hidden).toBe(true);
+  });
+});
+
+describe('art viewer strip + swipes', () => {
+  it('viewer shows the ambient strip with a clock', () => {
+    const host = el();
+    art.render(host, DEMO_VMS.art, CFG);
+    host.querySelector('.artwork').click();
+    const viewer = document.querySelector('#art-viewer');
+    const strip = viewer.querySelector('.strip');
+    expect(strip).not.toBeNull();
+    expect(strip.textContent).toMatch(/\d{1,2}:\d{2}\s?(AM|PM)/);
+    viewer.click();
+    expect(viewer.hidden).toBe(true);
+  });
+
+  it('viewer swipes to the next and previous artwork', async () => {
+    const list = [
+      DEMO_VMS.art,
+      { img: 'https://x.test/two.jpg', title: 'Second Work', artist: 'B', year: '1901', ar: 1.5 },
+    ];
+    vi.stubGlobal('fetch', async () => ({ ok: true, json: async () => list }));
+    vi.stubGlobal('Image', class { set src(v) { queueMicrotask(() => this.onload?.()); } });
+    const host = el();
+    art.render(host, DEMO_VMS.art, CFG);
+    host.querySelector('.artwork').click();
+    const viewer = document.querySelector('#art-viewer');
+    await new Promise((r) => setTimeout(r, 0)); // manifest load settles
+    const swipe = (fromX, toX) => {
+      viewer.dispatchEvent(new MouseEvent('pointerdown', { clientX: fromX, clientY: 100 }));
+      viewer.dispatchEvent(new MouseEvent('pointerup', { clientX: toX, clientY: 104 }));
+      return new Promise((r) => setTimeout(r, 0)); // preload microtask
+    };
+    await swipe(600, 400); // left: next
+    expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe('https://x.test/two.jpg');
+    expect(viewer.textContent).toContain('Second Work');
+    await swipe(400, 600); // right: back to the first
+    expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe(DEMO_VMS.art.img);
+    expect(viewer.hidden).toBe(false); // swipes never close
+    vi.unstubAllGlobals();
+    // A genuine tap (down/up/click at the same spot) still closes.
+    viewer.dispatchEvent(new MouseEvent('pointerdown', { clientX: 500, clientY: 300 }));
+    viewer.dispatchEvent(new MouseEvent('pointerup', { clientX: 502, clientY: 301 }));
+    viewer.dispatchEvent(new MouseEvent('click', { clientX: 502, clientY: 301 }));
     expect(viewer.hidden).toBe(true);
   });
 });

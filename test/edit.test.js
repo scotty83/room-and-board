@@ -3,6 +3,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { openEditMode } from '../site/js/edit.js';
+import { WIDGET_IDS } from '../site/js/config.js';
 
 const CFG = {
   layout: [
@@ -32,6 +33,17 @@ describe('openEditMode', () => {
     expect(editor.layout().find((r) => r.id === 'aqi')).toMatchObject({ x: 1, y: 1 });
     const weather = editor.layout().find((r) => r.id === 'weather');
     expect(weather.x === 0 && weather.y === 0).toBe(false); // displaced
+  });
+
+  it('labels every widget in the tray and on blocks (no raw ids, no undefined)', () => {
+    openEditMode({ layout: [{ id: 'weather', x: 0, y: 0, w: 6, h: 4 }] }, { root, cellSize: { w: 100, h: 100 } });
+    const chips = [...root.querySelectorAll('.edit-tray [data-add]')];
+    expect(chips.map((b) => b.dataset.add).sort()).toEqual(
+      WIDGET_IDS.filter((id) => id !== 'weather').sort(),
+    );
+    for (const chip of chips) expect(chip.textContent).not.toContain('undefined');
+    const block = root.querySelector('.edit-block__title');
+    expect(block.textContent).toBe('Weather');
   });
 
   it('rejects moves when the push is unsolvable', () => {

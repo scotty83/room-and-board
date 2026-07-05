@@ -31,6 +31,9 @@ describe('words.json', () => {
     for (const e of words) {
       expect(typeof e.w).toBe('string');
       expect(e.w.length).toBeGreaterThan(1);
+      // The render-time fit-to-width floor (20px) assumes words stay under
+      // ~18 chars; longer entries would clip on 2-wide cards.
+      expect(e.w.length).toBeLessThanOrEqual(18);
       expect(seen.has(e.w.toLowerCase())).toBe(false);
       seen.add(e.w.toLowerCase());
       expect(e.pr.length).toBeGreaterThan(1);

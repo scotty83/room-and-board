@@ -16,6 +16,15 @@ export function render(el, vm, _cfg) {
       <div class="wotd__def">${escapeHtml(vm.def)}</div>
       ${showExample ? `<div class="wotd__ex">“${escapeHtml(vm.ex)}”</div>` : ''}
     </div>`;
+  // A single long word has no break opportunity and would clip at the card
+  // edge (font metrics vary per device — the board has none of our named
+  // fonts). Scale the word down to fit, floored at the 20px legibility
+  // minimum; guarded so layout-less test environments skip it.
+  const wordEl = el.querySelector('.wotd__word');
+  if (wordEl.clientWidth > 0 && wordEl.scrollWidth > wordEl.clientWidth) {
+    const base = parseFloat(getComputedStyle(wordEl).fontSize);
+    wordEl.style.fontSize = `${Math.max(20, Math.floor((base * wordEl.clientWidth) / wordEl.scrollWidth))}px`;
+  }
 }
 
 export async function fetchData(cfg, net) {

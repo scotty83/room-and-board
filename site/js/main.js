@@ -44,7 +44,11 @@ const params = new URLSearchParams(location.search);
 const DEMO = params.get('demo') === '1';
 
 let cfg = null;
-let lastFreshRender = Date.now();
+// Liveness heartbeat for the watchdog: bumped on every clock tick, NOT on
+// widget freshness. A board showing only stale data (upstream outage) or only
+// daily-refresh widgets is still alive — the clock proves the page isn't
+// wedged, so it must not trigger a reload loop.
+let lastRender = Date.now();
 let slideshow = null;
 const cancels = [];
 
@@ -82,7 +86,6 @@ function stampOf(card) {
 function markFresh(card) {
   card.classList.remove('is-stale');
   stampOf(card).hidden = true;
-  lastFreshRender = Date.now();
 }
 
 function markStale(card, cachedAtSec) {
@@ -129,6 +132,9 @@ function startWidget(mod, rect) {
 }
 
 function renderStrip() {
+  // The strip only shows in ambient mode; skip the cache reads + DOM rebuild
+  // on the 30 s schedule while the dashboard grid is up.
+  if (!DEMO && !document.body.classList.contains('mode-ambient')) return;
   const caches = {};
   for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
   const data = DEMO
@@ -172,7 +178,10 @@ function applyMode() {
 }
 
 function startClock() {
-  const tick = () => clock.render($('#topbar'), null, cfg);
+  const tick = () => {
+    clock.render($('#topbar'), null, cfg);
+    lastRender = Date.now(); // heartbeat: the clock ticking proves the page is alive
+  };
   tick();
   cancels.push(schedule(tick, clock.meta.refreshMs, { jitter: 0 }));
 }
@@ -236,7 +245,7 @@ function startSelfHealing() {
   // Watchdog: if nothing has rendered fresh data for 15 minutes while the
   // browser thinks it is online, reload the page.
   setInterval(() => {
-    if (navigator.onLine !== false && Date.now() - lastFreshRender > 15 * 60 * 1000) {
+    if (navigator.onLine !== false && Date.now() - lastRender > 15 * 60 * 1000) {
       location.reload();
     }
   }, 60 * 1000);

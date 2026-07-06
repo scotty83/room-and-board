@@ -606,3 +606,12 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .team__logo { width: 44px; height: 44px; object-fit: contain; flex: none; background: rgba(232, 237, 244, 0.08); border-radius: 50%; padding: 7px; }
 .team__last { font-size: 17px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wc-flag { width: 26px; height: 26px; object-fit: contain; vertical-align: -5px; margin-right: 5px; border-radius: 3px; }
+
+/* ---------- on-screen keyboard (OSK) ---------- */
+.osk { display: flex; flex-direction: column; gap: 10px; }
+.osk__display { display: block; font-size: 40px; letter-spacing: 0.08em; min-height: 56px; margin: 10px 0; word-break: break-all; }
+.osk__row { display: flex; gap: 10px; justify-content: center; }
+.osk__key { min-width: 72px; min-height: 64px; font-size: 28px; }
+.osk__key--wide { min-width: 150px; }
+.osk__key--primary { background: var(--accent); color: #06131f; font-weight: 700; }
+.osk__key.is-on { background: rgba(88, 166, 255, 0.35); }

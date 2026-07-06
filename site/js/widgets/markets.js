@@ -85,6 +85,6 @@ export async function symbolKnown(symbol, fetchFn = fetch) {
 
 export async function fetchData(cfg, net) {
   const symbols = cfg.markets?.symbols ?? [];
-  const query = symbols.length ? `?symbols=${symbols.join(',')}` : '';
+  const query = symbols.length ? `?symbols=${symbols.map(encodeURIComponent).join(',')}` : '';
   return mapMarkets(await net.fetchJSON(`${WORKER_URL}/markets${query}`));
 }

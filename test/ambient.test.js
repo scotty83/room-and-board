@@ -110,6 +110,11 @@ describe('stripHtml', () => {
     expect(full).toContain('LIRR · Mineola');
     expect(full).toContain('<b>8 min</b>');
   });
+  it('escapes upstream label text', () => {
+    const out = stripHtml({ temp: null, transit: [{ label: 'NJT · <img src=x onerror=1>', min: 3 }] }, now);
+    expect(out).not.toContain('<img');
+    expect(out).toContain('&#60;img');
+  });
 });
 
 describe('swipeAction', () => {

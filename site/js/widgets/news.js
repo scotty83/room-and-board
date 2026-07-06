@@ -86,10 +86,14 @@ export function render(el, vm, _cfg) {
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('news', w, h);
   const nowMs = vm.nowMs ?? Date.now();
+  // When there's more than fits, reserve a row for the hint so it never
+  // overflows a body that the capacity model has already filled exactly.
+  const overflow = vm.items.length > cap;
+  const shown = vm.items.slice(0, overflow ? Math.max(1, cap - 1) : cap);
+  const hidden = vm.items.length - shown.length;
   // Source + age stack above the full-width headline so neither ever
   // squeezes the other (at 3 cols the old side-by-side row truncated both).
-  el.innerHTML = vm.items
-    .slice(0, cap)
+  el.innerHTML = shown
     .map(
       (i) => `<div class="headline">
         <div class="headline__meta">
@@ -99,7 +103,7 @@ export function render(el, vm, _cfg) {
         <span class="headline__title">${escapeHtml(i.title)}</span>
       </div>`,
     )
-    .join('');
+    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
 }
 
 export async function fetchData(cfg, net) {

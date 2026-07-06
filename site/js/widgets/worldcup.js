@@ -58,7 +58,7 @@ function matchRow(m, nowMs) {
     </div>`;
   }
   return `<div class="wc-match ${m.state === 'in' ? 'wc-match--live' : ''}">
-    <span class="wc-match__teams">${flagImg(m.hf)}${escapeHtml(m.home)} <b>${m.hs ?? '–'}–${m.as ?? '–'}</b> ${flagImg(m.af)}${escapeHtml(m.away)}</span>
+    <span class="wc-match__teams">${flagImg(m.hf)}${escapeHtml(m.home)} <b>${escapeHtml(String(m.hs ?? '–'))}–${escapeHtml(String(m.as ?? '–'))}</b> ${flagImg(m.af)}${escapeHtml(m.away)}</span>
     <span class="wc-match__meta">${m.state === 'in' ? '<b class="team__livedot">●</b> ' : ''}${escapeHtml(m.detail)}</span>
   </div>${m.note ? `<div class="wc-match__note">${escapeHtml(m.note)}</div>` : ''}`;
 }
@@ -69,18 +69,28 @@ export function render(el, vm, _cfg) {
   const nowMs = vm.nowMs ?? Date.now();
   const sections = [];
   let left = cap;
-  const take = (list, label) => {
+  // A match with a note renders as two rows, so it costs two capacity units —
+  // otherwise an exactly-full card clips the last row. `share` caps the middle
+  // section to half the remaining budget so the last section still gets room.
+  const take = (list, label, share) => {
     if (!list.length || left <= 0) return;
-    const n = Math.min(list.length, Math.max(1, label === 'Live' ? list.length : Math.ceil(left / 2)));
-    const rows = list.slice(0, Math.min(n, left));
-    left -= rows.length;
+    const maxMatches = share ? Math.max(1, Math.ceil(left / 2)) : list.length;
+    const rows = [];
+    for (const m of list) {
+      if (rows.length >= maxMatches) break;
+      const cost = m.note ? 2 : 1;
+      if (left - cost < 0) break;
+      rows.push(m);
+      left -= cost;
+    }
+    if (!rows.length) return;
     sections.push(`<div class="wc-section"><span class="wc-section__label">${label}</span>${rows
       .map((m) => matchRow(m, nowMs))
       .join('')}</div>`);
   };
-  take(vm.live, 'Live');
-  take(vm.upcoming, 'Upcoming');
-  take(vm.results, 'Results');
+  take(vm.live, 'Live', false);
+  take(vm.upcoming, 'Upcoming', true);
+  take(vm.results, 'Results', false);
   el.innerHTML = sections.join('') || '<div class="empty">No matches in the current window</div>';
 }
 

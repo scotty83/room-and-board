@@ -6,6 +6,7 @@ import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
 import { zipLookup } from '../geo.js';
+import { escapeHtml } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
@@ -343,7 +344,7 @@ function renderFollowField(prefix, cfgKey, listKey, validate) {
   const status = $(`#${prefix}-status`);
   const renderChips = () => {
     chips.innerHTML = cfg[cfgKey][listKey]
-      .map((a, i) => `<button type="button" data-acct="${i}">${a.label} ✕</button>`)
+      .map((a, i) => `<button type="button" data-acct="${i}">${escapeHtml(a.label)} ✕</button>`)
       .join('');
     chips.querySelectorAll('[data-acct]').forEach((b) =>
       b.addEventListener('click', () => {

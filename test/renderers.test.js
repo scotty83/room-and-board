@@ -68,6 +68,31 @@ describe('widget renderers', () => {
     expect(host.querySelectorAll('.linestatus--alert').length).toBe(2);
   });
 
+  it('worldcup escapes upstream score text', () => {
+    const host = el();
+    worldcup.render(host, { nowMs: 1783000000000, live: [{ state: 'in', detail: "12'", home: 'USA', away: 'CRC', hs: '<img src=x>', as: '0', hf: '', af: '', note: '' }], upcoming: [], results: [] }, CFG);
+    expect(host.innerHTML).not.toContain('<img src=x>');
+  });
+
+  it('news and history show a +N more hint when items overflow the card', () => {
+    const mkCard = (id) => {
+      const c = document.createElement('article');
+      c.className = `card card--${id} t-s t-narrow`;
+      c.dataset.w = '3'; c.dataset.h = '2';
+      c.innerHTML = '<div class="card__body"></div>';
+      document.body.appendChild(c);
+      return c;
+    };
+    const nc = mkCard('news');
+    news.render(nc.querySelector('.card__body'), { nowMs: Date.now(), items: Array.from({ length: 20 }, (_, i) => ({ title: `Story ${i}`, t: Date.now() - i * 1000, source: 'X' })) }, CFG);
+    expect(nc.querySelector('.more-hint')).not.toBeNull();
+    nc.remove();
+    const hc = mkCard('history');
+    history.render(hc.querySelector('.card__body'), { events: Array.from({ length: 20 }, (_, i) => ({ year: 1900 + i, text: `Event ${i}` })) }, CFG);
+    expect(hc.querySelector('.more-hint')).not.toBeNull();
+    hc.remove();
+  });
+
   it('markets colors gains and losses differently', () => {
     const host = el();
     markets.render(host, DEMO_VMS.markets, CFG);

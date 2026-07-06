@@ -7,16 +7,24 @@ import { itemCapacity, cardSize } from '../capacity.js';
 export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
+  if (!vm.events?.length) {
+    el.innerHTML = '<div class="empty">No events for today</div>';
+    return;
+  }
   const [w, h] = cardSize(el, [6, 2]);
   const cap = itemCapacity('history', w, h);
-  el.innerHTML = `<div class="history">${vm.events.slice(0, cap)
+  // Reserve a row for the hint so it can't overflow an exactly-full body.
+  const overflow = vm.events.length > cap;
+  const shown = vm.events.slice(0, overflow ? Math.max(1, cap - 1) : cap);
+  const hidden = vm.events.length - shown.length;
+  el.innerHTML = `<div class="history">${shown
     .map(
       (e) => `<div class="history__item">
         <span class="history__year">${e.year}</span>
         <span class="history__text">${escapeHtml(e.text)}</span>
       </div>`,
     )
-    .join('')}</div>`;
+    .join('')}</div>${hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : ''}`;
 }
 
 export function mapHistory(json, count = 9) {

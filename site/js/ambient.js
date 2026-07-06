@@ -2,6 +2,8 @@
 // assembled from whatever transit widgets the user has enabled, using their
 // latest cached view models.
 
+import { escapeHtml } from './util.js';
+
 export function stripData(caches, cfg) {
   const enabled = new Set(cfg.widgets);
   const temp = enabled.has('weather') && caches.weather ? caches.weather.now?.temp ?? null : null;
@@ -28,6 +30,6 @@ export function stripHtml(data, now) {
     <span class="strip__time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
     ${data.temp !== null ? `<span class="strip__temp">${data.temp}°</span>` : ''}
     ${data.transit
-      .map((t) => `<span class="strip__transit">${t.label} <b>${t.min} min</b></span>`)
+      .map((t) => `<span class="strip__transit">${escapeHtml(t.label)} <b>${t.min} min</b></span>`)
       .join('')}`;
 }

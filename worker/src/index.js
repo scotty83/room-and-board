@@ -37,9 +37,12 @@ function randomCode() {
 }
 
 async function postCode(request, env, origin) {
-  // Per-IP throttle (Cache API, not KV) so an anonymous flood can't burn the
-  // 1000/day KV write cap and break setup-code generation fleet-wide — the
-  // exact failure that forced the Cache-API migration above.
+  // Best-effort per-IP throttle (Cache API, not KV) to blunt a code-generation
+  // flood against the 1000/day KV write cap. NOTE: caches.default is colo-local
+  // and eventually-consistent, so this is a speed bump, not a hard limit — the
+  // reliable protection is the try/catch around the KV put below, which returns
+  // a clean 503 instead of a raw 500 when the cap is actually hit. A hard limit
+  // would need the Rate Limiting binding or a Durable Object counter.
   const ip = request.headers.get('CF-Connecting-IP') ?? 'anon';
   const throttleKey = new Request(`${origin}/__throttle/code/${encodeURIComponent(ip)}`);
   const cache = caches.default;

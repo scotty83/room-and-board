@@ -108,6 +108,12 @@ remove like any other.
   Cleveland); tap it for full screen, and swipe there to browse. Also powers the
   ambient screensaver. *Configure:* Settings → Art (rotation interval; optional
   collections). Ambient vs dashboard is set under Settings → Display.
+- **Photos** — a rotating slideshow from an iCloud Shared Album; tap for full
+  screen, swipe to browse. Can replace Art as the ambient screensaver. *Configure:*
+  in the Photos app, open the shared album → Share → enable **Public Website**, then
+  copy the link. On the board: Settings → Photos → paste the link (or enter it on
+  the phone setup page). ⚠️ Anyone with the link can view the album — add only
+  office-appropriate photos.
 
 ### Daily extras
 
@@ -233,6 +239,7 @@ the URL fragment and the dashboard returns configured.
 | PANYNJ RidePATH (PATH) | Worker, keyless | no CORS upstream; 30 s cached digest, projected epochs |
 | NYC Ferry GTFS-RT | Worker, keyless | protobuf decoded Worker-side; trip/route names from bundled `data/ferry.json` |
 | Bundled words.json (word of the day) | none | curated 366+ list, zero network — shares `dailyPick` with quotes |
+| iCloud Shared Streams (photos) | Worker, keyless (unofficial) | webstream + webasseturls endpoints; CORS-locked Worker-side; digest cached ~30 min; signed image URLs fetched by the board via `<img>` |
 
 **Resize-fit audit (standing policy):** widgets must fit their text at every
 supported size. After renderer/CSS changes, open `?demo=1` in Chrome and, for

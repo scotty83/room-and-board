@@ -43,8 +43,10 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 
 ## Widgets
 
-Everything is opt-in. Toggle widgets on/off under **Settings → Widgets**, then
-tap the **✎ pencil** to drag, resize, and arrange them on the 12×8 grid — each
+Everything is opt-in. Toggle widgets on/off under **Settings → Widgets** —
+grouped by category (Commute, Weather & Air, Markets & Sports, News & Social,
+Ambient, Daily Extras) — then tap the **✎ pencil** to drag, resize, and arrange
+them on the 12×8 grid — each
 widget has a minimum size and shows more content as you make its card bigger
 (the edit screen tells you how many rows fit). The clock/greeting across the top
 is always on. Every widget degrades gracefully: a dead feed dims the card and

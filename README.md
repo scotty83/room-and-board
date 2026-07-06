@@ -53,7 +53,8 @@ is always on. Every widget degrades gracefully: a dead feed dims the card and
 stamps "as of …" rather than going blank, and long text taps to full screen.
 
 Configure each widget in its own **Settings** section (on the board by touch, or
-from your phone at `/setup`). Configurable list widgets (markets, sports, world
+from your phone at `/setup` — whose widget picker and config sections share the
+same categories). Configurable list widgets (markets, sports, world
 clock, headlines, Substack, Bluesky) ship with sensible starter entries you can
 remove like any other.
 

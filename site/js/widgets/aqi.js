@@ -4,6 +4,7 @@
 
 import { escapeHtml } from '../util.js';
 import { icon } from '../icons.js';
+import { cardSize, sizeTier } from '../capacity.js';
 
 export const meta = { id: 'aqi', title: 'Air & Sky', refreshMs: 60 * 60 * 1000 };
 
@@ -16,22 +17,42 @@ const timeOnly = (iso) => {
 };
 
 export function render(el, vm, _cfg) {
+  // Two labeled stat blocks side by side (AQI and UV), then the sun/moon
+  // rows. Tall cards label each reading with a head ("AIR QUALITY"); shallow
+  // cards can't afford head rows, so the label rides inline instead.
+  const [, h] = cardSize(el, [2, 4]);
+  const shallow = sizeTier(h) === 's';
+  const stat = (band, head, value, label) => `
+    <div class="sky__aqi sky__aqi--${band}">
+      ${shallow ? '' : `<div class="sky__aqi-head">${head}</div>`}
+      <div class="sky__aqi-reading">
+        <span class="sky__aqi-value">${value}</span>
+        <span class="sky__aqi-label">${label}</span>
+      </div>
+    </div>`;
+  const aqiBand = vm.aqi <= 50 ? 'good' : vm.aqi <= 100 ? 'moderate' : 'bad';
+  const uvBand = vm.uv <= 2 ? 'good' : vm.uv <= 7 ? 'moderate' : 'bad';
   el.innerHTML = `
     <div class="sky">
-      <div class="sky__aqi sky__aqi--${vm.aqi <= 50 ? 'good' : vm.aqi <= 100 ? 'moderate' : 'bad'}">
-        <span class="sky__aqi-value">${vm.aqi}</span>
-        <span class="sky__aqi-label">AQI · ${escapeHtml(vm.category)}</span>
+      <div class="sky__stats${vm.uv == null ? ' sky__stats--single' : ''}">
+        ${stat(aqiBand, 'Air quality', vm.aqi, `${shallow ? 'AQI · ' : ''}${escapeHtml(vm.category)}`)}
+        ${vm.uv != null ? stat(uvBand, 'UV index', vm.uv, `${shallow ? 'UV · ' : ''}${uvLabel(vm.uv)}`) : ''}
       </div>
       <div class="sky__row">${icon('sun', 'icon--sm')}<span>Sunrise ${timeOnly(vm.sunrise)}</span></div>
-      <div class="sky__row">${icon('moon', 'icon--sm')}<span>Sunset ${timeOnly(vm.sunset)}</span></div>
+      <div class="sky__row">${icon('sun', 'icon--sm')}<span>Sunset ${timeOnly(vm.sunset)}</span></div>
       <div class="sky__row">${icon('moon', 'icon--sm')}<span>${escapeHtml(vm.moonPhase.name)}</span></div>
     </div>`;
+}
+
+// WHO UV index bands.
+export function uvLabel(uv) {
+  return uv <= 2 ? 'Low' : uv <= 5 ? 'Moderate' : uv <= 7 ? 'High' : uv <= 10 ? 'Very high' : 'Extreme';
 }
 
 const CATEGORIES = [
   [50, 'Good'],
   [100, 'Moderate'],
-  [150, 'Unhealthy for Sensitive Groups'],
+  [150, 'Sensitive groups'], // EPA shorthand — the full name overflows small cards
   [200, 'Unhealthy'],
   [300, 'Very Unhealthy'],
   [Infinity, 'Hazardous'],
@@ -66,11 +87,13 @@ export function moonPhase(date) {
 
 export function mapAqi(aqJson, sunJson, now) {
   const aqi = Math.round(aqJson.current.us_aqi);
+  const uvMax = sunJson?.daily?.uv_index_max?.[0];
   return {
     aqi,
     category: aqiCategory(aqi),
     sunrise: sunJson?.daily?.sunrise?.[0] ?? null,
     sunset: sunJson?.daily?.sunset?.[0] ?? null,
+    uv: Number.isFinite(uvMax) ? Math.round(uvMax) : null, // row omitted when absent
     moonPhase: moonPhase(now),
   };
 }
@@ -85,7 +108,7 @@ export async function fetchData(cfg, net) {
     // widget being enabled or having fetched first.
     net
       .fetchJSON(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset&forecast_days=1&timezone=auto`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset,uv_index_max&forecast_days=1&timezone=auto`,
       )
       .catch(() => null),
   ]);

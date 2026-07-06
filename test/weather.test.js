@@ -76,7 +76,9 @@ describe('mapAqi', () => {
     const aq = (v) => ({ current: { us_aqi: v } });
     const d = new Date('2026-07-02');
     expect(mapAqi(aq(50), null, d).category).toBe('Good');
-    expect(mapAqi(aq(101), null, d).category).toBe('Unhealthy for Sensitive Groups');
+    expect(mapAqi(aq(101), null, d).category).toBe('Sensitive groups');
+    expect(mapAqi(aq(101), null, d).uv).toBeNull();
+    expect(mapAqi(aq(40), { daily: { uv_index_max: [6.4] } }, d).uv).toBe(6);
     expect(mapAqi(aq(250), null, d).category).toBe('Very Unhealthy');
   });
 });

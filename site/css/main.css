@@ -158,8 +158,16 @@ html, body {
 .quote__author { font-size: 21px; color: var(--ink-dim); text-align: right; }
 
 .sky { display: flex; flex-direction: column; gap: 12px; }
-.sky__aqi { display: flex; align-items: baseline; gap: 12px; }
-.sky__aqi-value { font-size: 54px; font-weight: 700; }
+/* AQI + UV as equal labeled stat blocks; single column when UV is absent */
+.sky__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sky__stats--single { grid-template-columns: 1fr; }
+.sky__aqi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sky__aqi-head { font-size: 17px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Category sits under the number so both get the block's full width */
+.sky__aqi-reading { display: flex; flex-direction: column; min-width: 0; }
+/* The category never wraps under the number — it shrinks then ellipsizes */
+.sky__aqi-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sky__aqi-value { font-size: 54px; font-weight: 700; line-height: 1.05; }
 .sky__aqi--good .sky__aqi-value { color: var(--good); }
 .sky__aqi--moderate .sky__aqi-value { color: var(--warn); }
 .sky__aqi--bad .sky__aqi-value { color: var(--bad); }
@@ -439,10 +447,28 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .card--history.t-narrow .history__text {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-/* Air & Sky in a shallow card: smaller dial, drop the moon row */
+/* Air & Sky measured variants (nth-of-type counts ALL div siblings of .sky:
+   .sky__stats is div #1, sky rows start at #2).
+   Shallow (h<=2): compact dials, sunrise row only. */
+.card--aqi.t-s .sky { gap: 8px; }
 .card--aqi.t-s .sky__aqi-value { font-size: 36px; }
+.card--aqi.t-s .sky__aqi-label { font-size: 17px; }
 .card--aqi.t-s .sky__row { font-size: 18px; }
-.card--aqi.t-s .sky__row:nth-of-type(3) { display: none; }
+.card--aqi.t-s .sky__row:nth-of-type(n+3) { display: none; }
+/* 2-wide: half-columns can't hold the categories — stack the stats full
+   width with slightly smaller dials; at 2x3 the moon row goes too. */
+.card--aqi[data-w="2"] .sky__stats { grid-template-columns: 1fr; }
+.card--aqi[data-w="2"]:not(.t-s) .sky { gap: 8px; }
+.card--aqi[data-w="2"]:not(.t-s) .sky__aqi-value { font-size: 40px; }
+.card--aqi[data-w="2"]:not(.t-s) .sky__aqi-head { font-size: 15px; }
+.card--aqi[data-w="2"]:not(.t-s) .sky__aqi-label { font-size: 17px; }
+.card--aqi[data-w="2"][data-h="3"] .sky__row:nth-of-type(n+3) { display: none; }
+/* 2x2 minimum: the two dials fill the whole body — no sky rows; value at
+   the 34px primary-data floor */
+.card--aqi[data-w="2"].t-s .sky { gap: 6px; }
+.card--aqi[data-w="2"].t-s .sky__aqi { gap: 0; }
+.card--aqi[data-w="2"].t-s .sky__aqi-value { font-size: 34px; }
+.card--aqi[data-w="2"].t-s .sky__row { display: none; }
 /* Art at its smallest (shallow + narrow): caption reduces to the title */
 .card--art.t-s.t-narrow .artwork__artist { display: none; }
 /* Transit rows tighten when narrow */

@@ -156,6 +156,7 @@ export const DEMO_VMS = {
     category: 'Moderate',
     sunrise: '2026-07-02T05:28',
     sunset: '2026-07-02T20:30',
+    uv: 7,
     moonPhase: { name: 'Waning Gibbous', fraction: 0.62 },
   },
   quote: {

@@ -41,7 +41,7 @@ const CASES = [
   ['wotd', wotd, ['petrichor', 'PET-rih-kor', 'noun', 'earthy smell']],
   ['art', art, ['Wheat Fields', 'Jacob van Ruisdael']],
   ['history', history, ['1776', 'Continental Congress']],
-  ['aqi', aqi, ['66', 'Moderate', 'Waning Gibbous']],
+  ['aqi', aqi, ['66', 'Moderate', 'UV index', 'High', 'Waning Gibbous']],
   ['quote', quote, ['predict the future', 'Alan Kay']],
   ['markets', markets, ['Dow Jones', 'S&P 500', '0.45']],
   ['worldclock', worldclock, ['Hyderabad', '5:43 PM', 'Hong Kong', '+1d']],

@@ -139,7 +139,7 @@ describe('widget label coverage', () => {
   });
 });
 
-import { WIDGET_GROUPS } from '../site/js/settings/settings.js';
+import { WIDGET_GROUPS } from '../site/js/config.js';
 
 describe('WIDGET_GROUPS taxonomy', () => {
   it('is an exact partition of WIDGET_IDS (every id in exactly one group, no extras)', () => {

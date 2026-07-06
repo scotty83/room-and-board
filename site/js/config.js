@@ -19,6 +19,19 @@ export const WIDGET_IDS = [
   'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
 ];
 
+// Display grouping for the widget pickers (board Settings and phone /setup).
+// WIDGET_IDS above stays the validity source of truth; this is only on-screen
+// order + categories, and must remain an exact partition of WIDGET_IDS
+// (asserted in test/settings-logic.test.js).
+export const WIDGET_GROUPS = [
+  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
+  { label: 'Weather & Air', ids: ['weather', 'aqi'] },
+  { label: 'Markets & Sports', ids: ['markets', 'sports', 'worldcup'] },
+  { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
+  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
+];
+
 export const DEFAULT_CONFIG = Object.freeze({
   v: 3,
   t: 0,

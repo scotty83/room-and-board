@@ -32,7 +32,8 @@ const MODELS = {
   news: listCapacity(75, 57),
   // Same stacked rows as news, but post texts are long by nature — nearly
   // every row wraps to the full 2 lines, and the +N hint needs headroom too.
-  posts: listCapacity(90, 62),
+  substack: listCapacity(90, 62),
+  bsky: listCapacity(90, 62),
   // Single-line 35px rows + 10px gap (shrunk so five zones fit a 3-tall
   // card); min height is 3 rows so tier s never applies.
   worldclock: listCapacity(45, 45),
@@ -74,7 +75,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `${n} matches`;
     case 'news':
       return `${n} headlines`;
-    case 'posts':
+    case 'substack':
+    case 'bsky':
       return `${n} posts`;
     case 'worldclock':
       return ofTotal(Math.min(n, cfg.worldclock?.cities?.length ?? n), cfg.worldclock?.cities?.length, 'cities');

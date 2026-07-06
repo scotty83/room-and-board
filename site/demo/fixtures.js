@@ -135,12 +135,18 @@ export const DEMO_VMS = {
       { title: 'World Cup crowds boost midtown restaurants', t: 1782980000000, source: 'NYT Top Stories' },
     ],
   },
-  posts: {
+  substack: {
     nowMs: 1783000000000,
     items: [
       { text: 'The AI Superforecasters Are Here — What happens when the models start beating the humans at their own game', t: 1782998200000, source: 'Astral Codex Ten' },
-      { text: 'Breaking: newest ferry pier opens with a ribbon cutting at sunrise', t: 1782995000000, source: 'NYT' },
-      { text: 'Shipped a new feature today. The trick was deleting more code than I wrote.', t: 1782990000000, source: 'Pragmatic Engineer' },
+      { text: 'The Hidden Cost of Meetings — A field guide to reclaiming your calendar one recurring invite at a time', t: 1782910000000, source: 'Pragmatic Engineer' },
+    ],
+  },
+  bsky: {
+    nowMs: 1783000000000,
+    items: [
+      { text: 'Breaking: newest ferry pier opens with a ribbon cutting at sunrise', t: 1782998000000, source: 'NYT' },
+      { text: 'Shipped a new feature today. The trick was deleting more code than I wrote.', t: 1782990000000, source: 'Jane Dev' },
     ],
   },
   art: {

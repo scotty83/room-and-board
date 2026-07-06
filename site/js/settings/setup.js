@@ -32,7 +32,8 @@ const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
-  posts: 'Latest Posts',
+  substack: 'Newsletters (Substack)',
+  bsky: 'Bluesky',
 };
 const PRESETS = [
   ['Midtown Manhattan', 40.754, -73.984],
@@ -335,44 +336,50 @@ async function renderNjt() {
   $('#njt-station').addEventListener('change', (e) => (cfg.njt.station = e.target.value));
 }
 
-function renderPostsAccounts() {
-  const chips = $('#posts-chips');
-  const status = $('#posts-status');
+// Shared follow-list field (substack pubs / bsky handles): chips + one
+// validated text-input add flow.
+function renderFollowField(prefix, cfgKey, listKey, validate) {
+  const chips = $(`#${prefix}-chips`);
+  const status = $(`#${prefix}-status`);
   const renderChips = () => {
-    chips.innerHTML = cfg.posts.accounts
-      .map((a, i) => `<button type="button" data-acct="${i}">${a.label} (${a.net === 'bsky' ? 'Bluesky' : 'Substack'}) ✕</button>`)
+    chips.innerHTML = cfg[cfgKey][listKey]
+      .map((a, i) => `<button type="button" data-acct="${i}">${a.label} ✕</button>`)
       .join('');
     chips.querySelectorAll('[data-acct]').forEach((b) =>
       b.addEventListener('click', () => {
-        cfg.posts.accounts = cfg.posts.accounts.filter((_, i) => i !== Number(b.dataset.acct));
+        cfg[cfgKey][listKey] = cfg[cfgKey][listKey].filter((_, i) => i !== Number(b.dataset.acct));
         renderChips();
       }),
     );
   };
   renderChips();
-  $('#posts-add').addEventListener('click', async () => {
-    const net = $('#posts-net').value;
-    const id = $('#posts-id').value.trim().toLowerCase();
-    if (!id || cfg.posts.accounts.length >= 6 || cfg.posts.accounts.some((a) => a.net === net && a.id === id)) return;
+  $(`#${prefix}-add`).addEventListener('click', async () => {
+    const id = $(`#${prefix}-id`).value.trim().toLowerCase();
+    const list = cfg[cfgKey][listKey];
+    if (!id || list.length >= 6 || list.some((a) => a.id === id)) return;
     status.textContent = 'Checking…';
     try {
-      let label;
-      if (net === 'bsky') {
-        const prof = await (await fetch(`${BSKY_API}/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`)).json();
-        if (!prof.handle) throw new Error('not found');
-        label = (prof.displayName || prof.handle).slice(0, 30);
-      } else {
-        const digest = await (await fetch(`${WORKER_URL}/posts/substack?pub=${encodeURIComponent(id)}`)).json();
-        if (!digest.posts?.length) throw new Error('not found');
-        label = id.slice(0, 30);
-      }
-      cfg.posts.accounts = [...cfg.posts.accounts, { net, id, label }];
-      $('#posts-id').value = '';
+      const label = await validate(id);
+      cfg[cfgKey][listKey] = [...list, { id, label }];
+      $(`#${prefix}-id`).value = '';
       status.textContent = '';
       renderChips();
     } catch {
       status.textContent = `Couldn't find "${id}".`;
     }
+  });
+}
+
+function renderPostsAccounts() {
+  renderFollowField('substack', 'substack', 'pubs', async (id) => {
+    const digest = await (await fetch(`${WORKER_URL}/posts/substack?pub=${encodeURIComponent(id)}`)).json();
+    if (!digest.posts?.length) throw new Error('not found');
+    return id.slice(0, 30);
+  });
+  renderFollowField('bsky', 'bsky', 'handles', async (id) => {
+    const prof = await (await fetch(`${BSKY_API}/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`)).json();
+    if (!prof.handle) throw new Error('not found');
+    return (prof.displayName || prof.handle).slice(0, 30);
   });
 }
 

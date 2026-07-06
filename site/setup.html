@@ -130,18 +130,24 @@
       <div id="news-sources" class="checks"></div>
     </section>
 
-    <section class="field" id="posts-field">
-      <h2>Latest Posts <small>(Substack publications + Bluesky accounts — up to 6)</small></h2>
-      <div id="posts-chips" class="chips"></div>
-      <div class="pickrow">
-        <select id="posts-net">
-          <option value="substack">Substack</option>
-          <option value="bsky">Bluesky</option>
-        </select>
-        <input id="posts-id" type="text" maxlength="60" placeholder="publication name or handle">
-        <button id="posts-add" type="button">Add</button>
+    <section class="field" id="substack-field">
+      <h2>Newsletters <small>(Substack publications — up to 6)</small></h2>
+      <div id="substack-chips" class="chips"></div>
+      <div class="ziprow">
+        <input id="substack-id" type="text" maxlength="60" placeholder="publication name (before .substack.com)">
+        <button id="substack-add" type="button">Add</button>
       </div>
-      <p id="posts-status" class="hint"></p>
+      <p id="substack-status" class="hint"></p>
+    </section>
+
+    <section class="field" id="bsky-field">
+      <h2>Bluesky <small>(accounts — up to 6)</small></h2>
+      <div id="bsky-chips" class="chips"></div>
+      <div class="ziprow">
+        <input id="bsky-id" type="text" maxlength="60" placeholder="handle, e.g. name.bsky.social">
+        <button id="bsky-add" type="button">Add</button>
+      </div>
+      <p id="bsky-status" class="hint"></p>
     </section>
 
     <section class="field">

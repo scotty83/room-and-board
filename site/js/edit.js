@@ -28,7 +28,8 @@ const TITLES = {
   sports: 'My Teams',
   worldcup: 'World Cup',
   news: 'Headlines',
-  posts: 'Posts',
+  substack: 'Substack',
+  bsky: 'Bluesky',
 };
 
 export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {

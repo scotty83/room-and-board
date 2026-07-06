@@ -32,9 +32,10 @@ import * as worldclock from './widgets/worldclock.js';
 import * as sports from './widgets/sports.js';
 import * as worldcup from './widgets/worldcup.js';
 import * as news from './widgets/news.js';
-import * as posts from './widgets/posts.js';
+import * as substack from './widgets/substack.js';
+import * as bsky from './widgets/bsky.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, posts];
+const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer };

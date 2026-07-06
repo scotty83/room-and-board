@@ -223,18 +223,25 @@ describe('path/ferry/wotd config (v3 additive)', () => {
   });
 });
 
-describe('posts config', () => {
-  it('defaults empty and sanitizes accounts', () => {
-    expect(normalizeConfig({}).posts).toEqual({ accounts: [] });
+describe('substack/bsky config', () => {
+  it('defaults empty and sanitizes entries', () => {
+    const cfg = normalizeConfig({});
+    expect(cfg.substack).toEqual({ pubs: [] });
+    expect(cfg.bsky).toEqual({ handles: [] });
+    const filled = normalizeConfig({
+      substack: { pubs: [{ id: 'astralcodexten', label: 'ACX' }, { id: 'Bad Slug!', label: 'x' }] },
+      bsky: { handles: [{ id: 'nytimes.com', label: 'NYT' }] },
+    });
+    expect(filled.substack.pubs).toEqual([{ id: 'astralcodexten', label: 'ACX' }]);
+    expect(filled.bsky.handles).toEqual([{ id: 'nytimes.com', label: 'NYT' }]);
+  });
+  it('migrates the short-lived combined posts config', () => {
     const cfg = normalizeConfig({ posts: { accounts: [
       { net: 'substack', id: 'astralcodexten', label: 'ACX' },
       { net: 'bsky', id: 'nytimes.com', label: 'NYT' },
-      { net: 'substack', id: 'Bad Slug!', label: 'x' },
-      { net: 'myspace', id: 'tom', label: 'Tom' },
     ] } });
-    expect(cfg.posts.accounts).toEqual([
-      { net: 'substack', id: 'astralcodexten', label: 'ACX' },
-      { net: 'bsky', id: 'nytimes.com', label: 'NYT' },
-    ]);
+    expect(cfg.substack.pubs).toEqual([{ id: 'astralcodexten', label: 'ACX' }]);
+    expect(cfg.bsky.handles).toEqual([{ id: 'nytimes.com', label: 'NYT' }]);
+    expect(cfg.posts).toBeUndefined();
   });
 });

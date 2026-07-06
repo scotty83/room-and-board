@@ -36,6 +36,7 @@ import * as news from './widgets/news.js';
 import * as substack from './widgets/substack.js';
 import * as bsky from './widgets/bsky.js';
 import * as photos from './widgets/photos.js';
+import { resolvePhotosManifest } from './photos-manifest.js';
 
 const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky, photos];
 for (const m of MODULES) registerWidget(m);
@@ -152,9 +153,11 @@ async function startSlideshow() {
   if (slideshow) return;
   try {
     const src = ambientSource(cfg);
-    const manifest = DEMO ? [DEMO_VMS.art]
-      : src === 'photos' ? photos.photoManifest()
-      : art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+    let manifest;
+    if (DEMO) manifest = [DEMO_VMS.art];
+    else if (src === 'photos') manifest = await resolvePhotosManifest(cfg, net, photos);
+    else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+    if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
     slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: (cfg.art?.every ?? 30) * 60 * 1000 });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }

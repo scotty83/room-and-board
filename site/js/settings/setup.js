@@ -31,6 +31,7 @@ const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
+  posts: 'Latest Posts',
 };
 const PRESETS = [
   ['Midtown Manhattan', 40.754, -73.984],

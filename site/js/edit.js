@@ -28,6 +28,7 @@ const TITLES = {
   sports: 'My Teams',
   worldcup: 'World Cup',
   news: 'Headlines',
+  posts: 'Posts',
 };
 
 export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {

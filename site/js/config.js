@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news', 'posts',
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
@@ -40,6 +40,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
+  posts: Object.freeze({ accounts: Object.freeze([]) }), // [{net: substack|bsky, id, label}] up to 6
   njt: Object.freeze({ station: 'NY', alerts: true }),
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
@@ -126,6 +127,14 @@ export function normalizeConfig(raw) {
         const list = strList(raw.news?.sources, 7);
         return list.length ? list : [...DEFAULT_CONFIG.news.sources];
       })(),
+    },
+    posts: {
+      accounts: (Array.isArray(raw.posts?.accounts) ? raw.posts.accounts : [])
+        .filter((a) =>
+          (a?.net === 'substack' && /^[a-z0-9-]{2,64}$/.test(a?.id ?? '')) ||
+          (a?.net === 'bsky' && /^[a-z0-9.-]{4,253}$/i.test(a?.id ?? '')))
+        .map((a) => ({ net: a.net, id: a.id, label: str(a.label, a.id, 30) }))
+        .slice(0, 6),
     },
     markets: {
       // An empty list falls back to the defaults (a markets card with zero

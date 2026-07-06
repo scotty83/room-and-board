@@ -222,3 +222,19 @@ describe('path/ferry/wotd config (v3 additive)', () => {
     expect(cfg.widgets).toEqual(['path', 'ferry', 'wotd']);
   });
 });
+
+describe('posts config', () => {
+  it('defaults empty and sanitizes accounts', () => {
+    expect(normalizeConfig({}).posts).toEqual({ accounts: [] });
+    const cfg = normalizeConfig({ posts: { accounts: [
+      { net: 'substack', id: 'astralcodexten', label: 'ACX' },
+      { net: 'bsky', id: 'nytimes.com', label: 'NYT' },
+      { net: 'substack', id: 'Bad Slug!', label: 'x' },
+      { net: 'myspace', id: 'tom', label: 'Tom' },
+    ] } });
+    expect(cfg.posts.accounts).toEqual([
+      { net: 'substack', id: 'astralcodexten', label: 'ACX' },
+      { net: 'bsky', id: 'nytimes.com', label: 'NYT' },
+    ]);
+  });
+});

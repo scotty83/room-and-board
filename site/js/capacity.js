@@ -30,6 +30,7 @@ const MODELS = {
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).
   news: listCapacity(75, 57),
+  posts: listCapacity(75, 57), // same stacked meta+text rows as news
   // Single-line 35px rows + 10px gap (shrunk so five zones fit a 3-tall
   // card); min height is 3 rows so tier s never applies.
   worldclock: listCapacity(45, 45),
@@ -71,6 +72,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `${n} matches`;
     case 'news':
       return `${n} headlines`;
+    case 'posts':
+      return `${n} posts`;
     case 'worldclock':
       return ofTotal(Math.min(n, cfg.worldclock?.cities?.length ?? n), cfg.worldclock?.cities?.length, 'cities');
     case 'weather':

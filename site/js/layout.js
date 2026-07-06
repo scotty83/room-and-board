@@ -31,6 +31,7 @@ export const MIN_SIZE = {
   sports: [3, 2],
   worldcup: [3, 2],
   news: [3, 2],
+  posts: [3, 2],
 };
 
 // Nine widgets in four 3-wide columns, tiling all 96 cells (Sean's board

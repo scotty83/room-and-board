@@ -30,6 +30,7 @@ const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
+  posts: 'Latest Posts',
 };
 
 import { SUBWAY_LINES } from '../widgets/subway.js';

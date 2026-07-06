@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createSlideshow, swipeAction } from '../site/js/widgets/art.js';
+import { createSlideshow, swipeAction } from '../site/js/imageshow.js';
 import { stripData, stripHtml } from '../site/js/ambient.js';
 
 const MANIFEST = [

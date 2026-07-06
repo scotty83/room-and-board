@@ -1,7 +1,7 @@
 /**
  * @vitest-environment happy-dom
  */
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { DEMO_VMS } from '../site/demo/fixtures.js';
 import * as weather from '../site/js/widgets/weather.js';
 import * as subway from '../site/js/widgets/subway.js';
@@ -248,13 +248,14 @@ describe('art viewer strip + swipes', () => {
       DEMO_VMS.art,
       { img: 'https://x.test/two.jpg', title: 'Second Work', artist: 'B', year: '1901', ar: 1.5 },
     ];
-    vi.stubGlobal('fetch', async () => ({ ok: true, json: async () => list }));
     vi.stubGlobal('Image', class { set src(v) { queueMicrotask(() => this.onload?.()); } });
+    // Pre-populate artList so the viewer receives the full manifest for swiping.
+    await art.fetchData({ art: {} }, { fetchJSON: async () => list });
     const host = el();
     art.render(host, DEMO_VMS.art, CFG);
     host.querySelector('.artwork').click();
     const viewer = document.querySelector('#art-viewer');
-    await new Promise((r) => setTimeout(r, 0)); // manifest load settles
+    // No async manifest load — list is seeded synchronously from artList.
     const swipe = (fromX, toX) => {
       viewer.dispatchEvent(new MouseEvent('pointerdown', { clientX: fromX, clientY: 100 }));
       viewer.dispatchEvent(new MouseEvent('pointerup', { clientX: toX, clientY: 104 }));
@@ -333,5 +334,52 @@ describe('sparkPath', () => {
     expect(d).toContain('98.0'); // spans to width minus padding
     expect(sparkPath([], 100, 30)).toBe('');
     expect(sparkPath([7], 100, 30)).toBe('');
+  });
+});
+
+describe('imageshow module', () => {
+  it('imageshow exposes the shared viewer + slideshow', async () => {
+    const m = await import('../site/js/imageshow.js');
+    expect(typeof m.createSlideshow).toBe('function');
+    expect(typeof m.openImageViewer).toBe('function');
+    expect(typeof m.swipeAction).toBe('function');
+  });
+});
+
+describe('art fullscreen swipes via artList', () => {
+  beforeAll(() => {
+    // Remove any #art-viewer left by earlier tests so the fresh module instance
+    // gets its own element with event listeners bound to its own step closure.
+    document.querySelector('#art-viewer')?.remove();
+  });
+  afterAll(() => {
+    document.querySelector('#art-viewer')?.remove();
+  });
+
+  it('art fullscreen browses the whole filtered manifest after fetchData', async () => {
+    // Reset modules so this test gets fresh manifestCache / artList state,
+    // independent of any previous test that may have already cached a manifest.
+    vi.resetModules();
+    const artFresh = await import('../site/js/widgets/art.js');
+    const list = [
+      DEMO_VMS.art,
+      { img: 'https://x.test/artlist.jpg', title: 'ArtList Work', artist: 'AL', year: '1902', ar: 1.5 },
+    ];
+    vi.stubGlobal('Image', class { set src(v) { queueMicrotask(() => this.onload?.()); } });
+    // fetchData populates artList; render's click handler passes it to openImageViewer.
+    await artFresh.fetchData({ art: {} }, { fetchJSON: async () => list });
+    const host = el();
+    artFresh.render(host, DEMO_VMS.art, CFG);
+    host.querySelector('.artwork').click();
+    const viewer = document.querySelector('#art-viewer');
+    const swipe = (fromX, toX) => {
+      viewer.dispatchEvent(new MouseEvent('pointerdown', { clientX: fromX, clientY: 100 }));
+      viewer.dispatchEvent(new MouseEvent('pointerup', { clientX: toX, clientY: 104 }));
+      return new Promise((r) => setTimeout(r, 0)); // preload microtask
+    };
+    await swipe(600, 400); // swipe left → next
+    expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe('https://x.test/artlist.jpg');
+    expect(viewer.textContent).toContain('ArtList Work');
+    vi.unstubAllGlobals();
   });
 });

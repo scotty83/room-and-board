@@ -4,8 +4,8 @@
 // transition only (gen1-safe) and preloads the next image before switching.
 
 import { escapeHtml } from '../util.js';
-import { stripData, stripHtml } from '../ambient.js';
-import { loadCache } from '../store.js';
+import { openImageViewer } from '../imageshow.js';
+export { createSlideshow } from '../imageshow.js';
 
 export const meta = { id: 'art', title: 'Art', refreshMs: 60 * 1000 };
 
@@ -26,120 +26,18 @@ export function render(el, vm, cfg) {
         <span class="artwork__artist">${escapeHtml(vm.artist)}${vm.year ? ` (${escapeHtml(vm.year)})` : ''}</span>
       </figcaption>
     </figure>`;
-  el.querySelector('.artwork').addEventListener('click', () => openViewer(vm, cfg));
+  el.querySelector('.artwork').addEventListener('click', () => openImageViewer(vm, cfg, { list: artList.length ? artList : [vm] }));
 }
 
-// Pointer-gesture classifier for the viewer: horizontal drags navigate,
-// small movements are taps (close), anything ambiguous is ignored.
-export function swipeAction(dx, dy) {
-  if (Math.abs(dx) >= 60 && Math.abs(dx) >= 2 * Math.abs(dy)) return dx < 0 ? 'next' : 'prev';
-  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return 'tap';
-  return null;
-}
-
-let stripTimer = null;
-let viewerManifest = null; // cats-filtered list for the open viewer session
-let viewerIndex = -1;
-let viewerGen = 0; // bumped per open; a slow manifest load from a prior open bails
-let userStepped = false; // guards the async load from clobbering a swipe
-let manifestCache = null; // shared by fetchData and the viewer; fetched once
-
-// Full-screen viewer: tap the dashboard art card to open, tap anywhere to
-// close, swipe left/right to browse the (category-filtered) manifest. Shows
-// the ambient info strip so the clock stays visible. Stays up indefinitely
-// (mode changes don't touch it).
-export function openViewer(vm, cfg) {
-  // Reset session state synchronously so a stale previous-session manifest
-  // can't be swiped before this open's manifest loads.
-  const gen = ++viewerGen;
-  viewerManifest = null;
-  viewerIndex = -1;
-  userStepped = false;
-  let viewer = document.querySelector('#art-viewer');
-  if (!viewer) {
-    viewer = document.createElement('div');
-    viewer.id = 'art-viewer';
-    viewer.className = 'art-viewer';
-    // Close on tap, navigate on swipe. The trailing click is classified by
-    // its own coordinates against the gesture origin — no suppression state,
-    // so a swipe that never produces a click can't swallow the next tap.
-    let downX = 0;
-    let downY = 0;
-    viewer.addEventListener('pointerdown', (e) => {
-      downX = e.clientX;
-      downY = e.clientY;
-    });
-    viewer.addEventListener('pointerup', (e) => {
-      const action = swipeAction(e.clientX - downX, e.clientY - downY);
-      if (action === 'next' || action === 'prev') step(viewer, action === 'next' ? 1 : -1);
-    });
-    viewer.addEventListener('click', (e) => {
-      if (swipeAction(e.clientX - downX, e.clientY - downY) !== 'tap') return;
-      viewer.hidden = true;
-      clearInterval(stripTimer);
-    });
-    document.body.appendChild(viewer);
-  }
-  viewer.innerHTML = `
-    <img class="art-viewer__img" src="${escapeHtml(vm.img)}" alt="${escapeHtml(vm.title)}">
-    <div class="slide-caption">
-      <span class="slide-caption__title">${escapeHtml(vm.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(vm.artist)}${vm.year ? ` · ${escapeHtml(vm.year)}` : ''}</span>
-    </div>
-    <div class="strip"></div>`;
-  const strip = viewer.querySelector('.strip');
-  const refreshStrip = () => {
-    const caches = {};
-    for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
-    strip.innerHTML = stripHtml(stripData(caches, cfg ?? { widgets: [] }), new Date());
-  };
-  refreshStrip();
-  clearInterval(stripTimer);
-  stripTimer = setInterval(refreshStrip, 30 * 1000);
-  loadViewerManifest(vm, cfg, gen);
-  viewer.hidden = false;
-}
-
-// Swap in place: preload first (slideshow pattern), then update img + caption.
-function step(viewer, dir) {
-  if (!viewerManifest?.length) return;
-  userStepped = true;
-  viewerIndex = (viewerIndex + dir + viewerManifest.length) % viewerManifest.length;
-  const item = viewerManifest[viewerIndex];
-  const img = new Image();
-  const swap = () => {
-    const imgEl = viewer.querySelector('.art-viewer__img');
-    imgEl.src = item.img;
-    imgEl.alt = item.title;
-    viewer.querySelector('.slide-caption').innerHTML = `
-      <span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}</span>`;
-  };
-  img.onload = swap;
-  img.onerror = swap; // show anyway; <img> will retry like the slideshow does
-  img.src = item.img;
-}
-
-async function loadViewerManifest(vm, cfg, gen) {
-  if (!manifestCache) {
-    try {
-      const res = await fetch('data/art-manifest.json');
-      if (res.ok) manifestCache = await res.json();
-    } catch {
-      // leave the cache unset so a later open retries; swipes stay inert
-    }
-  }
-  if (gen !== viewerGen) return; // a newer open superseded this one
-  viewerManifest = filterByCats(manifestCache ?? [], cfg?.art?.cats);
-  // Don't clobber a swipe the user made while the manifest was loading.
-  if (!userStepped) viewerIndex = viewerManifest.findIndex((a) => a.img === vm.img);
-}
+let artList = []; // cats-filtered manifest, for fullscreen swiping
+let manifestCache = null; // fetched once; reused across card refreshes
 
 export async function fetchData(cfg, net) {
   // The manifest is static; fetch it once and reuse (also seeds the viewer),
   // instead of re-downloading the whole file on every 60 s card refresh.
   if (!manifestCache) manifestCache = await net.fetchJSON('data/art-manifest.json');
   const manifest = filterByCats(manifestCache, cfg.art?.cats);
+  artList = manifest; // stash for fullscreen swiping (passed to openImageViewer)
   if (!manifest.length) return { img: '', title: '', artist: '', year: '' };
   // Rotate deterministically on the user's interval so refreshes don't
   // repeat the same piece; the card re-renders each minute but the image
@@ -147,86 +45,4 @@ export async function fetchData(cfg, net) {
   const everyMs = (cfg.art?.every ?? 30) * 60 * 1000;
   const idx = Math.floor(Date.now() / everyMs) % manifest.length;
   return manifest[idx];
-}
-
-// Ambient slideshow engine: two stacked layers, crossfade via [data-active].
-// deps.now/random are injectable for tests.
-export function createSlideshow(manifest, host, { intervalMs = 75000, random = Math.random } = {}) {
-  let order = shuffle([...manifest.keys()], random);
-  let pos = 0;
-  let timer = null;
-  let active = 0;
-  let stopped = false;
-
-  host.innerHTML = `
-    <div class="slide" data-layer="0"></div>
-    <div class="slide" data-layer="1"></div>
-    <div class="slide-caption"></div>`;
-  const layers = [...host.querySelectorAll('.slide')];
-  const caption = host.querySelector('.slide-caption');
-
-  function shuffle(arr, rnd) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function itemAt(p) {
-    if (p >= order.length) {
-      order = shuffle(order, random);
-      pos = 0;
-    }
-    return manifest[order[pos]];
-  }
-
-  function show(item) {
-    const next = layers[1 - active];
-    next.style.backgroundImage = `url("${item.img}")`;
-    // Near-16:9 works fill the screen; anything else letterboxes on black
-    // rather than losing large parts of the canvas to a cover crop.
-    const nearScreen = item.ar && item.ar >= 1.55 && item.ar <= 2.1;
-    next.style.backgroundSize = nearScreen ? 'cover' : 'contain';
-    next.setAttribute('data-active', '');
-    layers[active].removeAttribute('data-active');
-    active = 1 - active;
-    caption.innerHTML = `<span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}</span>`;
-  }
-
-  function preload(item, done) {
-    const img = new Image();
-    img.onload = () => done();
-    img.onerror = () => done(); // show anyway; background-image will retry
-    img.src = item.img;
-  }
-
-  function advance() {
-    if (stopped) return;
-    const item = itemAt(pos);
-    pos += 1;
-    preload(item, () => {
-      // stop() during an in-flight preload must not resurrect the loop: the
-      // pending onload/onerror would otherwise schedule an uncancellable chain.
-      if (stopped) return;
-      show(item);
-      timer = setTimeout(advance, intervalMs);
-    });
-  }
-
-  return {
-    start() {
-      if (!manifest.length) return;
-      stopped = false;
-      advance();
-    },
-    stop() {
-      stopped = true;
-      clearTimeout(timer);
-    },
-    current() {
-      return manifest[order[Math.max(pos - 1, 0)]] ?? null;
-    },
-  };
 }

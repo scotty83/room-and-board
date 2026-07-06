@@ -10,6 +10,7 @@ import { fetchNewsFeed, newsFeedUrl } from './news.js';
 import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
 import { fetchPathRealtime } from './path.js';
 import { fetchFerryDepartures } from './ferry.js';
+import { fetchSubstackPosts } from './posts.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -157,6 +158,12 @@ export default {
 
     if (path === '/ferry/departures' && request.method === 'GET') {
       return cached(url.origin, 'ferry', 60, () => fetchFerryDepartures());
+    }
+
+    if (path === '/posts/substack' && request.method === 'GET') {
+      const pub = url.searchParams.get('pub') ?? '';
+      if (!/^[a-z0-9-]{2,64}$/.test(pub)) return json({ error: 'bad_pub' }, 400);
+      return cached(url.origin, `sub:${pub}`, 600, () => fetchSubstackPosts(pub));
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);

@@ -5,6 +5,7 @@ import { resetNjtToken } from '../../worker/src/njt.js';
 import { mapRidePath } from '../../worker/src/path.js';
 import GtfsRt from 'gtfs-realtime-bindings';
 import { mapFerryFeed } from '../../worker/src/ferry.js';
+import { mapSubstackPosts } from '../../worker/src/posts.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -444,5 +445,26 @@ describe('/ferry/departures', () => {
     ] }, 500);
     expect(out.updatedAt).toBe(500); // header timestamp fallback
     expect(out.trips).toEqual([{ tripId: '9', stops: [{ stopId: '4', t: 110 }] }]);
+  });
+});
+
+describe('/posts/substack', () => {
+  const SUB = [
+    { title: 'The AI Superforecasters', subtitle: 'Are here', post_date: '2026-07-02T12:00:00.000Z' },
+    { title: 'Untitled draftish', subtitle: null, post_date: null },
+  ];
+  beforeEach(() => clearCache('sub:acx'));
+  it('digests the publication API', async () => {
+    stubFetch([{ match: /acx\.substack\.com\/api\/v1\/posts/, body: SUB }]);
+    const res = await call('/posts/substack?pub=acx');
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.posts[0]).toEqual({ title: 'The AI Superforecasters', subtitle: 'Are here', t: Math.floor(Date.parse('2026-07-02T12:00:00.000Z') / 1000) });
+    expect(body.posts[1].t).toBe(0);
+    expect(mapSubstackPosts(null).posts).toEqual([]);
+  });
+  it('rejects bad slugs', async () => {
+    expect((await call('/posts/substack?pub=Not%20A%20Slug')).status).toBe(400);
+    expect((await call('/posts/substack')).status).toBe(400);
   });
 });

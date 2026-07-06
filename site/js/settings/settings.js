@@ -35,6 +35,7 @@ const WIDGET_LABELS = {
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
+import { BSKY_API } from '../widgets/posts.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 
@@ -113,6 +114,7 @@ const SECTIONS = [
   ['markets', 'Markets'],
   ['sports', 'My Teams'],
   ['news', 'Headlines'],
+  ['posts', 'Latest Posts'],
   ['worldclock', 'World Clock'],
   ['art', 'Art'],
   ['weather', 'Weather location'],
@@ -154,6 +156,7 @@ function renderSection() {
     markets: renderMarkets,
     sports: renderSports,
     news: renderNews,
+    posts: renderPosts,
     worldclock: renderWorldclock,
     art: renderArt,
     weather: renderWeather,
@@ -585,6 +588,91 @@ async function renderNews() {
       renderNews();
     }),
   );
+}
+
+/* ---------- latest posts ---------- */
+
+async function renderPosts() {
+  const accounts = state.cfg.posts.accounts;
+  const chips = accounts
+    .map((a, i) => `<button class="chip" data-rm-acct="${i}">${escapeHtml(a.label)} <small>${a.net === 'bsky' ? 'Bluesky' : 'Substack'}</small> ✕</button>`)
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">Latest Posts</h2>
+    <p class="pane__hint">Follow up to 6 Substack publications or Bluesky accounts — newest posts across all of them, merged. Tap a clipped post on the card to read it full screen.</p>
+    <div class="chips">${chips || '<span class="pane__empty">No accounts yet</span>'}</div>
+    <div class="rows">
+      <button class="row row--tap" data-add="substack">Add a Substack — type the publication name (the part before .substack.com)</button>
+      <button class="row row--tap" data-add="bsky">Add a Bluesky account — type the handle</button>
+    </div>
+    <div class="acct-pad" hidden>
+      <output class="code__display" aria-live="polite"></output>
+      <div class="keypad keypad--code"></div>
+      <p class="code__status"></p>
+    </div>`;
+  pane().querySelectorAll('[data-rm-acct]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.posts.accounts = accounts.filter((_, i) => i !== Number(chip.dataset.rmAcct));
+      renderPosts();
+    }),
+  );
+  const pad = pane().querySelector('.acct-pad');
+  const display = pad.querySelector('.code__display');
+  const status = pad.querySelector('.code__status');
+  const keys = pad.querySelector('.keypad');
+  let net = null;
+  let id = '';
+  pane().querySelectorAll('[data-add]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      net = btn.dataset.add;
+      id = '';
+      // Short identifiers only — never URLs. Bluesky gets a one-tap key for
+      // the common handle suffix.
+      keys.innerHTML =
+        'abcdefghijklmnopqrstuvwxyz0123456789-.'.split('')
+          .map((k) => `<button class="key" data-key="${k}">${k}</button>`)
+          .join('') +
+        (net === 'bsky' ? '<button class="key key--wide" data-key=".bsky.social">·bsky.social</button>' : '') +
+        '<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Check">Check</button>';
+      pad.hidden = false;
+      display.textContent = '';
+      status.textContent = '';
+      keys.querySelectorAll('[data-key]').forEach((k) =>
+        k.addEventListener('click', async () => {
+          const key = k.dataset.key;
+          if (key === '⌫') id = id.slice(0, -1);
+          else if (key === 'Check') {
+            await checkAndAdd();
+            return;
+          } else if (id.length < 60) id += key;
+          display.textContent = id;
+        }),
+      );
+    }),
+  );
+  async function checkAndAdd() {
+    if (accounts.length >= 6 || accounts.some((a) => a.net === net && a.id === id)) {
+      status.textContent = 'Already following that account (or the list is full).';
+      return;
+    }
+    status.textContent = 'Checking…';
+    try {
+      let label;
+      if (net === 'bsky') {
+        const prof = await fetchJSON(`${BSKY_API}/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`);
+        if (!prof.handle) throw new Error('not found');
+        label = (prof.displayName || prof.handle).slice(0, 30);
+      } else {
+        const digest = await fetchJSON(`${WORKER_URL}/posts/substack?pub=${encodeURIComponent(id)}`);
+        if (!digest.posts?.length) throw new Error('no posts');
+        label = id.slice(0, 30);
+      }
+      state.cfg.posts.accounts = [...accounts, { net, id, label }];
+      renderPosts();
+    } catch {
+      status.textContent = `Couldn't find "${id}" — check the ${net === 'bsky' ? 'handle' : 'publication name'}.`;
+    }
+  }
 }
 
 /* ---------- weather / display ---------- */

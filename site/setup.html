@@ -130,6 +130,20 @@
       <div id="news-sources" class="checks"></div>
     </section>
 
+    <section class="field" id="posts-field">
+      <h2>Latest Posts <small>(Substack publications + Bluesky accounts — up to 6)</small></h2>
+      <div id="posts-chips" class="chips"></div>
+      <div class="pickrow">
+        <select id="posts-net">
+          <option value="substack">Substack</option>
+          <option value="bsky">Bluesky</option>
+        </select>
+        <input id="posts-id" type="text" maxlength="60" placeholder="publication name or handle">
+        <button id="posts-add" type="button">Add</button>
+      </div>
+      <p id="posts-status" class="hint"></p>
+    </section>
+
     <section class="field">
       <h2>Display mode</h2>
       <select id="mode">

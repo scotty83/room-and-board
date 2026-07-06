@@ -10,6 +10,7 @@ import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
+import { BSKY_API } from '../widgets/posts.js';
 
 const $ = (sel) => document.querySelector(sel);
 const WIDGET_LABELS = {
@@ -77,6 +78,7 @@ async function boot() {
   renderWorldclockPrefs();
   await renderTeams();
   await renderNewsSources();
+  renderPostsAccounts();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -331,6 +333,47 @@ async function renderNjt() {
   }
   $('#njt-station').value = cfg.njt.station;
   $('#njt-station').addEventListener('change', (e) => (cfg.njt.station = e.target.value));
+}
+
+function renderPostsAccounts() {
+  const chips = $('#posts-chips');
+  const status = $('#posts-status');
+  const renderChips = () => {
+    chips.innerHTML = cfg.posts.accounts
+      .map((a, i) => `<button type="button" data-acct="${i}">${a.label} (${a.net === 'bsky' ? 'Bluesky' : 'Substack'}) ✕</button>`)
+      .join('');
+    chips.querySelectorAll('[data-acct]').forEach((b) =>
+      b.addEventListener('click', () => {
+        cfg.posts.accounts = cfg.posts.accounts.filter((_, i) => i !== Number(b.dataset.acct));
+        renderChips();
+      }),
+    );
+  };
+  renderChips();
+  $('#posts-add').addEventListener('click', async () => {
+    const net = $('#posts-net').value;
+    const id = $('#posts-id').value.trim().toLowerCase();
+    if (!id || cfg.posts.accounts.length >= 6 || cfg.posts.accounts.some((a) => a.net === net && a.id === id)) return;
+    status.textContent = 'Checking…';
+    try {
+      let label;
+      if (net === 'bsky') {
+        const prof = await (await fetch(`${BSKY_API}/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`)).json();
+        if (!prof.handle) throw new Error('not found');
+        label = (prof.displayName || prof.handle).slice(0, 30);
+      } else {
+        const digest = await (await fetch(`${WORKER_URL}/posts/substack?pub=${encodeURIComponent(id)}`)).json();
+        if (!digest.posts?.length) throw new Error('not found');
+        label = id.slice(0, 30);
+      }
+      cfg.posts.accounts = [...cfg.posts.accounts, { net, id, label }];
+      $('#posts-id').value = '';
+      status.textContent = '';
+      renderChips();
+    } catch {
+      status.textContent = `Couldn't find "${id}".`;
+    }
+  });
 }
 
 function renderPath() {

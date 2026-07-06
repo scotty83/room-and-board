@@ -148,6 +148,8 @@ the URL fragment and the dashboard returns configured.
 | MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
+| Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |
+| Bluesky public AppView (latest posts) | direct, keyless | CORS-open; also validates handles when adding accounts |
 | TrainTime (LIRR tracks) | direct, unofficial | feature-detected; drops silently if the host vanishes |
 | NJ Transit RailData | Worker + credentials | their ToS **requires** serving from a non-NJT server |
 | Yahoo Finance (markets) | Worker, unofficial | browser UA + 5 min cache; widget hides if it breaks |

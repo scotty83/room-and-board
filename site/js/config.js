@@ -40,8 +40,22 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
-  substack: Object.freeze({ pubs: Object.freeze([]) }), // [{id: slug, label}] up to 6
-  bsky: Object.freeze({ handles: Object.freeze([]) }), // [{id: handle, label}] up to 6
+  // Starter accounts (AI/tech/finance, politically neutral, verified active
+  // 2026-07-05) — removable entries like the markets tickers.
+  substack: Object.freeze({ pubs: Object.freeze([
+    { id: 'oneusefulthing', label: 'One Useful Thing' },
+    { id: 'importai', label: 'Import AI' },
+    { id: 'netinterest', label: 'Net Interest' },
+    { id: 'pragmaticengineer', label: 'The Pragmatic Engineer' },
+    { id: 'exponentialview', label: 'Exponential View' },
+  ].map(Object.freeze)) }),
+  bsky: Object.freeze({ handles: Object.freeze([
+    { id: 'bloomberg.com', label: 'Bloomberg' },
+    { id: 'reuters.com', label: 'Reuters' },
+    { id: 'theverge.com', label: 'The Verge' },
+    { id: 'emollick.bsky.social', label: 'Ethan Mollick' },
+    { id: 'simonwillison.net', label: 'Simon Willison' },
+  ].map(Object.freeze)) }),
   njt: Object.freeze({ station: 'NY', alerts: true }),
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
@@ -131,23 +145,32 @@ export function normalizeConfig(raw) {
     },
     // Short-lived combined `posts` configs (2026-07-05) migrate into the two
     // split widgets; the account shape {id, label} stays.
+    // An empty follow list falls back to the starter accounts (a card with
+    // zero accounts is never useful — remove the widget instead), matching
+    // the markets-tickers convention.
     substack: {
-      pubs: [
-        ...(Array.isArray(raw.substack?.pubs) ? raw.substack.pubs : []),
-        ...(Array.isArray(raw.posts?.accounts) ? raw.posts.accounts.filter((a) => a?.net === 'substack') : []),
-      ]
-        .filter((a) => /^[a-z0-9-]{2,64}$/.test(a?.id ?? ''))
-        .map((a) => ({ id: a.id, label: str(a.label, a.id, 30) }))
-        .slice(0, 6),
+      pubs: (() => {
+        const list = [
+          ...(Array.isArray(raw.substack?.pubs) ? raw.substack.pubs : []),
+          ...(Array.isArray(raw.posts?.accounts) ? raw.posts.accounts.filter((a) => a?.net === 'substack') : []),
+        ]
+          .filter((a) => /^[a-z0-9-]{2,64}$/.test(a?.id ?? ''))
+          .map((a) => ({ id: a.id, label: str(a.label, a.id, 30) }))
+          .slice(0, 6);
+        return list.length ? list : DEFAULT_CONFIG.substack.pubs.map((a) => ({ ...a }));
+      })(),
     },
     bsky: {
-      handles: [
-        ...(Array.isArray(raw.bsky?.handles) ? raw.bsky.handles : []),
-        ...(Array.isArray(raw.posts?.accounts) ? raw.posts.accounts.filter((a) => a?.net === 'bsky') : []),
-      ]
-        .filter((a) => /^[a-z0-9.-]{4,253}$/i.test(a?.id ?? ''))
-        .map((a) => ({ id: a.id, label: str(a.label, a.id, 30) }))
-        .slice(0, 6),
+      handles: (() => {
+        const list = [
+          ...(Array.isArray(raw.bsky?.handles) ? raw.bsky.handles : []),
+          ...(Array.isArray(raw.posts?.accounts) ? raw.posts.accounts.filter((a) => a?.net === 'bsky') : []),
+        ]
+          .filter((a) => /^[a-z0-9.-]{4,253}$/i.test(a?.id ?? ''))
+          .map((a) => ({ id: a.id, label: str(a.label, a.id, 30) }))
+          .slice(0, 6);
+        return list.length ? list : DEFAULT_CONFIG.bsky.handles.map((a) => ({ ...a }));
+      })(),
     },
     markets: {
       // An empty list falls back to the defaults (a markets card with zero
@@ -209,8 +232,13 @@ async function pipe(bytes, transform) {
 }
 
 export async function encodeConfig(cfg) {
-  // `widgets` is derived from layout; keep the wire format minimal.
+  // Keep the wire format minimal: `widgets` is derived from layout, and
+  // follow lists equal to the starter defaults re-derive on decode (only
+  // customized lists pay for their bytes in the URL fragment).
   const { widgets, ...wire } = cfg;
+  const isDefault = (list, defs) => JSON.stringify(list) === JSON.stringify(defs);
+  if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
+  if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }

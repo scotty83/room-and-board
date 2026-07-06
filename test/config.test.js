@@ -160,6 +160,8 @@ describe('encode/decode round trip', () => {
       sports: { teams: [{ lg: 'mlb', id: 'nym' }, { lg: 'nfl', id: 'nyj' }, { lg: 'nba', id: 'nyk' }, { lg: 'nhl', id: 'nyr' }, { lg: 'mls', id: 'nyc' }, { lg: 'epl', id: 'ars' }] },
       markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOG', 'META'] },
       news: { sources: ['nyt-home', 'nyt-us', 'nyt-business', 'npr', 'bbc', 'nyt-nyregion', 'gothamist'] },
+      substack: { pubs: Array.from({ length: 6 }, (_, i) => ({ id: `custompublication${i}`, label: `A Custom Publication Name ${i}` })) },
+      bsky: { handles: Array.from({ length: 6 }, (_, i) => ({ id: `somelongname${i}.bsky.social`, label: `Custom Person Number ${i}` })) },
       worldclock: { cities: [
         { label: 'New York', zone: 'America/New_York' }, { label: 'San Francisco', zone: 'America/Los_Angeles' },
         { label: 'Kansas City', zone: 'America/Chicago' }, { label: 'Bermuda', zone: 'Atlantic/Bermuda' },
@@ -170,9 +172,14 @@ describe('encode/decode round trip', () => {
     });
     const enc = await encodeConfig(cfg);
     // 2048-char URL minus ~100 chars of bridge auth leaves ~1900 for the
-    // fragment; the fully-maxed config (10 tickers, 10 clock cities, 7 feeds)
-    // measures 916, so 1000 still guards roughly 2x headroom.
-    expect(enc.length).toBeLessThan(1000);
+    // fragment; the fully-maxed config (10 tickers, 10 clock cities, 7 feeds,
+    // 12 fully-custom follow accounts) measures ~1120, so 1200 still guards
+    // ~1.6x headroom. Default follow lists are stripped from the wire and
+    // re-derived on decode, so untouched boards stay far smaller.
+    expect(enc.length).toBeLessThan(1200);
+
+    const plain = await encodeConfig(normalizeConfig({}));
+    expect(plain.length).toBeLessThan(700); // starter lists never ship
   });
 
   it('throws on corrupt input', async () => {
@@ -224,10 +231,12 @@ describe('path/ferry/wotd config (v3 additive)', () => {
 });
 
 describe('substack/bsky config', () => {
-  it('defaults empty and sanitizes entries', () => {
+  it('defaults to the starter accounts and sanitizes entries', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.substack).toEqual({ pubs: [] });
-    expect(cfg.bsky).toEqual({ handles: [] });
+    expect(cfg.substack.pubs).toEqual(DEFAULT_CONFIG.substack.pubs.map((a) => ({ ...a })));
+    expect(cfg.bsky.handles).toEqual(DEFAULT_CONFIG.bsky.handles.map((a) => ({ ...a })));
+    // Emptied lists fall back to the starters (markets-tickers convention).
+    expect(normalizeConfig({ substack: { pubs: [] } }).substack.pubs.length).toBe(5);
     const filled = normalizeConfig({
       substack: { pubs: [{ id: 'astralcodexten', label: 'ACX' }, { id: 'Bad Slug!', label: 'x' }] },
       bsky: { handles: [{ id: 'nytimes.com', label: 'NYT' }] },

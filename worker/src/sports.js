@@ -74,17 +74,17 @@ export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null) {
   return row;
 }
 
-export async function fetchTeamSummary(lg, id) {
-  const base = `https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/teams/${id}`;
-  const teamRes = await fetch(base);
-  if (!teamRes.ok) throw new Error(`espn team ${teamRes.status}`);
-  const teamJson = await teamRes.json();
-  const abbr = teamJson?.team?.abbreviation ?? '';
-
-  // Last-game line from the schedule feed, best-effort. The /sports/team route
-  // wraps this whole summary in the 120s Cache-API layer, so no separate cache
-  // is needed here (this used to keep a 30-min KV cache of its own, which added
-  // to the KV writes that exhausted the daily cap).
+// The schedule payload runs ~2 MB and its last result changes a few times a
+// day, but the /sports/team summary is only 120s-cached (for live scores).
+// Cache the digested last-game line on its own 30-min Cache-API entry so the
+// heavy schedule isn't re-downloaded on every 120s refresh per followed team.
+async function cachedLastLine(origin, lg, id, abbr, base) {
+  const cache = caches.default;
+  const key = origin && new Request(`${origin}/__cache/sched/${lg}:${id}`);
+  if (key) {
+    const hit = await cache.match(key);
+    if (hit) return (await hit.json()).lastLine ?? null;
+  }
   let lastLine = null;
   try {
     const schedRes = await fetch(`${base}/schedule`);
@@ -92,6 +92,24 @@ export async function fetchTeamSummary(lg, id) {
   } catch {
     lastLine = null;
   }
+  if (key) {
+    try {
+      await cache.put(key, new Response(JSON.stringify({ lastLine }), { headers: { 'Cache-Control': 'max-age=1800' } }));
+    } catch {
+      // best-effort
+    }
+  }
+  return lastLine;
+}
+
+export async function fetchTeamSummary(lg, id, origin) {
+  const base = `https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/teams/${id}`;
+  const teamRes = await fetch(base);
+  if (!teamRes.ok) throw new Error(`espn team ${teamRes.status}`);
+  const teamJson = await teamRes.json();
+  const abbr = teamJson?.team?.abbreviation ?? '';
+
+  const lastLine = await cachedLastLine(origin, lg, id, abbr, base);
   // The team endpoint nulls competitor scores while a game is live; only the
   // league scoreboard carries them (verified 2026-07-03). Join by event id,
   // Worker-side only — the ~250 KB scoreboard never reaches a board, and it's

@@ -36,7 +36,15 @@ function randomCode() {
   return code;
 }
 
-async function postCode(request, env) {
+async function postCode(request, env, origin) {
+  // Per-IP throttle (Cache API, not KV) so an anonymous flood can't burn the
+  // 1000/day KV write cap and break setup-code generation fleet-wide — the
+  // exact failure that forced the Cache-API migration above.
+  const ip = request.headers.get('CF-Connecting-IP') ?? 'anon';
+  const throttleKey = new Request(`${origin}/__throttle/code/${encodeURIComponent(ip)}`);
+  const cache = caches.default;
+  if (await cache.match(throttleKey)) return json({ error: 'rate_limited' }, 429);
+
   let body;
   try {
     body = await request.json();
@@ -47,10 +55,16 @@ async function postCode(request, env) {
     return json({ error: 'missing_cfg' }, 400);
   }
   if (body.cfg.length > MAX_CFG_CHARS) return json({ error: 'cfg_too_large' }, 413);
+  await cache.put(throttleKey, new Response('1', { headers: { 'Cache-Control': 'max-age=10' } }));
   for (let attempt = 0; attempt < 3; attempt++) {
     const code = randomCode();
     if (await env.CODES.get(`code:${code}`)) continue; // collision, retry
-    await env.CODES.put(`code:${code}`, body.cfg, { expirationTtl: CODE_TTL_S });
+    try {
+      await env.CODES.put(`code:${code}`, body.cfg, { expirationTtl: CODE_TTL_S });
+    } catch {
+      // KV write cap hit or namespace unavailable — clear error, not a raw 500.
+      return json({ error: 'code_service_unavailable' }, 503);
+    }
     return json({ code, expiresInSeconds: CODE_TTL_S });
   }
   return json({ error: 'code_generation_failed' }, 500);
@@ -90,7 +104,12 @@ async function cached(origin, key, ttlS, fetcher) {
       new Response(body, {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': `max-age=${ttl}` },
       });
-    await Promise.all([cache.put(freshKey, entry(ttlS)), cache.put(staleKey, entry(STALE_TTL_S))]);
+    try {
+      await Promise.all([cache.put(freshKey, entry(ttlS)), cache.put(staleKey, entry(STALE_TTL_S))]);
+    } catch {
+      // Caching is best-effort — a put failure must not drop the fresh payload
+      // we already fetched.
+    }
     return json(fresh);
   } catch (err) {
     const stale = await cache.match(staleKey);
@@ -105,7 +124,10 @@ const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500'
 const DEFAULT_SYMBOLS = Object.keys(INDEX_NAMES);
 
 async function fetchMarkets(symbols) {
-  const indices = await Promise.all(
+  // One unresolvable symbol shouldn't 502 the whole batch (and, without a
+  // negative cache, re-hit Yahoo for the good symbols on every retry). Drop
+  // the failures; only a total wipeout throws (so cached() serves stale/502).
+  const settled = await Promise.allSettled(
     symbols.map(async (symbol) => {
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=15m`;
       const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA } });
@@ -113,6 +135,8 @@ async function fetchMarkets(symbols) {
       return mapYahooChart(await res.json(), INDEX_NAMES[symbol]);
     }),
   );
+  const indices = settled.filter((s) => s.status === 'fulfilled').map((s) => s.value);
+  if (!indices.length) throw new Error('yahoo: all symbols failed');
   return { updatedAt: Math.floor(Date.now() / 1000), stale: false, indices };
 }
 
@@ -122,7 +146,7 @@ export default {
     const path = url.pathname;
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
-    if (path === '/code' && request.method === 'POST') return postCode(request, env);
+    if (path === '/code' && request.method === 'POST') return postCode(request, env, url.origin);
 
     const codeMatch = /^\/code\/([A-Za-z0-9]{6})$/.exec(path);
     if (codeMatch && request.method === 'GET') return getCode(env, codeMatch[1]);
@@ -148,8 +172,11 @@ export default {
         .map((t) => t.trim().toUpperCase())
         .filter((t) => /^[\^A-Z0-9.\-]{1,10}$/.test(t))
         .slice(0, 10);
-      const symbols = requested.length ? requested : DEFAULT_SYMBOLS;
-      return cached(url.origin, `markets:${symbols.join(',')}`, 300, () => fetchMarkets(symbols));
+      // Dedupe for the fetch, but keep request order for display; the cache
+      // key is sorted so AAPL,MSFT and MSFT,AAPL coalesce to one entry.
+      const symbols = [...new Set(requested.length ? requested : DEFAULT_SYMBOLS)];
+      const cacheKey = [...symbols].sort().join(',');
+      return cached(url.origin, `markets:${cacheKey}`, 300, () => fetchMarkets(symbols));
     }
 
     if (path === '/path/realtime' && request.method === 'GET') {
@@ -174,8 +201,12 @@ export default {
     if (path === '/sports/team' && request.method === 'GET') {
       const lg = url.searchParams.get('lg');
       const id = (url.searchParams.get('id') ?? '').toLowerCase();
-      if (!SPORTS_LEAGUES[lg] || !/^[a-z0-9]{1,8}$/.test(id)) return json({ error: 'bad_team' }, 400);
-      return cached(url.origin, `sports:${lg}:${id}`, 120, () => fetchTeamSummary(lg, id));
+      // Object.hasOwn, not truthiness — 'constructor'/'toString' inherit from
+      // the prototype and would otherwise pass the whitelist check.
+      if (!Object.hasOwn(SPORTS_LEAGUES, lg ?? '') || !/^[a-z0-9]{1,8}$/.test(id)) {
+        return json({ error: 'bad_team' }, 400);
+      }
+      return cached(url.origin, `sports:${lg}:${id}`, 120, () => fetchTeamSummary(lg, id, url.origin));
     }
 
     const newsMatch = /^\/news\/([a-z0-9-]{1,24})$/.exec(path);

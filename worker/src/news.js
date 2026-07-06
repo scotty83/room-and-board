@@ -8,7 +8,9 @@ const FEEDS = {
 };
 
 export function newsFeedUrl(id) {
-  return FEEDS[id] ?? null;
+  // Object.hasOwn so inherited keys ('constructor' matches the route regex)
+  // don't resolve to a prototype member instead of null.
+  return Object.hasOwn(FEEDS, id) ? FEEDS[id] : null;
 }
 
 export async function fetchNewsFeed(id) {

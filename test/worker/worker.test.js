@@ -58,7 +58,12 @@ describe('CORS and routing', () => {
   });
 });
 
+const clearThrottle = (ip = 'anon') =>
+  caches.default.delete(new Request(`https://api.test/__throttle/code/${encodeURIComponent(ip)}`));
+
 describe('/code exchange', () => {
+  beforeEach(() => clearThrottle());
+
   it('stores a config and returns a 6-char single-use code', async () => {
     const post = await call('/code', {
       method: 'POST',
@@ -304,6 +309,27 @@ describe('/sports/team live scores', () => {
   });
 });
 
+describe('/code rate limiting', () => {
+  beforeEach(() => clearThrottle('1.2.3.4'));
+  it('429s a second code request from the same IP within the window', async () => {
+    const init = { method: 'POST', body: JSON.stringify({ cfg: 'abc123' }), headers: { 'CF-Connecting-IP': '1.2.3.4' } };
+    expect((await call('/code', init)).status).toBe(200);
+    expect((await call('/code', init)).status).toBe(429);
+  });
+  it('does not throttle on invalid requests', async () => {
+    const ip = { 'CF-Connecting-IP': '1.2.3.4' };
+    expect((await call('/code', { method: 'POST', body: 'nope', headers: ip })).status).toBe(400);
+    expect((await call('/code', { method: 'POST', body: JSON.stringify({ cfg: 'ok123' }), headers: ip })).status).toBe(200);
+  });
+});
+
+describe('/sports/team prototype-key guard', () => {
+  it('rejects inherited-property league names', async () => {
+    expect((await call('/sports/team?lg=constructor&id=abc')).status).toBe(400);
+    expect((await call('/sports/team?lg=toString&id=abc')).status).toBe(400);
+  });
+});
+
 describe('/news', () => {
   it('proxies whitelisted feeds and 404s unknown ids', async () => {
     await clearCache('news:npr');
@@ -328,7 +354,7 @@ describe('/markets', () => {
     },
   });
 
-  beforeEach(() => clearCache('markets:^DJI,^IXIC,^GSPC'));
+  beforeEach(() => clearCache('markets:^DJI,^GSPC,^IXIC')); // cache key is sorted
 
   it('serves custom symbols with Yahoo shortName fallback', async () => {
     await clearCache('markets:AAPL');

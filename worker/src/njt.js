@@ -87,11 +87,23 @@ export async function fetchNjtDepartures(env, station) {
 }
 
 export async function fetchNjtStations(env) {
-  if (!cachedToken) {
-    const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
-    cachedToken = tok?.UserToken;
+  const getList = async () => {
+    if (!cachedToken) {
+      const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
+      cachedToken = tok?.UserToken;
+      if (!cachedToken) throw new Error('njt token missing');
+    }
+    return form(`${BASE}/getStationList`, { token: cachedToken });
+  };
+  let json;
+  try {
+    json = await getList();
+  } catch {
+    // One retry with a fresh token covers expiry-driven failures (mirrors
+    // fetchNjtDepartures).
+    cachedToken = null;
+    json = await getList();
   }
-  const json = await form(`${BASE}/getStationList`, { token: cachedToken });
   const items = Array.isArray(json) ? json : json?.STATIONS ?? [];
   return items
     .map((s) => ({ code: String(s.STATION_2CHAR ?? s.code ?? ''), name: String(s.STATIONNAME ?? s.name ?? '') }))

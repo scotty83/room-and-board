@@ -25,6 +25,15 @@ export function setCardNote(el, text) {
   note.textContent = text;
 }
 
+// Extract an iCloud shared-album token from a full URL, a #fragment, or a bare
+// token. Case-sensitive (the token is), lenient about surrounding text.
+export function parseAlbumToken(input) {
+  let s = String(input ?? '').trim();
+  if (s.includes('#')) s = s.slice(s.lastIndexOf('#') + 1); // token lives after the fragment
+  s = s.replace(/[^A-Za-z0-9].*$/, ''); // drop a trailing slash or any junk
+  return /^[A-Za-z0-9]{8,25}$/.test(s) ? s : null;
+}
+
 // Deterministic per-calendar-day pick, shared by the quote and word widgets.
 export function dailyPick(list, date) {
   const start = Date.UTC(date.getFullYear(), 0, 0);

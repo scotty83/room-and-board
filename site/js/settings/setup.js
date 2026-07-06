@@ -122,6 +122,18 @@ async function boot() {
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
+
+  $('#to-step-2').addEventListener('click', () => {
+    applyStepTwo();
+    $('#step-1').hidden = true;
+    $('#step-2').hidden = false;
+    window.scrollTo(0, 0);
+  });
+  $('#to-step-1').addEventListener('click', () => {
+    $('#step-2').hidden = true;
+    $('#step-1').hidden = false;
+    window.scrollTo(0, 0);
+  });
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -135,6 +147,19 @@ export function widgetChecksHtml(labels, placed) {
         `<label><input type="checkbox" data-w="${id}" ${placed.has(id) ? 'checked' : ''}> ${labels[id]}</label>`,
       ).join('')}</div>
     </section>`).join('');
+}
+
+// Hide step-2 config sections + dividers that don't apply to the current picks.
+function applyStepTwo() {
+  const placed = new Set(cfg.layout.map((r) => r.id));
+  const { sections, groups } = stepTwoVisibility(placed);
+  for (const s of SETUP_SECTIONS) {
+    const el = document.getElementById(s.id);
+    if (el) el.hidden = !sections.has(s.id);
+  }
+  document.querySelectorAll('#step-2 [data-group]').forEach((d) => {
+    d.hidden = !groups.has(d.dataset.group);
+  });
 }
 
 function renderWidgets() {

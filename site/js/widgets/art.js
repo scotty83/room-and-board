@@ -40,12 +40,21 @@ export function swipeAction(dx, dy) {
 let stripTimer = null;
 let viewerManifest = null; // cats-filtered list for the open viewer session
 let viewerIndex = -1;
+let viewerGen = 0; // bumped per open; a slow manifest load from a prior open bails
+let userStepped = false; // guards the async load from clobbering a swipe
+let manifestCache = null; // shared by fetchData and the viewer; fetched once
 
 // Full-screen viewer: tap the dashboard art card to open, tap anywhere to
 // close, swipe left/right to browse the (category-filtered) manifest. Shows
 // the ambient info strip so the clock stays visible. Stays up indefinitely
 // (mode changes don't touch it).
 export function openViewer(vm, cfg) {
+  // Reset session state synchronously so a stale previous-session manifest
+  // can't be swiped before this open's manifest loads.
+  const gen = ++viewerGen;
+  viewerManifest = null;
+  viewerIndex = -1;
+  userStepped = false;
   let viewer = document.querySelector('#art-viewer');
   if (!viewer) {
     viewer = document.createElement('div');
@@ -87,13 +96,14 @@ export function openViewer(vm, cfg) {
   refreshStrip();
   clearInterval(stripTimer);
   stripTimer = setInterval(refreshStrip, 30 * 1000);
-  loadViewerManifest(vm, cfg);
+  loadViewerManifest(vm, cfg, gen);
   viewer.hidden = false;
 }
 
 // Swap in place: preload first (slideshow pattern), then update img + caption.
 function step(viewer, dir) {
   if (!viewerManifest?.length) return;
+  userStepped = true;
   viewerIndex = (viewerIndex + dir + viewerManifest.length) % viewerManifest.length;
   const item = viewerManifest[viewerIndex];
   const img = new Image();
@@ -110,19 +120,27 @@ function step(viewer, dir) {
   img.src = item.img;
 }
 
-async function loadViewerManifest(vm, cfg) {
-  try {
-    const res = await fetch('data/art-manifest.json');
-    const all = res.ok ? await res.json() : [];
-    viewerManifest = filterByCats(all, cfg?.art?.cats);
-  } catch {
-    viewerManifest = []; // swipes inert; tap-close still works
+async function loadViewerManifest(vm, cfg, gen) {
+  if (!manifestCache) {
+    try {
+      const res = await fetch('data/art-manifest.json');
+      if (res.ok) manifestCache = await res.json();
+    } catch {
+      // leave the cache unset so a later open retries; swipes stay inert
+    }
   }
-  viewerIndex = viewerManifest.findIndex((a) => a.img === vm.img);
+  if (gen !== viewerGen) return; // a newer open superseded this one
+  viewerManifest = filterByCats(manifestCache ?? [], cfg?.art?.cats);
+  // Don't clobber a swipe the user made while the manifest was loading.
+  if (!userStepped) viewerIndex = viewerManifest.findIndex((a) => a.img === vm.img);
 }
 
 export async function fetchData(cfg, net) {
-  const manifest = filterByCats(await net.fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+  // The manifest is static; fetch it once and reuse (also seeds the viewer),
+  // instead of re-downloading the whole file on every 60 s card refresh.
+  if (!manifestCache) manifestCache = await net.fetchJSON('data/art-manifest.json');
+  const manifest = filterByCats(manifestCache, cfg.art?.cats);
+  if (!manifest.length) return { img: '', title: '', artist: '', year: '' };
   // Rotate deterministically on the user's interval so refreshes don't
   // repeat the same piece; the card re-renders each minute but the image
   // only changes when the interval bucket flips.
@@ -138,6 +156,7 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   let pos = 0;
   let timer = null;
   let active = 0;
+  let stopped = false;
 
   host.innerHTML = `
     <div class="slide" data-layer="0"></div>
@@ -184,9 +203,13 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   }
 
   function advance() {
+    if (stopped) return;
     const item = itemAt(pos);
     pos += 1;
     preload(item, () => {
+      // stop() during an in-flight preload must not resurrect the loop: the
+      // pending onload/onerror would otherwise schedule an uncancellable chain.
+      if (stopped) return;
       show(item);
       timer = setTimeout(advance, intervalMs);
     });
@@ -195,9 +218,11 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   return {
     start() {
       if (!manifest.length) return;
+      stopped = false;
       advance();
     },
     stop() {
+      stopped = true;
       clearTimeout(timer);
     },
     current() {

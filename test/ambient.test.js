@@ -122,3 +122,20 @@ describe('swipeAction', () => {
     expect(swipeAction(30, 4)).toBe(null);    // drag, neither tap nor swipe
   });
 });
+
+describe('createSlideshow stop() safety', () => {
+  it('a stop() during a pending preload never resurrects the advance loop', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('Image', class { set src(_v) { this._fire = () => this.onload?.(); Slideshow._pending.push(this); } });
+    const host = document.createElement('div');
+    const s = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0 });
+    s.start(); // advance → preload → onload pending (not fired)
+    s.stop(); // stopped while the preload is in flight
+    Slideshow._pending.forEach((img) => img._fire()); // resolve the pending onload
+    vi.advanceTimersByTime(10000);
+    expect(host.querySelector('.slide-caption').innerHTML.trim()).toBe(''); // never showed
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+});
+const Slideshow = { _pending: [] };

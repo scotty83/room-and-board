@@ -6,6 +6,12 @@ import { escapeHtml } from './util.js';
 import { stripData, stripHtml } from './ambient.js';
 import { loadCache } from './store.js';
 
+// Caption metadata line: artist [· year] for art; empty when absent (e.g. photos).
+function captionMeta(item) {
+  if (!item.artist) return '';
+  return `${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}`;
+}
+
 // Pointer-gesture classifier for the viewer: horizontal drags navigate,
 // small movements are taps (close), anything ambiguous is ignored.
 export function swipeAction(dx, dy) {
@@ -57,7 +63,7 @@ export function openImageViewer(current, cfg, { list = [] } = {}) {
     <img class="art-viewer__img" src="${escapeHtml(current.img)}" alt="${escapeHtml(current.title)}">
     <div class="slide-caption">
       <span class="slide-caption__title">${escapeHtml(current.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(current.artist)}${current.year ? ` · ${escapeHtml(current.year)}` : ''}</span>
+      <span class="slide-caption__meta">${captionMeta(current)}</span>
     </div>
     <div class="strip"></div>`;
   const strip = viewer.querySelector('.strip');
@@ -88,7 +94,7 @@ function step(viewer, dir) {
     imgEl.alt = item.title;
     viewer.querySelector('.slide-caption').innerHTML = `
       <span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}</span>`;
+      <span class="slide-caption__meta">${captionMeta(item)}</span>`;
   };
   img.onload = swap;
   img.onerror = swap; // show anyway; <img> will retry like the slideshow does
@@ -138,7 +144,7 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
     layers[active].removeAttribute('data-active');
     active = 1 - active;
     caption.innerHTML = `<span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}</span>`;
+      <span class="slide-caption__meta">${captionMeta(item)}</span>`;
   }
 
   function preload(item, done) {

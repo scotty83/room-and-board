@@ -348,6 +348,36 @@ describe('imageshow module', () => {
   });
 });
 
+describe('viewer caption meta — photos vs art', () => {
+  beforeAll(() => {
+    document.querySelector('#art-viewer')?.remove();
+  });
+  afterAll(() => {
+    document.querySelector('#art-viewer')?.remove();
+  });
+
+  it('photo item (no artist) shows empty meta — not "undefined"', async () => {
+    vi.resetModules();
+    const { openImageViewer } = await import('../site/js/imageshow.js');
+    const photo = { img: 'https://x.test/photo.jpg', title: 'Sunset', date: '2024-06-01', ar: 1.78 };
+    openImageViewer(photo, CFG, { list: [photo] });
+    const viewer = document.querySelector('#art-viewer');
+    const meta = viewer.querySelector('.slide-caption__meta');
+    expect(meta.textContent).not.toContain('undefined');
+    expect(meta.textContent).toBe('');
+  });
+
+  it('art item (with artist) still renders artist · year in meta', async () => {
+    vi.resetModules();
+    const { openImageViewer } = await import('../site/js/imageshow.js');
+    const artwork = { img: 'https://x.test/art.jpg', title: 'Wheat Fields', artist: 'Jacob van Ruisdael', year: '1670', ar: 1.5 };
+    openImageViewer(artwork, CFG, { list: [artwork] });
+    const viewer = document.querySelector('#art-viewer');
+    const meta = viewer.querySelector('.slide-caption__meta');
+    expect(meta.textContent).toBe('Jacob van Ruisdael · 1670');
+  });
+});
+
 describe('art fullscreen swipes via artList', () => {
   beforeAll(() => {
     // Remove any #art-viewer left by earlier tests so the fresh module instance

@@ -41,6 +41,81 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
   every save is mirrored to the macro vault over the device's own WebSocket
   xAPI, and the macro re-seeds the page through the URL fragment after a wipe.
 
+## Widgets
+
+Everything is opt-in. Toggle widgets on/off under **Settings → Widgets**, then
+tap the **✎ pencil** to drag, resize, and arrange them on the 12×8 grid — each
+widget has a minimum size and shows more content as you make its card bigger
+(the edit screen tells you how many rows fit). The clock/greeting across the top
+is always on. Every widget degrades gracefully: a dead feed dims the card and
+stamps "as of …" rather than going blank, and long text taps to full screen.
+
+Configure each widget in its own **Settings** section (on the board by touch, or
+from your phone at `/setup`). Configurable list widgets (markets, sports, world
+clock, headlines, Substack, Bluesky) ship with sensible starter entries you can
+remove like any other.
+
+### Weather & sky
+
+- **Weather** — current conditions, an hourly strip, and a multi-day forecast,
+  with a National Weather Service alert banner when one is active. *Configure:*
+  Settings → Weather location (pick a preset or enter a ZIP; drives Air & Sky too).
+- **Air & Sky** — labeled AQI and UV-index dials (color-coded by band), plus
+  sunrise, sunset, and the moon phase. *Configure:* none — uses your weather location.
+
+### NYC-area transit
+
+- **Subway Status** — Good Service or the current alert for each line you pick.
+  *Configure:* Settings → Subway (tap line bullets; shuttle "S" and express
+  variants are matched automatically).
+- **LIRR** / **Metro-North** — Penn Station / Grand Central departure boards
+  with live minutes, track, and service alerts. *Configure:* their Settings
+  sections; optionally filter to trains stopping at one station (named in the
+  card corner), and toggle the alert banner.
+- **NJ Transit** — departures for one rail station, with track and status; a
+  delayed-but-boardable train stays on the board past its scheduled minute.
+  *Configure:* Settings → NJ Transit (pick a station; toggle alerts).
+- **PATH** — next trains at one station as colored line dots + minutes; choose
+  one direction or both. *Configure:* Settings → PATH.
+- **NYC Ferry** — next departures from one landing, with route name and color.
+  *Configure:* Settings → NYC Ferry.
+- **MTA Bus** — arrivals for up to two stop codes (the 6-digit number on the
+  bus-stop sign), in minutes or distance. *Configure:* Settings → MTA Bus
+  (needs a free BusTime key on the Worker; see Data sources).
+
+### Markets, sports & news
+
+- **Markets** — Dow / Nasdaq / S&P by default, plus any tickers you add
+  (indexes start with `^`), each with a sparkline and change. *Configure:*
+  Settings → Markets (add/remove tickers; unknown symbols are rejected).
+- **My Teams** — one glanceable row per followed team: live score, final, or
+  next game, with the last result. *Configure:* Settings → My Teams (up to 6,
+  across MLB/NFL/NBA/NHL/MLS/EPL).
+- **World Cup 2026** — live / upcoming / recent matches during the tournament.
+  *Configure:* none.
+- **Headlines** — newest stories merged across the news sources you enable
+  (NYT sections, NPR, BBC, Gothamist). *Configure:* Settings → Headlines.
+- **Substack** — latest posts from up to 6 followed publications. *Configure:*
+  Settings → Substack (type the publication name before `.substack.com`).
+- **Bluesky** — latest posts from up to 6 followed accounts. *Configure:*
+  Settings → Bluesky (type the handle; a one-tap `.bsky.social` key helps).
+
+### Time & ambient
+
+- **World Clock** — up to 10 cities in order of their current time, with a
+  next-day marker. *Configure:* Settings → World Clock (offices or any zone).
+- **Art** — a rotating public-domain artwork (Met / Art Institute of Chicago /
+  Cleveland); tap it for full screen, and swipe there to browse. Also powers the
+  ambient screensaver. *Configure:* Settings → Art (rotation interval; optional
+  collections). Ambient vs dashboard is set under Settings → Display.
+
+### Daily extras
+
+- **This Day in History** — notable events on today's date (Wikimedia).
+- **Quote of the Day** / **Word of the Day** — a curated daily quote / word
+  with definition and example.
+- *Configure:* none — all three rotate on their own, offline.
+
 ## Local development
 
 ```bash

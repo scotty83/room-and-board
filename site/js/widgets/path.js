@@ -81,13 +81,25 @@ export function render(el, vm, _cfg) {
       : '<div class="empty">No trains</div>';
     return;
   }
-  // The two direction labels together cost roughly one train row.
-  const cap = Math.max(both ? 2 : 1, (itemCapacity('path', w, h) ?? 4) - (both ? 1 : 0));
-  const per = both ? Math.max(1, Math.floor(cap / 2)) : cap;
-  el.innerHTML = sections
-    .map((s) => `<div class="path-section">
-      ${both ? `<div class="path-section__label">${escapeHtml(s.label)}</div>` : ''}
-      ${s.rows.length ? s.rows.slice(0, per).map((r) => row(r)).join('') : '<div class="empty">No trains</div>'}
+  // Drop an empty direction entirely — terminal stations (e.g. the default
+  // 33S) run one way only, so a fixed 50/50 split would waste half the card on
+  // a permanent "To New York — No trains". Budget is allocated by availability.
+  const live = sections.filter((s) => s.rows.length);
+  if (!live.length) {
+    el.innerHTML = '<div class="empty">No trains</div>';
+    return;
+  }
+  const showBoth = live.length > 1;
+  const cap = Math.max(showBoth ? 2 : 1, (itemCapacity('path', w, h) ?? 4) - (showBoth ? 1 : 0));
+  // Fair share to each section, then hand any unused budget to the other.
+  let per0 = showBoth ? Math.min(live[0].rows.length, Math.ceil(cap / 2)) : cap;
+  const per1 = showBoth ? Math.min(live[1].rows.length, cap - per0) : 0;
+  if (showBoth) per0 = Math.min(live[0].rows.length, cap - per1);
+  const counts = showBoth ? [per0, per1] : [cap];
+  el.innerHTML = live
+    .map((s, i) => `<div class="path-section">
+      ${showBoth ? `<div class="path-section__label">${escapeHtml(s.label)}</div>` : ''}
+      ${s.rows.slice(0, counts[i]).map((r) => row(r)).join('')}
     </div>`)
     .join('');
 }

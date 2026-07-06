@@ -35,11 +35,19 @@ export function mapNjt(payload, nowSec, showAlerts = true) {
     return { updatedAt: null, stale: true, trains: [], alerts: [] };
   }
   const trains = payload.trains
-    .filter((t) => Number.isFinite(t.time) && t.time > nowSec)
+    .filter((t) => {
+      if (!Number.isFinite(t.time)) return false;
+      if (t.time > nowSec) return true;
+      // NJT times are static schedule stamps, not live predictions — a train
+      // past its scheduled minute is still boardable if it hasn't departed.
+      // Keep it for a 15-min grace window when its status says so.
+      const s = (t.status ?? '').toUpperCase();
+      return Boolean(s) && !s.includes('DEPART') && !s.includes('CANCEL') && t.time > nowSec - 15 * 60;
+    })
     .slice(0, 12)
     .map((t) => ({
       time: t.time,
-      min: Math.max(1, Math.round((t.time - nowSec) / 60)),
+      min: Math.max(0, Math.round((t.time - nowSec) / 60)),
       dest: String(t.dest ?? ''),
       line: String(t.line ?? ''),
       track: t.track ? String(t.track) : null,

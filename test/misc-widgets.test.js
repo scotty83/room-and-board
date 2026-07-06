@@ -22,11 +22,14 @@ describe('mapNjt', () => {
       { time: 1500, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
     ],
   };
-  it('computes minutes, drops past trains, keeps order', () => {
+  it('computes minutes and keeps a still-boarding train past its scheduled time', () => {
     const vm = mapNjt(payload, 1000);
-    expect(vm.trains).toHaveLength(2);
-    expect(vm.trains[0]).toMatchObject({ dest: 'Dover', min: 2, time: 1120 });
-    expect(vm.trains[1]).toMatchObject({ dest: 'Bay Head', min: 8, track: '5' });
+    // Trenton is 100s past schedule but BOARDING — literally at the platform,
+    // so it stays (grace window), followed by the two upcoming trains.
+    expect(vm.trains).toHaveLength(3);
+    expect(vm.trains[0]).toMatchObject({ dest: 'Trenton', min: 0, track: '3' });
+    expect(vm.trains[1]).toMatchObject({ dest: 'Dover', min: 2, time: 1120 });
+    expect(vm.trains[2]).toMatchObject({ dest: 'Bay Head', min: 8, track: '5' });
     expect(vm.stale).toBe(false);
   });
   it('caps at twelve (renderers slice further by card capacity) and passes stale through', () => {
@@ -38,6 +41,15 @@ describe('mapNjt', () => {
     const vm = mapNjt(many, 1000);
     expect(vm.trains).toHaveLength(12);
     expect(vm.stale).toBe(true);
+  });
+  it('keeps a delayed train past its scheduled minute, drops departed/expired', () => {
+    const vm = mapNjt({ trains: [
+      { time: 700, dest: 'Trenton', line: 'NEC', track: '3', status: 'DELAYED' }, // 5 min past, still boardable
+      { time: 700, dest: 'Dover', line: 'M&E', track: null, status: 'DEPARTED' }, // gone
+      { time: -200, dest: 'BayHead', line: 'NJC', track: null, status: 'DELAYED' }, // >15 min past
+    ] }, 1000);
+    expect(vm.trains.map((t) => t.dest)).toEqual(['Trenton']);
+    expect(vm.trains[0].min).toBe(0);
   });
   it('handles unconfigured/error payloads as empty', () => {
     expect(mapNjt({ error: 'njt_not_configured' }, 0).trains).toEqual([]);

@@ -222,3 +222,20 @@ describe('mapFerry', () => {
     expect(vm.departures[0].dest).toBe('Ferry');
   });
 });
+
+describe('mapSubwayStatus aliases', () => {
+  it("matches shuttle 'S' against GS/FS/H route ids", () => {
+    const alerts = [{ routes: ['GS'], header: '42 St Shuttle suspended' }];
+    const vm = mapSubwayStatus(alerts, ['S']);
+    expect(vm[0]).toMatchObject({ line: 'S', ok: false });
+    expect(vm[0].headers[0]).toContain('Shuttle');
+  });
+  it('matches 6 against the 6X express variant', () => {
+    const vm = mapSubwayStatus([{ routes: ['6X'], header: 'Express delays' }], ['6']);
+    expect(vm[0].ok).toBe(false);
+  });
+  it('still shows Good Service for an unaffected line', () => {
+    const vm = mapSubwayStatus([{ routes: ['GS'], header: 'x' }], ['1']);
+    expect(vm[0].ok).toBe(true);
+  });
+});

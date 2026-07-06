@@ -132,7 +132,7 @@ async function stationNames(net) {
     try {
       stationsCache = await net.fetchJSON('data/stations-lirr.json');
     } catch {
-      stationsCache = [];
+      return {}; // leave the cache unset so the next 60 s refresh retries
     }
   }
   return Object.fromEntries(stationsCache.map((s) => [s.id, s.name]));

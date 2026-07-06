@@ -12,10 +12,20 @@ export const meta = { id: 'subway', title: 'Subway Status', refreshMs: 2 * 60 * 
 // Kept for the settings line chips.
 export const SUBWAY_LINES = ['1', '2', '3', '4', '5', '6', '7', 'A', 'C', 'E', 'B', 'D', 'F', 'M', 'G', 'J', 'Z', 'L', 'N', 'Q', 'R', 'W', 'S', 'SI'];
 
+// A picked line can carry alerts under sibling feed route ids: shuttles are
+// tagged GS/FS/H (never 'S'), and express variants 6X/7X/FX. Match any.
+const LINE_ALIASES = {
+  S: ['S', 'GS', 'FS', 'H'],
+  6: ['6', '6X'],
+  7: ['7', '7X'],
+  F: ['F', 'FX'],
+};
+
 // digest alerts: [{routes, header}]. Returns one row per selected line.
 export function mapSubwayStatus(alerts, lines) {
   return lines.map((line) => {
-    const hits = (alerts ?? []).filter((a) => a.routes.includes(line));
+    const ids = LINE_ALIASES[line] ?? [line];
+    const hits = (alerts ?? []).filter((a) => a.routes.some((r) => ids.includes(r)));
     return {
       line,
       ok: hits.length === 0,

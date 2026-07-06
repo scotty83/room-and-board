@@ -6,7 +6,8 @@ import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS } fro
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { WORKER_URL } from '../env.js';
-import { escapeHtml } from '../util.js';
+import { escapeHtml, parseAlbumToken } from '../util.js';
+import { mountKeyboard } from './keyboard.js';
 import { zipLookup } from '../geo.js';
 import { alphaSections, toggleIn } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
@@ -120,6 +121,7 @@ const SECTIONS = [
   ['bsky', 'Bluesky'],
   ['worldclock', 'World Clock'],
   ['art', 'Art'],
+  ['photos', 'Photos'],
   ['weather', 'Weather location'],
   ['display', 'Display'],
   ['code', 'Setup code'],
@@ -163,6 +165,7 @@ function renderSection() {
     bsky: renderBsky,
     worldclock: renderWorldclock,
     art: renderArt,
+    photos: renderPhotos,
     weather: renderWeather,
     display: renderDisplay,
     code: renderCode,
@@ -260,6 +263,56 @@ function renderArt() {
       renderArt();
     }),
   );
+}
+
+/* ---------- photos ---------- */
+
+function renderPhotos() {
+  const p = state.cfg.photos;
+  const set = p.album
+    ? `<div class="kv"><span>Album</span><b>Configured</b>
+        <button class="btn" data-clear-album>Remove</button></div>`
+    : '';
+  pane().innerHTML = `
+    <h2 class="pane__title">Photos</h2>
+    <p class="pane__hint">Show an iCloud <b>Shared Album</b> with its <b>Public Website</b> turned on.
+      In the Photos app: open the album → its settings → enable <b>Public Website</b> → <b>Copy Link</b>,
+      then enter it here. <b>This is a public link — anyone who has it can view the album, so add only
+      photos appropriate for a shared office display.</b></p>
+    ${set}
+    <div class="row">
+      <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
+      <span class="row__label">Use these photos as the screensaver (replaces art)</span>
+    </div>
+    <p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
+    <button class="btn" data-paste>Paste link</button>
+    <div class="photo-kb"></div>
+    <p class="code__status"></p>
+    <div class="photo-preview"></div>`;
+  pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg.photos.album = ''; renderPhotos(); });
+  pane().querySelector('[data-ss]').addEventListener('click', () => { state.cfg.photos.screensaver = !state.cfg.photos.screensaver; renderPhotos(); });
+  const status = pane().querySelector('.code__status');
+  const preview = pane().querySelector('.photo-preview');
+  const validate = async (raw) => {
+    const token = parseAlbumToken(raw);
+    if (!token) { status.textContent = "That doesn't look like an album link — check it and try again."; return; }
+    status.textContent = 'Checking…';
+    try {
+      const digest = await fetchJSON(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(token)}`);
+      if (!digest.photos?.length) throw new Error('empty');
+      state.cfg.photos = { ...state.cfg.photos, source: 'icloud', album: token };
+      status.textContent = `Found ${digest.photos.length} photo${digest.photos.length > 1 ? 's' : ''}.`;
+      preview.innerHTML = `<img class="photo-preview__img" src="${escapeHtml(digest.photos[0].url)}" alt="">`;
+    } catch {
+      status.textContent = "Couldn't open that album — check Public Website is on and the link/token is exact (it's case-sensitive).";
+      preview.innerHTML = '';
+    }
+  };
+  const kb = mountKeyboard(pane().querySelector('.photo-kb'), { onSubmit: validate });
+  pane().querySelector('[data-paste]').addEventListener('click', async () => {
+    try { const t = await navigator.clipboard.readText(); const tok = parseAlbumToken(t); if (tok) { kb.set(tok); validate(tok); } }
+    catch { status.textContent = 'Paste unavailable on this display — type the link instead.'; }
+  });
 }
 
 /* ---------- subway ---------- */

@@ -11,6 +11,7 @@ import * as busw from '../site/js/widgets/bus.js';
 import * as sports from '../site/js/widgets/sports.js';
 import * as worldcup from '../site/js/widgets/worldcup.js';
 import * as news from '../site/js/widgets/news.js';
+import * as posts from '../site/js/widgets/posts.js';
 import * as njt from '../site/js/widgets/njt.js';
 import * as pathw from '../site/js/widgets/path.js';
 import * as ferry from '../site/js/widgets/ferry.js';
@@ -35,6 +36,7 @@ const CASES = [
   ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:']],
   ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
+  ['posts', posts, ['AI Superforecasters', 'Astral Codex Ten', 'Pragmatic Engineer']],
   ['njt', njt, ['Trenton', 'Northeast Corridor', '12']],
   ['path', pathw, ['Journal Square', 'Hoboken', 'min']],
   ['ferry', ferry, ['Wall St./Pier 11', 'East River', 'min']],

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { logoUrl } from '../site/js/widgets/sports.js';
 import { mapTeamSummary, digestSchedule, pickLogo, LEAGUE_PATHS } from '../worker/src/sports.js';
 import { mapWorldCup } from '../site/js/widgets/worldcup.js';
+import { mapPosts } from '../site/js/widgets/posts.js';
 import { parseRss, mergeNews, ageLabel } from '../site/js/widgets/news.js';
 
 describe('mapTeamSummary', () => {
@@ -148,5 +149,18 @@ describe('pickLogo', () => {
     expect(pickLogo([{ href: 'only.png', rel: ['full', 'default'] }])).toBe('only.png');
     expect(pickLogo([])).toBeNull();
     expect(pickLogo()).toBeNull();
+  });
+});
+
+describe('mapPosts', () => {
+  it('merges accounts newest-first and tolerates empty accounts', () => {
+    const vm = mapPosts([
+      [{ text: 'Older post', t: 1000e3, source: 'ACX' }],
+      [{ text: 'Newest post', t: 2000e3, source: 'NYT' }],
+      [],
+    ], 2100e3);
+    expect(vm.items.map((i) => i.text)).toEqual(['Newest post', 'Older post']);
+    expect(vm.items[0].source).toBe('NYT');
+    expect(vm.nowMs).toBe(2100e3);
   });
 });

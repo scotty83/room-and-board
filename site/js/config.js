@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
@@ -60,6 +60,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
+  photos: Object.freeze({ source: 'icloud', album: '', screensaver: false }), // iCloud shared-album token
   mode: 'dashboard',
   theme: 'dark',
 });
@@ -197,6 +198,11 @@ export function normalizeConfig(raw) {
       every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),
       cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
     },
+    photos: {
+      source: 'icloud', // only source today; the discriminator reserves the slot for more
+      album: /^[A-Za-z0-9]{8,25}$/.test(raw.photos?.album ?? '') ? raw.photos.album : '',
+      screensaver: raw.photos?.screensaver === true,
+    },
     worldclock: {
       cities: (() => {
         const seen = new Set();
@@ -239,6 +245,7 @@ export async function encodeConfig(cfg) {
   const isDefault = (list, defs) => JSON.stringify(list) === JSON.stringify(defs);
   if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
+  if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }

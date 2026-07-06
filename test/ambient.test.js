@@ -2,8 +2,10 @@
  * @vitest-environment happy-dom
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createSlideshow, swipeAction } from '../site/js/widgets/art.js';
+import { createSlideshow, swipeAction } from '../site/js/imageshow.js';
 import { stripData, stripHtml } from '../site/js/ambient.js';
+import { ambientSource } from '../site/js/modes.js';
+import { resolvePhotosManifest } from '../site/js/photos-manifest.js';
 
 const MANIFEST = [
   { img: 'a.jpg', title: 'A', artist: 'AA', year: '1900', ar: 1.78 },
@@ -144,3 +146,71 @@ describe('createSlideshow stop() safety', () => {
   });
 });
 const Slideshow = { _pending: [] };
+
+describe('photos screensaver cold-boot — manifest resolution', () => {
+  // Regression for the cold-start race in startSlideshow (photos source).
+  // Before the fix, photoManifest() returned [] on cold boot (widget fetches
+  // async), so createSlideshow([]) assigned a non-null `slideshow`. Every
+  // subsequent applyMode() retry hit `if (slideshow) return` and the
+  // screensaver stayed blank until the nightly page reload.
+
+  it('calls fetchData() inline when photoManifest() is empty on cold boot', async () => {
+    const photo = { img: 'https://example.com/1.jpg', ar: 1.78, title: 'Sunset' };
+    const fetchDataMock = vi.fn().mockResolvedValue({ photos: [photo] });
+    const photosMod = {
+      photoManifest: () => [], // cold boot: render() hasn't run yet
+      fetchData: fetchDataMock,
+    };
+    const cfg = { photos: { source: 'icloud', album: 'B1m5fk75vLWwX' } };
+    const net = { fetchJSON: vi.fn() };
+
+    const manifest = await resolvePhotosManifest(cfg, net, photosMod);
+
+    expect(fetchDataMock).toHaveBeenCalledWith(cfg, net);
+    expect(manifest).toHaveLength(1);
+    expect(manifest[0].img).toBe(photo.img);
+  });
+
+  it('skips fetchData() when photoManifest() is already populated (warm cache)', async () => {
+    const photo = { img: 'https://example.com/cached.jpg', ar: 1.5, title: 'Cached' };
+    const fetchDataMock = vi.fn();
+    const photosMod = {
+      photoManifest: () => [photo], // warm: render() ran earlier
+      fetchData: fetchDataMock,
+    };
+    const cfg = { photos: { source: 'icloud', album: 'B1m5fk75vLWwX' } };
+    const net = { fetchJSON: vi.fn() };
+
+    const manifest = await resolvePhotosManifest(cfg, net, photosMod);
+
+    expect(fetchDataMock).not.toHaveBeenCalled();
+    expect(manifest).toHaveLength(1);
+    expect(manifest[0]).toBe(photo);
+  });
+
+  it('returns [] when both photoManifest() and fetchData() are empty — allows retry without locking', async () => {
+    const fetchDataMock = vi.fn().mockResolvedValue({ photos: [] });
+    const photosMod = {
+      photoManifest: () => [],
+      fetchData: fetchDataMock,
+    };
+    const cfg = { photos: { source: 'icloud', album: 'B1m5fk75vLWwX' } };
+    const net = { fetchJSON: vi.fn() };
+
+    const manifest = await resolvePhotosManifest(cfg, net, photosMod);
+
+    // Returns [] — startSlideshow then hits `if (!manifest.length) return`
+    // so slideshow stays null and the next applyMode() retry can recover.
+    expect(manifest).toHaveLength(0);
+    expect(fetchDataMock).toHaveBeenCalled(); // tried, but album was empty
+  });
+});
+
+describe('ambientSource', () => {
+  it('picks photos only when enabled + screensaver on + configured', () => {
+    expect(ambientSource({ widgets: ['art'], photos: { screensaver: false, album: '' } })).toBe('art');
+    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe('photos');
+    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: false, album: 'B1m5fk75vLWwX' } })).toBe('art');
+    expect(ambientSource({ widgets: [], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe(null);
+  });
+});

@@ -26,6 +26,7 @@ export const MIN_SIZE = {
   quote: [2, 2],
   wotd: [2, 2],
   art: [2, 2],
+  photos: [2, 2],
   aqi: [2, 2],
   worldclock: [2, 3], // shortest card that fits a useful clock list (rows slice to fit)
   sports: [3, 2],

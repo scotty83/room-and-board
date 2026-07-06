@@ -6,7 +6,7 @@ import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
 import { zipLookup } from '../geo.js';
-import { escapeHtml } from '../util.js';
+import { escapeHtml, parseAlbumToken } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
@@ -25,6 +25,7 @@ export const WIDGET_LABELS = {
   bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art slideshow',
+  photos: 'Photos',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
@@ -81,6 +82,7 @@ async function boot() {
   await renderTeams();
   await renderNewsSources();
   renderPostsAccounts();
+  renderPhotos();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -381,6 +383,24 @@ function renderPostsAccounts() {
     const prof = await (await fetch(`${BSKY_API}/app.bsky.actor.getProfile?actor=${encodeURIComponent(id)}`)).json();
     if (!prof.handle) throw new Error('not found');
     return (prof.displayName || prof.handle).slice(0, 30);
+  });
+}
+
+function renderPhotos() {
+  $('#photos-ss').checked = cfg.photos.screensaver;
+  $('#photos-ss').addEventListener('change', (e) => (cfg.photos.screensaver = e.target.checked));
+  $('#photos-album').value = cfg.photos.album;
+  $('#photos-add').addEventListener('click', async () => {
+    const token = parseAlbumToken($('#photos-album').value);
+    const status = $('#photos-status');
+    if (!token) { status.textContent = 'That doesn\'t look like an album link.'; return; }
+    status.textContent = 'Checking…';
+    try {
+      const digest = await (await fetch(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(token)}`)).json();
+      if (!digest.photos?.length) throw new Error('empty');
+      cfg.photos = { ...cfg.photos, source: 'icloud', album: token };
+      status.textContent = `Found ${digest.photos.length} photos.`;
+    } catch { status.textContent = "Couldn't open that album — check Public Website is on and the link is exact."; }
   });
 }
 

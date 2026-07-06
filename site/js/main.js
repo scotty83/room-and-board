@@ -4,11 +4,12 @@ import { normalizeConfig, decodeConfig, DEFAULT_CONFIG } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
 import { schedule } from './scheduler.js';
-import { resolveMode } from './modes.js';
+import { resolveMode, ambientSource } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
 import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
 import { stripData, stripHtml } from './ambient.js';
+import { createSlideshow } from './imageshow.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
 import { initTextViewer } from './textviewer.js';
 import { icon } from './icons.js';
@@ -34,8 +35,10 @@ import * as worldcup from './widgets/worldcup.js';
 import * as news from './widgets/news.js';
 import * as substack from './widgets/substack.js';
 import * as bsky from './widgets/bsky.js';
+import * as photos from './widgets/photos.js';
+import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky];
+const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky, photos];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };
@@ -149,22 +152,21 @@ function renderStrip() {
 async function startSlideshow() {
   if (slideshow) return;
   try {
-    const manifest = DEMO
-      ? [DEMO_VMS.art]
-      : art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
-    slideshow = art.createSlideshow(manifest, $('#slideshow'), {
-      intervalMs: (cfg.art?.every ?? 30) * 60 * 1000,
-    });
+    const src = ambientSource(cfg);
+    let manifest;
+    if (DEMO) manifest = [DEMO_VMS.art];
+    else if (src === 'photos') manifest = await resolvePhotosManifest(cfg, net, photos);
+    else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
+    if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
+    slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: (cfg.art?.every ?? 30) * 60 * 1000 });
     slideshow.start();
-  } catch (err) {
-    console.error('[signage] slideshow unavailable', err);
-  }
+  } catch (err) { console.error('[signage] slideshow unavailable', err); }
 }
 
 function applyMode() {
   const forced = params.get('mode');
   const mode = forced === 'ambient' || forced === 'dashboard' ? forced : resolveMode(cfg, new Date());
-  const ambient = mode === 'ambient' && cfg.widgets.includes('art');
+  const ambient = mode === 'ambient' && ambientSource(cfg) !== null;
   document.body.classList.toggle('mode-ambient', ambient);
   $('#ambient').hidden = !ambient;
   $('#grid').hidden = ambient;

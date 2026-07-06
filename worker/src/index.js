@@ -11,6 +11,7 @@ import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
 import { fetchPathRealtime } from './path.js';
 import { fetchFerryDepartures } from './ferry.js';
 import { fetchSubstackPosts } from './posts.js';
+import { fetchIcloudAlbum } from './icloud.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -194,6 +195,12 @@ export default {
       const pub = url.searchParams.get('pub') ?? '';
       if (!/^[a-z0-9-]{2,64}$/.test(pub)) return json({ error: 'bad_pub' }, 400);
       return cached(url.origin, `sub:${pub}`, 600, () => fetchSubstackPosts(pub));
+    }
+
+    if (path === '/icloud/album' && request.method === 'GET') {
+      const token = url.searchParams.get('token') ?? '';
+      if (!/^[A-Za-z0-9]{8,25}$/.test(token)) return json({ error: 'bad_token' }, 400);
+      return cached(url.origin, `icloud:${token}`, 1800, () => fetchIcloudAlbum(token));
     }
 
     const alertsMatch = /^\/alerts\/(subway|lirr|mnr)$/.exec(path);

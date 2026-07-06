@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment happy-dom
+ */
 import { describe, it, expect, vi } from 'vitest';
 import {
   boroughs,
@@ -133,5 +136,23 @@ import { WIDGET_LABELS as BOARD_LABELS } from '../site/js/settings/settings.js';
 describe('widget label coverage', () => {
   it('board settings labels cover every widget id', () => {
     for (const id of ALL_IDS) expect(BOARD_LABELS[id], id).toBeTruthy();
+  });
+});
+
+import { mountKeyboard } from '../site/js/settings/keyboard.js';
+describe('mountKeyboard', () => {
+  it('types, shifts to uppercase, backspaces, and submits the value', () => {
+    const host = document.createElement('div');
+    let submitted = null;
+    const kb = mountKeyboard(host, { onSubmit: (v) => (submitted = v) });
+    host.querySelector('[data-k="b"]').click();
+    host.querySelector('[data-act="shift"]').click();
+    host.querySelector('[data-k="A"]').click(); // uppercase key present after shift
+    host.querySelector('[data-k="1"]').click();
+    expect(kb.value()).toBe('bA1');
+    host.querySelector('[data-act="back"]').click();
+    expect(kb.value()).toBe('bA');
+    host.querySelector('[data-act="submit"]').click();
+    expect(submitted).toBe('bA');
   });
 });

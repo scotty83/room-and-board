@@ -20,6 +20,7 @@ const TITLES = {
   bus: 'MTA Bus',
   markets: 'Markets',
   art: 'Art',
+  photos: 'Photos',
   history: 'History',
   aqi: 'Air & Sky',
   quote: 'Quote',

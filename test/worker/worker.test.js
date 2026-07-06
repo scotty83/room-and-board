@@ -6,6 +6,7 @@ import { mapRidePath } from '../../worker/src/path.js';
 import GtfsRt from 'gtfs-realtime-bindings';
 import { mapFerryFeed } from '../../worker/src/ferry.js';
 import { mapSubstackPosts } from '../../worker/src/posts.js';
+import { mapIcloudAlbum } from '../../worker/src/icloud.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -492,5 +493,45 @@ describe('/posts/substack', () => {
   it('rejects bad slugs', async () => {
     expect((await call('/posts/substack?pub=Not%20A%20Slug')).status).toBe(400);
     expect((await call('/posts/substack')).status).toBe(400);
+  });
+});
+
+describe('/icloud/album', () => {
+  const WS = { photos: [
+    { photoGuid: 'g1', dateCreated: '2026-02-24T12:00:00Z', caption: 'Beach', width: '2049', height: '1537',
+      derivatives: { 342: { checksum: 'cA', fileSize: '41233', width: '342', height: '257' },
+                     2049: { checksum: 'cB', fileSize: '660318', width: '2049', height: '1537' } } },
+    { photoGuid: 'g2', dateCreated: '2026-03-01T09:00:00Z', caption: '', width: '2049', height: '2049',
+      derivatives: { 2049: { checksum: 'cC', fileSize: '9000000', width: '2049', height: '2049' } } },
+  ] };
+  const AU = { items: {
+    cB: { url_location: 'cvws.icloud-content.com', url_path: '/S/x/1.JPG?a=1' },
+    cA: { url_location: 'cvws.icloud-content.com', url_path: '/S/x/1t.JPG?a=1' },
+  } };
+
+  it('maps to newest-first photos, largest derivative under the byte cap, joined URLs', () => {
+    const out = mapIcloudAlbum(WS, AU, 3_000_000);
+    expect(out.photos).toHaveLength(1);
+    expect(out.photos[0]).toEqual({
+      url: 'https://cvws.icloud-content.com/S/x/1.JPG?a=1',
+      w: 2049, h: 1537, ar: expect.closeTo(1.333, 2), caption: 'Beach', date: '2026-02-24T12:00:00Z',
+    });
+  });
+
+  it('rejects a bad token at the route', async () => {
+    expect((await call('/icloud/album?token=short')).status).toBe(400);
+    expect((await call('/icloud/album')).status).toBe(400);
+  });
+
+  it('follows the 330 partition redirect and returns the digest', async () => {
+    stubFetch([
+      { match: /p\d+-sharedstreams.*webstream/, status: 330, body: { 'X-Apple-MMe-Host': 'p110-sharedstreams.icloud.com' } },
+      { match: /p110-sharedstreams.*webstream/, body: WS },
+      { match: /p110-sharedstreams.*webasseturls/, body: AU },
+    ]);
+    await clearCache('icloud:B1m5fk75vLWwX');
+    const res = await call('/icloud/album?token=B1m5fk75vLWwX');
+    expect(res.status).toBe(200);
+    expect((await res.json()).photos).toHaveLength(1);
   });
 });

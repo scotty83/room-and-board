@@ -43,6 +43,10 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
   font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--ink-dim); margin: 0;
 }
+.setup__group {
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-dim); border-top: 1px solid var(--bg-card-2); padding-top: 22px; margin-bottom: -12px;
+}
 
 .pickrow, .ziprow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .pickrow select { flex: 1 1 140px; }

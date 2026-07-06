@@ -23,15 +23,7 @@
       <div id="widgets"></div>
     </section>
 
-    <section class="field">
-      <h2>Weather location</h2>
-      <select id="loc-preset"></select>
-      <div class="ziprow">
-        <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
-        <button id="zip-go" type="button">Use ZIP</button>
-      </div>
-      <p id="loc-current" class="hint"></p>
-    </section>
+    <h2 class="setup__group">Commute</h2>
 
     <section class="field" id="subway-field">
       <h2>Subway status</h2>
@@ -81,6 +73,20 @@
       </div>
     </section>
 
+    <h2 class="setup__group">Weather &amp; Air</h2>
+
+    <section class="field">
+      <h2>Weather location</h2>
+      <select id="loc-preset"></select>
+      <div class="ziprow">
+        <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
+        <button id="zip-go" type="button">Use ZIP</button>
+      </div>
+      <p id="loc-current" class="hint"></p>
+    </section>
+
+    <h2 class="setup__group">Markets &amp; Sports</h2>
+
     <section class="field" id="markets-field">
       <h2>Markets <small>(remove or add tickers; indexes start with ^)</small></h2>
       <div id="sym-chips" class="chips"></div>
@@ -89,20 +95,6 @@
         <button id="sym-add" type="button">Add ticker</button>
       </div>
       <p id="sym-status" class="hint"></p>
-    </section>
-
-    <section class="field">
-      <h2>Art</h2>
-      <label for="art-every">Rotate artwork</label>
-      <select id="art-every">
-        <option value="5">Every 5 minutes</option>
-        <option value="15">Every 15 minutes</option>
-        <option value="30">Every 30 minutes</option>
-        <option value="60">Every hour</option>
-        <option value="120">Every 2 hours</option>
-      </select>
-      <p class="hint">Collections — none checked means all:</p>
-      <div id="art-cats" class="checks"></div>
     </section>
 
     <section class="field" id="sports-field">
@@ -115,15 +107,7 @@
       </div>
     </section>
 
-    <section class="field" id="wc-field">
-      <h2>World Clock <small>(shown in order of current time — up to 10)</small></h2>
-      <div id="wc-chips" class="chips"></div>
-      <div id="wc-offices" class="checks"></div>
-      <div class="pickrow">
-        <select id="wc-zone"></select>
-        <button id="wc-add" type="button">Add time zone</button>
-      </div>
-    </section>
+    <h2 class="setup__group">News &amp; Social</h2>
 
     <section class="field" id="news-field">
       <h2>Headlines</h2>
@@ -150,6 +134,22 @@
       <p id="bsky-status" class="hint"></p>
     </section>
 
+    <h2 class="setup__group">Ambient</h2>
+
+    <section class="field">
+      <h2>Art</h2>
+      <label for="art-every">Rotate artwork</label>
+      <select id="art-every">
+        <option value="5">Every 5 minutes</option>
+        <option value="15">Every 15 minutes</option>
+        <option value="30">Every 30 minutes</option>
+        <option value="60">Every hour</option>
+        <option value="120">Every 2 hours</option>
+      </select>
+      <p class="hint">Collections — none checked means all:</p>
+      <div id="art-cats" class="checks"></div>
+    </section>
+
     <section class="field" id="photos-field">
       <h2>Photos <small>(iCloud Shared Album with Public Website on)</small></h2>
       <p class="hint">Public link — anyone with it can view; add only office-appropriate photos.</p>
@@ -159,6 +159,16 @@
       </div>
       <label class="alertcheck"><input type="checkbox" id="photos-ss"> Use as screensaver</label>
       <p id="photos-status" class="hint"></p>
+    </section>
+
+    <section class="field" id="wc-field">
+      <h2>World Clock <small>(shown in order of current time — up to 10)</small></h2>
+      <div id="wc-chips" class="chips"></div>
+      <div id="wc-offices" class="checks"></div>
+      <div class="pickrow">
+        <select id="wc-zone"></select>
+        <button id="wc-add" type="button">Add time zone</button>
+      </div>
     </section>
 
     <section class="field">

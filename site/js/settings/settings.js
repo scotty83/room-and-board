@@ -36,6 +36,18 @@ export const WIDGET_LABELS = {
   bsky: 'Bluesky',
 };
 
+// Display grouping for the Widgets picker. WIDGET_IDS (config.js) stays the
+// validity source of truth; this is only the on-screen order + categories.
+// Must remain an exact partition of WIDGET_IDS (asserted in settings-logic.test).
+export const WIDGET_GROUPS = [
+  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
+  { label: 'Weather & Air', ids: ['weather', 'aqi'] },
+  { label: 'Markets & Sports', ids: ['markets', 'sports', 'worldcup'] },
+  { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
+  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
+];
+
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';

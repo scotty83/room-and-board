@@ -139,6 +139,24 @@ describe('widget label coverage', () => {
   });
 });
 
+import { WIDGET_GROUPS } from '../site/js/settings/settings.js';
+
+describe('WIDGET_GROUPS taxonomy', () => {
+  it('is an exact partition of WIDGET_IDS (every id in exactly one group, no extras)', () => {
+    const grouped = WIDGET_GROUPS.flatMap((g) => g.ids);
+    // no duplicates across groups
+    expect(new Set(grouped).size).toBe(grouped.length);
+    // same membership as WIDGET_IDS, both directions
+    expect([...grouped].sort()).toEqual([...ALL_IDS].sort());
+  });
+
+  it('has the six expected group labels in order', () => {
+    expect(WIDGET_GROUPS.map((g) => g.label)).toEqual([
+      'Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras',
+    ]);
+  });
+});
+
 import { mountKeyboard } from '../site/js/settings/keyboard.js';
 describe('mountKeyboard', () => {
   it('types, shifts to uppercase, backspaces, and submits the value', () => {

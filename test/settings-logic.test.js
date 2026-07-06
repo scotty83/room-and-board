@@ -124,3 +124,14 @@ describe('connectBridge', () => {
     await expect(connectBridge({ u: 'u', p: 'p', ip: null }, {})).rejects.toThrow(/ip/i);
   });
 });
+
+// Every widget id must have a label in BOTH settings surfaces — a missing
+// entry renders literal "undefined" in the Widgets and Diagnostics menus.
+import { WIDGET_IDS as ALL_IDS } from '../site/js/config.js';
+import { WIDGET_LABELS as BOARD_LABELS } from '../site/js/settings/settings.js';
+
+describe('widget label coverage', () => {
+  it('board settings labels cover every widget id', () => {
+    for (const id of ALL_IDS) expect(BOARD_LABELS[id], id).toBeTruthy();
+  });
+});

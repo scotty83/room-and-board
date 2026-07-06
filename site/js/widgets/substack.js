@@ -3,7 +3,7 @@
 
 import { renderPostRows, fetchSubstackRows, fetchAll } from './posts.js';
 
-export const meta = { id: 'substack', title: 'Newsletters', refreshMs: 30 * 60 * 1000 };
+export const meta = { id: 'substack', title: 'Substack', refreshMs: 30 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
   renderPostRows(el, vm, 'substack', 'Add publications in Settings → Substack');

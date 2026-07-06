@@ -13,7 +13,7 @@ import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';
 
 const $ = (sel) => document.querySelector(sel);
-const WIDGET_LABELS = {
+export const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
   lirr: 'LIRR (Penn Station)',
@@ -32,7 +32,7 @@ const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
-  substack: 'Newsletters (Substack)',
+  substack: 'Substack',
   bsky: 'Bluesky',
 };
 const PRESETS = [

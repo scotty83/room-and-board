@@ -11,7 +11,7 @@ import { zipLookup } from '../geo.js';
 import { alphaSections, toggleIn } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
-const WIDGET_LABELS = {
+export const WIDGET_LABELS = {
   weather: 'Weather',
   subway: 'NYC Subway',
   lirr: 'LIRR (Penn Station)',
@@ -30,7 +30,7 @@ const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
-  substack: 'Newsletters (Substack)',
+  substack: 'Substack',
   bsky: 'Bluesky',
 };
 
@@ -115,7 +115,7 @@ const SECTIONS = [
   ['markets', 'Markets'],
   ['sports', 'My Teams'],
   ['news', 'Headlines'],
-  ['substack', 'Newsletters'],
+  ['substack', 'Substack'],
   ['bsky', 'Bluesky'],
   ['worldclock', 'World Clock'],
   ['art', 'Art'],
@@ -663,7 +663,7 @@ function renderSubstack() {
   renderFollowPane({
     cfgKey: 'substack',
     listKey: 'pubs',
-    title: 'Newsletters (Substack)',
+    title: 'Substack',
     hint: 'Follow up to 6 publications — newest essays across all of them.',
     addLabel: 'Add a publication — type the name before .substack.com',
     suffixKey: null,

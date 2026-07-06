@@ -37,6 +37,13 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 }
 .checks input { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
 
+#widgets { display: flex; flex-direction: column; gap: 18px; }
+.wpick__group { display: flex; flex-direction: column; gap: 8px; }
+.wpick__title {
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-dim); margin: 0;
+}
+
 .pickrow, .ziprow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .pickrow select { flex: 1 1 140px; }
 .ziprow input { flex: 1; }

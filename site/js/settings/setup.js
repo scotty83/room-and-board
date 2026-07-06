@@ -1,7 +1,7 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
@@ -88,11 +88,22 @@ async function boot() {
   $('#get-code').addEventListener('click', getCode);
 }
 
+// Grouped checkbox HTML for the setup widget picker. `labels` is this page's
+// WIDGET_LABELS (phone-length); `placed` is a Set of currently-placed ids.
+// Exported for tests. Mirrors the board's widgetGroupsHtml.
+export function widgetChecksHtml(labels, placed) {
+  return WIDGET_GROUPS.map((g) => `
+    <section class="wpick__group">
+      <h3 class="wpick__title">${g.label}</h3>
+      <div class="checks">${g.ids.map((id) =>
+        `<label><input type="checkbox" data-w="${id}" ${placed.has(id) ? 'checked' : ''}> ${labels[id]}</label>`,
+      ).join('')}</div>
+    </section>`).join('');
+}
+
 function renderWidgets() {
   const placed = () => new Set(cfg.layout.map((r) => r.id));
-  $('#widgets').innerHTML = WIDGET_IDS.map(
-    (id) => `<label><input type="checkbox" data-w="${id}" ${placed().has(id) ? 'checked' : ''}> ${WIDGET_LABELS[id]}</label>`,
-  ).join('');
+  $('#widgets').innerHTML = widgetChecksHtml(WIDGET_LABELS, placed());
   $('#widgets').addEventListener('change', (e) => {
     const id = e.target.dataset.w;
     if (!id) return;

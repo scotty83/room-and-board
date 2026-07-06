@@ -37,6 +37,42 @@ export const WIDGET_LABELS = {
   substack: 'Substack',
   bsky: 'Bluesky',
 };
+
+// Ordered config sections for the two-step /setup wizard. A section shows in
+// step 2 iff any of its trigger widget ids is placed; a category divider shows
+// iff its group has ≥1 visible section. Single source of truth for step-2
+// visibility — triggers ⊆ WIDGET_IDS, group ∈ WIDGET_GROUPS (settings-logic.test).
+export const SETUP_SECTIONS = [
+  { id: 'subway-field', group: 'Commute', triggers: ['subway'] },
+  { id: 'lirr-field', group: 'Commute', triggers: ['lirr'] },
+  { id: 'mnr-field', group: 'Commute', triggers: ['mnr'] },
+  { id: 'njt-field', group: 'Commute', triggers: ['njt'] },
+  { id: 'path-field', group: 'Commute', triggers: ['path'] },
+  { id: 'ferry-field', group: 'Commute', triggers: ['ferry'] },
+  { id: 'bus-field', group: 'Commute', triggers: ['bus'] },
+  { id: 'weather-field', group: 'Weather & Air', triggers: ['weather', 'aqi'] },
+  { id: 'markets-field', group: 'Markets & Sports', triggers: ['markets'] },
+  { id: 'sports-field', group: 'Markets & Sports', triggers: ['sports'] },
+  { id: 'news-field', group: 'News & Social', triggers: ['news'] },
+  { id: 'substack-field', group: 'News & Social', triggers: ['substack'] },
+  { id: 'bsky-field', group: 'News & Social', triggers: ['bsky'] },
+  { id: 'art-field', group: 'Ambient', triggers: ['art'] },
+  { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
+  { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
+];
+
+// Which step-2 config sections + category dividers are visible for a set of
+// placed widget ids. Pure — drives the DOM apply step in the wizard.
+export function stepTwoVisibility(placed) {
+  const p = placed instanceof Set ? placed : new Set(placed);
+  const sections = new Set();
+  const groups = new Set();
+  for (const s of SETUP_SECTIONS) {
+    if (s.triggers.some((id) => p.has(id))) { sections.add(s.id); groups.add(s.group); }
+  }
+  return { sections, groups };
+}
+
 const PRESETS = [
   ['Midtown Manhattan', 40.754, -73.984],
   ['Lower Manhattan', 40.707, -74.011],

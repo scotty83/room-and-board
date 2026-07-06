@@ -220,3 +220,31 @@ describe('widgetGroupsHtml', () => {
     expect(html).toMatch(/data-toggle="weather"[^>]*aria-checked="true"/);
   });
 });
+
+import { stepTwoVisibility, SETUP_SECTIONS } from '../site/js/settings/setup.js';
+
+describe('stepTwoVisibility', () => {
+  it('shows only the sections + divider groups for the placed widgets', () => {
+    const { sections, groups } = stepTwoVisibility(['subway', 'lirr']);
+    expect([...sections].sort()).toEqual(['lirr-field', 'subway-field']);
+    expect([...groups]).toEqual(['Commute']);
+  });
+  it('shows the Weather location section when Air & Sky (aqi) is placed (shared trigger)', () => {
+    const { sections, groups } = stepTwoVisibility(new Set(['aqi']));
+    expect(sections.has('weather-field')).toBe(true);
+    expect(groups.has('Weather & Air')).toBe(true);
+  });
+  it('shows nothing for config-less widgets', () => {
+    const { sections, groups } = stepTwoVisibility(['worldcup', 'history']);
+    expect(sections.size).toBe(0);
+    expect(groups.size).toBe(0);
+  });
+  it('SETUP_SECTIONS triggers are valid WIDGET_IDS and groups are valid WIDGET_GROUPS labels', () => {
+    const validIds = new Set(ALL_IDS);
+    const validGroups = new Set(WIDGET_GROUPS.map((g) => g.label));
+    for (const s of SETUP_SECTIONS) {
+      for (const t of s.triggers) expect(validIds.has(t)).toBe(true);
+      expect(validGroups.has(s.group)).toBe(true);
+    }
+  });
+});

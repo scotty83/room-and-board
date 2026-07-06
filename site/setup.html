@@ -13,180 +13,194 @@
       <p>Pick what you want on your board, get a code, and type it on the board's screen (Settings → Setup code). Codes last one hour.</p>
     </header>
 
-    <section class="field">
-      <label for="name">Your first name <small>(for the greeting — optional)</small></label>
-      <input id="name" type="text" maxlength="24" autocomplete="given-name" placeholder="Sean">
-    </section>
+    <div id="step-1">
+      <p class="step__label">Step 1 of 2 · Choose widgets</p>
 
-    <section class="field">
-      <h2>Widgets</h2>
-      <div id="widgets"></div>
-    </section>
+      <section class="field">
+        <label for="name">Your first name <small>(for the greeting — optional)</small></label>
+        <input id="name" type="text" maxlength="24" autocomplete="given-name" placeholder="Sean">
+      </section>
 
-    <h2 class="setup__group">Commute</h2>
+      <section class="field">
+        <h2>Widgets</h2>
+        <p class="hint">No pressure — you can add or remove widgets anytime after setup, right on the board (Settings → Widgets).</p>
+        <div id="widgets"></div>
+      </section>
 
-    <section class="field" id="subway-field">
-      <h2>Subway status</h2>
-      <p class="hint">The card shows Good Service or the current alert for each line you pick:</p>
-      <div id="sub-lines" class="linechips"></div>
-    </section>
+      <div class="step__nav"><button id="to-step-2" type="button" class="primary">Next →</button></div>
+    </div>
 
-    <section class="field" id="lirr-field">
-      <h2>LIRR <small>(Penn Station departures — Grand Central trains are never shown)</small></h2>
-      <label for="lirr-dest">Only trains stopping at</label>
-      <select id="lirr-dest"><option value="">Any station</option></select>
-      <label class="alertcheck"><input type="checkbox" id="lirr-alerts"> Show service alerts</label>
-    </section>
-
-    <section class="field" id="mnr-field">
-      <h2>Metro-North <small>(Grand Central departures)</small></h2>
-      <label for="mnr-dest">Only trains stopping at</label>
-      <select id="mnr-dest"><option value="">Any station</option></select>
-      <label class="alertcheck"><input type="checkbox" id="mnr-alerts"> Show service alerts</label>
-    </section>
-
-    <section class="field" id="njt-field">
-      <h2>NJ Transit rail station</h2>
-      <select id="njt-station"><option value="NY">New York Penn Station</option></select>
-      <label class="alertcheck"><input type="checkbox" id="njt-alerts"> Show service alerts</label>
-    </section>
-
-    <section class="field" id="path-field">
-      <h2>PATH</h2>
-      <label for="path-station">Station</label>
-      <select id="path-station"></select>
-      <label for="path-dir">Direction</label>
-      <select id="path-dir"></select>
-    </section>
-
-    <section class="field" id="ferry-field">
-      <h2>NYC Ferry landing</h2>
-      <select id="ferry-landing"></select>
-    </section>
-
-    <section class="field" id="bus-field">
-      <h2>MTA Bus <small>(up to two 6-digit stop codes from the bus stop sign)</small></h2>
-      <div id="bus-chips" class="chips"></div>
-      <div class="ziprow">
-        <input id="bus-code" type="text" inputmode="numeric" pattern="[0-9]{4,7}" placeholder="e.g. 550685">
-        <button id="bus-add" type="button">Add stop</button>
+    <div id="step-2" hidden>
+      <div class="step__head">
+        <button id="to-step-1" type="button">← Back</button>
+        <p class="step__label">Step 2 of 2 · Personalize your data</p>
       </div>
-    </section>
 
-    <h2 class="setup__group">Weather &amp; Air</h2>
+      <h2 class="setup__group" data-group="Commute">Commute</h2>
 
-    <section class="field">
-      <h2>Weather location</h2>
-      <select id="loc-preset"></select>
-      <div class="ziprow">
-        <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
-        <button id="zip-go" type="button">Use ZIP</button>
-      </div>
-      <p id="loc-current" class="hint"></p>
-    </section>
+      <section class="field" id="subway-field">
+        <h2>Subway status</h2>
+        <p class="hint">The card shows Good Service or the current alert for each line you pick:</p>
+        <div id="sub-lines" class="linechips"></div>
+      </section>
 
-    <h2 class="setup__group">Markets &amp; Sports</h2>
+      <section class="field" id="lirr-field">
+        <h2>LIRR <small>(Penn Station departures — Grand Central trains are never shown)</small></h2>
+        <label for="lirr-dest">Only trains stopping at</label>
+        <select id="lirr-dest"><option value="">Any station</option></select>
+        <label class="alertcheck"><input type="checkbox" id="lirr-alerts"> Show service alerts</label>
+      </section>
 
-    <section class="field" id="markets-field">
-      <h2>Markets <small>(remove or add tickers; indexes start with ^)</small></h2>
-      <div id="sym-chips" class="chips"></div>
-      <div class="ziprow">
-        <input id="sym-code" type="text" maxlength="10" placeholder="e.g. AAPL or ^GSPC" style="text-transform: uppercase">
-        <button id="sym-add" type="button">Add ticker</button>
-      </div>
-      <p id="sym-status" class="hint"></p>
-    </section>
+      <section class="field" id="mnr-field">
+        <h2>Metro-North <small>(Grand Central departures)</small></h2>
+        <label for="mnr-dest">Only trains stopping at</label>
+        <select id="mnr-dest"><option value="">Any station</option></select>
+        <label class="alertcheck"><input type="checkbox" id="mnr-alerts"> Show service alerts</label>
+      </section>
 
-    <section class="field" id="sports-field">
-      <h2>My Teams <small>(sports scores — up to 6)</small></h2>
-      <div id="team-chips" class="chips"></div>
-      <div class="pickrow">
-        <select id="team-league"></select>
-        <select id="team-select"></select>
-        <button id="team-add" type="button">Add team</button>
-      </div>
-    </section>
+      <section class="field" id="njt-field">
+        <h2>NJ Transit rail station</h2>
+        <select id="njt-station"><option value="NY">New York Penn Station</option></select>
+        <label class="alertcheck"><input type="checkbox" id="njt-alerts"> Show service alerts</label>
+      </section>
 
-    <h2 class="setup__group">News &amp; Social</h2>
+      <section class="field" id="path-field">
+        <h2>PATH</h2>
+        <label for="path-station">Station</label>
+        <select id="path-station"></select>
+        <label for="path-dir">Direction</label>
+        <select id="path-dir"></select>
+      </section>
 
-    <section class="field" id="news-field">
-      <h2>Headlines</h2>
-      <div id="news-sources" class="checks"></div>
-    </section>
+      <section class="field" id="ferry-field">
+        <h2>NYC Ferry landing</h2>
+        <select id="ferry-landing"></select>
+      </section>
 
-    <section class="field" id="substack-field">
-      <h2>Substack <small>(publications — up to 6)</small></h2>
-      <div id="substack-chips" class="chips"></div>
-      <div class="ziprow">
-        <input id="substack-id" type="text" maxlength="60" placeholder="publication name (before .substack.com)">
-        <button id="substack-add" type="button">Add</button>
-      </div>
-      <p id="substack-status" class="hint"></p>
-    </section>
+      <section class="field" id="bus-field">
+        <h2>MTA Bus <small>(up to two 6-digit stop codes from the bus stop sign)</small></h2>
+        <div id="bus-chips" class="chips"></div>
+        <div class="ziprow">
+          <input id="bus-code" type="text" inputmode="numeric" pattern="[0-9]{4,7}" placeholder="e.g. 550685">
+          <button id="bus-add" type="button">Add stop</button>
+        </div>
+      </section>
 
-    <section class="field" id="bsky-field">
-      <h2>Bluesky <small>(accounts — up to 6)</small></h2>
-      <div id="bsky-chips" class="chips"></div>
-      <div class="ziprow">
-        <input id="bsky-id" type="text" maxlength="60" placeholder="handle, e.g. name.bsky.social">
-        <button id="bsky-add" type="button">Add</button>
-      </div>
-      <p id="bsky-status" class="hint"></p>
-    </section>
+      <h2 class="setup__group" data-group="Weather &amp; Air">Weather &amp; Air</h2>
 
-    <h2 class="setup__group">Ambient</h2>
+      <section class="field" id="weather-field">
+        <h2>Weather location</h2>
+        <select id="loc-preset"></select>
+        <div class="ziprow">
+          <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
+          <button id="zip-go" type="button">Use ZIP</button>
+        </div>
+        <p id="loc-current" class="hint"></p>
+      </section>
 
-    <section class="field">
-      <h2>Art</h2>
-      <label for="art-every">Rotate artwork</label>
-      <select id="art-every">
-        <option value="5">Every 5 minutes</option>
-        <option value="15">Every 15 minutes</option>
-        <option value="30">Every 30 minutes</option>
-        <option value="60">Every hour</option>
-        <option value="120">Every 2 hours</option>
-      </select>
-      <p class="hint">Collections — none checked means all:</p>
-      <div id="art-cats" class="checks"></div>
-    </section>
+      <h2 class="setup__group" data-group="Markets &amp; Sports">Markets &amp; Sports</h2>
 
-    <section class="field" id="photos-field">
-      <h2>Photos <small>(iCloud Shared Album with Public Website on)</small></h2>
-      <p class="hint">Public link — anyone with it can view; add only office-appropriate photos.</p>
-      <div class="ziprow">
-        <input id="photos-album" type="text" maxlength="120" placeholder="paste the album link">
-        <button id="photos-add" type="button">Check &amp; add</button>
-      </div>
-      <label class="alertcheck"><input type="checkbox" id="photos-ss"> Use as screensaver</label>
-      <p id="photos-status" class="hint"></p>
-    </section>
+      <section class="field" id="markets-field">
+        <h2>Markets <small>(remove or add tickers; indexes start with ^)</small></h2>
+        <div id="sym-chips" class="chips"></div>
+        <div class="ziprow">
+          <input id="sym-code" type="text" maxlength="10" placeholder="e.g. AAPL or ^GSPC" style="text-transform: uppercase">
+          <button id="sym-add" type="button">Add ticker</button>
+        </div>
+        <p id="sym-status" class="hint"></p>
+      </section>
 
-    <section class="field" id="wc-field">
-      <h2>World Clock <small>(shown in order of current time — up to 10)</small></h2>
-      <div id="wc-chips" class="chips"></div>
-      <div id="wc-offices" class="checks"></div>
-      <div class="pickrow">
-        <select id="wc-zone"></select>
-        <button id="wc-add" type="button">Add time zone</button>
-      </div>
-    </section>
+      <section class="field" id="sports-field">
+        <h2>My Teams <small>(sports scores — up to 6)</small></h2>
+        <div id="team-chips" class="chips"></div>
+        <div class="pickrow">
+          <select id="team-league"></select>
+          <select id="team-select"></select>
+          <button id="team-add" type="button">Add team</button>
+        </div>
+      </section>
 
-    <section class="field">
-      <h2>Display mode</h2>
-      <select id="mode">
-        <option value="auto">Auto — dashboard at commute times, art otherwise</option>
-        <option value="dashboard">Always dashboard</option>
-        <option value="ambient">Always art</option>
-      </select>
-    </section>
+      <h2 class="setup__group" data-group="News &amp; Social">News &amp; Social</h2>
 
-    <footer class="setup__foot">
-      <button id="get-code" type="button" class="primary">Get my setup code</button>
-      <div id="code-out" class="code-out" hidden>
-        <output id="code"></output>
-        <p>On your board: tap the gear → <b>Setup code</b> → enter this code, then Save. Expires in 1 hour.</p>
-      </div>
-    </footer>
+      <section class="field" id="news-field">
+        <h2>Headlines</h2>
+        <div id="news-sources" class="checks"></div>
+      </section>
+
+      <section class="field" id="substack-field">
+        <h2>Substack <small>(publications — up to 6)</small></h2>
+        <div id="substack-chips" class="chips"></div>
+        <div class="ziprow">
+          <input id="substack-id" type="text" maxlength="60" placeholder="publication name (before .substack.com)">
+          <button id="substack-add" type="button">Add</button>
+        </div>
+        <p id="substack-status" class="hint"></p>
+      </section>
+
+      <section class="field" id="bsky-field">
+        <h2>Bluesky <small>(accounts — up to 6)</small></h2>
+        <div id="bsky-chips" class="chips"></div>
+        <div class="ziprow">
+          <input id="bsky-id" type="text" maxlength="60" placeholder="handle, e.g. name.bsky.social">
+          <button id="bsky-add" type="button">Add</button>
+        </div>
+        <p id="bsky-status" class="hint"></p>
+      </section>
+
+      <h2 class="setup__group" data-group="Ambient">Ambient</h2>
+
+      <section class="field" id="art-field">
+        <h2>Art</h2>
+        <label for="art-every">Rotate artwork</label>
+        <select id="art-every">
+          <option value="5">Every 5 minutes</option>
+          <option value="15">Every 15 minutes</option>
+          <option value="30">Every 30 minutes</option>
+          <option value="60">Every hour</option>
+          <option value="120">Every 2 hours</option>
+        </select>
+        <p class="hint">Collections — none checked means all:</p>
+        <div id="art-cats" class="checks"></div>
+      </section>
+
+      <section class="field" id="photos-field">
+        <h2>Photos <small>(iCloud Shared Album with Public Website on)</small></h2>
+        <p class="hint">Public link — anyone with it can view; add only office-appropriate photos.</p>
+        <div class="ziprow">
+          <input id="photos-album" type="text" maxlength="120" placeholder="paste the album link">
+          <button id="photos-add" type="button">Check &amp; add</button>
+        </div>
+        <label class="alertcheck"><input type="checkbox" id="photos-ss"> Use as screensaver</label>
+        <p id="photos-status" class="hint"></p>
+      </section>
+
+      <section class="field" id="wc-field">
+        <h2>World Clock <small>(shown in order of current time — up to 10)</small></h2>
+        <div id="wc-chips" class="chips"></div>
+        <div id="wc-offices" class="checks"></div>
+        <div class="pickrow">
+          <select id="wc-zone"></select>
+          <button id="wc-add" type="button">Add time zone</button>
+        </div>
+      </section>
+
+      <section class="field">
+        <h2>Display mode</h2>
+        <select id="mode">
+          <option value="auto">Auto — dashboard at commute times, art otherwise</option>
+          <option value="dashboard">Always dashboard</option>
+          <option value="ambient">Always art</option>
+        </select>
+      </section>
+
+      <footer class="setup__foot">
+        <button id="get-code" type="button" class="primary">Get my setup code</button>
+        <div id="code-out" class="code-out" hidden>
+          <output id="code"></output>
+          <p>On your board: tap the gear → <b>Setup code</b> → enter this code, then Save. Expires in 1 hour.</p>
+        </div>
+      </footer>
+    </div>
   </main>
   <script type="module" src="js/settings/setup.js"></script>
 </body>

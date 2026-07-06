@@ -15,6 +15,11 @@ body {
   line-height: 1.45;
 }
 .setup { max-width: 640px; margin: 0 auto; padding: 28px 20px 80px; display: flex; flex-direction: column; gap: 28px; }
+#step-1:not([hidden]), #step-2:not([hidden]) { display: flex; flex-direction: column; gap: 28px; }
+.step__label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); margin: 0; }
+.step__head { display: flex; align-items: center; gap: 14px; }
+.step__nav { display: flex; justify-content: flex-end; }
+#to-step-1 { background: none; border: 1px solid var(--bg-card-2); }
 .setup__head h1 { font-size: 1.7rem; margin-bottom: 8px; }
 .setup__head p, .hint { color: var(--ink-dim); font-size: 1rem; }
 h2 { font-size: 1.15rem; margin-bottom: 10px; }
@@ -37,7 +42,7 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 }
 .checks input { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
 
-#widgets { display: flex; flex-direction: column; gap: 18px; }
+#widgets { display: flex; flex-direction: column; gap: 18px; margin-top: 16px; }
 .wpick__group { display: flex; flex-direction: column; gap: 8px; }
 .wpick__title {
   font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;

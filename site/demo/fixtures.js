@@ -193,4 +193,7 @@ export const DEMO_VMS = {
       { symbol: '^GSPC', name: 'S&P 500', price: 7483.23, change: -16.13, changePct: -0.22, spark: [7499, 7490, 7470, 7458, 7481, 7483] },
     ],
   },
+  photos: { updatedAt: 1783000000, stale: false, photos: [
+    { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
+  ] },
 };

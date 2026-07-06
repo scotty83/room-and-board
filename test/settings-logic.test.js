@@ -139,6 +139,24 @@ describe('widget label coverage', () => {
   });
 });
 
+import { WIDGET_GROUPS } from '../site/js/settings/settings.js';
+
+describe('WIDGET_GROUPS taxonomy', () => {
+  it('is an exact partition of WIDGET_IDS (every id in exactly one group, no extras)', () => {
+    const grouped = WIDGET_GROUPS.flatMap((g) => g.ids);
+    // no duplicates across groups
+    expect(new Set(grouped).size).toBe(grouped.length);
+    // same membership as WIDGET_IDS, both directions
+    expect([...grouped].sort()).toEqual([...ALL_IDS].sort());
+  });
+
+  it('has the six expected group labels in order', () => {
+    expect(WIDGET_GROUPS.map((g) => g.label)).toEqual([
+      'Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras',
+    ]);
+  });
+});
+
 import { mountKeyboard } from '../site/js/settings/keyboard.js';
 describe('mountKeyboard', () => {
   it('types, shifts to uppercase, backspaces, and submits the value', () => {
@@ -154,5 +172,32 @@ describe('mountKeyboard', () => {
     expect(kb.value()).toBe('bA');
     host.querySelector('[data-act="submit"]').click();
     expect(submitted).toBe('bA');
+  });
+});
+
+import { widgetGroupsHtml } from '../site/js/settings/settings.js';
+
+describe('widgetGroupsHtml', () => {
+  it('renders all six group headers and one toggle per widget with correct on-state', () => {
+    const html = widgetGroupsHtml([{ id: 'weather', x: 0, y: 0, w: 4, h: 4 }]);
+    // six group headers
+    for (const label of ['Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras']) {
+      expect(html).toContain(`<h3 class="wgroup__title">${label}</h3>`);
+    }
+    // one toggle per WIDGET_ID (21)
+    expect((html.match(/data-toggle="/g) || []).length).toBe(ALL_IDS.length);
+    // weather is placed → its toggle is on
+    expect(html).toMatch(/data-toggle="weather"[^>]*aria-checked="true"/);
+    // subway is not placed → not on
+    expect(html).toMatch(/class="toggle "[^>]*data-toggle="subway"/);
+  });
+
+  it('disables a widget that cannot fit (no room) and labels it', () => {
+    // one widget filling the whole 12x8 grid leaves no room for others
+    const html = widgetGroupsHtml([{ id: 'weather', x: 0, y: 0, w: 12, h: 8 }]);
+    expect(html).toMatch(/data-toggle="subway"[^>]*disabled/);
+    expect(html).toContain('(no room — resize others first)');
+    // the placed, full-size widget is still shown as on
+    expect(html).toMatch(/data-toggle="weather"[^>]*aria-checked="true"/);
   });
 });

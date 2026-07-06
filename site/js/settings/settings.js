@@ -36,6 +36,18 @@ export const WIDGET_LABELS = {
   bsky: 'Bluesky',
 };
 
+// Display grouping for the Widgets picker. WIDGET_IDS (config.js) stays the
+// validity source of truth; this is only the on-screen order + categories.
+// Must remain an exact partition of WIDGET_IDS (asserted in settings-logic.test).
+export const WIDGET_GROUPS = [
+  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
+  { label: 'Weather & Air', ids: ['weather', 'aqi'] },
+  { label: 'Markets & Sports', ids: ['markets', 'sports', 'worldcup'] },
+  { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
+  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
+];
+
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';
@@ -176,23 +188,34 @@ function renderSection() {
 
 /* ---------- widgets ---------- */
 
+// Pure HTML for the Widgets picker: one .wgroup section per WIDGET_GROUPS entry,
+// each with a small-caps header and the (unchanged) toggle rows. Exported for tests.
+export function widgetGroupsHtml(layout) {
+  const placed = new Set(layout.map((r) => r.id));
+  return WIDGET_GROUPS.map((g) => `
+    <section class="wgroup">
+      <h3 class="wgroup__title">${g.label}</h3>
+      <div class="wgroup__rows">${g.ids.map((id) => {
+        const on = placed.has(id);
+        const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
+        return `<div class="row">
+          <button class="toggle ${on ? 'is-on' : ''}" data-toggle="${id}" role="switch"
+            aria-checked="${on}" ${canAdd ? '' : 'disabled'}>
+            <span class="toggle__knob"></span>
+          </button>
+          <span class="row__label">${WIDGET_LABELS[id]}${canAdd ? '' : ' <small>(no room — resize others first)</small>'}</span>
+        </div>`;
+      }).join('')}</div>
+    </section>`).join('');
+}
+
 function renderWidgets() {
   const layout = state.cfg.layout;
   const placed = new Set(layout.map((r) => r.id));
   pane().innerHTML = `
     <h2 class="pane__title">Widgets</h2>
     <p class="pane__hint">Toggle what appears on your dashboard. To move or resize widgets, close settings and tap the ✎ pencil button.</p>
-    <div class="rows">${WIDGET_IDS.map((id) => {
-      const on = placed.has(id);
-      const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
-      return `<div class="row">
-        <button class="toggle ${on ? 'is-on' : ''}" data-toggle="${id}" role="switch"
-          aria-checked="${on}" ${canAdd ? '' : 'disabled'}>
-          <span class="toggle__knob"></span>
-        </button>
-        <span class="row__label">${WIDGET_LABELS[id]}${canAdd ? '' : ' <small>(no room — resize others first)</small>'}</span>
-      </div>`;
-    }).join('')}</div>`;
+    <div class="wgroups">${widgetGroupsHtml(layout)}</div>`;
   pane().querySelectorAll('[data-toggle]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const id = btn.dataset.toggle;

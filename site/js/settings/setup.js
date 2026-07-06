@@ -466,4 +466,4 @@ async function getCode() {
   }
 }
 
-boot();
+if (document.getElementById('widgets')) boot();

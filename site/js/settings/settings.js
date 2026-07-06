@@ -310,7 +310,7 @@ function renderPhotos() {
   };
   const kb = mountKeyboard(pane().querySelector('.photo-kb'), { onSubmit: validate });
   pane().querySelector('[data-paste]').addEventListener('click', async () => {
-    try { const t = await navigator.clipboard.readText(); const tok = parseAlbumToken(t); if (tok) { kb.set(tok); validate(tok); } }
+    try { const t = await navigator.clipboard.readText(); const tok = parseAlbumToken(t); if (tok) { kb.set(tok); validate(tok); } else { status.textContent = "That clipboard text isn't an album link — type the token instead."; } }
     catch { status.textContent = 'Paste unavailable on this display — type the link instead.'; }
   });
 }

@@ -16,7 +16,7 @@ export function mapPhotos(digest) {
 
 let sessionList = []; // most recent fetch, for the viewer to browse
 
-export function render(el, vm, _cfg) {
+export function render(el, vm, cfg) {
   sessionList = vm.photos ?? [];
   if (!sessionList.length) {
     el.innerHTML = '<div class="empty">Add a shared album in Settings → Photos</div>';
@@ -30,7 +30,7 @@ export function render(el, vm, _cfg) {
       <img class="artwork__img" src="${escapeHtml(p.img)}" alt="${escapeHtml(p.title)}" loading="lazy">
       ${p.title ? `<figcaption class="artwork__caption"><span class="artwork__title">${escapeHtml(p.title)}</span></figcaption>` : ''}
     </figure>`;
-  el.querySelector('.artwork').addEventListener('click', () => openImageViewer(p, _cfg, { list: sessionList }));
+  el.querySelector('.artwork').addEventListener('click', () => openImageViewer(p, cfg, { list: sessionList }));
 }
 
 // Used by ambient mode (Task 6) when photos are the chosen screensaver source.

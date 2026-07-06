@@ -4,6 +4,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createSlideshow, swipeAction } from '../site/js/imageshow.js';
 import { stripData, stripHtml } from '../site/js/ambient.js';
+import { ambientSource } from '../site/js/modes.js';
 
 const MANIFEST = [
   { img: 'a.jpg', title: 'A', artist: 'AA', year: '1900', ar: 1.78 },
@@ -144,3 +145,12 @@ describe('createSlideshow stop() safety', () => {
   });
 });
 const Slideshow = { _pending: [] };
+
+describe('ambientSource', () => {
+  it('picks photos only when enabled + screensaver on + configured', () => {
+    expect(ambientSource({ widgets: ['art'], photos: { screensaver: false, album: '' } })).toBe('art');
+    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe('photos');
+    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: false, album: 'B1m5fk75vLWwX' } })).toBe('art');
+    expect(ambientSource({ widgets: [], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe(null);
+  });
+});

@@ -86,7 +86,12 @@ export function moonPhase(date) {
 }
 
 export function mapAqi(aqJson, sunJson, now) {
-  const aqi = Math.round(aqJson.current.us_aqi);
+  // Open-Meteo returns us_aqi:null when it has no reading; Math.round(null) is
+  // 0 ("Good") and Math.round(undefined) is NaN ("Hazardous") — both are
+  // confidently-wrong dials. Throw so the stale cached reading keeps showing.
+  const rawAqi = aqJson?.current?.us_aqi;
+  if (!Number.isFinite(rawAqi)) throw new Error('aqi: no us_aqi reading');
+  const aqi = Math.round(rawAqi);
   const uvMax = sunJson?.daily?.uv_index_max?.[0];
   return {
     aqi,

@@ -94,5 +94,8 @@ export function render(el, vm, _cfg) {
 
 export async function fetchData(cfg, net) {
   const digest = await net.fetchJSON(`${WORKER_URL}/path/realtime`);
-  return mapPath(digest, cfg.path, Math.floor(Date.now() / 1000));
+  const vm = mapPath(digest, cfg.path, Math.floor(Date.now() / 1000));
+  vm.stale = Boolean(digest.stale);
+  vm.updatedAt = digest.updatedAt;
+  return vm;
 }

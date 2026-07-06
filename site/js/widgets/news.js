@@ -60,6 +60,9 @@ export function mergeNews(perSource, nowMs, max = 30) {
     .sort((a, b) => b.t - a.t)
     .filter((i) => {
       const key = i.title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      // Non-ASCII text (emoji-only, CJK, Cyrillic posts) normalizes to '';
+      // don't let the first such item claim that key and drop all the rest.
+      if (!key) return true;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -101,24 +104,25 @@ export function render(el, vm, _cfg) {
 
 export async function fetchData(cfg, net) {
   const ids = cfg.news?.sources?.length ? cfg.news.sources : ['nyt-home'];
-  const perSource = await Promise.all(
+  const settled = await Promise.allSettled(
     ids.map(async (id) => {
       const src = SOURCE_BY_ID[id];
       if (!src) return [];
       const [, label, kind, ref] = src;
-      try {
-        if (kind === 'direct') {
-          const res = await fetch(ref);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return parseRss(await res.text(), label);
-        }
-        const payload = await net.fetchJSON(`${WORKER_URL}/news/${ref}`);
-        return parseRss(payload.xml ?? '', label);
-      } catch {
-        return []; // a dead source never blanks the card
+      if (kind === 'direct') {
+        // net.fetchText applies the 15s timeout — a bare fetch() on a hung
+        // NYT connection would stall the whole refresh cycle indefinitely.
+        return parseRss(await net.fetchText(ref), label);
       }
+      const payload = await net.fetchJSON(`${WORKER_URL}/news/${ref}`);
+      return parseRss(payload.xml ?? '', label);
     }),
   );
+  const perSource = settled.filter((s) => s.status === 'fulfilled').map((s) => s.value);
+  // Every source failed (not merely empty): throw so the stale cache survives.
+  if (ids.length && !perSource.some((p) => p.length) && settled.some((s) => s.status === 'rejected')) {
+    throw new Error('news: all sources failed');
+  }
   const nowMs = Date.now();
   return { items: mergeNews(perSource, nowMs), nowMs };
 }

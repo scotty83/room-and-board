@@ -34,3 +34,7 @@ export async function fetchJSON(url, opts) {
 export async function fetchBuffer(url, opts) {
   return (await fetchWithTimeout(url, opts)).arrayBuffer();
 }
+
+export async function fetchText(url, opts) {
+  return (await fetchWithTimeout(url, opts)).text();
+}

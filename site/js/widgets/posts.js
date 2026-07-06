@@ -69,11 +69,14 @@ export async function fetchSubstackRows(acct, net) {
   }));
 }
 
-// One dead account never blanks a card.
+// One dead account never blanks a card. But a TOTAL failure (every account
+// rejected) must throw, not resolve empty — otherwise it overwrites the good
+// stale cache and shows "add accounts" though accounts are configured.
 export async function fetchAll(accounts, fetchRows, net) {
   const settled = await Promise.allSettled(accounts.map((a) => fetchRows(a, net)));
-  return mapPosts(
-    settled.filter((s) => s.status === 'fulfilled').map((s) => s.value),
-    Date.now(),
-  );
+  const ok = settled.filter((s) => s.status === 'fulfilled').map((s) => s.value);
+  if (accounts.length && !ok.length && settled.some((s) => s.status === 'rejected')) {
+    throw new Error('posts: all account fetches failed');
+  }
+  return mapPosts(ok, Date.now());
 }

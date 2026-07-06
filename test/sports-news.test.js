@@ -1,3 +1,4 @@
+import { fetchAll } from '../site/js/widgets/posts.js';
 import { describe, it, expect } from 'vitest';
 import { logoUrl } from '../site/js/widgets/sports.js';
 import { mapTeamSummary, digestSchedule, pickLogo, LEAGUE_PATHS } from '../worker/src/sports.js';
@@ -162,5 +163,43 @@ describe('mapPosts', () => {
     expect(vm.items.map((i) => i.text)).toEqual(['Newest post', 'Older post']);
     expect(vm.items[0].source).toBe('NYT');
     expect(vm.nowMs).toBe(2100e3);
+  });
+});
+
+describe('mergeNews non-ASCII dedupe', () => {
+  it('keeps emoji-only / CJK / Cyrillic posts instead of collapsing to one', () => {
+    const items = ['🔥', '🎉🎉', 'こんにちは世界', 'Привет мир', 'Hello world'].map((t, i) => ({ title: t, t: 1000 - i, source: 'x' }));
+    const out = mergeNews([items], 2000);
+    expect(out).toHaveLength(5);
+  });
+});
+
+describe('fetchAll total-failure resilience', () => {
+  const rejecting = async () => { throw new Error('down'); };
+  it('throws when every account rejects (so the stale cache survives)', async () => {
+    await expect(fetchAll([{ id: 'a' }, { id: 'b' }], rejecting, {})).rejects.toThrow();
+  });
+  it('resolves with the survivors on partial failure', async () => {
+    const one = async (acct) => (acct.id === 'a' ? [{ text: 'hi', t: 1e12, source: 'A' }] : Promise.reject(new Error('down')));
+    const vm = await fetchAll([{ id: 'a' }, { id: 'b' }], one, {});
+    expect(vm.items).toHaveLength(1);
+  });
+  it('resolves empty when there are no accounts', async () => {
+    const vm = await fetchAll([], rejecting, {});
+    expect(vm.items).toEqual([]);
+  });
+});
+
+describe('sports fetchData total-failure resilience', () => {
+  it('throws when all team fetches reject', async () => {
+    const sports = await import('../site/js/widgets/sports.js');
+    const net = { fetchJSON: async () => { throw new Error('down'); } };
+    await expect(sports.fetchData({ sports: { teams: [{ lg: 'mlb', id: '10' }] } }, net)).rejects.toThrow();
+  });
+  it('returns rows on success', async () => {
+    const sports = await import('../site/js/widgets/sports.js');
+    const net = { fetchJSON: async () => ({ row: { abbr: 'NYM', state: 'pre', line: 'x' } }) };
+    const vm = await sports.fetchData({ sports: { teams: [{ lg: 'mlb', id: '21' }] } }, net);
+    expect(vm.rows).toHaveLength(1);
   });
 });

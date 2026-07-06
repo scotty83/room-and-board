@@ -74,5 +74,8 @@ export async function fetchData(cfg, net) {
     net.fetchJSON(`${WORKER_URL}/ferry/departures`),
     ferryData(net),
   ]);
-  return mapFerry(digest, data, cfg.ferry.landing, Math.floor(Date.now() / 1000));
+  const vm = mapFerry(digest, data, cfg.ferry.landing, Math.floor(Date.now() / 1000));
+  vm.stale = Boolean(digest.stale);
+  vm.updatedAt = digest.updatedAt;
+  return vm;
 }

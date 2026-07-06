@@ -2,7 +2,7 @@
 
 import { normalizeConfig, decodeConfig, DEFAULT_CONFIG } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
-import { fetchJSON, fetchBuffer } from './net.js';
+import { fetchJSON, fetchBuffer, fetchText } from './net.js';
 import { schedule } from './scheduler.js';
 import { resolveMode } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
@@ -38,7 +38,7 @@ import * as bsky from './widgets/bsky.js';
 const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky];
 for (const m of MODULES) registerWidget(m);
 
-const net = { fetchJSON, fetchBuffer };
+const net = { fetchJSON, fetchBuffer, fetchText };
 const $ = (sel) => document.querySelector(sel);
 const params = new URLSearchParams(location.search);
 const DEMO = params.get('demo') === '1';
@@ -116,7 +116,10 @@ function startWidget(mod, rect) {
       const vm = await mod.fetchData(cfg, net);
       saveCache(mod.meta.id, vm);
       renderWidget(mod, vm);
-      markFresh(card);
+      // A worker-served stale fallback (up to 24h old) must not read as fresh:
+      // dim the card and stamp its age instead of clearing the stale mark.
+      if (vm?.stale) markStale(card, vm.updatedAt);
+      else markFresh(card);
     } catch (err) {
       markStale(card, loadCache(mod.meta.id)?.t);
       throw err; // let the scheduler back off

@@ -51,5 +51,9 @@ export function render(el, vm, _cfg) {
 
 export async function fetchData(cfg, net) {
   const digest = await net.fetchJSON(`${WORKER_URL}/alerts/subway`);
-  return { updatedAt: digest.updatedAt, lines: mapSubwayStatus(digest.alerts, cfg.subway.lines) };
+  return {
+    updatedAt: digest.updatedAt,
+    stale: Boolean(digest.stale),
+    lines: mapSubwayStatus(digest.alerts, cfg.subway.lines),
+  };
 }

@@ -77,6 +77,8 @@ describe('mapAqi', () => {
     const d = new Date('2026-07-02');
     expect(mapAqi(aq(50), null, d).category).toBe('Good');
     expect(mapAqi(aq(101), null, d).category).toBe('Sensitive groups');
+    expect(() => mapAqi({ current: { us_aqi: null } }, null, d)).toThrow();
+    expect(() => mapAqi({ current: {} }, null, d)).toThrow();
     expect(mapAqi(aq(101), null, d).uv).toBeNull();
     expect(mapAqi(aq(40), { daily: { uv_index_max: [6.4] } }, d).uv).toBe(6);
     expect(mapAqi(aq(250), null, d).category).toBe('Very Unhealthy');

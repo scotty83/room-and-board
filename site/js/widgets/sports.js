@@ -49,20 +49,22 @@ export function render(el, vm, _cfg) {
 
 export async function fetchData(cfg, net) {
   const teams = cfg.sports?.teams ?? [];
-  const rows = await Promise.all(
-    teams.map(async ({ lg, id }) => {
-      try {
-        const payload = await net.fetchJSON(
-          `${WORKER_URL}/sports/team?lg=${encodeURIComponent(lg)}&id=${encodeURIComponent(id)}`,
-        );
-        return payload.row ?? null;
-      } catch {
-        return null;
-      }
-    }),
+  const settled = await Promise.allSettled(
+    teams.map(({ lg, id }) =>
+      net.fetchJSON(`${WORKER_URL}/sports/team?lg=${encodeURIComponent(lg)}&id=${encodeURIComponent(id)}`),
+    ),
   );
+  const list = settled
+    .filter((s) => s.status === 'fulfilled')
+    .map((s) => s.value?.row)
+    .filter(Boolean);
+  // Total upstream failure (every team fetch rejected): throw so the scheduler
+  // backs off and the last good cache keeps rendering, instead of overwriting
+  // it with an empty payload and a false "pick your teams" state.
+  if (teams.length && !list.length && settled.some((s) => s.status === 'rejected')) {
+    throw new Error('sports: all team fetches failed');
+  }
   // Live games float to the top; otherwise keep the user's order.
-  const list = rows.filter(Boolean);
   list.sort((a, b) => Number(b.state === 'in') - Number(a.state === 'in'));
   return { rows: list };
 }

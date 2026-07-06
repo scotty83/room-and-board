@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, ART_CATS } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { WORKER_URL } from '../env.js';
@@ -36,17 +36,6 @@ export const WIDGET_LABELS = {
   bsky: 'Bluesky',
 };
 
-// Display grouping for the Widgets picker. WIDGET_IDS (config.js) stays the
-// validity source of truth; this is only the on-screen order + categories.
-// Must remain an exact partition of WIDGET_IDS (asserted in settings-logic.test).
-export const WIDGET_GROUPS = [
-  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
-  { label: 'Weather & Air', ids: ['weather', 'aqi'] },
-  { label: 'Markets & Sports', ids: ['markets', 'sports', 'worldcup'] },
-  { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
-  { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
-  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
-];
 
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';

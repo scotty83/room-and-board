@@ -139,7 +139,7 @@ describe('widget label coverage', () => {
   });
 });
 
-import { WIDGET_GROUPS } from '../site/js/settings/settings.js';
+import { WIDGET_GROUPS } from '../site/js/config.js';
 
 describe('WIDGET_GROUPS taxonomy', () => {
   it('is an exact partition of WIDGET_IDS (every id in exactly one group, no extras)', () => {
@@ -172,6 +172,25 @@ describe('mountKeyboard', () => {
     expect(kb.value()).toBe('bA');
     host.querySelector('[data-act="submit"]').click();
     expect(submitted).toBe('bA');
+  });
+});
+
+import { widgetChecksHtml, WIDGET_LABELS as SETUP_LABELS } from '../site/js/settings/setup.js';
+
+describe('widgetChecksHtml (setup picker)', () => {
+  it('renders six grouped sections, one checkbox per widget, reflecting the placed set', () => {
+    const html = widgetChecksHtml(SETUP_LABELS, new Set(['subway', 'photos']));
+    for (const label of ['Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras']) {
+      expect(html).toContain(`<h3 class="wpick__title">${label}</h3>`);
+    }
+    expect((html.match(/data-w="/g) || []).length).toBe(ALL_IDS.length); // 21 checkboxes
+    // placed widgets are checked
+    expect(html).toMatch(/data-w="subway"[^>]*checked/);
+    expect(html).toMatch(/data-w="photos"[^>]*checked/);
+    // an unplaced widget is not checked
+    expect(html).not.toMatch(/data-w="lirr"[^>]*checked/);
+    // uses the passed (phone) labels
+    expect(html).toContain('Metro-North (GCT)');
   });
 });
 

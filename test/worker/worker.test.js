@@ -7,6 +7,7 @@ import GtfsRt from 'gtfs-realtime-bindings';
 import { mapFerryFeed } from '../../worker/src/ferry.js';
 import { mapSubstackPosts } from '../../worker/src/posts.js';
 import { mapIcloudAlbum } from '../../worker/src/icloud.js';
+import { newsFeedUrl } from '../../worker/src/news.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -339,6 +340,13 @@ describe('/news', () => {
     expect(res.status).toBe(200);
     expect((await res.json()).xml).toContain('<title>Hi</title>');
     expect((await call('/news/evil-feed')).status).toBe(404);
+  });
+
+  it('resolves the finance feed ids and rejects unknown ids', () => {
+    for (const id of ['cnbc', 'marketwatch', 'yahoo-finance', 'seekingalpha']) {
+      expect(newsFeedUrl(id)).toMatch(/^https:\/\//);
+    }
+    expect(newsFeedUrl('not-a-feed')).toBeNull();
   });
 });
 

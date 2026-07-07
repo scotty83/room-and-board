@@ -89,6 +89,14 @@ describe('news parsing', () => {
     expect(items[0]).toMatchObject({ title: 'Big headline & more', source: 'NYT' });
     expect(items[0].t).toBe(Date.parse('2026-07-02T12:00:00Z'));
   });
+  it('decodes hex and decimal numeric character references', () => {
+    // Regression: MarketWatch emits hex refs (&#x2019;); only decimal was
+    // decoded, so "Here&#x2019;s" survived and rendered the literal entity.
+    const xml = `<rss><channel>
+      <item><title>Here&#x2019;s what it means &#8212; part &#x33;</title><pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate></item>
+    </channel></rss>`;
+    expect(parseRss(xml, 'MW')[0].title).toBe('Here’s what it means — part 3');
+  });
   it('merges sources newest-first and drops far-future items', () => {
     const now = Date.parse('2026-07-02T13:00:00Z');
     const merged = mergeNews([

@@ -229,7 +229,8 @@ describe('settings nav model', () => {
     expect(navGroupForSection('photos')).toBe('Images');
     expect(navGroupForSection('news')).toBe('News & Social');
     expect(navGroupForSection('widgets')).toBeNull(); // pinned
-    expect(navGroupForSection('markets')).toBeNull(); // standalone
+    expect(navGroupForSection('markets')).toBe('Markets'); // now a group with marketsnews
+    expect(navGroupForSection('marketsnews')).toBe('Markets'); // grouped under Markets
     expect(navGroupForSection('sports')).toBeNull(); // standalone
     expect(navGroupForSection('weather')).toBeNull(); // standalone
     expect(navGroupForSection('worldclock')).toBeNull(); // standalone (pulled out of Images)

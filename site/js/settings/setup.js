@@ -53,6 +53,7 @@ export const SETUP_SECTIONS = [
   { id: 'bus-field', group: 'Commute', triggers: ['bus'] },
   { id: 'weather-field', group: 'Weather & Air', triggers: ['weather', 'aqi'] },
   { id: 'markets-field', group: 'Markets & Sports', triggers: ['markets'] },
+  { id: 'marketsnews-field', group: 'Markets & Sports', triggers: ['marketsnews'] },
   { id: 'sports-field', group: 'Markets & Sports', triggers: ['sports'] },
   { id: 'news-field', group: 'News & Social', triggers: ['news'] },
   { id: 'substack-field', group: 'News & Social', triggers: ['substack'] },
@@ -115,6 +116,7 @@ async function boot() {
   await renderFerry();
   renderBusStops();
   renderTickers();
+  await renderMarketsNewsSources();
   renderWorldclockPrefs();
   await renderTeams();
   await renderNewsSources();
@@ -366,6 +368,17 @@ async function renderTeams() {
       cfg.sports.teams = [...cfg.sports.teams, { lg, id }];
       renderChips();
     }
+  });
+}
+
+async function renderMarketsNewsSources() {
+  const { MARKET_SOURCES } = await import('../widgets/marketsnews.js');
+  $('#marketsnews-sources').innerHTML = MARKET_SOURCES.map(
+    ([id, label, , , aud]) => `<label><input type="checkbox" data-mn="${id}" ${cfg.marketsnews.sources.includes(id) ? 'checked' : ''}> ${label} <small>(${aud})</small></label>`,
+  ).join('');
+  $('#marketsnews-sources').addEventListener('change', (e) => {
+    const id = e.target.dataset.mn;
+    if (id) cfg.marketsnews.sources = toggleIn(cfg.marketsnews.sources, id);
   });
 }
 

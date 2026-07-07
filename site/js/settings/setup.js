@@ -374,7 +374,7 @@ async function renderTeams() {
 async function renderMarketsNewsSources() {
   const { MARKET_SOURCES } = await import('../widgets/marketsnews.js');
   $('#marketsnews-sources').innerHTML = MARKET_SOURCES.map(
-    ([id, label, , , aud]) => `<label><input type="checkbox" data-mn="${id}" ${cfg.marketsnews.sources.includes(id) ? 'checked' : ''}> ${label} <small>(${aud})</small></label>`,
+    ([id, label]) => `<label><input type="checkbox" data-mn="${id}" ${cfg.marketsnews.sources.includes(id) ? 'checked' : ''}> ${label}</label>`,
   ).join('');
   $('#marketsnews-sources').addEventListener('change', (e) => {
     const id = e.target.dataset.mn;

@@ -280,3 +280,26 @@ describe('marketsnews config', () => {
     expect(normalizeConfig({ marketsnews: { sources: [] } }).marketsnews.sources).toEqual(['cnbc', 'nyt-business']);
   });
 });
+
+describe('bus legs config', () => {
+  it('defaults to empty legs', () => {
+    expect(normalizeConfig({}).bus).toEqual({ legs: [] });
+    expect(DEFAULT_CONFIG.bus).toEqual({ legs: [] });
+  });
+  it('migrates old stop-code config to empty legs', () => {
+    expect(normalizeConfig({ bus: { stops: ['550789', '504123'] } }).bus).toEqual({ legs: [] });
+  });
+  it('keeps valid legs, caps at 2, drops junk, carries lineRef', () => {
+    const legs = [
+      { route: 'QM24', lineRef: 'MTABC_QM24', dir: 0, stopId: '550789', stopName: 'Madison Av / E 34 St' },
+      { route: 'x27', lineRef: 'MTA NYCT_X27', dir: 1, stopId: '504123', stopName: 'Some Stop' }, // route case-insensitive
+      { route: 'M15', lineRef: 'x', dir: 0, stopId: '1', stopName: 'x' },       // not express -> dropped
+      { route: 'QM1', lineRef: 'x', dir: 5, stopId: '2', stopName: 'x' },       // bad dir -> dropped
+      { route: 'QM2', lineRef: 'x', dir: 0, stopId: '', stopName: 'x' },        // empty stopId -> dropped
+    ];
+    const out = normalizeConfig({ bus: { legs } }).bus.legs;
+    expect(out).toHaveLength(2);
+    expect(out[0]).toEqual({ route: 'QM24', lineRef: 'MTABC_QM24', dir: 0, stopId: '550789', stopName: 'Madison Av / E 34 St' });
+    expect(out[1]).toEqual({ route: 'x27', lineRef: 'MTA NYCT_X27', dir: 1, stopId: '504123', stopName: 'Some Stop' });
+  });
+});

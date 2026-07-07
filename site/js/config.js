@@ -49,7 +49,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   subway: Object.freeze({ lines: Object.freeze(['1', '2', '3']) }),
   lirr: Object.freeze({ dest: '', alerts: true }), // Penn board destination filter ('' = all trains)
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
-  bus: Object.freeze({ stops: Object.freeze([]) }), // 6-digit bus stop codes, up to 2
+  bus: Object.freeze({ legs: Object.freeze([]) }), // up to 2 route-first legs
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['cnbc', 'nyt-business']) }),
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
@@ -146,7 +146,15 @@ export function normalizeConfig(raw) {
       dest: str(raw.mnr?.dest, '', 4),
       alerts: raw.mnr?.alerts !== false,
     },
-    bus: { stops: strList(raw.bus?.stops, 2).filter((c) => /^\d{4,7}$/.test(c)) },
+    bus: {
+      legs: (Array.isArray(raw.bus?.legs) ? raw.bus.legs : [])
+        .filter((l) =>
+          l && /^(QM|BM|SIM|X)\d+[A-Z]?$/i.test(String(l.route ?? '')) &&
+          (l.dir === 0 || l.dir === 1) &&
+          typeof l.stopId === 'string' && l.stopId.length > 0)
+        .slice(0, 2)
+        .map((l) => ({ route: String(l.route), lineRef: String(l.lineRef ?? ''), dir: l.dir, stopId: String(l.stopId), stopName: String(l.stopName ?? '') })),
+    },
     sports: {
       teams: (Array.isArray(raw.sports?.teams) ? raw.sports.teams : [])
         .filter((t) => typeof t?.lg === 'string' && typeof t?.id === 'string')

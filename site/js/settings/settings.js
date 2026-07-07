@@ -146,11 +146,11 @@ export function navHtml(section, openGroup) {
     }
     const open = openGroup === e.label;
     const header = `<button class="settings__navgroup ${open ? 'is-open' : ''}" data-group="${e.label}" aria-expanded="${open}"><span class="settings__chev"></span>${e.label}</button>`;
-    const children = open
-      ? e.items.map(([id, label]) =>
-          `<button class="settings__navitem settings__navchild ${id === section ? 'is-active' : ''}" data-section="${id}">${label}</button>`).join('')
-      : '';
-    return header + children;
+    // Children always in the DOM inside a grid wrapper; toggling .is-open animates
+    // grid-template-rows 0fr↔1fr (see main.css). Kept persistent so the transition plays.
+    const children = e.items.map(([id, label]) =>
+      `<button class="settings__navitem settings__navchild ${id === section ? 'is-active' : ''}" data-section="${id}">${label}</button>`).join('');
+    return `${header}<div class="settings__navkids ${open ? 'is-open' : ''}"><div class="settings__navkids__inner">${children}</div></div>`;
   }).join('');
 }
 
@@ -169,7 +169,13 @@ function renderNav() {
   nav.querySelectorAll('[data-group]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.openGroup = state.openGroup === btn.dataset.group ? null : btn.dataset.group;
-      renderNav();
+      // Toggle open state in place (no re-render) so the grid-rows transition animates.
+      nav.querySelectorAll('.settings__navgroup').forEach((h) => {
+        const on = h.dataset.group === state.openGroup;
+        h.classList.toggle('is-open', on);
+        h.setAttribute('aria-expanded', String(on));
+        h.nextElementSibling.classList.toggle('is-open', on); // the .settings__navkids wrapper
+      });
     }),
   );
 }

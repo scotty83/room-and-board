@@ -272,20 +272,21 @@ describe('stepTwoVisibility', () => {
 });
 
 describe('navHtml', () => {
-  it('renders pinned items and collapsed group headers, hiding children until open', () => {
+  it('renders pinned items + group headers; children live in a wrapper that is closed until open', () => {
     const html = navHtml('widgets', null);
     expect(html).toContain('data-section="widgets"');          // pinned item
     expect(html).toContain('data-group="Commute"');            // group header
     expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="false"/);
-    expect(html).not.toContain('data-section="subway"');       // children hidden while collapsed
+    // children are always in the DOM (for the collapse animation); no group wrapper is open
+    expect(html).toContain('data-section="subway"');
+    expect((html.match(/settings__navkids is-open/g) || []).length).toBe(0);
     // active pinned item highlighted
     expect(html).toMatch(/class="settings__navitem is-active"[^>]*data-section="widgets"/);
   });
-  it('shows children of the open group with the active child highlighted', () => {
+  it('opens exactly the active group wrapper with the active child highlighted', () => {
     const html = navHtml('subway', 'Commute');
     expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="true"/);
-    expect(html).toContain('data-section="subway"');           // child now shown
+    expect((html.match(/settings__navkids is-open/g) || []).length).toBe(1); // only Commute open
     expect(html).toMatch(/settings__navchild is-active"[^>]*data-section="subway"/);
-    expect(html).not.toContain('data-section="art"');          // a different, closed group's child stays hidden
   });
 });

@@ -286,7 +286,18 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .settings__navgroup.is-open .settings__chev { transform: rotate(90deg); }
 .settings__navchild { padding-left: 34px; font-size: 21px; }
-@media (prefers-reduced-motion: reduce) { .settings__chev { transition: none; } }
+/* Accordion expand/collapse: grid-template-rows 0fr↔1fr animates to exact height
+   (degrades to an instant snap on older engines). The inner clips during collapse. */
+.settings__navkids {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.settings__navkids.is-open { grid-template-rows: 1fr; }
+.settings__navkids__inner { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: 4px; }
+.settings__navkids.is-open .settings__navkids__inner { padding-top: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .settings__chev, .settings__navkids { transition: none; }
+}
 .settings__railfoot { display: flex; flex-direction: column; gap: 10px; flex: none; }
 .settings__pane { padding: 44px 56px; overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }

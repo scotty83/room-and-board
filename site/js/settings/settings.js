@@ -118,7 +118,7 @@ export const NAV_MODEL = [
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
-  { type: 'item', id: 'weather', label: 'Weather location' },
+  { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'item', id: 'markets', label: 'Markets' },
   { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
@@ -818,7 +818,7 @@ function renderWorldclock() {
 
 function renderWeather() {
   pane().innerHTML = `
-    <h2 class="pane__title">Weather location</h2>
+    <h2 class="pane__title">Weather</h2>
     <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
     <div class="rows">${PRESET_LOCATIONS.map(
       (p, i) =>

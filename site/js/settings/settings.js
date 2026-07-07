@@ -684,21 +684,18 @@ async function renderNews() {
 
 async function renderMarketsNews() {
   const { MARKET_SOURCES } = await import('../widgets/marketsnews.js');
-  const groups = ['Professional', 'General'];
   pane().innerHTML = `
     <h2 class="pane__title">Markets News</h2>
     <p class="pane__hint">Pick your finance sources — newest stories across all of them, merged.</p>
-    ${groups.map((g) => `
-      <p class="pane__hint">${g}</p>
-      <div class="rows">${MARKET_SOURCES.filter((s) => s[4] === g).map(([id, label]) => {
-        const on = state.cfg.marketsnews.sources.includes(id);
-        return `<div class="row">
-          <button class="toggle ${on ? 'is-on' : ''}" data-src="${id}" role="switch" aria-checked="${on}">
-            <span class="toggle__knob"></span>
-          </button>
-          <span class="row__label">${label}</span>
-        </div>`;
-      }).join('')}</div>`).join('')}`;
+    <div class="rows">${MARKET_SOURCES.map(([id, label]) => {
+      const on = state.cfg.marketsnews.sources.includes(id);
+      return `<div class="row">
+        <button class="toggle ${on ? 'is-on' : ''}" data-src="${id}" role="switch" aria-checked="${on}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">${label}</span>
+      </div>`;
+    }).join('')}</div>`;
   pane().querySelectorAll('[data-src]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.cfg.marketsnews.sources = toggleIn(state.cfg.marketsnews.sources, btn.dataset.src);
@@ -845,6 +842,11 @@ function renderWorldclock() {
 function renderWeather() {
   pane().innerHTML = `
     <h2 class="pane__title">Weather</h2>
+    <p class="pane__hint">Temperature unit:</p>
+    <div class="segmented" role="group" aria-label="Temperature unit">
+      <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
+      <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
+    </div>
     <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
     <div class="rows">${PRESET_LOCATIONS.map(
       (p, i) =>
@@ -858,11 +860,6 @@ function renderWeather() {
         (k) => `<button class="key" data-key="${k}">${k}</button>`,
       ).join('')}</div>
       <p class="zip__status"></p>
-    </div>
-    <p class="pane__hint">Temperature unit:</p>
-    <div class="segmented" role="group" aria-label="Temperature unit">
-      <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
-      <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
     </div>`;
   pane().querySelectorAll('[data-loc]').forEach((btn) =>
     btn.addEventListener('click', () => {

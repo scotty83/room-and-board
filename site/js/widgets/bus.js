@@ -6,7 +6,7 @@ import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-export const meta = { id: 'bus', title: 'MTA Bus', refreshMs: 60 * 1000 };
+export const meta = { id: 'bus', title: 'Express Bus', refreshMs: 60 * 1000 };
 
 export function mapBus(payload, nowSec, legs) {
   if (!payload || payload.error || !Array.isArray(payload.stops)) {
@@ -36,7 +36,7 @@ export function render(el, vm, _cfg) {
     return;
   }
   if (!vm.stops.length) {
-    el.innerHTML = '<div class="empty">Add an express route in Settings → MTA Bus</div>';
+    el.innerHTML = '<div class="empty">Add an express route in Settings → Express Bus</div>';
     return;
   }
   // Slice to the card, don't clip: each stop costs one header row plus its

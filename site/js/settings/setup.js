@@ -22,7 +22,7 @@ export const WIDGET_LABELS = {
   njt: 'NJ Transit',
   path: 'PATH',
   ferry: 'NYC Ferry',
-  bus: 'MTA Bus',
+  bus: 'Express Bus',
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art slideshow',

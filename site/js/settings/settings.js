@@ -20,7 +20,7 @@ export const WIDGET_LABELS = {
   njt: 'NJ Transit',
   path: 'PATH',
   ferry: 'NYC Ferry',
-  bus: 'MTA Bus',
+  bus: 'Express Bus',
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art slideshow',
@@ -118,7 +118,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
-    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'] ] },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'item', id: 'sports', label: 'My Teams' },

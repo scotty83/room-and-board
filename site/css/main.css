@@ -249,13 +249,15 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  /* Vertically centered on the ambient strip's info line (strip at bottom:0,
-     text ~18px up); 56px button aligned with the ~34px text row. */
-  position: absolute; right: 28px; bottom: 7px;
+  /* Edit + settings FABs. On the dashboard they sit comfortably above the
+     RoomOS bar (tappable); in ambient mode they drop onto the info strip. */
+  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) + 7px);
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);
 }
+/* Ambient mode: the FABs align with the info strip sitting at the bottom. */
+body.mode-ambient .gear { bottom: 7px; }
 
 /* ---------- settings overlay ---------- */
 .settings {

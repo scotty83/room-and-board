@@ -22,9 +22,12 @@
 /* The hidden attribute must always win, even over rules that set display. */
 [hidden] { display: none !important; }
 
-/* RoomOS overlays a small system bar along the bottom edge in interactive
-   signage mode; keep all content and controls above it (tunable). */
-:root { --safe-bottom: 84px; }
+/* RoomOS overlays a "Tap here to start" system bar along the bottom edge in
+   interactive signage mode. --roomos-bar is its measured height (from a 4K
+   board capture); --safe-bottom is the larger, comfortable clearance that
+   dashboard/settings content sits above. The ambient info band hugs the
+   actual bar (--roomos-bar); general content clears --safe-bottom. Tunable. */
+:root { --safe-bottom: 84px; --roomos-bar: 40px; }
 
 html, body {
   width: 1920px;
@@ -202,8 +205,8 @@ html, body {
 }
 .slide[data-active] { opacity: 1; }
 .slide-caption {
-  /* Sit just above the info band (which now hugs the reserved bar). */
-  position: absolute; left: 48px; bottom: calc(var(--safe-bottom) + 78px);
+  /* Sit just above the info band (which now hugs the RoomOS bar). */
+  position: absolute; left: 48px; bottom: calc(var(--roomos-bar) + 78px);
   display: flex; flex-direction: column; gap: 4px;
   background: rgba(0, 0, 0, 0.55);
   padding: 14px 22px; border-radius: 12px;
@@ -211,12 +214,12 @@ html, body {
 .slide-caption__title { font-size: 24px; font-weight: 600; }
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .strip {
-  /* Original translucent info band, anchored to bottom:0 so the band reaches
-     down into the reserved RoomOS "Tap here to start" bar (no floating gap
-     above it). padding-bottom keeps the text clear of that bar. */
-  position: absolute; left: 0; right: 0; bottom: 0;
+  /* Original ~70px translucent info band, moved down as a unit so its bottom
+     sits on the RoomOS bar (tucked 4px behind it, no floating gap, not
+     stretched). Its text clears the bar. */
+  position: absolute; left: 0; right: 0; bottom: calc(var(--roomos-bar) - 4px);
   display: flex; align-items: center; gap: 36px;
-  padding: 18px 48px var(--safe-bottom);
+  padding: 18px 48px;
   background: rgba(0, 0, 0, 0.65);
   font-size: 24px;
 }
@@ -247,9 +250,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  /* Vertically centered on the ambient strip's info line (which now sits just
-     above the reserved bar); 56px button, aligned with the ~34px text row. */
-  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) - 11px);
+  /* Vertically centered on the ambient strip's info line (which now sits on
+     the RoomOS bar); 56px button aligned with the ~34px text row. */
+  position: absolute; right: 28px; bottom: calc(var(--roomos-bar) + 3px);
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);

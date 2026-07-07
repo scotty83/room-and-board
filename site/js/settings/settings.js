@@ -22,6 +22,7 @@ export const WIDGET_LABELS = {
   ferry: 'NYC Ferry',
   bus: 'MTA Bus',
   markets: 'Markets',
+  marketsnews: 'Markets News',
   art: 'Art slideshow',
   photos: 'Photos',
   history: 'This Day in History',

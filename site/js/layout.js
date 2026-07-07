@@ -22,6 +22,7 @@ export const MIN_SIZE = {
   path: [3, 2],
   ferry: [3, 2],
   markets: [3, 2],
+  marketsnews: [4, 3],
   history: [2, 2],
   quote: [2, 2],
   wotd: [2, 2],

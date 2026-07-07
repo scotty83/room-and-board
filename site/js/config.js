@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -26,7 +26,7 @@ export const WIDGET_IDS = [
 export const WIDGET_GROUPS = [
   { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
-  { label: 'Markets & Sports', ids: ['markets', 'sports', 'worldcup'] },
+  { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
   { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
@@ -51,6 +51,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
   bus: Object.freeze({ stops: Object.freeze([]) }), // 6-digit bus stop codes, up to 2
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
+  marketsnews: Object.freeze({ sources: Object.freeze(['cnbc', 'nyt-business']) }),
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   // Starter accounts (AI/tech/finance, politically neutral, verified active
@@ -195,6 +196,13 @@ export function normalizeConfig(raw) {
           .map((t) => t.toUpperCase())
           .filter((t) => /^[\^A-Z0-9.\-]{1,10}$/.test(t));
         return list.length ? list : [...DEFAULT_CONFIG.markets.symbols];
+      })(),
+    },
+    marketsnews: {
+      sources: (() => {
+        const valid = new Set(['mw', 'sa', 'cnbc', 'nyt-business', 'yahoo-finance']); // MARKET_SOURCES ids
+        const picked = (Array.isArray(raw.marketsnews?.sources) ? raw.marketsnews.sources : []).filter((s) => valid.has(s));
+        return picked.length ? picked : ['cnbc', 'nyt-business'];
       })(),
     },
     njt: {

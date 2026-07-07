@@ -29,6 +29,7 @@ import * as aqi from './widgets/aqi.js';
 import * as quote from './widgets/quote.js';
 import * as wotd from './widgets/wotd.js';
 import * as markets from './widgets/markets.js';
+import * as marketsnews from './widgets/marketsnews.js';
 import * as worldclock from './widgets/worldclock.js';
 import * as sports from './widgets/sports.js';
 import * as worldcup from './widgets/worldcup.js';
@@ -38,7 +39,7 @@ import * as bsky from './widgets/bsky.js';
 import * as photos from './widgets/photos.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, worldclock, sports, worldcup, news, substack, bsky, photos];
+const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };

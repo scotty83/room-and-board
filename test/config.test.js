@@ -272,3 +272,11 @@ describe('weather units', () => {
     expect(normalizeConfig({ loc: { label: 'X', lat: 1, lon: 2, units: 'K' } }).loc.units).toBe('F');
   });
 });
+
+describe('marketsnews config', () => {
+  it('defaults to cnbc+nyt-business and filters junk ids', () => {
+    expect(normalizeConfig({}).marketsnews.sources).toEqual(['cnbc', 'nyt-business']);
+    expect(normalizeConfig({ marketsnews: { sources: ['cnbc', 'bogus'] } }).marketsnews.sources).toEqual(['cnbc']);
+    expect(normalizeConfig({ marketsnews: { sources: [] } }).marketsnews.sources).toEqual(['cnbc', 'nyt-business']);
+  });
+});

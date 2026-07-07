@@ -24,6 +24,7 @@ import * as quote from '../site/js/widgets/quote.js';
 import * as markets from '../site/js/widgets/markets.js';
 import * as worldclock from '../site/js/widgets/worldclock.js';
 import * as photos from '../site/js/widgets/photos.js';
+import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -51,6 +52,7 @@ const CASES = [
   ['markets', markets, ['Dow Jones', 'S&P 500', '0.45']],
   ['worldclock', worldclock, ['Hyderabad', '5:43 PM', 'Hong Kong', '+1d']],
   ['photos', photos, ['Beach']],
+  ['marketsnews', marketsnews, ['Fed holds rates']],
 ];
 
 describe('widget renderers', () => {

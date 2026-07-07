@@ -1,6 +1,6 @@
-// MTA Bus arrivals for up to two stop codes (the 6-digit numbers on bus stop
-// signs), via the Worker's Bus Time proxy. Shows minutes when a prediction
-// exists, otherwise Bus Time's distance ("approaching", "2 stops away").
+// MTA Bus arrivals for route-first legs (stop + lineRef pair), via the
+// Worker's Bus Time proxy. Shows minutes when a prediction exists, otherwise
+// Bus Time's distance ("approaching", "2 stops away").
 
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
@@ -8,25 +8,25 @@ import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'bus', title: 'MTA Bus', refreshMs: 60 * 1000 };
 
-export function mapBus(payload, nowSec) {
+export function mapBus(payload, nowSec, legs) {
   if (!payload || payload.error || !Array.isArray(payload.stops)) {
     return { configured: !payload || payload.error !== 'bus_not_configured', stops: [] };
   }
+  const legByStop = Object.fromEntries((legs ?? []).map((l) => [l.stopId, l]));
   return {
     configured: true,
-    stops: payload.stops.map((stop) => ({
-      id: stop.id,
-      name: stop.name,
-      arrivals: (stop.arrivals ?? [])
-        .filter((a) => a.route && (a.time === null || a.time > nowSec))
-        .slice(0, 3)
-        .map((a) => ({
-          route: a.route,
-          dest: a.dest,
-          min: a.time ? Math.max(1, Math.round((a.time - nowSec) / 60)) : null,
-          distance: a.distance,
-        })),
-    })),
+    stops: payload.stops.map((stop) => {
+      const leg = legByStop[stop.id];
+      return {
+        id: stop.id,
+        route: leg?.route ?? '',
+        name: leg?.stopName || stop.name,
+        arrivals: (stop.arrivals ?? [])
+          .filter((a) => a.time === null || a.time > nowSec)
+          .slice(0, 3)
+          .map((a) => ({ dest: a.dest, min: a.time ? Math.max(1, Math.round((a.time - nowSec) / 60)) : null, distance: a.distance })),
+      };
+    }),
   };
 }
 
@@ -36,7 +36,7 @@ export function render(el, vm, _cfg) {
     return;
   }
   if (!vm.stops.length) {
-    el.innerHTML = '<div class="empty">Add a bus stop code in Settings → MTA Bus</div>';
+    el.innerHTML = '<div class="empty">Add an express route in Settings → MTA Bus</div>';
     return;
   }
   // Slice to the card, don't clip: each stop costs one header row plus its
@@ -55,7 +55,7 @@ export function render(el, vm, _cfg) {
   el.innerHTML = groups
     .map(
       (stop) => `<div class="stop-group">
-        <div class="stop-group__head"><span class="stop-group__name">${escapeHtml(stop.name || `Stop ${stop.id}`)}</span></div>
+        <div class="stop-group__head"><span class="stop-group__name"><b class="buspill">${escapeHtml(stop.route)}</b> ${escapeHtml(stop.name || `Stop ${stop.id}`)}</span></div>
         <div class="trains">${
           stop.arrivals.length
             ? stop.arrivals
@@ -67,7 +67,7 @@ export function render(el, vm, _cfg) {
                         : `<small class="train__dist">${escapeHtml(a.distance || 'due')}</small>`
                     }</div>
                     <div class="train__info">
-                      <span class="train__dest"><b class="buspill">${escapeHtml(a.route)}</b> ${escapeHtml(a.dest)}</span>
+                      <span class="train__dest">${escapeHtml(a.dest)}</span>
                     </div>
                   </div>`,
                 )
@@ -80,9 +80,12 @@ export function render(el, vm, _cfg) {
 }
 
 export async function fetchData(cfg, net) {
-  if (!cfg.bus.stops.length) return { configured: true, stops: [] };
+  const legs = cfg.bus.legs ?? [];
+  if (!legs.length) return { configured: true, stops: [] };
+  // Each leg carries its agency-prefixed lineRef (stored at pick time).
+  const param = legs.map((l) => `${encodeURIComponent(l.stopId)}:${encodeURIComponent(l.lineRef)}`).join(',');
   const payload = await net
-    .fetchJSON(`${WORKER_URL}/bus/stops?ids=${cfg.bus.stops.join(',')}`)
+    .fetchJSON(`${WORKER_URL}/bus/stops?legs=${param}`)
     .catch((err) => (String(err).includes('503') ? { error: 'bus_not_configured' } : Promise.reject(err)));
-  return mapBus(payload, Math.floor(Date.now() / 1000));
+  return mapBus(payload, Math.floor(Date.now() / 1000), legs);
 }

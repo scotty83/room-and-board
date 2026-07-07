@@ -175,3 +175,22 @@ describe('mapBus (page side)', () => {
     expect(mapBus({ error: 'bus_not_configured' }, 0).configured).toBe(false);
   });
 });
+
+describe('mapBus (legs)', () => {
+  const legs = [{ route: 'QM24', dir: 0, stopId: '550789', stopName: 'Madison Av / E 34 St' }];
+  it('labels each stop with its leg route + configured name, filters past/other', () => {
+    const now = 1000;
+    const vm = mapBus({ stops: [{ id: '550789', name: 'MADISON AV', arrivals: [
+      { route: 'QM24', dest: 'Wall St', time: 1600, distance: '' },
+      { route: 'QM24', dest: 'Wall St', time: 500, distance: '' },   // past -> dropped
+    ] }] }, now, legs);
+    expect(vm.configured).toBe(true);
+    expect(vm.stops[0].route).toBe('QM24');
+    expect(vm.stops[0].name).toBe('Madison Av / E 34 St'); // configured name wins
+    expect(vm.stops[0].arrivals).toHaveLength(1);
+    expect(vm.stops[0].arrivals[0].min).toBe(10);
+  });
+  it('flags not-configured on the server error', () => {
+    expect(mapBus({ error: 'bus_not_configured' }, 0, legs).configured).toBe(false);
+  });
+});

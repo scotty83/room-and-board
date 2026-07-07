@@ -35,7 +35,7 @@ const CASES = [
   ['subway', subway, ['Good Service', 'rerouted', 'delays']],
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
-  ['bus', busw, ['M34-SBS', 'Javits Center', 'approaching']],
+  ['bus', busw, ['QM24', 'Madison Av / E 34 St', 'Wall St', '8']],
   ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:']],
   ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],

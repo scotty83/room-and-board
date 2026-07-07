@@ -30,6 +30,8 @@ const MODELS = {
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).
   news: listCapacity(75, 57),
+  // Markets News renders the identical stacked-headline rows as news.
+  marketsnews: listCapacity(75, 57),
   // Same stacked rows as news, but post texts are long by nature — nearly
   // every row wraps to the full 2 lines, and the +N hint needs headroom too.
   substack: listCapacity(90, 62),
@@ -74,6 +76,7 @@ export function capacityLabel(id, w, h, cfg = {}) {
     case 'worldcup':
       return `${n} matches`;
     case 'news':
+    case 'marketsnews':
       return `${n} headlines`;
     case 'substack':
     case 'bsky':

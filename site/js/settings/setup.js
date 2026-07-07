@@ -393,28 +393,31 @@ async function renderNewsSources() {
   });
 }
 
-function renderBusStops() {
+let expressBusData = null;
+async function renderBusStops() {
+  const { expressRoutes, directionsForRoute, stopsForRouteDir } = await import('./pickers.js');
+  expressBusData ??= await fetch('data/express-bus.json').then((r) => r.json());
   const chips = $('#bus-chips');
-  const renderChips = () => {
-    chips.innerHTML = cfg.bus.stops
-      .map((c) => `<button type="button" data-stop="${c}">Stop ${c} ✕</button>`)
-      .join('');
-    chips.querySelectorAll('[data-stop]').forEach((b) =>
-      b.addEventListener('click', () => {
-        cfg.bus.stops = cfg.bus.stops.filter((s) => s !== b.dataset.stop);
-        renderChips();
-      }),
-    );
+  const routeSel = $('#bus-route'), dirSel = $('#bus-dir'), stopSel = $('#bus-stop');
+  const opt = (v, t) => `<option value="${v}">${t}</option>`;
+  const paintChips = () => {
+    chips.innerHTML = cfg.bus.legs.map((l, i) => `<button type="button" class="chip" data-remove="${i}">${l.route} · ${l.stopName} ✕</button>`).join('');
+    chips.querySelectorAll('[data-remove]').forEach((b) => b.addEventListener('click', () => { cfg.bus.legs = cfg.bus.legs.filter((_, i) => i !== Number(b.dataset.remove)); paintChips(); }));
   };
-  renderChips();
+  routeSel.innerHTML = expressRoutes(expressBusData).map((r) => opt(r.id, r.id)).join('');
+  const paintDirs = () => { dirSel.innerHTML = directionsForRoute(expressBusData, routeSel.value).map((d) => opt(d.id, d.headsign || `Direction ${d.id}`)).join(''); paintStops(); };
+  const paintStops = () => { stopSel.innerHTML = stopsForRouteDir(expressBusData, routeSel.value, Number(dirSel.value)).map((s) => opt(s.id, s.name)).join(''); };
+  routeSel.addEventListener('change', paintDirs);
+  dirSel.addEventListener('change', paintStops);
+  paintDirs();
   $('#bus-add').addEventListener('click', () => {
-    const code = $('#bus-code').value.trim();
-    if (/^\d{4,7}$/.test(code) && cfg.bus.stops.length < 2 && !cfg.bus.stops.includes(code)) {
-      cfg.bus.stops = [...cfg.bus.stops, code];
-      $('#bus-code').value = '';
-      renderChips();
-    }
+    if (cfg.bus.legs.length >= 2) return;
+    const route = expressRoutes(expressBusData).find((r) => r.id === routeSel.value);
+    const name = stopsForRouteDir(expressBusData, routeSel.value, Number(dirSel.value)).find((s) => s.id === stopSel.value)?.name ?? '';
+    cfg.bus.legs = [...cfg.bus.legs, { route: route.id, lineRef: route.lineRef, dir: Number(dirSel.value), stopId: stopSel.value, stopName: name }];
+    paintChips();
   });
+  paintChips();
 }
 
 async function renderNjt() {

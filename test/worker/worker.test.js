@@ -8,6 +8,7 @@ import { mapFerryFeed } from '../../worker/src/ferry.js';
 import { mapSubstackPosts } from '../../worker/src/posts.js';
 import { mapIcloudAlbum } from '../../worker/src/icloud.js';
 import { newsFeedUrl } from '../../worker/src/news.js';
+import { parseLegs, siriUrl } from '../../worker/src/bus.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -228,14 +229,16 @@ describe('/alerts', () => {
 });
 
 describe('/bus/stops', () => {
-  it('503s without a key and validates stop ids', async () => {
-    expect((await call('/bus/stops?ids=550685')).status).toBe(503);
-    expect((await call('/bus/stops?ids=abc', {}, { MTA_BUS_KEY: 'k' })).status).toBe(400);
+  it('503s without a key and returns empty stops for missing legs', async () => {
+    expect((await call('/bus/stops?legs=550685:MTABC_QM24')).status).toBe(503);
+    const empty = await call('/bus/stops', {}, { MTA_BUS_KEY: 'k' });
+    expect(empty.status).toBe(200);
+    expect((await empty.json()).stops).toEqual([]);
   });
-  it('proxies SIRI per stop', async () => {
-    await clearCache('bus:550685');
+  it('proxies SIRI per stop with LineRef filter', async () => {
+    await clearCache('bus:550685:MTABC_QM24');
     stubFetch([{ match: /bustime\.mta\.info/, body: { Siri: { ServiceDelivery: { StopMonitoringDelivery: [{ MonitoredStopVisit: [] }] } } } }]);
-    const res = await call('/bus/stops?ids=550685', {}, { MTA_BUS_KEY: 'k' });
+    const res = await call('/bus/stops?legs=550685:MTABC_QM24', {}, { MTA_BUS_KEY: 'k' });
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.stops).toEqual([{ id: '550685', name: '', arrivals: [] }]);
@@ -541,5 +544,20 @@ describe('/icloud/album', () => {
     const res = await call('/icloud/album?token=B1m5fk75vLWwX');
     expect(res.status).toBe(200);
     expect((await res.json()).photos).toHaveLength(1);
+  });
+});
+
+describe('bus legs', () => {
+  it('parses stopId:lineRef pairs (decoded)', () => {
+    expect(parseLegs('550789:MTABC_QM24,504123:MTA%20NYCT_X27')).toEqual([
+      { stopId: '550789', lineRef: 'MTABC_QM24' },
+      { stopId: '504123', lineRef: 'MTA NYCT_X27' }]);
+    expect(parseLegs('')).toEqual([]);
+  });
+  it('builds a StopMonitoring URL with a LineRef filter', () => {
+    const u = siriUrl('KEY', { stopId: '550789', lineRef: 'MTA NYCT_X27' });
+    expect(u).toContain('MonitoringRef=550789');
+    expect(u).toContain('LineRef=MTA%20NYCT_X27');
+    expect(u).toContain('key=KEY');
   });
 });

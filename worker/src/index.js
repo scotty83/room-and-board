@@ -5,7 +5,7 @@
 import { mapYahooChart } from './markets.js';
 import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
-import { fetchBusStops } from './bus.js';
+import { fetchBusStops, parseLegs } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
 import { fetchTeamSummary, LEAGUE_PATHS as SPORTS_LEAGUES } from './sports.js';
 import { fetchPathRealtime } from './path.js';
@@ -227,13 +227,10 @@ export default {
 
     if (path === '/bus/stops' && request.method === 'GET') {
       if (!env.MTA_BUS_KEY) return json({ error: 'bus_not_configured' }, 503);
-      const ids = (url.searchParams.get('ids') ?? '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => /^\d{4,7}$/.test(s))
-        .slice(0, 2);
-      if (!ids.length) return json({ error: 'bad_stop_ids' }, 400);
-      return cached(url.origin, `bus:${ids.join(',')}`, 30, () => fetchBusStops(env, ids));
+      const legs = parseLegs(url.searchParams.get('legs') ?? '');
+      if (!legs.length) return json({ stops: [] });
+      return cached(url.origin, `bus:${url.searchParams.get('legs')}`, 30,
+        () => fetchBusStops(env, legs));
     }
 
     return json({ error: 'not_found' }, 404);

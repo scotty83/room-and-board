@@ -26,13 +26,29 @@ export function mapSiriStop(json, stopId) {
   return { id: stopId, name: stopName, arrivals };
 }
 
-export async function fetchBusStops(env, stopIds) {
+export function parseLegs(param) {
+  return (param || '')
+    .split(',')
+    .filter(Boolean)
+    .map((pair) => {
+      const i = pair.indexOf(':');
+      return { stopId: decodeURIComponent(pair.slice(0, i)), lineRef: decodeURIComponent(pair.slice(i + 1)) };
+    })
+    .filter((l) => l.stopId && l.lineRef);
+}
+
+export function siriUrl(key, leg) {
+  return `${BASE}?key=${encodeURIComponent(key)}&OperatorRef=MTA` +
+    `&MonitoringRef=${encodeURIComponent(leg.stopId)}` +
+    `&LineRef=${encodeURIComponent(leg.lineRef)}&MaximumStopVisits=4`;
+}
+
+export async function fetchBusStops(env, legs) {
   const stops = await Promise.all(
-    stopIds.map(async (stopId) => {
-      const url = `${BASE}?key=${encodeURIComponent(env.MTA_BUS_KEY)}&OperatorRef=MTA&MonitoringRef=${encodeURIComponent(stopId)}&MaximumStopVisits=4`;
-      const res = await fetch(url);
+    legs.map(async (leg) => {
+      const res = await fetch(siriUrl(env.MTA_BUS_KEY, leg));
       if (!res.ok) throw new Error(`bustime ${res.status}`);
-      return mapSiriStop(await res.json(), stopId);
+      return mapSiriStop(await res.json(), leg.stopId);
     }),
   );
   return { updatedAt: Math.floor(Date.now() / 1000), stale: false, stops };

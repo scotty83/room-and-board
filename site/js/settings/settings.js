@@ -63,6 +63,7 @@ export async function openSettings(cfg, { focus } = {}) {
     cfg: structuredClone(cfg),
     root: document.querySelector('#settings-root'),
     section: focus === 'code' ? 'code' : 'widgets',
+    openGroup: navGroupForSection(focus === 'code' ? 'code' : 'widgets'),
     stack: [],
     dirty: false,
   };
@@ -106,29 +107,6 @@ async function saveAndClose() {
   location.reload(); // simplest correct way to apply layout/widget changes
 }
 
-const SECTIONS = [
-  ['widgets', 'Widgets'],
-  ['subway', 'Subway'],
-  ['lirr', 'LIRR'],
-  ['mnr', 'Metro-North'],
-  ['njt', 'NJ Transit'],
-  ['path', 'PATH'],
-  ['ferry', 'NYC Ferry'],
-  ['bus', 'MTA Bus'],
-  ['markets', 'Markets'],
-  ['sports', 'My Teams'],
-  ['news', 'Headlines'],
-  ['substack', 'Substack'],
-  ['bsky', 'Bluesky'],
-  ['worldclock', 'World Clock'],
-  ['art', 'Art'],
-  ['photos', 'Photos'],
-  ['weather', 'Weather location'],
-  ['display', 'Display'],
-  ['code', 'Setup code'],
-  ['diag', 'Diagnostics'],
-];
-
 // Collapsible nav model: pinned items + collapsible category groups (one open
 // at a time). Replaces the flat SECTIONS as the nav source (Task 2). Labels
 // verbatim from SECTIONS; ids must equal SECTION_IDS (coverage-tested).
@@ -154,18 +132,39 @@ export function navGroupForSection(id) {
   return null;
 }
 
+// Pure nav HTML: pinned items as nav buttons; groups as a toggle header (chevron
+// + aria-expanded) followed by indented child buttons only when the group is open.
+export function navHtml(section, openGroup) {
+  return NAV_MODEL.map((e) => {
+    if (e.type === 'item') {
+      return `<button class="settings__navitem ${e.id === section ? 'is-active' : ''}" data-section="${e.id}">${e.label}</button>`;
+    }
+    const open = openGroup === e.label;
+    const header = `<button class="settings__navgroup ${open ? 'is-open' : ''}" data-group="${e.label}" aria-expanded="${open}"><span class="settings__chev"></span>${e.label}</button>`;
+    const children = open
+      ? e.items.map(([id, label]) =>
+          `<button class="settings__navitem settings__navchild ${id === section ? 'is-active' : ''}" data-section="${id}">${label}</button>`).join('')
+      : '';
+    return header + children;
+  }).join('');
+}
+
 function renderNav() {
   const nav = state.root.querySelector('.settings__nav');
-  nav.innerHTML = SECTIONS.map(
-    ([id, label]) =>
-      `<button class="settings__navitem ${id === state.section ? 'is-active' : ''}" data-section="${id}">${label}</button>`,
-  ).join('');
+  nav.innerHTML = navHtml(state.section, state.openGroup);
   nav.querySelectorAll('[data-section]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.section = btn.dataset.section;
       state.stack = [];
+      state.openGroup = navGroupForSection(state.section);
       renderNav();
       renderSection();
+    }),
+  );
+  nav.querySelectorAll('[data-group]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.openGroup = state.openGroup === btn.dataset.group ? null : btn.dataset.group;
+      renderNav();
     }),
   );
 }

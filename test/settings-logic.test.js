@@ -221,7 +221,7 @@ describe('widgetGroupsHtml', () => {
   });
 });
 
-import { NAV_MODEL, navGroupForSection, SECTION_IDS } from '../site/js/settings/settings.js';
+import { NAV_MODEL, navGroupForSection, SECTION_IDS, navHtml } from '../site/js/settings/settings.js';
 
 describe('settings nav model', () => {
   it('navGroupForSection maps grouped sections and returns null for pinned', () => {
@@ -263,5 +263,24 @@ describe('stepTwoVisibility', () => {
       for (const t of s.triggers) expect(validIds.has(t)).toBe(true);
       expect(validGroups.has(s.group)).toBe(true);
     }
+  });
+});
+
+describe('navHtml', () => {
+  it('renders pinned items and collapsed group headers, hiding children until open', () => {
+    const html = navHtml('widgets', null);
+    expect(html).toContain('data-section="widgets"');          // pinned item
+    expect(html).toContain('data-group="Commute"');            // group header
+    expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="false"/);
+    expect(html).not.toContain('data-section="subway"');       // children hidden while collapsed
+    // active pinned item highlighted
+    expect(html).toMatch(/class="settings__navitem is-active"[^>]*data-section="widgets"/);
+  });
+  it('shows children of the open group with the active child highlighted', () => {
+    const html = navHtml('subway', 'Commute');
+    expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="true"/);
+    expect(html).toContain('data-section="subway"');           // child now shown
+    expect(html).toMatch(/settings__navchild is-active"[^>]*data-section="subway"/);
+    expect(html).not.toContain('data-section="art"');          // a different, closed group's child stays hidden
   });
 });

@@ -274,6 +274,19 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   flex: none;
 }
 .settings__navitem.is-active { background: var(--bg-card-2); color: var(--ink); font-weight: 600; }
+.settings__navgroup {
+  display: flex; align-items: center; gap: 10px;
+  text-align: left; font-size: 22px; padding: 11px 16px; min-height: 48px;
+  border: none; border-radius: 10px; background: none; color: var(--ink-dim); cursor: pointer; flex: none;
+}
+.settings__chev {
+  width: 0; height: 0; flex: none;
+  border-left: 7px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  transition: transform 0.15s ease;
+}
+.settings__navgroup.is-open .settings__chev { transform: rotate(90deg); }
+.settings__navchild { padding-left: 34px; font-size: 21px; }
+@media (prefers-reduced-motion: reduce) { .settings__chev { transition: none; } }
 .settings__railfoot { display: flex; flex-direction: column; gap: 10px; flex: none; }
 .settings__pane { padding: 44px 56px; overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }

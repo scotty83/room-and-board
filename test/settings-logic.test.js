@@ -224,12 +224,17 @@ describe('widgetGroupsHtml', () => {
 import { NAV_MODEL, navGroupForSection, SECTION_IDS, navHtml } from '../site/js/settings/settings.js';
 
 describe('settings nav model', () => {
-  it('navGroupForSection maps grouped sections and returns null for pinned', () => {
+  it('navGroupForSection maps grouped sections and returns null for pinned/standalone', () => {
     expect(navGroupForSection('mnr')).toBe('Commute');
-    expect(navGroupForSection('photos')).toBe('Ambient');
-    expect(navGroupForSection('markets')).toBe('Markets & Sports');
-    expect(navGroupForSection('widgets')).toBeNull();
+    expect(navGroupForSection('photos')).toBe('Images');
+    expect(navGroupForSection('news')).toBe('News & Social');
+    expect(navGroupForSection('widgets')).toBeNull(); // pinned
+    expect(navGroupForSection('markets')).toBeNull(); // standalone
+    expect(navGroupForSection('sports')).toBeNull(); // standalone
+    expect(navGroupForSection('weather')).toBeNull(); // standalone
+    expect(navGroupForSection('worldclock')).toBeNull(); // standalone (pulled out of Images)
     expect(navGroupForSection('diag')).toBeNull();
+    expect(navGroupForSection('nope')).toBeNull(); // unknown
   });
   it('NAV_MODEL covers exactly the valid section ids (none missing or orphaned)', () => {
     const navIds = NAV_MODEL.flatMap((e) => (e.type === 'group' ? e.items.map(([id]) => id) : [e.id]));

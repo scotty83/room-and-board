@@ -108,17 +108,22 @@ async function saveAndClose() {
 }
 
 // Collapsible nav model: pinned items + collapsible category groups (one open
-// at a time). Replaces the flat SECTIONS as the nav source (Task 2). Labels
-// verbatim from SECTIONS; ids must equal SECTION_IDS (coverage-tested).
+// at a time). The nav source (replaces the old flat SECTIONS). Single-config
+// categories are pinned items, not one-child groups. Its ids must equal
+// SECTION_IDS (coverage-tested); grouping intentionally diverges from /setup.
+// (Future: Markets and My Teams become groups once the Markets-news / Teams-news
+// feed widgets land.)
 export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
-  { type: 'group', label: 'Weather & Air', items: [['weather', 'Weather location']] },
-  { type: 'group', label: 'Markets & Sports', items: [['markets', 'Markets'], ['sports', 'My Teams']] },
+  { type: 'item', id: 'weather', label: 'Weather location' },
+  { type: 'item', id: 'markets', label: 'Markets' },
+  { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
-  { type: 'group', label: 'Ambient', items: [['worldclock', 'World Clock'], ['art', 'Art'], ['photos', 'Photos']] },
+  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
+  { type: 'item', id: 'worldclock', label: 'World Clock' },
   { type: 'item', id: 'display', label: 'Display' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },

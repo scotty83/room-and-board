@@ -9,6 +9,9 @@ import {
   alphaSections,
   moveWidget,
   toggleIn,
+  applyNameKey,
+  nameAutoCap,
+  NAME_MAX_LEN,
 } from '../site/js/settings/pickers.js';
 import { connectBridge } from '../site/js/bridge.js';
 
@@ -40,6 +43,42 @@ describe('alphaSections', () => {
       { letter: 'A', stations: [{ id: '1', name: 'Albertson' }, { id: '2', name: 'Amityville' }] },
       { letter: 'B', stations: [{ id: '3', name: 'Babylon' }] },
     ]);
+  });
+});
+
+describe('applyNameKey (Display name keypad)', () => {
+  // Drive the pure reducer through a key sequence, returning the final value.
+  const type = (keys, start = '') => {
+    let s = { value: start, shift: nameAutoCap(start) };
+    for (const k of keys) s = applyNameKey(s, k);
+    return s.value;
+  };
+  const letters = (word) => word.toUpperCase().split(''); // buttons emit A-Z
+
+  it('auto-capitalizes each word hands-free', () => {
+    expect(type([...letters('sean'), 'Space', ...letters('scott')])).toBe('Sean Scott');
+  });
+  it('types interior capitals via a momentary Shift (camelCase)', () => {
+    expect(type([...letters('mc'), 'Shift', ...letters('donald')])).toBe('McDonald');
+    expect(type([...letters('de'), 'Shift', ...letters('angelo')])).toBe('DeAngelo');
+  });
+  it('supports hyphenated names and auto-caps after the hyphen', () => {
+    expect(type([...letters('jean'), '-', ...letters('paul')])).toBe('Jean-Paul');
+    expect(type([...letters('mary'), '-', ...letters('kate')])).toBe('Mary-Kate');
+  });
+  it('lets Shift turn OFF the auto-capital for lowercase particles', () => {
+    expect(type(['Shift', ...letters('van'), 'Space', 'Shift', ...letters('gogh')])).toBe('van gogh');
+  });
+  it('restores auto-cap state on backspace', () => {
+    expect(applyNameKey({ value: 'Sean ', shift: true }, 'Backspace')).toEqual({ value: 'Sean', shift: false });
+    expect(applyNameKey({ value: 'S', shift: false }, 'Backspace')).toEqual({ value: '', shift: true });
+  });
+  it('never leads with, doubles, or exceeds the cap on separators', () => {
+    expect(applyNameKey({ value: '', shift: true }, 'Space')).toEqual({ value: '', shift: true });
+    expect(applyNameKey({ value: 'Jo', shift: false }, '-')).toEqual({ value: 'Jo-', shift: true });
+    expect(applyNameKey({ value: 'Jo-', shift: true }, '-')).toEqual({ value: 'Jo-', shift: true });
+    const full = 'A'.repeat(NAME_MAX_LEN);
+    expect(applyNameKey({ value: full, shift: false }, 'B').value).toBe(full);
   });
 });
 

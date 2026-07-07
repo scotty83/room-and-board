@@ -236,7 +236,7 @@ function renderLocation() {
   $('#loc-preset').addEventListener('change', (e) => {
     const p = PRESETS[Number(e.target.value)];
     if (!p) return;
-    cfg.loc = { label: p[0], lat: p[1], lon: p[2] };
+    cfg.loc = { label: p[0], lat: p[1], lon: p[2], units: cfg.loc.units };
     $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
   });
   $('#zip-go').addEventListener('click', async () => {
@@ -245,12 +245,17 @@ function renderLocation() {
     try {
       const loc = await zipLookup(zip);
       if (!loc) throw new Error('no match');
-      cfg.loc = loc;
+      cfg.loc = { ...loc, units: cfg.loc.units };
       $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
     } catch {
       $('#loc-current').textContent = `Couldn't find ${zip}`;
     }
   });
+  const paintUnits = () => $('#weather-field').querySelectorAll('[data-units]').forEach((b) =>
+    b.classList.toggle('is-active', b.dataset.units === (cfg.loc.units === 'C' ? 'C' : 'F')));
+  paintUnits();
+  $('#weather-field').querySelectorAll('[data-units]').forEach((b) =>
+    b.addEventListener('click', () => { cfg.loc = { ...cfg.loc, units: b.dataset.units }; paintUnits(); }));
 }
 
 function renderWorldclockPrefs() {

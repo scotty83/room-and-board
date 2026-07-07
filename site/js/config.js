@@ -36,7 +36,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   v: 3,
   t: 0,
   name: '',
-  loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' }),
+  loc: Object.freeze({ lat: 40.7506, lon: -73.9971, label: 'New York 10001', units: 'F' }),
   layout: DEFAULT_LAYOUT,
   worldclock: Object.freeze({ cities: Object.freeze([
     { label: 'New York', zone: 'America/New_York' },
@@ -100,6 +100,7 @@ function normalizeLoc(rawLoc) {
     lat: num(rawLoc.lat, d.lat),
     lon: num(rawLoc.lon, d.lon),
     label: str(rawLoc.label, d.label, 40),
+    units: rawLoc.units === 'C' ? 'C' : 'F',
   };
 }
 

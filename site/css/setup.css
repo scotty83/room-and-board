@@ -56,6 +56,9 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 .pickrow, .ziprow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .pickrow select { flex: 1 1 140px; }
 .ziprow input { flex: 1; }
+.segmented { display: inline-flex; border: 1px solid var(--bg-card-2); border-radius: 10px; overflow: hidden; margin-top: 8px; }
+.seg { min-height: 48px; padding: 0 20px; border: none; background: var(--bg-card); color: var(--ink-dim); cursor: pointer; width: auto; }
+.seg.is-active { background: var(--accent); color: #06131f; font-weight: 700; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
 .chips button {

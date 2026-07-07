@@ -832,11 +832,16 @@ function renderWeather() {
         (k) => `<button class="key" data-key="${k}">${k}</button>`,
       ).join('')}</div>
       <p class="zip__status"></p>
+    </div>
+    <p class="pane__hint">Temperature unit:</p>
+    <div class="segmented" role="group" aria-label="Temperature unit">
+      <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
+      <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
     </div>`;
   pane().querySelectorAll('[data-loc]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const p = PRESET_LOCATIONS[Number(btn.dataset.loc)];
-      state.cfg.loc = { lat: p.lat, lon: p.lon, label: p.label };
+      state.cfg.loc = { lat: p.lat, lon: p.lon, label: p.label, units: state.cfg.loc.units };
       renderWeather();
     }),
   );
@@ -853,7 +858,7 @@ function renderWeather() {
         try {
           const loc = await zipLookup(zip);
           if (!loc) throw new Error('no match');
-          state.cfg.loc = loc;
+          state.cfg.loc = { ...loc, units: state.cfg.loc.units };
           renderWeather();
           return;
         } catch {
@@ -861,6 +866,12 @@ function renderWeather() {
         }
       } else if (zip.length < 5) zip += k;
       display.textContent = zip;
+    }),
+  );
+  pane().querySelectorAll('[data-units]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.loc = { ...state.cfg.loc, units: btn.dataset.units };
+      renderWeather();
     }),
   );
 }

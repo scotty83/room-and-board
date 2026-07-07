@@ -221,6 +221,28 @@ describe('widgetGroupsHtml', () => {
   });
 });
 
+import { NAV_MODEL, navGroupForSection, SECTION_IDS, navHtml } from '../site/js/settings/settings.js';
+
+describe('settings nav model', () => {
+  it('navGroupForSection maps grouped sections and returns null for pinned/standalone', () => {
+    expect(navGroupForSection('mnr')).toBe('Commute');
+    expect(navGroupForSection('photos')).toBe('Images');
+    expect(navGroupForSection('news')).toBe('News & Social');
+    expect(navGroupForSection('widgets')).toBeNull(); // pinned
+    expect(navGroupForSection('markets')).toBeNull(); // standalone
+    expect(navGroupForSection('sports')).toBeNull(); // standalone
+    expect(navGroupForSection('weather')).toBeNull(); // standalone
+    expect(navGroupForSection('worldclock')).toBeNull(); // standalone (pulled out of Images)
+    expect(navGroupForSection('diag')).toBeNull();
+    expect(navGroupForSection('nope')).toBeNull(); // unknown
+  });
+  it('NAV_MODEL covers exactly the valid section ids (none missing or orphaned)', () => {
+    const navIds = NAV_MODEL.flatMap((e) => (e.type === 'group' ? e.items.map(([id]) => id) : [e.id]));
+    expect(new Set(navIds).size).toBe(navIds.length); // no dupes
+    expect([...navIds].sort()).toEqual([...SECTION_IDS].sort());
+  });
+});
+
 import { stepTwoVisibility, SETUP_SECTIONS } from '../site/js/settings/setup.js';
 
 describe('stepTwoVisibility', () => {
@@ -246,5 +268,25 @@ describe('stepTwoVisibility', () => {
       for (const t of s.triggers) expect(validIds.has(t)).toBe(true);
       expect(validGroups.has(s.group)).toBe(true);
     }
+  });
+});
+
+describe('navHtml', () => {
+  it('renders pinned items + group headers; children live in a wrapper that is closed until open', () => {
+    const html = navHtml('widgets', null);
+    expect(html).toContain('data-section="widgets"');          // pinned item
+    expect(html).toContain('data-group="Commute"');            // group header
+    expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="false"/);
+    // children are always in the DOM (for the collapse animation); no group wrapper is open
+    expect(html).toContain('data-section="subway"');
+    expect((html.match(/settings__navkids is-open/g) || []).length).toBe(0);
+    // active pinned item highlighted
+    expect(html).toMatch(/class="settings__navitem is-active"[^>]*data-section="widgets"/);
+  });
+  it('opens exactly the active group wrapper with the active child highlighted', () => {
+    const html = navHtml('subway', 'Commute');
+    expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="true"/);
+    expect((html.match(/settings__navkids is-open/g) || []).length).toBe(1); // only Commute open
+    expect(html).toMatch(/settings__navchild is-active"[^>]*data-section="subway"/);
   });
 });

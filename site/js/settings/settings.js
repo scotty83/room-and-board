@@ -63,6 +63,7 @@ export async function openSettings(cfg, { focus } = {}) {
     cfg: structuredClone(cfg),
     root: document.querySelector('#settings-root'),
     section: focus === 'code' ? 'code' : 'widgets',
+    openGroup: navGroupForSection(focus === 'code' ? 'code' : 'widgets'),
     stack: [],
     dirty: false,
   };
@@ -106,41 +107,75 @@ async function saveAndClose() {
   location.reload(); // simplest correct way to apply layout/widget changes
 }
 
-const SECTIONS = [
-  ['widgets', 'Widgets'],
-  ['subway', 'Subway'],
-  ['lirr', 'LIRR'],
-  ['mnr', 'Metro-North'],
-  ['njt', 'NJ Transit'],
-  ['path', 'PATH'],
-  ['ferry', 'NYC Ferry'],
-  ['bus', 'MTA Bus'],
-  ['markets', 'Markets'],
-  ['sports', 'My Teams'],
-  ['news', 'Headlines'],
-  ['substack', 'Substack'],
-  ['bsky', 'Bluesky'],
-  ['worldclock', 'World Clock'],
-  ['art', 'Art'],
-  ['photos', 'Photos'],
-  ['weather', 'Weather location'],
-  ['display', 'Display'],
-  ['code', 'Setup code'],
-  ['diag', 'Diagnostics'],
+// Collapsible nav model: pinned items + collapsible category groups (one open
+// at a time). The nav source (replaces the old flat SECTIONS). Single-config
+// categories are pinned items, not one-child groups. Its ids must equal
+// SECTION_IDS (coverage-tested); grouping intentionally diverges from /setup.
+// (Future: Markets and My Teams become groups once the Markets-news / Teams-news
+// feed widgets land.)
+export const NAV_MODEL = [
+  { type: 'item', id: 'widgets', label: 'Widgets' },
+  { type: 'group', label: 'Commute', items: [
+    ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
+  { type: 'item', id: 'weather', label: 'Weather' },
+  { type: 'item', id: 'markets', label: 'Markets' },
+  { type: 'item', id: 'sports', label: 'My Teams' },
+  { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
+  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
+  { type: 'item', id: 'worldclock', label: 'World Clock' },
+  { type: 'item', id: 'display', label: 'Display' },
+  { type: 'item', id: 'code', label: 'Setup code' },
+  { type: 'item', id: 'diag', label: 'Diagnostics' },
 ];
+
+// The category label containing a section id, or null if pinned/unknown.
+export function navGroupForSection(id) {
+  for (const e of NAV_MODEL) {
+    if (e.type === 'group' && e.items.some(([sid]) => sid === id)) return e.label;
+  }
+  return null;
+}
+
+// Pure nav HTML: pinned items as nav buttons; groups as a toggle header (chevron
+// + aria-expanded) followed by indented child buttons only when the group is open.
+export function navHtml(section, openGroup) {
+  return NAV_MODEL.map((e) => {
+    if (e.type === 'item') {
+      return `<button class="settings__navitem ${e.id === section ? 'is-active' : ''}" data-section="${e.id}">${e.label}</button>`;
+    }
+    const open = openGroup === e.label;
+    const header = `<button class="settings__navgroup ${open ? 'is-open' : ''}" data-group="${e.label}" aria-expanded="${open}"><span class="settings__chev"></span>${e.label}</button>`;
+    // Children always in the DOM inside a grid wrapper; toggling .is-open animates
+    // grid-template-rows 0fr↔1fr (see main.css). Kept persistent so the transition plays.
+    const children = e.items.map(([id, label]) =>
+      `<button class="settings__navitem settings__navchild ${id === section ? 'is-active' : ''}" data-section="${id}">${label}</button>`).join('');
+    return `${header}<div class="settings__navkids ${open ? 'is-open' : ''}"><div class="settings__navkids__inner">${children}</div></div>`;
+  }).join('');
+}
 
 function renderNav() {
   const nav = state.root.querySelector('.settings__nav');
-  nav.innerHTML = SECTIONS.map(
-    ([id, label]) =>
-      `<button class="settings__navitem ${id === state.section ? 'is-active' : ''}" data-section="${id}">${label}</button>`,
-  ).join('');
+  nav.innerHTML = navHtml(state.section, state.openGroup);
   nav.querySelectorAll('[data-section]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.section = btn.dataset.section;
       state.stack = [];
+      state.openGroup = navGroupForSection(state.section);
       renderNav();
       renderSection();
+    }),
+  );
+  nav.querySelectorAll('[data-group]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.openGroup = state.openGroup === btn.dataset.group ? null : btn.dataset.group;
+      // Toggle open state in place (no re-render) so the grid-rows transition animates.
+      nav.querySelectorAll('.settings__navgroup').forEach((h) => {
+        const on = h.dataset.group === state.openGroup;
+        h.classList.toggle('is-open', on);
+        h.setAttribute('aria-expanded', String(on));
+        h.nextElementSibling.classList.toggle('is-open', on); // the .settings__navkids wrapper
+      });
     }),
   );
 }
@@ -149,30 +184,17 @@ function pane() {
   return state.root.querySelector('.settings__pane');
 }
 
+const SECTION_RENDERERS = {
+  widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
+  path: renderPath, ferry: renderFerry, bus: renderBus, markets: renderMarkets, sports: renderSports,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock,
+  art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
+  code: renderCode, diag: renderDiag,
+};
+export const SECTION_IDS = Object.keys(SECTION_RENDERERS);
+
 function renderSection() {
-  const renderers = {
-    widgets: renderWidgets,
-    subway: renderSubway,
-    lirr: renderLirr,
-    mnr: renderMnr,
-    njt: renderNjt,
-    path: renderPath,
-    ferry: renderFerry,
-    bus: renderBus,
-    markets: renderMarkets,
-    sports: renderSports,
-    news: renderNews,
-    substack: renderSubstack,
-    bsky: renderBsky,
-    worldclock: renderWorldclock,
-    art: renderArt,
-    photos: renderPhotos,
-    weather: renderWeather,
-    display: renderDisplay,
-    code: renderCode,
-    diag: renderDiag,
-  };
-  renderers[state.section]();
+  SECTION_RENDERERS[state.section]();
 }
 
 /* ---------- widgets ---------- */
@@ -796,7 +818,7 @@ function renderWorldclock() {
 
 function renderWeather() {
   pane().innerHTML = `
-    <h2 class="pane__title">Weather location</h2>
+    <h2 class="pane__title">Weather</h2>
     <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
     <div class="rows">${PRESET_LOCATIONS.map(
       (p, i) =>

@@ -202,10 +202,8 @@ html, body {
 }
 .slide[data-active] { opacity: 1; }
 .slide-caption {
-  /* Sit just above the info line, inside the bottom scrim, so the caption and
-     strip read as one calm cluster hugging the reserved bar — not a card
-     floating up in the middle of the art. */
-  position: absolute; left: 48px; bottom: calc(var(--safe-bottom) + 58px);
+  /* Sit just above the info band (which now hugs the reserved bar). */
+  position: absolute; left: 48px; bottom: calc(var(--safe-bottom) + 78px);
   display: flex; flex-direction: column; gap: 4px;
   background: rgba(0, 0, 0, 0.55);
   padding: 14px 22px; border-radius: 12px;
@@ -213,19 +211,13 @@ html, body {
 .slide-caption__title { font-size: 24px; font-weight: 600; }
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .strip {
-  /* Anchor to the very bottom and clear the RoomOS "Tap here to start" bar
-     with padding, so the scrim flows continuously into that reserved black
-     bar — no floating band, no tonal seam. The gradient melts up into the
-     art (soft top edge) instead of a hard-edged translucent slab, so it
-     reads as a natural vignette rather than breaking up the picture. */
+  /* Original translucent info band, anchored to bottom:0 so the band reaches
+     down into the reserved RoomOS "Tap here to start" bar (no floating gap
+     above it). padding-bottom keeps the text clear of that bar. */
   position: absolute; left: 0; right: 0; bottom: 0;
   display: flex; align-items: center; gap: 36px;
-  padding: 40px 48px calc(16px + var(--safe-bottom));
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.9) 0,
-    rgba(0, 0, 0, 0.9) calc(var(--safe-bottom) + 52px),
-    rgba(0, 0, 0, 0) 100%);
+  padding: 18px 48px var(--safe-bottom);
+  background: rgba(0, 0, 0, 0.65);
   font-size: 24px;
 }
 .strip__time { font-weight: 700; font-size: 28px; font-variant-numeric: tabular-nums; }
@@ -255,9 +247,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  /* Vertically centered in the ambient strip's band (strip ≈ 70px tall,
-     button 56px → 7px inset above the strip's bottom edge). */
-  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) + 7px);
+  /* Vertically centered on the ambient strip's info line (which now sits just
+     above the reserved bar); 56px button, aligned with the ~34px text row. */
+  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) - 11px);
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);

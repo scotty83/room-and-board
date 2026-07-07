@@ -15,7 +15,7 @@ describe('normalizeConfig', () => {
     expect(cfg.widgets).toEqual(cfg.layout.map((r) => r.id)); // derived
     expect(cfg.mode).toBe('dashboard');
     expect(cfg.theme).toBe('dark');
-    expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001' });
+    expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001', units: 'F' });
     expect(cfg.lirr).toEqual({ dest: '', alerts: true });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
     expect(cfg.bus).toEqual({ stops: [] });
@@ -262,5 +262,13 @@ describe('photos config', () => {
     expect(cfg.photos).toEqual({ source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true });
     const bad = normalizeConfig({ photos: { source: 'myspace', album: 'nope!', screensaver: 'yes' } });
     expect(bad.photos).toEqual({ source: 'icloud', album: '', screensaver: false });
+  });
+});
+
+describe('weather units', () => {
+  it('defaults to F, preserves C, sanitizes junk', () => {
+    expect(normalizeConfig({}).loc.units).toBe('F');
+    expect(normalizeConfig({ loc: { label: 'X', lat: 1, lon: 2, units: 'C' } }).loc.units).toBe('C');
+    expect(normalizeConfig({ loc: { label: 'X', lat: 1, lon: 2, units: 'K' } }).loc.units).toBe('F');
   });
 });

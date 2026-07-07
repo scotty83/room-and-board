@@ -110,13 +110,19 @@ export function mapWeather(json, alertsJson) {
   };
 }
 
-export function render(el, vm, _cfg) {
+// Format a rounded-Fahrenheit temp for display in the chosen unit ('F'|'C').
+export function fmtTemp(fTemp, units) {
+  return `${units === 'C' ? Math.round((fTemp - 32) * 5 / 9) : fTemp}°`;
+}
+
+export function render(el, vm, cfg) {
+  const units = cfg?.loc?.units ?? 'F';
   const hourly = vm.hourly
     .map(
       (h) => `<div class="wx-hour">
         <span class="wx-hour__label">${escapeHtml(h.h)}</span>
         ${icon(wmoInfo(h.code).icon, 'icon--sm')}
-        <span class="wx-hour__temp">${h.temp}°</span>
+        <span class="wx-hour__temp">${fmtTemp(h.temp, units)}</span>
       </div>`,
     )
     .join('');
@@ -125,7 +131,7 @@ export function render(el, vm, _cfg) {
       (d) => `<div class="wx-day">
         <span class="wx-day__name">${escapeHtml(d.day)}</span>
         ${icon(wmoInfo(d.code).icon, 'icon--sm')}
-        <span class="wx-day__hi">${d.hi}°</span><span class="wx-day__lo">${d.lo}°</span>
+        <span class="wx-day__hi">${fmtTemp(d.hi, units)}</span><span class="wx-day__lo">${fmtTemp(d.lo, units)}</span>
       </div>`,
     )
     .join('');
@@ -134,9 +140,9 @@ export function render(el, vm, _cfg) {
     <div class="wx-now">
       ${icon(vm.now.icon, 'icon--xl wx-now__icon')}
       <div class="wx-now__main">
-        <span class="wx-now__temp">${vm.now.temp}°</span>
+        <span class="wx-now__temp">${fmtTemp(vm.now.temp, units)}</span>
         <span class="wx-now__label">${escapeHtml(vm.now.label)}</span>
-        <span class="wx-now__feels">Feels like ${vm.now.feels}°</span>
+        <span class="wx-now__feels">Feels like ${fmtTemp(vm.now.feels, units)}</span>
       </div>
     </div>
     <div class="wx-hours">${hourly}</div>

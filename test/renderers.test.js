@@ -415,3 +415,28 @@ describe('art fullscreen swipes via artList', () => {
     vi.unstubAllGlobals();
   });
 });
+
+describe('fmtTemp', () => {
+  it('passes Fahrenheit through and converts to Celsius (rounded)', () => {
+    expect(weather.fmtTemp(84, 'F')).toBe('84°');
+    expect(weather.fmtTemp(84, 'C')).toBe('29°');   // (84-32)*5/9 = 28.9 → 29
+    expect(weather.fmtTemp(32, 'C')).toBe('0°');
+    expect(weather.fmtTemp(212, 'C')).toBe('100°');
+    expect(weather.fmtTemp(70, 'F')).toBe('70°');
+  });
+});
+
+describe('weather render honors cfg.loc.units', () => {
+  const vm = {
+    now: { temp: 84, feels: 92, code: 0, label: 'Clear', icon: 'sun' },
+    hourly: [{ h: '1 PM', temp: 80, code: 0 }],
+    daily: [{ day: 'Mon', hi: 88, lo: 70, code: 0 }],
+    sunrise: '2026-07-06T05:30', sunset: '2026-07-06T20:30', alert: null,
+  };
+  it('renders Celsius when cfg.loc.units is C', async () => {
+    const el = document.createElement('div');
+    weather.render(el, vm, { loc: { units: 'C' } });
+    expect(el.textContent).toContain('29°');   // 84°F → 29°C
+    expect(el.textContent).not.toContain('84°');
+  });
+});

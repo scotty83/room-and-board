@@ -22,6 +22,7 @@ export const WIDGET_LABELS = {
   ferry: 'NYC Ferry',
   bus: 'MTA Bus',
   markets: 'Markets',
+  marketsnews: 'Markets News',
   art: 'Art slideshow',
   photos: 'Photos',
   history: 'This Day in History',
@@ -119,7 +120,7 @@ export const NAV_MODEL = [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
   { type: 'item', id: 'weather', label: 'Weather' },
-  { type: 'item', id: 'markets', label: 'Markets' },
+  { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
   { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
@@ -186,7 +187,7 @@ function pane() {
 
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
-  path: renderPath, ferry: renderFerry, bus: renderBus, markets: renderMarkets, sports: renderSports,
+  path: renderPath, ferry: renderFerry, bus: renderBus, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
@@ -677,6 +678,31 @@ async function renderNews() {
     btn.addEventListener('click', () => {
       state.cfg.news.sources = toggleIn(state.cfg.news.sources, btn.dataset.src);
       renderNews();
+    }),
+  );
+}
+
+async function renderMarketsNews() {
+  const { MARKET_SOURCES } = await import('../widgets/marketsnews.js');
+  const groups = ['Professional', 'General'];
+  pane().innerHTML = `
+    <h2 class="pane__title">Markets News</h2>
+    <p class="pane__hint">Pick your finance sources — newest stories across all of them, merged.</p>
+    ${groups.map((g) => `
+      <p class="pane__hint">${g}</p>
+      <div class="rows">${MARKET_SOURCES.filter((s) => s[4] === g).map(([id, label]) => {
+        const on = state.cfg.marketsnews.sources.includes(id);
+        return `<div class="row">
+          <button class="toggle ${on ? 'is-on' : ''}" data-src="${id}" role="switch" aria-checked="${on}">
+            <span class="toggle__knob"></span>
+          </button>
+          <span class="row__label">${label}</span>
+        </div>`;
+      }).join('')}</div>`).join('')}`;
+  pane().querySelectorAll('[data-src]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.marketsnews.sources = toggleIn(state.cfg.marketsnews.sources, btn.dataset.src);
+      renderMarketsNews();
     }),
   );
 }

@@ -5,6 +5,10 @@ const FEEDS = {
   gothamist: 'https://gothamist.com/feed',
   npr: 'https://feeds.npr.org/1001/rss.xml',
   bbc: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+  cnbc: 'https://www.cnbc.com/id/20910258/device/rss/rss.html',
+  marketwatch: 'https://feeds.content.dowjones.io/public/rss/mw_topstories',
+  'yahoo-finance': 'https://finance.yahoo.com/news/rssindex',
+  seekingalpha: 'https://seekingalpha.com/feed.xml',
 };
 
 export function newsFeedUrl(id) {

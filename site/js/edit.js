@@ -19,6 +19,7 @@ const TITLES = {
   ferry: 'NYC Ferry',
   bus: 'MTA Bus',
   markets: 'Markets',
+  marketsnews: 'Markets News',
   art: 'Art',
   photos: 'Photos',
   history: 'History',

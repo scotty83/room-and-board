@@ -221,6 +221,23 @@ describe('widgetGroupsHtml', () => {
   });
 });
 
+import { NAV_MODEL, navGroupForSection, SECTION_IDS } from '../site/js/settings/settings.js';
+
+describe('settings nav model', () => {
+  it('navGroupForSection maps grouped sections and returns null for pinned', () => {
+    expect(navGroupForSection('mnr')).toBe('Commute');
+    expect(navGroupForSection('photos')).toBe('Ambient');
+    expect(navGroupForSection('markets')).toBe('Markets & Sports');
+    expect(navGroupForSection('widgets')).toBeNull();
+    expect(navGroupForSection('diag')).toBeNull();
+  });
+  it('NAV_MODEL covers exactly the valid section ids (none missing or orphaned)', () => {
+    const navIds = NAV_MODEL.flatMap((e) => (e.type === 'group' ? e.items.map(([id]) => id) : [e.id]));
+    expect(new Set(navIds).size).toBe(navIds.length); // no dupes
+    expect([...navIds].sort()).toEqual([...SECTION_IDS].sort());
+  });
+});
+
 import { stepTwoVisibility, SETUP_SECTIONS } from '../site/js/settings/setup.js';
 
 describe('stepTwoVisibility', () => {

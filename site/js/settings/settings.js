@@ -129,6 +129,31 @@ const SECTIONS = [
   ['diag', 'Diagnostics'],
 ];
 
+// Collapsible nav model: pinned items + collapsible category groups (one open
+// at a time). Replaces the flat SECTIONS as the nav source (Task 2). Labels
+// verbatim from SECTIONS; ids must equal SECTION_IDS (coverage-tested).
+export const NAV_MODEL = [
+  { type: 'item', id: 'widgets', label: 'Widgets' },
+  { type: 'group', label: 'Commute', items: [
+    ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
+  { type: 'group', label: 'Weather & Air', items: [['weather', 'Weather location']] },
+  { type: 'group', label: 'Markets & Sports', items: [['markets', 'Markets'], ['sports', 'My Teams']] },
+  { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
+  { type: 'group', label: 'Ambient', items: [['worldclock', 'World Clock'], ['art', 'Art'], ['photos', 'Photos']] },
+  { type: 'item', id: 'display', label: 'Display' },
+  { type: 'item', id: 'code', label: 'Setup code' },
+  { type: 'item', id: 'diag', label: 'Diagnostics' },
+];
+
+// The category label containing a section id, or null if pinned/unknown.
+export function navGroupForSection(id) {
+  for (const e of NAV_MODEL) {
+    if (e.type === 'group' && e.items.some(([sid]) => sid === id)) return e.label;
+  }
+  return null;
+}
+
 function renderNav() {
   const nav = state.root.querySelector('.settings__nav');
   nav.innerHTML = SECTIONS.map(
@@ -149,30 +174,17 @@ function pane() {
   return state.root.querySelector('.settings__pane');
 }
 
+const SECTION_RENDERERS = {
+  widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
+  path: renderPath, ferry: renderFerry, bus: renderBus, markets: renderMarkets, sports: renderSports,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock,
+  art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
+  code: renderCode, diag: renderDiag,
+};
+export const SECTION_IDS = Object.keys(SECTION_RENDERERS);
+
 function renderSection() {
-  const renderers = {
-    widgets: renderWidgets,
-    subway: renderSubway,
-    lirr: renderLirr,
-    mnr: renderMnr,
-    njt: renderNjt,
-    path: renderPath,
-    ferry: renderFerry,
-    bus: renderBus,
-    markets: renderMarkets,
-    sports: renderSports,
-    news: renderNews,
-    substack: renderSubstack,
-    bsky: renderBsky,
-    worldclock: renderWorldclock,
-    art: renderArt,
-    photos: renderPhotos,
-    weather: renderWeather,
-    display: renderDisplay,
-    code: renderCode,
-    diag: renderDiag,
-  };
-  renderers[state.section]();
+  SECTION_RENDERERS[state.section]();
 }
 
 /* ---------- widgets ---------- */

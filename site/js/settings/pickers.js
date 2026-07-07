@@ -45,6 +45,20 @@ export function moveWidget(ids, id, delta) {
   return next;
 }
 
+// Express Bus route-first pickers (data = site/data/express-bus.json shape).
+export const expressRoutes = (data) => data.routes.map((r) => ({ id: r.id, lineRef: r.lineRef }));
+
+export function directionsForRoute(data, routeId) {
+  const r = data.routes.find((x) => x.id === routeId);
+  return r ? r.dirs.map((d) => ({ id: d.id, headsign: d.headsign })) : [];
+}
+
+export function stopsForRouteDir(data, routeId, dirId) {
+  const r = data.routes.find((x) => x.id === routeId);
+  const d = r?.dirs.find((x) => x.id === dirId);
+  return d ? d.stops.map((id) => ({ id, name: data.stops[id] ?? id })) : [];
+}
+
 export const NAME_MAX_LEN = 24;
 
 // Shift auto-capitalizes the first letter of each word (start of input, or

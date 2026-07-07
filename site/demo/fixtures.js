@@ -91,20 +91,9 @@ export const DEMO_VMS = {
     def: 'The pleasant, earthy smell that follows rain on dry ground.',
     ex: 'The first storm of the season filled the street with petrichor.',
   },
-  bus: {
-    configured: true,
-    stops: [
-      {
-        id: '550685',
-        name: 'W 34 St / 7 Av',
-        arrivals: [
-          { route: 'M34-SBS', dest: 'Javits Center', min: 3, distance: '' },
-          { route: 'M34-SBS', dest: 'Javits Center', min: 11, distance: '' },
-          { route: 'M4', dest: 'The Cloisters', min: null, distance: 'approaching' },
-        ],
-      },
-    ],
-  },
+  bus: { configured: true, stops: [
+    { id: '550789', route: 'QM24', name: 'Madison Av / E 34 St', arrivals: [
+      { dest: 'Wall St', min: 8, distance: '' }, { dest: 'Wall St', min: 21, distance: '' } ] } ] },
   sports: {
     rows: [
       { lg: 'mlb', abbr: 'NYM', name: 'Mets', record: '48-37', state: 'in', line: '3-2 vs ATL · Bot 7th', logo: 'https://a.espncdn.com/i/teamlogos/mlb/500-dark/nym.png', lastLine: 'L 3-9 vs TOR · Final' },

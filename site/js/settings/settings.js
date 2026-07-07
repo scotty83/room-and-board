@@ -20,7 +20,7 @@ export const WIDGET_LABELS = {
   njt: 'NJ Transit',
   path: 'PATH',
   ferry: 'NYC Ferry',
-  bus: 'MTA Bus',
+  bus: 'Express Bus',
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art slideshow',
@@ -118,7 +118,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
-    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'MTA Bus'] ] },
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'] ] },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
@@ -529,40 +529,38 @@ async function renderFerry() {
   }
 }
 
-function renderBus() {
-  const chips = state.cfg.bus.stops
-    .map((code) => `<button class="chip" data-remove-stop="${code}">Stop ${code} ✕</button>`)
+let expressBus = null;
+async function renderBus() {
+  expressBus ??= await fetchJSON('data/express-bus.json');
+  const { expressRoutes, directionsForRoute, stopsForRouteDir } = await import('./pickers.js');
+  const legs = state.cfg.bus.legs;
+  const chips = legs
+    .map((l, i) => `<button class="chip" data-remove="${i}"><b class="buspill">${escapeHtml(l.route)}</b> ${escapeHtml(l.stopName)} ✕</button>`)
     .join('');
   pane().innerHTML = `
-    <h2 class="pane__title">MTA Bus</h2>
-    <p class="pane__hint">Enter up to two 6-digit stop codes (printed on the bus stop sign):</p>
-    <div class="chips">${chips || '<span class="pane__empty">No stops yet</span>'}</div>
-    <output class="zip__display" aria-live="polite"></output>
-    <div class="keypad keypad--zip">${[1, 2, 3, 4, 5, 6, 7, 8, 9, '⌫', 0, 'Add'].map(
-      (k) => `<button class="key" data-key="${k}">${k}</button>`,
-    ).join('')}</div>`;
-  pane().querySelectorAll('[data-remove-stop]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      state.cfg.bus.stops = state.cfg.bus.stops.filter((c) => c !== chip.dataset.removeStop);
-      renderBus();
-    }),
-  );
-  let code = '';
-  const display = pane().querySelector('.zip__display');
-  pane().querySelectorAll('[data-key]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const k = btn.dataset.key;
-      if (k === '⌫') code = code.slice(0, -1);
-      else if (k === 'Add') {
-        if (/^\d{4,7}$/.test(code) && state.cfg.bus.stops.length < 2 && !state.cfg.bus.stops.includes(code)) {
-          state.cfg.bus.stops = [...state.cfg.bus.stops, code];
-          renderBus();
-          return;
-        }
-      } else if (code.length < 7) code += k;
-      display.textContent = code;
-    }),
-  );
+    <h2 class="pane__title">Express Bus</h2>
+    <p class="pane__hint">Pick your express route, direction, then stop. Add up to two.</p>
+    <div class="chips">${chips || '<span class="pane__empty">No routes yet</span>'}</div>
+    ${legs.length < 2 ? '<button class="btn" data-add>Add a route</button>' : ''}
+    <div class="drill"></div>`;
+  pane().querySelectorAll('[data-remove]').forEach((c) =>
+    c.addEventListener('click', () => { state.cfg.bus.legs = legs.filter((_, i) => i !== Number(c.dataset.remove)); renderBus(); }));
+  pane().querySelector('[data-add]')?.addEventListener('click', () => {
+    state.stack = [];
+    const pickRoute = () => drillList('Express route',
+      expressRoutes(expressBus).map((r) => ({ html: `<b class="buspill">${escapeHtml(r.id)}</b>`, value: r })),
+      (r) => { state.stack.push(pickRoute); pickDir(r.value); });
+    const pickDir = (route) => drillList(`${route.id} — direction`,
+      directionsForRoute(expressBus, route.id).map((d) => ({ html: escapeHtml(d.headsign || `Direction ${d.id}`), value: d })),
+      (d) => { state.stack.push(() => pickDir(route)); pickStop(route, d.value); });
+    const pickStop = (route, dir) => drillList(`${route.id} ${dir.headsign} — stop`,
+      stopsForRouteDir(expressBus, route.id, dir.id).map((s) => ({ html: escapeHtml(s.name), value: s })),
+      (s) => {
+        state.cfg.bus.legs = [...state.cfg.bus.legs, { route: route.id, lineRef: route.lineRef, dir: dir.id, stopId: s.value.id, stopName: s.value.name }];
+        renderBus();
+      });
+    pickRoute();
+  });
 }
 
 const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };

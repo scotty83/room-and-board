@@ -12,6 +12,9 @@ import {
   applyNameKey,
   nameAutoCap,
   NAME_MAX_LEN,
+  expressRoutes,
+  directionsForRoute,
+  stopsForRouteDir,
 } from '../site/js/settings/pickers.js';
 import { connectBridge } from '../site/js/bridge.js';
 
@@ -328,5 +331,32 @@ describe('navHtml', () => {
     expect(html).toMatch(/data-group="Commute"[^>]*aria-expanded="true"/);
     expect((html.match(/settings__navkids is-open/g) || []).length).toBe(1); // only Commute open
     expect(html).toMatch(/settings__navchild is-active"[^>]*data-section="subway"/);
+  });
+});
+
+const BUS = {
+  routes: [
+    { id: 'QM24', lineRef: 'MTABC_QM24', dirs: [
+      { id: 0, headsign: 'Manhattan', stops: ['a', 'b'] },
+      { id: 1, headsign: 'Bayside', stops: ['b', 'a'] } ] },
+    { id: 'X27', lineRef: 'MTA NYCT_X27', dirs: [ { id: 0, headsign: 'Downtown', stops: ['c'] } ] },
+  ],
+  stops: { a: 'Madison Av / E 34 St', b: '5 Av / W 57 St', c: 'Water St' },
+};
+
+describe('express bus pickers', () => {
+  it('lists routes with their lineRef', () => {
+    expect(expressRoutes(BUS)).toEqual([
+      { id: 'QM24', lineRef: 'MTABC_QM24' }, { id: 'X27', lineRef: 'MTA NYCT_X27' }]);
+  });
+  it('lists a route directions by headsign', () => {
+    expect(directionsForRoute(BUS, 'QM24')).toEqual([
+      { id: 0, headsign: 'Manhattan' }, { id: 1, headsign: 'Bayside' }]);
+    expect(directionsForRoute(BUS, 'NOPE')).toEqual([]);
+  });
+  it('lists a route+direction stops in order with names', () => {
+    expect(stopsForRouteDir(BUS, 'QM24', 1)).toEqual([
+      { id: 'b', name: '5 Av / W 57 St' }, { id: 'a', name: 'Madison Av / E 34 St' }]);
+    expect(stopsForRouteDir(BUS, 'QM24', 9)).toEqual([]);
   });
 });

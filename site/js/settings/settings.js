@@ -9,7 +9,7 @@ import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
 import { zipLookup } from '../geo.js';
-import { alphaSections, toggleIn } from './pickers.js';
+import { alphaSections, toggleIn, applyNameKey, nameAutoCap } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
 export const WIDGET_LABELS = {
@@ -915,10 +915,8 @@ function renderDisplay() {
       <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
       ${state.cfg.name ? '<button class="btn" data-clear-name>Remove</button>' : ''}</div>
     <div class="namepad" hidden>
-      <output class="code__display" aria-live="polite"></output>
-      <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(
-        (k) => `<button class="key" data-nkey="${k}">${k}</button>`,
-      ).join('')}<button class="key key--wide" data-nkey="Space">␣</button><button class="key" data-nkey="⌫">⌫</button><button class="key key--wide" data-nkey="Done">Done</button></div>
+      <output class="code__display" aria-live="polite">·</output>
+      <div class="keypad keypad--code namepad__keys"></div>
     </div>`;
   pane().querySelectorAll('[data-set]').forEach((btn) =>
     btn.addEventListener('click', () => {
@@ -933,26 +931,35 @@ function renderDisplay() {
   });
   const pad = pane().querySelector('.namepad');
   const display = pad.querySelector('.code__display');
-  // Typed lowercase, shown/saved title-cased ("sean scott" -> "Sean Scott").
-  const titleCase = (raw) => raw.replace(/\b[a-z]/g, (c) => c.toUpperCase());
-  let raw = state.cfg.name.toLowerCase();
+  const keys = pad.querySelector('.namepad__keys');
+  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  // Explicit case, saved verbatim (see applyNameKey): auto-caps the first
+  // letter of each word, Shift overrides for camelCase, '-' for hyphenated.
+  let nameState = { value: state.cfg.name, shift: nameAutoCap(state.cfg.name) };
+  function paintPad() {
+    const { value, shift } = nameState;
+    display.textContent = value || '·';
+    keys.innerHTML = LETTERS.map(
+      (k) => `<button class="key" data-nkey="${k}">${shift ? k : k.toLowerCase()}</button>`,
+    ).join('')
+      + '<button class="key" data-nkey="-">-</button>'
+      + `<button class="key ${shift ? 'is-on' : ''}" data-nkey="Shift">⇧</button>`
+      + '<button class="key key--wide" data-nkey="Space">␣</button>'
+      + '<button class="key" data-nkey="Backspace">⌫</button>'
+      + '<button class="key key--wide" data-nkey="Done">Done</button>';
+    keys.querySelectorAll('[data-nkey]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.nkey;
+        if (k === 'Done') { state.cfg.name = nameState.value.trim(); renderDisplay(); return; }
+        nameState = applyNameKey(nameState, k);
+        paintPad();
+      }),
+    );
+  }
   pane().querySelector('[data-edit-name]').addEventListener('click', () => {
     pad.hidden = !pad.hidden;
-    display.textContent = titleCase(raw);
+    if (!pad.hidden) paintPad();
   });
-  pad.querySelectorAll('[data-nkey]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const k = btn.dataset.nkey;
-      if (k === '⌫') raw = raw.slice(0, -1);
-      else if (k === 'Space') { if (raw && !raw.endsWith(' ') && raw.length < 23) raw += ' '; }
-      else if (k === 'Done') {
-        state.cfg.name = titleCase(raw.trim());
-        renderDisplay();
-        return;
-      } else if (raw.length < 24) raw += k.toLowerCase();
-      display.textContent = titleCase(raw) || '·';
-    }),
-  );
 }
 
 /* ---------- setup code + QR export ---------- */

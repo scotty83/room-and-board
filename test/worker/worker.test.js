@@ -554,6 +554,12 @@ describe('bus legs', () => {
       { stopId: '504123', lineRef: 'MTA NYCT_X27' }]);
     expect(parseLegs('')).toEqual([]);
   });
+  it('caps at 2 legs even when more are supplied', () => {
+    const result = parseLegs('1:A,2:B,3:C');
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual({ stopId: '1', lineRef: 'A' });
+    expect(result[1]).toEqual({ stopId: '2', lineRef: 'B' });
+  });
   it('builds a StopMonitoring URL with a LineRef filter', () => {
     const u = siriUrl('KEY', { stopId: '550789', lineRef: 'MTA NYCT_X27' });
     expect(u).toContain('MonitoringRef=550789');

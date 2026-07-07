@@ -34,7 +34,8 @@ export function parseLegs(param) {
       const i = pair.indexOf(':');
       return { stopId: decodeURIComponent(pair.slice(0, i)), lineRef: decodeURIComponent(pair.slice(i + 1)) };
     })
-    .filter((l) => l.stopId && l.lineRef);
+    .filter((l) => l.stopId && l.lineRef)
+    .slice(0, 2);
 }
 
 export function siriUrl(key, leg) {

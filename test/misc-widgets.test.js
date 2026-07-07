@@ -193,4 +193,19 @@ describe('mapBus (legs)', () => {
   it('flags not-configured on the server error', () => {
     expect(mapBus({ error: 'bus_not_configured' }, 0, legs).configured).toBe(false);
   });
+  it('joins stops by index so two legs sharing a stopId keep their own route', () => {
+    const sharedLegs = [
+      { route: 'QM1', stopId: 'x', stopName: 'Stop X' },
+      { route: 'QM2', stopId: 'x', stopName: 'Stop X' },
+    ];
+    const payload = {
+      stops: [
+        { id: 'x', name: 'Stop X', arrivals: [{ route: 'QM1', dest: 'A', time: 2000, distance: '' }] },
+        { id: 'x', name: 'Stop X', arrivals: [{ route: 'QM2', dest: 'B', time: 3000, distance: '' }] },
+      ],
+    };
+    const vm = mapBus(payload, 1000, sharedLegs);
+    expect(vm.stops[0].route).toBe('QM1');
+    expect(vm.stops[1].route).toBe('QM2');
+  });
 });

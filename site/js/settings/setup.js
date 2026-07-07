@@ -399,9 +399,9 @@ async function renderBusStops() {
   expressBusData ??= await fetch('data/express-bus.json').then((r) => r.json());
   const chips = $('#bus-chips');
   const routeSel = $('#bus-route'), dirSel = $('#bus-dir'), stopSel = $('#bus-stop');
-  const opt = (v, t) => `<option value="${v}">${t}</option>`;
+  const opt = (v, t) => `<option value="${escapeHtml(v)}">${escapeHtml(t)}</option>`;
   const paintChips = () => {
-    chips.innerHTML = cfg.bus.legs.map((l, i) => `<button type="button" class="chip" data-remove="${i}">${l.route} · ${l.stopName} ✕</button>`).join('');
+    chips.innerHTML = cfg.bus.legs.map((l, i) => `<button type="button" class="chip" data-remove="${i}">${escapeHtml(l.route)} · ${escapeHtml(l.stopName)} ✕</button>`).join('');
     chips.querySelectorAll('[data-remove]').forEach((b) => b.addEventListener('click', () => { cfg.bus.legs = cfg.bus.legs.filter((_, i) => i !== Number(b.dataset.remove)); paintChips(); }));
   };
   routeSel.innerHTML = expressRoutes(expressBusData).map((r) => opt(r.id, r.id)).join('');

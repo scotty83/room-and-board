@@ -12,11 +12,11 @@ export function mapBus(payload, nowSec, legs) {
   if (!payload || payload.error || !Array.isArray(payload.stops)) {
     return { configured: !payload || payload.error !== 'bus_not_configured', stops: [] };
   }
-  const legByStop = Object.fromEntries((legs ?? []).map((l) => [l.stopId, l]));
+  const legsArr = legs ?? [];
   return {
     configured: true,
-    stops: payload.stops.map((stop) => {
-      const leg = legByStop[stop.id];
+    stops: payload.stops.map((stop, i) => {
+      const leg = legsArr[i];
       return {
         id: stop.id,
         route: leg?.route ?? '',

@@ -348,6 +348,15 @@ describe('imageshow module', () => {
   });
 });
 
+describe('newscore module', () => {
+  it('newscore exposes the shared news engine', async () => {
+    const m = await import('../site/js/widgets/newscore.js');
+    for (const fn of ['parseRss', 'mergeNews', 'ageLabel', 'renderHeadlines', 'fetchHeadlines']) {
+      expect(typeof m[fn]).toBe('function');
+    }
+  });
+});
+
 describe('viewer caption meta — photos vs art', () => {
   beforeAll(() => {
     document.querySelector('#art-viewer')?.remove();

@@ -26,7 +26,11 @@ const MODELS = {
   njt: listCapacity(80, 56),
   path: listCapacity(58, 44), // single-line rows, subway-like density
   ferry: listCapacity(80, 56), // two-line train rows
-  bus: listCapacity(80, 56),
+  // Row budget shared between each stop's header (~28px) and its arrival rows
+  // (~41px). It borrowed lirr/mnr's 80px two-line pitch, which ~halved what
+  // fits; 50 is the measured safe average (never overflows worst-case configs
+  // 3x3–4x8, hint included) — e.g. a 3x3 now packs 5 rows, not 2.
+  bus: listCapacity(50, 56),
   history: listCapacity(64, 54),
   sports: listCapacity(94, 70),
   worldcup: listCapacity(60, 46),

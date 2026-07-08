@@ -16,7 +16,10 @@ const listCapacity = (rowPx, compactRowPx) => (w, h) =>
 
 // Per-widget capacity of the primary list, or null when there isn't one.
 const MODELS = {
-  markets: listCapacity(78, 40),
+  // ~67px row pitch (name+price stacked over a 28px spark, +10px row-gap) with
+  // headroom for the "+N more" hint. 69 (was a too-tall 78) makes a 4x3 fit 3
+  // index rows instead of 2 — verified overflow-safe with the hint at 3–8 tall.
+  markets: listCapacity(69, 40),
   subway: listCapacity(58, 42),
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),

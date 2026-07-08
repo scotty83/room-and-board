@@ -6,8 +6,9 @@ import { itemCapacity, capacityLabel } from '../site/js/capacity.js';
 describe('itemCapacity', () => {
   it('scales list rows with card height', () => {
     expect(itemCapacity('markets', 4, 2)).toBe(2);
+    expect(itemCapacity('markets', 4, 3)).toBe(3);
     expect(itemCapacity('markets', 4, 4)).toBe(4);
-    expect(itemCapacity('markets', 4, 8)).toBe(10);
+    expect(itemCapacity('markets', 4, 8)).toBe(11);
     expect(itemCapacity('lirr', 4, 4)).toBe(4);
     expect(itemCapacity('lirr', 4, 6)).toBe(7);
     expect(itemCapacity('subway', 4, 4)).toBe(5);

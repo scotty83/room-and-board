@@ -5,6 +5,7 @@ import { mapTeamSummary, digestSchedule, pickLogo, LEAGUE_PATHS } from '../worke
 import { mapWorldCup } from '../site/js/widgets/worldcup.js';
 import { mapPosts } from '../site/js/widgets/posts.js';
 import { parseRss, mergeNews, ageLabel } from '../site/js/widgets/news.js';
+import { renderHeadlines } from '../site/js/widgets/newscore.js';
 
 describe('mapTeamSummary', () => {
   const espn = (state, detail, scores) => ({
@@ -125,6 +126,54 @@ describe('news parsing', () => {
     expect(ageLabel(now - 3 * 3600e3, now)).toBe('3h');
     expect(ageLabel(now - 2 * 86400e3, now)).toBe('2d');
     expect(ageLabel(0, now)).toBe('');
+  });
+});
+
+describe('renderHeadlines fill-to-fit', () => {
+  // A fake card body: scrollHeight is derived from the rendered content
+  // (rowPx per headline + hintPx if the "+N more" line is present), so we can
+  // drive the measure loop without a real layout engine.
+  const fakeBody = ({ clientHeight = 0, rowPx = 60, hintPx = 25, dataH = 4 } = {}) => {
+    let html = '';
+    return {
+      closest: () => ({ dataset: { w: '4', h: String(dataH) } }),
+      clientHeight,
+      get scrollHeight() {
+        const rows = (html.match(/class="headline"/g) || []).length;
+        return rows * rowPx + (html.includes('more-hint') ? hintPx : 0);
+      },
+      set innerHTML(v) { html = v; },
+      get innerHTML() { return html; },
+    };
+  };
+  const vm = (n) => ({ items: Array.from({ length: n }, (_, i) => ({ title: `H${i}`, source: 'NYT', t: 0 })), nowMs: 0 });
+  const count = (el) => (el.innerHTML.match(/class="headline"/g) || []).length;
+  const opts = { widgetId: 'news', emptyHint: 'none' };
+
+  it('falls back to the static estimate with no layout (tests/happy-dom)', () => {
+    const el = fakeBody({ clientHeight: 0 });        // cap('news',4,4)=4 → 30 items → show cap-1
+    renderHeadlines(el, vm(30), opts);
+    expect(count(el)).toBe(3);
+    expect(el.innerHTML).toContain('+27 more');
+  });
+  it('grows to fill a card with room (one-line titles)', () => {
+    const el = fakeBody({ clientHeight: 338, rowPx: 60, hintPx: 25 }); // real h=4 body
+    renderHeadlines(el, vm(30), opts);
+    expect(count(el)).toBe(5);                        // 5*60+25=325 ≤ 338; 6th overflows
+    expect(el.innerHTML).toContain('+25 more');
+    expect(el.scrollHeight).toBeLessThanOrEqual(el.clientHeight);
+  });
+  it('shrinks when even the static estimate overflows a short card', () => {
+    const el = fakeBody({ clientHeight: 150, rowPx: 60, hintPx: 25 });
+    renderHeadlines(el, vm(30), opts);
+    expect(count(el)).toBe(2);                        // 2*60+25=145 ≤ 150; 3 rows overflow
+    expect(el.scrollHeight).toBeLessThanOrEqual(el.clientHeight);
+  });
+  it('shows all items with no hint when they all fit', () => {
+    const el = fakeBody({ clientHeight: 338, rowPx: 60 });
+    renderHeadlines(el, vm(4), opts);
+    expect(count(el)).toBe(4);
+    expect(el.innerHTML).not.toContain('more-hint');
   });
 });
 

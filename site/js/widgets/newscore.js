@@ -66,27 +66,41 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
     el.innerHTML = `<div class="empty">${emptyHint}</div>`;
     return;
   }
-  const [w, h] = cardSize(el, [4, 4]);
-  const cap = itemCapacity(widgetId, w, h);
   const nowMs = vm.nowMs ?? Date.now();
-  // When there's more than fits, reserve a row for the hint so it never
-  // overflows a body that the capacity model has already filled exactly.
-  const overflow = vm.items.length > cap;
-  const shown = vm.items.slice(0, overflow ? Math.max(1, cap - 1) : cap);
-  const hidden = vm.items.length - shown.length;
   // Source + age stack above the full-width headline so neither ever
   // squeezes the other (at 3 cols the old side-by-side row truncated both).
-  el.innerHTML = shown
-    .map(
-      (i) => `<div class="headline">
+  const itemHtml = (i) => `<div class="headline">
         <div class="headline__meta">
           <span class="headline__src">${escapeHtml(i.source)}</span>
           <span class="headline__age">${escapeHtml(ageLabel(i.t, nowMs))}</span>
         </div>
         <span class="headline__title">${escapeHtml(i.title)}</span>
-      </div>`,
-    )
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+      </div>`;
+  // Markup for the first n items, with a "+N more" hint when some are hidden
+  // (the hint costs a row, so it's part of what we measure against).
+  const build = (n) => {
+    const hidden = vm.items.length - n;
+    return vm.items.slice(0, n).map(itemHtml).join('')
+      + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+  };
+  // Static estimate from the capacity model. This is the final answer when
+  // there's no rendered box to measure (e.g. happy-dom in tests). It reserves
+  // a row for the hint when there's overflow so it never clips the body.
+  const [w, h] = cardSize(el, [4, 4]);
+  const cap = itemCapacity(widgetId, w, h) ?? 4;
+  let n = vm.items.length > cap ? Math.max(1, cap - 1) : vm.items.length;
+  el.innerHTML = build(n);
+  // Fill-to-fit: with a real rendered box, grow/shrink to the count that
+  // actually fits. The static 75px/row estimate assumes worst-case two-line
+  // titles; most titles are one line, so the card usually has room for more.
+  if (el.clientHeight > 0) {
+    while (n > 1 && el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
+    while (n < vm.items.length) {
+      n += 1;
+      el.innerHTML = build(n);
+      if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); break; }
+    }
+  }
 }
 
 export async function fetchHeadlines(ids, sourceById, net) {

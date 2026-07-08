@@ -208,7 +208,7 @@ export function normalizeConfig(raw) {
     },
     marketsnews: {
       sources: (() => {
-        const valid = new Set(['mw', 'sa', 'cnbc', 'nyt-business', 'yahoo-finance']); // MARKET_SOURCES ids
+        const valid = new Set(['mw', 'wsj-markets', 'ft-markets', 'sa', 'cnbc', 'nyt-business', 'yahoo-finance']); // MARKET_SOURCES ids
         const picked = (Array.isArray(raw.marketsnews?.sources) ? raw.marketsnews.sources : []).filter((s) => valid.has(s));
         return picked.length ? picked : ['cnbc', 'nyt-business'];
       })(),

@@ -7,6 +7,8 @@ const FEEDS = {
   bbc: 'https://feeds.bbci.co.uk/news/world/rss.xml',
   cnbc: 'https://www.cnbc.com/id/20910258/device/rss/rss.html',
   marketwatch: 'https://feeds.content.dowjones.io/public/rss/mw_topstories',
+  'wsj-markets': 'https://feeds.content.dowjones.io/public/rss/RSSMarketsMain',
+  'ft-markets': 'https://www.ft.com/markets?format=rss',
   'yahoo-finance': 'https://finance.yahoo.com/news/rssindex',
   seekingalpha: 'https://seekingalpha.com/feed.xml',
 };

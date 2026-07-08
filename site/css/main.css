@@ -84,24 +84,104 @@ html, body {
 
 /* ---------- weather ---------- */
 .alert { display: flex; gap: 10px; align-items: center; background: rgba(210, 153, 34, 0.15); color: var(--warn); border-radius: 10px; padding: 8px 14px; font-size: 20px; font-weight: 600; }
-.wx-now { display: flex; align-items: center; gap: 24px; }
-.wx-now__icon { width: 96px; height: 96px; color: var(--accent); }
-.wx-now__temp { font-size: 88px; font-weight: 700; line-height: 1; }
-.wx-now__main { display: flex; flex-direction: column; gap: 4px; }
-.wx-now__label { font-size: 26px; color: var(--ink-dim); }
-.wx-now__feels { font-size: 20px; color: var(--ink-faint); }
-.wx-hours { display: flex; justify-content: space-between; margin-top: 8px; }
-.wx-hour { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 21px; color: var(--ink-dim); }
-.wx-hour__temp { color: var(--ink); font-weight: 600; }
-.wx-days { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-.wx-day { display: grid; grid-template-columns: 70px 34px 1fr auto; align-items: center; gap: 12px; font-size: 20px; }
-.wx-day__name { color: var(--ink-dim); }
-.wx-day__hi { font-weight: 600; text-align: right; }
-.wx-day__lo { color: var(--ink-faint); margin-left: 10px; }
-
 .icon { width: 28px; height: 28px; }
 .icon--sm { width: 24px; height: 24px; }
 .icon--xl { width: 96px; height: 96px; }
+
+/* ---------- weather layout (editorial redesign) ----------
+   Placed after the .icon utilities on purpose: the glyphs render as
+   `.icon .wx-now__icon` / `.icon .wx-day__ico`, so these same-specificity
+   rules must come later in source to win the size over the base .icon. */
+/* condition-driven accent (current conditions) */
+.card--weather { --wx-accent: var(--accent); }
+.card--weather[data-cond="clear"]    { --wx-accent: #e3b341; }
+.card--weather[data-cond="partly"]   { --wx-accent: #9db2c9; }
+.card--weather[data-cond="cloudy"],
+.card--weather[data-cond="fog"]      { --wx-accent: #8a97ab; }
+.card--weather[data-cond="rain"],
+.card--weather[data-cond="drizzle"]  { --wx-accent: #58a6ff; }
+.card--weather[data-cond="snow"],
+.card--weather[data-cond="sleet"]    { --wx-accent: #7fc8e6; }
+.card--weather[data-cond="thunder"]  { --wx-accent: #d29922; }
+
+/* per-condition glyph tints (current glyph + each daily glyph) */
+.wx-ico--clear    { color: #e3b341; }
+.wx-ico--partly   { color: #9db2c9; }
+.wx-ico--cloudy,
+.wx-ico--fog      { color: #8a97ab; }
+.wx-ico--rain,
+.wx-ico--drizzle  { color: #58a6ff; }
+.wx-ico--snow,
+.wx-ico--sleet    { color: #7fc8e6; }
+.wx-ico--thunder  { color: #d29922; }
+
+/* the sections own their spacing; override the base body gap */
+.card--weather .card__body { gap: 0; }
+
+/* hero */
+.wx-now { display: flex; align-items: center; gap: 16px; }
+.wx-now__icon { width: 50px; height: 50px; flex: none; }
+.wx-now__temp { font-size: 78px; font-weight: 700; line-height: 0.9; letter-spacing: -0.03em; }
+.wx-now__meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; min-width: 0; }
+.wx-now__label { font-size: 22px; font-weight: 600; color: #c1ccda; white-space: nowrap; }
+.wx-now__feels { font-size: 18px; color: var(--ink-faint); white-space: nowrap; }
+
+.wx-rule { height: 1px; background: rgba(255, 255, 255, 0.07); margin: 16px 0 10px; flex: none; }
+
+/* hourly trend */
+.wx-trend { display: flex; flex-direction: column; gap: 4px; }
+.wx-trend__row { display: flex; }
+.wx-trend__row > span { flex: 1; min-width: 0; text-align: center; font-size: 18px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.wx-trend__row--hours > span { font-size: 14px; font-weight: 400; color: var(--ink-faint); }
+.wx-trend__chart { width: 100%; height: 60px; display: block; }
+.wx-trend__line { fill: none; stroke: var(--wx-accent); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.wx-trend__g0 { stop-color: var(--wx-accent); stop-opacity: 0.30; }
+.wx-trend__g1 { stop-color: var(--wx-accent); stop-opacity: 0; }
+
+/* daily strip (tiles) */
+.wx-days { display: flex; gap: 8px; margin-top: auto; }
+.wx-day { flex: 1; min-width: 0; background: var(--bg-card-2); border-radius: 12px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.wx-day__name { font-size: 16px; color: var(--ink-dim); }
+.wx-day__ico { width: 26px; height: 26px; }
+.wx-day__hi { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.wx-day__lo { font-size: 15px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+
+/* --- wider cards (w >= 5): larger hero + tiles, 8-hour trend, 5 tiles --- */
+.card--weather:not(.t-narrow) .wx-now__temp { font-size: 92px; }
+.card--weather:not(.t-narrow) .wx-now__icon { width: 62px; height: 62px; }
+.card--weather:not(.t-narrow) .wx-now__label { font-size: 26px; }
+.card--weather:not(.t-narrow) .wx-now__feels { font-size: 20px; }
+.card--weather:not(.t-narrow) .wx-trend__chart { height: 44px; }
+.card--weather:not(.t-narrow) .wx-day { padding: 9px 4px; }
+.card--weather:not(.t-narrow) .wx-day__name { font-size: 17px; }
+.card--weather:not(.t-narrow) .wx-day__ico { width: 30px; height: 30px; }
+.card--weather:not(.t-narrow) .wx-day__hi { font-size: 24px; }
+.card--weather:not(.t-narrow) .wx-day__lo { font-size: 16px; }
+
+/* --- tall cards (h >= 5): scale hero + trend up, even vertical rhythm --- */
+.card--weather.t-l .card__body { justify-content: space-between; }
+.card--weather.t-l .wx-rule { display: none; }
+.card--weather.t-l .wx-now__temp { font-size: 112px; }
+.card--weather.t-l .wx-now__icon { width: 72px; height: 72px; }
+.card--weather.t-l .wx-trend__chart { height: 116px; }
+.card--weather.t-l .wx-days { margin-top: 0; }
+.card--weather.t-l .wx-day { padding: 16px 4px; gap: 8px; }
+.card--weather.t-l .wx-day__name { font-size: 18px; }
+.card--weather.t-l .wx-day__ico { width: 34px; height: 34px; }
+.card--weather.t-l .wx-day__hi { font-size: 27px; }
+.card--weather.t-l .wx-day__lo { font-size: 17px; }
+
+/* --- measured-fit tweaks (resize-fit audit) --- the NWS alert banner adds
+   ~41px of height the base tiers don't budget for. At h==4 (t-m) trim the
+   hairline margin + chart, and cap the wide-card hero so hero+8h-trend+strip
+   still clear the body; at h==5 the fixed t-l chart must shrink to fit the
+   shorter body. Verified zero-overflow at every w×h from 3×4→12×8, alert
+   present or not. (Placed last so these win over the tier rules above.) */
+.card--weather.t-m .wx-rule { margin: 8px 0 6px; }
+.card--weather.t-m .wx-trend__chart { height: 40px; }
+.card--weather.t-m:not(.t-narrow) .wx-now__temp { font-size: 78px; }
+.card--weather.t-m:not(.t-narrow) .wx-day { padding: 7px 4px; }
+.card--weather.t-l .wx-trend__chart { height: 100px; }
 
 /* ---------- transit ---------- */
 .stop-group { display: flex; flex-direction: column; gap: 8px; }
@@ -467,8 +547,6 @@ body.mode-ambient .gear { bottom: 7px; }
 /* ---------- per-size compact variants (gen1 Chromium lacks container queries;
    cards carry data-w/data-h and the tier classes t-s/t-m/t-l/t-narrow that
    main.js derives from the layout: t-s when h≤2, t-narrow when w≤4) ---------- */
-/* Weather when narrow (≤4 cols): 6 hourly slots instead of 8 */
-.card.t-narrow .wx-hour:nth-child(n+7) { display: none; }
 /* Quote in a shallow card: clamp long quotes */
 .card--quote.t-s .quote__text {
   font-size: 22px;
@@ -519,16 +597,6 @@ body.mode-ambient .gear { bottom: 7px; }
 /* Transit rows tighten when narrow */
 .card.t-narrow .train__track { padding: 4px 8px; font-size: 17px; }
 
-/* Measured-fit variants (from the overflow audit — see README testing notes) */
-/* Weather at 2-high: compact current block, 6 hourly slots, 3 daily rows */
-.card--weather.t-m .card__body { gap: 8px; }
-.card--weather.t-m .wx-now__temp { font-size: 64px; }
-.card--weather.t-m .wx-now__icon { width: 64px; height: 64px; }
-.card--weather.t-m .alert { padding: 5px 12px; font-size: 18px; }
-.card--weather.t-m .wx-hour:nth-child(n+7) { display: none; }
-.card--weather.t-m .wx-hours { margin-top: 2px; }
-.card--weather.t-m .wx-days { margin-top: 2px; }
-.card--weather.t-m .wx-day:nth-child(n+3) { display: none; }
 
 /* ---------- transit service alerts ---------- */
 .talert {

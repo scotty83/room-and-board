@@ -7,6 +7,8 @@ export const meta = { id: 'marketsnews', title: 'Markets News', refreshMs: 10 * 
 // [id, label, kind, url-or-proxy-id, audience]
 export const MARKET_SOURCES = [
   ['mw', 'MarketWatch', 'proxy', 'marketwatch', 'Professional'],
+  ['wsj-markets', 'WSJ Markets', 'proxy', 'wsj-markets', 'Professional'],
+  ['ft-markets', 'FT Markets', 'proxy', 'ft-markets', 'Professional'],
   ['sa', 'Seeking Alpha', 'proxy', 'seekingalpha', 'Professional'],
   ['cnbc', 'CNBC', 'proxy', 'cnbc', 'General'],
   ['nyt-business', 'NYT Business', 'direct', 'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', 'General'],

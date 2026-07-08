@@ -7,6 +7,33 @@ import { icon } from '../icons.js';
 
 export const meta = { id: 'weather', title: 'Weather', refreshMs: 10 * 60 * 1000 };
 
+// Inline SVG temperature trend. viewBox is 0..n across (points at column
+// centers) and 0..100 down, stretched to the chart box with
+// preserveAspectRatio="none" so it lines up with an n-column flex label row at
+// ANY width. The stroke uses vector-effect="non-scaling-stroke" to stay a
+// constant weight under that stretch. Domain is padded (min 6° window) so a
+// calm night still shows a legible slope without being misleading.
+function trendSvg(temps, gradId) {
+  const n = temps.length;
+  if (n < 2) return '';
+  let lo = Math.min(...temps), hi = Math.max(...temps);
+  if (hi - lo < 6) { const mid = (lo + hi) / 2; lo = mid - 3; hi = mid + 3; }
+  else { lo -= 1; hi += 1; }
+  const TOP = 14, BOT = 86;
+  const xs = (i) => (i + 0.5).toFixed(2);
+  const ys = (t) => (TOP + (1 - (t - lo) / (hi - lo)) * (BOT - TOP)).toFixed(2);
+  const pts = temps.map((t, i) => `${xs(i)} ${ys(t)}`);
+  const line = 'M' + pts.join(' L');
+  const area = `M${xs(0)} 100 L` + pts.join(' L') + ` L${xs(n - 1)} 100 Z`;
+  return `<svg class="wx-trend__chart" viewBox="0 0 ${n} 100" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" class="wx-trend__g0"></stop><stop offset="1" class="wx-trend__g1"></stop>
+      </linearGradient></defs>
+      <path class="wx-trend__area" d="${area}" fill="url(#${gradId})"></path>
+      <path class="wx-trend__line" d="${line}"></path>
+    </svg>`;
+}
+
 // WMO weather interpretation codes → display label + icon key.
 const WMO = new Map([
   [0, ['Clear', 'clear']],
@@ -117,36 +144,55 @@ export function fmtTemp(fTemp, units) {
 
 export function render(el, vm, cfg) {
   const units = cfg?.loc?.units ?? 'F';
-  const hourly = vm.hourly
-    .map(
-      (h) => `<div class="wx-hour">
-        <span class="wx-hour__label">${escapeHtml(h.h)}</span>
-        ${icon(wmoInfo(h.code).icon, 'icon--sm')}
-        <span class="wx-hour__temp">${fmtTemp(h.temp, units)}</span>
-      </div>`,
-    )
+
+  // Size class is stamped on the card by main.js (cardFor) before render runs.
+  const card = el.closest('.card');
+  const w = Number(card?.dataset.w) || 3;
+  const h = Number(card?.dataset.h) || 4;
+  const big = w >= 5 || h >= 5;
+  const nHours = big ? 8 : 6;
+  const nDays = big ? 5 : 4;
+
+  // Drive the accent from the CURRENT condition.
+  if (card) card.dataset.cond = vm.now.icon;
+
+  const hours = vm.hourly.slice(0, nHours);
+  const days = vm.daily.slice(0, nDays);
+
+  const tempsRow = hours
+    .map((x) => `<span>${fmtTemp(x.temp, units)}</span>`)
     .join('');
-  const daily = vm.daily
+  const hoursRow = hours
+    .map((x) => `<span>${escapeHtml(x.h)}</span>`)
+    .join('');
+  const dayTiles = days
     .map(
       (d) => `<div class="wx-day">
-        <span class="wx-day__name">${escapeHtml(d.day)}</span>
-        ${icon(wmoInfo(d.code).icon, 'icon--sm')}
-        <span class="wx-day__hi">${fmtTemp(d.hi, units)}</span><span class="wx-day__lo">${fmtTemp(d.lo, units)}</span>
-      </div>`,
+          <span class="wx-day__name">${escapeHtml(d.day)}</span>
+          ${icon(wmoInfo(d.code).icon, 'wx-day__ico wx-ico--' + wmoInfo(d.code).icon)}
+          <span class="wx-day__hi">${fmtTemp(d.hi, units)}</span>
+          <span class="wx-day__lo">${fmtTemp(d.lo, units)}</span>
+        </div>`,
     )
     .join('');
+
   el.innerHTML = `
     ${vm.alert ? `<div class="alert">${icon('thunder', 'icon--sm')}<span>${escapeHtml(vm.alert.event)}</span></div>` : ''}
     <div class="wx-now">
-      ${icon(vm.now.icon, 'icon--xl wx-now__icon')}
-      <div class="wx-now__main">
-        <span class="wx-now__temp">${fmtTemp(vm.now.temp, units)}</span>
+      ${icon(vm.now.icon, 'wx-now__icon wx-ico--' + vm.now.icon)}
+      <span class="wx-now__temp">${fmtTemp(vm.now.temp, units)}</span>
+      <div class="wx-now__meta">
         <span class="wx-now__label">${escapeHtml(vm.now.label)}</span>
         <span class="wx-now__feels">Feels like ${fmtTemp(vm.now.feels, units)}</span>
       </div>
     </div>
-    <div class="wx-hours">${hourly}</div>
-    <div class="wx-days">${daily}</div>`;
+    <div class="wx-rule"></div>
+    <div class="wx-trend">
+      <div class="wx-trend__row">${tempsRow}</div>
+      ${trendSvg(hours.map((x) => x.temp), 'wx-trend-grad')}
+      <div class="wx-trend__row wx-trend__row--hours">${hoursRow}</div>
+    </div>
+    <div class="wx-days">${dayTiles}</div>`;
 }
 
 export async function fetchData(cfg, net) {

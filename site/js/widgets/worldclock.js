@@ -60,14 +60,22 @@ export function render(el, vm) {
   const cap = itemCapacity('worldclock', w, h);
   const shown = vm.slice(0, cap);
   const hidden = vm.length - shown.length;
+  // Reserve the day-offset gutter on every row (only when some city actually
+  // crosses a day boundary) so the +1d/−1d badge never shifts the time; and
+  // split the hour into a fixed-width cell so the colon sits on one axis
+  // whether the hour is one or two digits.
+  el.classList.toggle('wc-has-day', shown.some((row) => row.dayDiff));
   el.innerHTML = shown
-    .map(
-      (row) => `<div class="wc-row">
+    .map((row) => {
+      const ci = row.time.indexOf(':');
+      const hh = row.time.slice(0, ci);
+      const rest = row.time.slice(ci); // ":11 PM"
+      const day = row.dayDiff > 0 ? '+1d' : row.dayDiff < 0 ? '−1d' : '';
+      return `<div class="wc-row">
         <span class="wc-row__city">${escapeHtml(row.city)}</span>
-        <span class="wc-row__time">${escapeHtml(row.time)}${
-          row.dayDiff ? `<span class="wc-row__day">${row.dayDiff > 0 ? '+1d' : '−1d'}</span>` : ''
-        }</span>
-      </div>`,
-    )
+        <span class="wc-row__time"><span class="wc-row__hh">${escapeHtml(hh)}</span>${escapeHtml(rest)}</span>
+        <span class="wc-row__day">${day}</span>
+      </div>`;
+    })
     .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
 }

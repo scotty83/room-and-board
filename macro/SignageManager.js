@@ -10,10 +10,11 @@
 //   3. Compose and set the signage URL, and listen for config saves the page
 //      sends over the device's own WebSocket xAPI (Message Send "sgn1:...").
 //
-// Deployment: deploy/provision.js replaces SITE_URL and pushes this file.
-// Requires on the device: WebEngine Mode On, Standby Signage Mode On,
-// WebEngine Features AllowDeviceCertificate True, NetworkServices Websocket
-// FollowHTTPService (provision.js sets all of these).
+// Deployment: provision.js (networked) or a plain manual upload installs this
+// file with SITE_URL substituted. init() self-configures every device setting
+// it needs — WebEngine Mode, Standby Signage Mode + InteractionMode, WebEngine
+// Features AllowDeviceCertificate, and NetworkServices Websocket
+// FollowHTTPService — so a hand-uploaded copy works without running provision.js.
 
 import xapi from 'xapi';
 
@@ -148,6 +149,18 @@ async function init() {
   await xapi.Config.WebEngine.Mode.set('On');
   await xapi.Config.Standby.Signage.Mode.set('On');
   await xapi.Config.Standby.Signage.InteractionMode.set('Interactive');
+
+  // Enable the device's local WebSocket xAPI channel the setup page uses to push
+  // config saves back to this macro. These are the two settings provision.js
+  // sets for the networked path but a manual macro upload otherwise leaves off —
+  // without them the page can't reach the macro. Non-fatal: if they can't be set
+  // the signage still displays, it just can't be reconfigured from the board.
+  try {
+    await xapi.Config.WebEngine.Features.AllowDeviceCertificate.set('True');
+    await xapi.Config.NetworkServices.Websocket.set('FollowHTTPService');
+  } catch (e) {
+    console.warn('SignageManager: could not enable the config-save websocket:', e.Context ?? e.message ?? e);
+  }
 
   // Register the config-save listener BEFORE applying the URL, so that even a
   // config that can't be applied (e.g. one persisted over-long by an older

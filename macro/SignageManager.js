@@ -164,6 +164,7 @@ async function init() {
       await applySignageUrl(nextCfg, auth);
       await writeVault({ ...vault, cfg: nextCfg });
       vault.cfg = nextCfg;
+      console.log('SignageManager: config ' + (msg.type === 'reset' ? 'reset' : `updated (${nextCfg.length} chars)`));
       await xapi.Command.Message.Send({ Text: 'sgn1-ack' });
     } catch (e) {
       console.error('SignageManager: config save failed:', e.Context ?? e.message ?? e);

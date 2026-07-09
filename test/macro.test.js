@@ -41,6 +41,17 @@ describe('composeUrl', () => {
   it('guards the 2048-char signage url limit', () => {
     expect(() => composeUrl('https://s.example', 'x'.repeat(2100), auth)).toThrow(/2048/);
   });
+  it('carries a Context on the 2048 overflow so the save handler can log/nack it', () => {
+    let err;
+    try {
+      composeUrl('https://s.example', 'x'.repeat(2100), auth);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).toBeInstanceOf(Error); // keeps .message so toThrow(/2048/) still holds
+    expect(err.Context).toContain('2048');
+    expect(err.Context).toMatch(/\d{4,}/); // reports the offending url length
+  });
 });
 
 describe('parseMsg', () => {

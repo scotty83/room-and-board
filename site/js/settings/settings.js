@@ -565,6 +565,21 @@ async function renderBus() {
 
 const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };
 
+// QWERTY-ordered keypad rows filtered to the field's alphabet: keys keep their
+// familiar positions, and characters the field doesn't accept simply don't
+// appear (setup codes have no I/L/O/U on purpose). Reuses the photos
+// keyboard's .osk row/key styles so every on-board keyboard reads the same.
+const QWERTY_ROWS = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+function qwertyKeypad(alphabet, extraKeys, actionsHtml) {
+  const allowed = new Set(alphabet);
+  const rows = QWERTY_ROWS.map((r) => [...r].filter((k) => allowed.has(k)));
+  rows[rows.length - 1].push(...extraKeys); // symbols ride the short bottom row
+  return `<div class="osk">${rows
+    .map((row) => `<div class="osk__row">${row
+      .map((k) => `<button class="key osk__key" data-key="${k}">${k}</button>`).join('')}</div>`)
+    .join('')}<div class="osk__row">${actionsHtml}</div></div>`;
+}
+
 function renderMarkets() {
   const symbols = state.cfg.markets.symbols;
   const chips = symbols
@@ -575,9 +590,8 @@ function renderMarkets() {
     <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Remove any you don't want — the defaults are just entries like the rest. Larger cards show more tickers — the edit screen tells you how many fit.</p>
     <div class="chips">${chips || '<span class="pane__empty">No tickers — defaults return on save</span>'}</div>
     <output class="code__display" aria-live="polite"></output>
-    <div class="keypad keypad--code">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789^.-'.split('').map(
-      (k) => `<button class="key" data-key="${k}">${k}</button>`,
-    ).join('')}<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Add">Add</button></div>
+    ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', ['^', '.', '-'],
+      '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Add">Add</button>')}
     <p class="code__status"></p>`;
   pane().querySelectorAll('[data-remove-sym]').forEach((chip) =>
     chip.addEventListener('click', () => {
@@ -967,9 +981,8 @@ function renderCode() {
     <h2 class="pane__title">Setup code</h2>
     <p class="pane__hint">Build your configuration at <b>${location.host}/setup</b> on any device, then enter the 6-character code here.</p>
     <output class="code__display" aria-live="polite">······</output>
-    <div class="keypad keypad--code">${'ABCDEFGHJKMNPQRSTVWXYZ0123456789'.split('').map(
-      (k) => `<button class="key" data-key="${k}">${k}</button>`,
-    ).join('')}<button class="key key--wide" data-key="⌫">⌫</button></div>
+    ${qwertyKeypad('ABCDEFGHJKMNPQRSTVWXYZ0123456789', [],
+      '<button class="key osk__key osk__key--wide" data-key="⌫">⌫</button>')}
     <p class="code__status"></p>
     <hr class="pane__rule">
     <p class="pane__hint">Share this board's setup: get a code to write down, then enter it on another board (Settings → Setup code) or at <b>${location.host}/setup</b>.</p>

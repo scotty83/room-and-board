@@ -334,9 +334,12 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  /* Edit + settings FABs. On the dashboard they sit comfortably above the
-     RoomOS bar (tappable); in ambient mode they drop onto the info strip. */
-  position: absolute; right: 28px; bottom: calc(var(--safe-bottom) + 7px);
+  /* Edit + settings FABs. On the dashboard they sit centered in the empty
+     --safe-bottom band BELOW the grid (grid edge is at 84px; a 56px FAB at
+     bottom:14px spans 14-70px), so they no longer overlap the lower-right
+     widget. The RoomOS bar is below the web viewport, so this stays tappable.
+     In ambient mode they drop onto the info strip. */
+  position: absolute; right: 28px; bottom: 14px;
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);

@@ -1026,7 +1026,10 @@ function renderCode() {
     const qr = qrcode(0, 'M');
     qr.addData(`https://${location.host}/setup#cfg=${encoded}`);
     qr.make();
-    pane().querySelector('.qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
+    // cellSize 3 (was 6): the config QR is dense (~25-version for the full
+    // encoded cfg), and at 6 it dominated the pane. ~350 logical px ≈ 22cm on
+    // the 55" panel — still an easy phone scan. Margin stays 4 (QR quiet zone).
+    pane().querySelector('.qr').innerHTML = qr.createSvgTag({ cellSize: 3, margin: 4 });
   });
   pane().querySelector('[data-export]').addEventListener('click', async () => {
     const btn = pane().querySelector('[data-export]');

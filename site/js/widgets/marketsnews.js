@@ -14,7 +14,7 @@ export const MARKET_SOURCES = [
   ['nyt-business', 'NYT Business', 'direct', 'https://rss.nytimes.com/services/xml/rss/nyt/Business.xml', 'General'],
   ['yahoo-finance', 'Yahoo Finance', 'proxy', 'yahoo-finance', 'General'],
 ];
-export const DEFAULT_MARKET_SOURCES = ['cnbc', 'nyt-business'];
+export const DEFAULT_MARKET_SOURCES = ['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance'];
 const SOURCE_BY_ID = Object.fromEntries(MARKET_SOURCES.map((s) => [s[0], s]));
 
 export function render(el, vm, _cfg) {

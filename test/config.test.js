@@ -274,10 +274,11 @@ describe('weather units', () => {
 });
 
 describe('marketsnews config', () => {
-  it('defaults to cnbc+nyt-business and filters junk ids', () => {
-    expect(normalizeConfig({}).marketsnews.sources).toEqual(['cnbc', 'nyt-business']);
+  it('defaults to all sources except Seeking Alpha and filters junk ids', () => {
+    const DEFAULTS = ['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance'];
+    expect(normalizeConfig({}).marketsnews.sources).toEqual(DEFAULTS);
     expect(normalizeConfig({ marketsnews: { sources: ['cnbc', 'bogus'] } }).marketsnews.sources).toEqual(['cnbc']);
-    expect(normalizeConfig({ marketsnews: { sources: [] } }).marketsnews.sources).toEqual(['cnbc', 'nyt-business']);
+    expect(normalizeConfig({ marketsnews: { sources: [] } }).marketsnews.sources).toEqual(DEFAULTS);
   });
 });
 

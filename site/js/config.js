@@ -74,7 +74,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
-  photos: Object.freeze({ source: 'icloud', album: '', screensaver: false }), // iCloud shared-album token
+  photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes
   mode: 'dashboard',
   theme: 'dark',
 });
@@ -232,6 +232,10 @@ export function normalizeConfig(raw) {
       source: 'icloud', // only source today; the discriminator reserves the slot for more
       album: /^[A-Za-z0-9]{8,25}$/.test(raw.photos?.album ?? '') ? raw.photos.album : '',
       screensaver: raw.photos?.screensaver === true,
+      // Photos' own rotation interval (card + ambient slideshow) — art.every
+      // no longer leaks into photo timing. Key order must match DEFAULT_CONFIG
+      // (the encode wire-strip compares JSON.stringify of the whole object).
+      every: Math.min(Math.max(num(raw.photos?.every, 30), 1), 360),
     },
     worldclock: {
       cities: (() => {

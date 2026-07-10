@@ -319,6 +319,11 @@ function renderPhotos() {
       <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
       <span class="row__label">Use these photos as the screensaver (replaces art)</span>
     </div>
+    <p class="pane__hint">How often the photo changes (slideshow and dashboard card):</p>
+    <div class="rows">${ART_INTERVALS.map(
+      (m) => `<button class="row row--tap ${p.every === m ? 'is-selected' : ''}" data-every="${m}">
+        Every ${m >= 60 ? `${m / 60} hour${m > 60 ? 's' : ''}` : `${m} minutes`}</button>`,
+    ).join('')}</div>
     <p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
     <button class="btn" data-paste>Paste link</button>
     <div class="photo-kb"></div>
@@ -326,6 +331,12 @@ function renderPhotos() {
     <div class="photo-preview"></div>`;
   pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg.photos.album = ''; renderPhotos(); });
   pane().querySelector('[data-ss]').addEventListener('click', () => { state.cfg.photos.screensaver = !state.cfg.photos.screensaver; renderPhotos(); });
+  pane().querySelectorAll('[data-every]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.photos.every = Number(btn.dataset.every);
+      renderPhotos();
+    }),
+  );
   const status = pane().querySelector('.code__status');
   const preview = pane().querySelector('.photo-preview');
   const validate = async (raw) => {

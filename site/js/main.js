@@ -159,7 +159,10 @@ async function startSlideshow() {
     else if (src === 'photos') manifest = await resolvePhotosManifest(cfg, net, photos);
     else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
     if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
-    slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: (cfg.art?.every ?? 30) * 60 * 1000 });
+    // Each ambient source owns its interval: photos.every for the photo
+    // slideshow, art.every for art (art's setting used to leak into photos).
+    const everyMin = (src === 'photos' ? cfg.photos?.every : cfg.art?.every) ?? 30;
+    slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000 });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }
 }

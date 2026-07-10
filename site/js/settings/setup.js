@@ -483,6 +483,8 @@ function renderPostsAccounts() {
 
 function renderPhotos() {
   $('#photos-ss').checked = cfg.photos.screensaver;
+  $('#photos-every').value = String(cfg.photos.every);
+  $('#photos-every').addEventListener('change', (e) => (cfg.photos.every = Number(e.target.value)));
   $('#photos-ss').addEventListener('change', (e) => (cfg.photos.screensaver = e.target.checked));
   $('#photos-album').value = cfg.photos.album;
   $('#photos-add').addEventListener('click', async () => {

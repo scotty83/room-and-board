@@ -281,7 +281,7 @@ html, body {
 
 /* ---------- ambient mode ---------- */
 .ambient { position: absolute; inset: 0; }
-.slideshow { position: absolute; inset: 0; background: #000; }
+.slideshow { position: absolute; inset: 0; background: #000; touch-action: none; /* swipes must reach the pointer handlers, not the browser's pan gesture */ }
 .slide {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
@@ -534,6 +534,10 @@ body.mode-ambient .gear { bottom: 7px; }
 .art-viewer {
   position: absolute; inset: 0; z-index: 45;
   background: #000; cursor: pointer;
+  /* Without this, a touch swipe is claimed by the browser's gesture
+     arbitration: pointercancel fires instead of pointerup and the swipe
+     classifier never runs (mouse drags were unaffected — no arbitration). */
+  touch-action: none;
 }
 .art-viewer__img { width: 100%; height: 100%; object-fit: contain; }
 

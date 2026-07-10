@@ -9,7 +9,7 @@ import { registerWidget, getWidget } from './registry.js';
 import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
 import { stripData, stripHtml } from './ambient.js';
-import { createSlideshow } from './imageshow.js';
+import { createSlideshow, swipeAction } from './imageshow.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
 import { initTextViewer } from './textviewer.js';
 import { icon } from './icons.js';
@@ -334,6 +334,25 @@ async function boot() {
       }
     });
   }
+}
+
+// Ambient slideshow swipe: left/right steps the photo/art slideshow using the
+// same gesture classifier as the full-screen viewer. Handlers live on the
+// static #slideshow host (they survive createSlideshow re-rendering its
+// innerHTML) and read the module-level `slideshow`, so every ambient session
+// is covered without re-wiring.
+{
+  const host = $('#slideshow');
+  let downX = 0;
+  let downY = 0;
+  host.addEventListener('pointerdown', (e) => {
+    downX = e.clientX;
+    downY = e.clientY;
+  });
+  host.addEventListener('pointerup', (e) => {
+    const action = swipeAction(e.clientX - downX, e.clientY - downY);
+    if (action === 'next' || action === 'prev') slideshow?.step(action === 'next' ? 1 : -1);
+  });
 }
 
 $('#gear').addEventListener('click', async () => {

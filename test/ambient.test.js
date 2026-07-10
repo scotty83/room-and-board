@@ -78,6 +78,53 @@ describe('createSlideshow', () => {
     await vi.advanceTimersByTimeAsync(2000);
     expect(loadedSrcs).toHaveLength(0);
   });
+
+  it('step(1) advances immediately and resets the cadence', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0.4 });
+    show.start();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(loadedSrcs).toHaveLength(1);
+    const first = host.querySelector('.slide-caption').textContent;
+
+    show.step(1);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(loadedSrcs).toHaveLength(2);
+    expect(host.querySelector('.slide-caption').textContent).not.toBe(first);
+
+    // cadence reset: nothing at +999ms, next auto-advance lands at +1000ms
+    await vi.advanceTimersByTimeAsync(999);
+    expect(loadedSrcs).toHaveLength(2);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(loadedSrcs).toHaveLength(3);
+    show.stop();
+  });
+
+  it('step(-1) returns to the previously shown item', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0.4 });
+    show.start();
+    await vi.advanceTimersByTimeAsync(0);
+    const first = host.querySelector('.slide-caption').textContent;
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(host.querySelector('.slide-caption').textContent).not.toBe(first);
+
+    show.step(-1);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(host.querySelector('.slide-caption').textContent).toBe(first);
+    show.stop();
+  });
+
+  it('step after stop does nothing', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0.4 });
+    show.start();
+    await vi.advanceTimersByTimeAsync(0);
+    show.stop();
+    show.step(1);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(loadedSrcs).toHaveLength(1);
+  });
 });
 
 describe('stripData', () => {

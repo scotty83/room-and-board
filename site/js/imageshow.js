@@ -177,6 +177,26 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
       stopped = true;
       clearTimeout(timer);
     },
+    // Manual navigation (ambient swipe): next reuses the natural advance,
+    // prev re-shows the previously shown item within the current order. Both
+    // reset the auto-advance cadence so a swipe isn't followed moments later
+    // by a scheduled change.
+    step(dir) {
+      if (stopped || !manifest.length) return;
+      clearTimeout(timer);
+      if (dir > 0) {
+        advance();
+        return;
+      }
+      pos = (pos - 2 + order.length) % order.length;
+      const item = manifest[order[pos]];
+      pos += 1;
+      preload(item, () => {
+        if (stopped) return;
+        show(item);
+        timer = setTimeout(advance, intervalMs);
+      });
+    },
     current() {
       return manifest[order[Math.max(pos - 1, 0)]] ?? null;
     },

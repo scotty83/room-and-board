@@ -51,7 +51,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
   bus: Object.freeze({ legs: Object.freeze([]) }), // up to 2 route-first legs
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
-  marketsnews: Object.freeze({ sources: Object.freeze(['cnbc', 'nyt-business']) }),
+  marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   // Starter accounts (AI/tech/finance, politically neutral, verified active
@@ -210,7 +210,7 @@ export function normalizeConfig(raw) {
       sources: (() => {
         const valid = new Set(['mw', 'wsj-markets', 'ft-markets', 'sa', 'cnbc', 'nyt-business', 'yahoo-finance']); // MARKET_SOURCES ids
         const picked = (Array.isArray(raw.marketsnews?.sources) ? raw.marketsnews.sources : []).filter((s) => valid.has(s));
-        return picked.length ? picked : ['cnbc', 'nyt-business'];
+        return picked.length ? picked : [...DEFAULT_CONFIG.marketsnews.sources];
       })(),
     },
     njt: {
@@ -275,6 +275,7 @@ export async function encodeConfig(cfg) {
   const isDefault = (list, defs) => JSON.stringify(list) === JSON.stringify(defs);
   if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
+  if (wire.marketsnews && isDefault(wire.marketsnews.sources, DEFAULT_CONFIG.marketsnews.sources)) delete wire.marketsnews;
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

@@ -360,3 +360,14 @@ describe('express bus pickers', () => {
     expect(stopsForRouteDir(BUS, 'QM24', 9)).toEqual([]);
   });
 });
+
+import { signageUrlFor } from '../site/js/settings/setup.js';
+
+describe('signageUrlFor (non-touch boards)', () => {
+  it('builds a cfg-only signage URL', () => {
+    expect(signageUrlFor('signage.rvc.tech', 'AbC-_123')).toBe('https://signage.rvc.tech/#cfg=AbC-_123');
+  });
+  it('never carries auth', () => {
+    expect(signageUrlFor('h.example', 'x')).not.toContain('auth');
+  });
+});

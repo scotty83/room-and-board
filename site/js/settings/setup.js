@@ -125,6 +125,7 @@ async function boot() {
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
+  $('#get-signage-url').addEventListener('click', getSignageUrl);
 
   $('#to-step-2').addEventListener('click', () => {
     applyStepTwo();
@@ -519,6 +520,28 @@ async function renderFerry() {
   }
   $('#ferry-landing').value = cfg.ferry.landing;
   $('#ferry-landing').addEventListener('change', (e) => (cfg.ferry.landing = e.target.value));
+}
+
+// Cfg-only signage URL for non-touch devices (pasted into xConfiguration
+// Standby Signage Url). NEVER includes auth — that fragment part is the
+// macro's rotating bridge credential and must not leave its board.
+export function signageUrlFor(host, encoded) {
+  return `https://${host}/#cfg=${encoded}`;
+}
+
+async function getSignageUrl() {
+  cfg.name = $('#name').value.trim();
+  cfg.mode = $('#mode').value;
+  cfg.t = Math.floor(Date.now() / 1000); // fresh t: a re-pasted URL always wins
+  const url = signageUrlFor(location.host, await encodeConfig(normalizeConfig(cfg)));
+  $('#url-out').hidden = false;
+  $('#signage-url').value = url;
+  try {
+    await navigator.clipboard.writeText(url);
+    $('#url-copied').textContent = 'Copied! ';
+  } catch {
+    $('#url-copied').textContent = 'Select and copy the URL above. ';
+  }
 }
 
 async function getCode() {

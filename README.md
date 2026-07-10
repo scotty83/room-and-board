@@ -2,7 +2,7 @@
 
 A lightweight, personal signage dashboard for Cisco Board Pro devices (gen1 + gen2)
 in private offices: weather, NYC-area transit boards (Subway status, LIRR,
-Metro-North, NJ Transit, PATH, NYC Ferry, MTA Bus), market tickers, sports
+Metro-North, NJ Transit, PATH, NYC Ferry, Express Bus), market tickers, sports
 scores, headlines, public-domain art, and daily extras. Hosted entirely on the
 public internet, personalized per device **without authentication**, with
 preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
@@ -60,9 +60,10 @@ remove like any other.
 
 ### Weather & sky
 
-- **Weather** — current conditions, an hourly strip, and a multi-day forecast,
-  with a National Weather Service alert banner when one is active. *Configure:*
-  Settings → Weather location (pick a preset or enter a ZIP; drives Air & Sky too).
+- **Weather** — current conditions, an hourly temperature trend line, and a
+  multi-day forecast strip, with a National Weather Service alert banner when
+  one is active. *Configure:* Settings → Weather (pick a preset or enter a
+  ZIP; drives Air & Sky too; °F/°C toggle).
 - **Air & Sky** — labeled AQI and UV-index dials (color-coded by band), plus
   sunrise, sunset, and the moon phase. *Configure:* none — uses your weather location.
 
@@ -82,9 +83,10 @@ remove like any other.
   one direction or both. *Configure:* Settings → PATH.
 - **NYC Ferry** — next departures from one landing, with route name and color.
   *Configure:* Settings → NYC Ferry.
-- **MTA Bus** — arrivals for up to two stop codes (the 6-digit number on the
-  bus-stop sign), in minutes or distance. *Configure:* Settings → MTA Bus
-  (needs a free BusTime key on the Worker; see Data sources).
+- **Express Bus** — arrivals for up to two route + stop picks (choose an
+  express route QM/BM/SIM/X, then direction, then stop), in minutes or
+  distance. *Configure:* Settings → Express Bus (needs a free BusTime key on
+  the Worker; see Data sources — the picker works without it).
 
 ### Markets, sports & news
 
@@ -96,6 +98,10 @@ remove like any other.
   across MLB/NFL/NBA/NHL/MLS/EPL).
 - **World Cup 2026** — live / upcoming / recent matches during the tournament.
   *Configure:* none.
+- **Markets News** — newest finance stories merged across the sources you
+  enable (MarketWatch, WSJ Markets, FT Markets, CNBC, NYT Business, Yahoo
+  Finance on by default; Seeking Alpha opt-in). *Configure:* Settings →
+  Markets News.
 - **Headlines** — newest stories merged across the news sources you enable
   (NYT sections, NPR, BBC, Gothamist). *Configure:* Settings → Headlines.
 - **Substack** — latest posts from up to 6 followed publications. *Configure:*
@@ -186,6 +192,32 @@ Per board this enables the web engine, interactive signage, the device-cert
 WebSocket path, and installs + activates the SignageManager macro. Pilot on
 one board first. Recommended extras per Cisco guidance: configure
 `Time OfficeHours` so signage runs ≤ 12 h/day.
+
+### 4. Non-touch devices (Room series driving a TV)
+
+Non-touch devices can't enter setup codes, so they take the configuration in
+the signage URL itself. Get the URL from a working config: on a template
+board, gear → **Setup code** → **Show QR of current config**, open it on your
+phone, then tap **Get signage URL (non-touch boards)** — or build a config on
+`/setup` from scratch and tap the same button. Then set, in the device's web
+interface (or Control Hub → device configurations):
+
+```
+xConfiguration WebEngine Mode: On
+xConfiguration Standby Signage Mode: On
+xConfiguration Standby Signage InteractionMode: NonInteractive
+xConfiguration Standby Signage Url: <the generated URL>
+```
+
+**Do not install the SignageManager macro on these devices** — its startup
+composes the signage URL from its own (empty) vault and would overwrite the
+one you pasted. Here the URL itself is the persistence: it survives reboots,
+upgrades, and web-storage wipes by definition. To change the config later,
+regenerate the URL (it carries a fresh timestamp, so it always wins over the
+device's cached copy) and paste it again; the board picks it up at its next
+reload (hourly version check, nightly 4 AM, or a power cycle). The exported
+URL deliberately contains only `#cfg=` — never the `auth` credentials a
+macro-managed board's URL carries.
 
 ### Arranging the dashboard
 

@@ -6,7 +6,12 @@ import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { openImageViewer } from '../imageshow.js';
 
-export const meta = { id: 'photos', title: 'Photos', refreshMs: 30 * 60 * 1000 };
+// refreshMs is the render cadence, not the photo-change rate: like Art, the
+// widget re-renders every minute and the shown photo only changes when the
+// cfg.photos.every bucket flips (the worker caches /icloud/album 30 min, so
+// the frequent fetch is an edge-cache hit, and re-setting the same <img> URL
+// is a browser-cache hit).
+export const meta = { id: 'photos', title: 'Photos', refreshMs: 60 * 1000 };
 
 // Worker digest → slideshow-shaped list ({img, ar, title, date}).
 export function mapPhotos(digest) {
@@ -22,8 +27,9 @@ export function render(el, vm, cfg) {
     el.innerHTML = '<div class="empty">Add a shared album in Settings → Photos</div>';
     return;
   }
-  // Rotate deterministically on the interval bucket, like Art.
-  const idx = Math.floor(Date.now() / meta.refreshMs) % sessionList.length;
+  // Rotate deterministically on the user's interval bucket, like Art.
+  const everyMs = (cfg?.photos?.every ?? 30) * 60 * 1000;
+  const idx = Math.floor(Date.now() / everyMs) % sessionList.length;
   const p = sessionList[idx];
   el.innerHTML = `
     <figure class="artwork" role="button" tabindex="0" aria-label="View photo full screen">

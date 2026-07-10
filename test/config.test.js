@@ -257,11 +257,14 @@ describe('substack/bsky config', () => {
 
 describe('photos config', () => {
   it('defaults empty and sanitizes source/album/screensaver', () => {
-    expect(normalizeConfig({}).photos).toEqual({ source: 'icloud', album: '', screensaver: false });
-    const cfg = normalizeConfig({ photos: { source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true } });
-    expect(cfg.photos).toEqual({ source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true });
-    const bad = normalizeConfig({ photos: { source: 'myspace', album: 'nope!', screensaver: 'yes' } });
-    expect(bad.photos).toEqual({ source: 'icloud', album: '', screensaver: false });
+    expect(normalizeConfig({}).photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
+    const cfg = normalizeConfig({ photos: { source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 } });
+    expect(cfg.photos).toEqual({ source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
+    const bad = normalizeConfig({ photos: { source: 'myspace', album: 'nope!', screensaver: 'yes', every: 'soon' } });
+    expect(bad.photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
+    // every clamps like art.every (1–360 minutes)
+    expect(normalizeConfig({ photos: { every: 0 } }).photos.every).toBe(1);
+    expect(normalizeConfig({ photos: { every: 999 } }).photos.every).toBe(360);
   });
 });
 

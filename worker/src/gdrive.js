@@ -22,7 +22,10 @@ export function mapGdriveAlbum(json) {
       w,
       h,
       ar: Math.round((w / h) * 1000) / 1000,
-      caption: String(f.name ?? '').replace(/\.[A-Za-z0-9]+$/, ''),
+      // Drive has no real captions, only filenames ("pexels-pixabay-462162"…)
+      // — noise on a board, so photos render caption-less (unlike iCloud,
+      // where captions are user-written). The digest field stays for shape.
+      caption: '',
       date: String(f.createdTime ?? ''),
     });
     if (photos.length >= MAX_PHOTOS) break;

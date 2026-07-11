@@ -592,3 +592,28 @@ describe('mapGdriveAlbum', () => {
     expect(out.photos[0].caption).toBe('p0');
   });
 });
+
+describe('/gdrive/album route', () => {
+  const FOLDER = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
+  it('503s without GDRIVE_KEY', async () => {
+    const res = await call(`/gdrive/album?folder=${FOLDER}`);
+    expect(res.status).toBe(503);
+    expect((await res.json()).error).toBe('gdrive_not_configured');
+  });
+  it('400s on a malformed folder id', async () => {
+    const res = await call('/gdrive/album?folder=nope!', undefined, { GDRIVE_KEY: 'k' });
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe('bad_folder');
+  });
+  it('serves the digest from the listing (key + ordering on the wire)', async () => {
+    await clearCache(`gdrive:${FOLDER}`);
+    const calls = stubFetch([{ match: /googleapis\.com\/drive\/v3\/files/, body: gdriveFixture }]);
+    const res = await call(`/gdrive/album?folder=${FOLDER}`, undefined, { GDRIVE_KEY: 'testkey' });
+    expect(res.status).toBe(200);
+    const digest = await res.json();
+    expect(digest.photos).toHaveLength(3);
+    expect(digest.photos[0].url).toContain('=s2048');
+    expect(calls[0]).toContain('key=testkey');
+    expect(calls[0]).toContain('orderBy=createdTime');
+  });
+});

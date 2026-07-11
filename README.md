@@ -118,12 +118,14 @@ remove like any other.
   Cleveland); tap it for full screen, and swipe there to browse. Also powers the
   ambient screensaver. *Configure:* Settings → Art (rotation interval; optional
   collections). Ambient vs dashboard is set under Settings → Display.
-- **Photos** — a rotating slideshow from an iCloud Shared Album; tap for full
-  screen, swipe to browse. Can replace Art as the ambient screensaver. *Configure:*
-  in the Photos app, open the shared album → Share → enable **Public Website**, then
-  copy the link. On the board: Settings → Photos → paste the link (or enter it on
-  the phone setup page). ⚠️ Anyone with the link can view the album — add only
-  office-appropriate photos.
+- **Photos** — a rotating slideshow from an **iCloud Shared Album** or a
+  **public Google Drive folder**; tap for full screen, swipe to browse. Can
+  replace Art as the ambient screensaver. *Configure:* Settings → Photos →
+  pick the source, then paste the link — iCloud: Photos app → the album →
+  Share → enable **Public Website** → Copy Link; Drive: right-click the
+  folder → Share → **Anyone with the link** → Copy link (Drive needs a free
+  API key on the Worker; see Data sources). ⚠️ Anyone with the link can view
+  the photos — add only office-appropriate ones.
 
 ### Daily extras
 
@@ -263,6 +265,7 @@ the URL fragment and the dashboard returns configured.
 | MTA LIRR + MNR GTFS-RT | direct, keyless | GET only (HEAD returns 403); 60 s jittered polling |
 | MTA alert feeds (camsys) | Worker digest | raw subway feed ~800 KB → ~2 KB digest shared fleet-wide |
 | MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
+| Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); Photos' Drive source reports unconfigured until set |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

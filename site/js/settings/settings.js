@@ -30,7 +30,7 @@ export const WIDGET_LABELS = {
   quote: 'Quote of the Day',
   wotd: 'Word of the Day',
   worldclock: 'World Clock',
-  services: 'Service Status',
+  services: 'Cloud Service Status',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',
@@ -126,7 +126,7 @@ export const NAV_MODEL = [
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
   { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
   { type: 'item', id: 'worldclock', label: 'World Clock' },
-  { type: 'item', id: 'services', label: 'Service Status' },
+  { type: 'item', id: 'services', label: 'Cloud Service Status' },
   { type: 'item', id: 'display', label: 'Display' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },
@@ -762,7 +762,7 @@ async function renderMarketsNews() {
 async function renderServices() {
   const { SERVICE_CHOICES } = await import('../widgets/services.js');
   pane().innerHTML = `
-    <h2 class="pane__title">Service Status</h2>
+    <h2 class="pane__title">Cloud Service Status</h2>
     <p class="pane__hint">Pick the cloud services to watch — each shows Operational or its current incident. Tap a degraded service on the card for the full picture.</p>
     <div class="rows">${SERVICE_CHOICES.map(([id, label]) => {
       const on = state.cfg.services.list.includes(id);

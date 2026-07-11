@@ -1,4 +1,4 @@
-// Service Status: subway-board-style rows for the cloud services the office
+// Cloud Service Status: subway-board-style rows for the cloud services the office
 // depends on, from their public status pages via the Worker's whitelisted
 // /services/status proxy. Degraded rows are tappable — the existing
 // full-screen text viewer shows the incident detail.
@@ -8,7 +8,7 @@ import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
 
-export const meta = { id: 'services', title: 'Service Status', refreshMs: 5 * 60 * 1000 };
+export const meta = { id: 'services', title: 'Cloud Service Status', refreshMs: 5 * 60 * 1000 };
 
 // [id, label] pairs for the settings pickers; ids mirror the Worker registry.
 export const SERVICE_CHOICES = [
@@ -40,7 +40,7 @@ export function render(el, vm, _cfg) {
   const shown = all.slice(0, cap);
   const hidden = all.length - shown.length;
   if (!shown.length) {
-    el.innerHTML = '<div class="empty">Pick services in Settings → Service Status</div>';
+    el.innerHTML = '<div class="empty">Pick services in Settings → Cloud Service Status</div>';
     return;
   }
   el.innerHTML = shown

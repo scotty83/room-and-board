@@ -10,14 +10,15 @@
 //   3. Compose and set the signage URL, and listen for config saves the page
 //      sends over the device's own WebSocket xAPI (Message Send "sgn1:...").
 //
-// Deployment: deploy/provision.js replaces SITE_URL and pushes this file.
-// Requires on the device: WebEngine Mode On, Standby Signage Mode On,
-// WebEngine Features AllowDeviceCertificate True, NetworkServices Websocket
-// FollowHTTPService (provision.js sets all of these).
+// Deployment: provision.js (networked) or a plain manual upload installs this
+// file with SITE_URL substituted. init() self-configures every device setting
+// it needs — WebEngine Mode, Standby Signage Mode + InteractionMode, WebEngine
+// Features AllowDeviceCertificate, and NetworkServices Websocket
+// FollowHTTPService — so a hand-uploaded copy works without running provision.js.
 
 import xapi from 'xapi';
 
-const SITE_URL = 'https://signage.rvc.tech';
+const SITE_URL = 'https://roomboard.app';
 const STORAGE_MACRO = 'Signage_Storage';
 const BRIDGE_USER = 'signage-bridge';
 const VAULT_PREFIX = '// signage-vault v1\nconst store = ';
@@ -60,7 +61,11 @@ export function serializeVault(obj) {
 
 export function parseVault(content) {
   const at = content.indexOf(VAULT_PREFIX);
-  if (at === -1) throw new Error('not a signage vault');
+  if (at === -1) {
+    const err = new Error('not a signage vault');
+    err.Context = `${STORAGE_MACRO} content missing the vault prefix`;
+    throw err;
+  }
   return JSON.parse(content.slice(at + VAULT_PREFIX.length).replace(/;\s*$/, ''));
 }
 
@@ -69,7 +74,11 @@ export function composeUrl(site, cfg, auth) {
   if (cfg) parts.push('cfg=' + cfg);
   parts.push('auth=' + b64url(JSON.stringify(auth)));
   const url = site + '#' + parts.join('&');
-  if (url.length > 2048) throw new Error('signage url exceeds 2048 chars');
+  if (url.length > 2048) {
+    const err = new Error('signage url exceeds 2048 chars');
+    err.Context = `url length ${url.length} exceeds 2048`;
+    throw err;
+  }
   return url;
 }
 
@@ -125,8 +134,8 @@ async function ensureBridgeUser(pass) {
   }
 }
 
-async function applySignageUrl(vault, auth) {
-  const url = composeUrl(SITE_URL, vault.cfg, auth);
+async function applySignageUrl(cfg, auth) {
+  const url = composeUrl(SITE_URL, cfg, auth);
   await xapi.Config.Standby.Signage.Url.set(url);
 }
 
@@ -140,17 +149,44 @@ async function init() {
   await xapi.Config.WebEngine.Mode.set('On');
   await xapi.Config.Standby.Signage.Mode.set('On');
   await xapi.Config.Standby.Signage.InteractionMode.set('Interactive');
-  await applySignageUrl(vault, auth);
-  await writeVault(vault);
 
-  xapi.Event.Message.Send.on(async (event) => {
-    const msg = parseMsg(event.Text);
+  // Enable the device's local WebSocket xAPI channel the setup page uses to push
+  // config saves back to this macro. These are the two settings provision.js
+  // sets for the networked path but a manual macro upload otherwise leaves off —
+  // without them the page can't reach the macro. Non-fatal: if they can't be set
+  // the signage still displays, it just can't be reconfigured from the board.
+  try {
+    await xapi.Config.WebEngine.Features.AllowDeviceCertificate.set('True');
+    await xapi.Config.NetworkServices.Websocket.set('FollowHTTPService');
+  } catch (e) {
+    console.warn('SignageManager: could not enable the config-save websocket:', e.Context ?? e.message ?? e);
+  }
+
+  // Register the config-save listener BEFORE applying the URL, so that even a
+  // config that can't be applied (e.g. one persisted over-long by an older
+  // build of this macro) can never lock the page out from sending a fix.
+  xapi.Event.Message.Send.on(async ({ Text }) => {
+    const msg = parseMsg(Text);
     if (!msg) return;
-    vault.cfg = msg.type === 'reset' ? null : msg.cfg;
-    await writeVault(vault);
-    await applySignageUrl(vault, auth);
-    await xapi.Command.Message.Send({ Text: 'sgn1-ack' });
+    const nextCfg = msg.type === 'reset' ? null : msg.cfg;
+    try {
+      // Apply first: composeUrl enforces the 2048-char limit and throws before
+      // anything is written, so a config we can't display is never persisted to
+      // the vault (which would otherwise fail again on every reboot). Commit the
+      // in-memory cfg only once both the apply and the write have succeeded.
+      await applySignageUrl(nextCfg, auth);
+      await writeVault({ ...vault, cfg: nextCfg });
+      vault.cfg = nextCfg;
+      console.log('SignageManager: config ' + (msg.type === 'reset' ? 'reset' : `updated (${nextCfg.length} chars)`));
+      await xapi.Command.Message.Send({ Text: 'sgn1-ack' });
+    } catch (e) {
+      console.error('SignageManager: config save failed:', e.Context ?? e.message ?? e);
+      await xapi.Command.Message.Send({ Text: 'sgn1-nack' }).catch(() => {});
+    }
   });
+
+  await writeVault(vault);
+  await applySignageUrl(vault.cfg, auth);
 
   console.log('SignageManager ready; config ' + (vault.cfg ? 'restored from vault' : 'not set yet'));
 }

@@ -228,15 +228,25 @@ export function normalizeConfig(raw) {
       every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),
       cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
     },
-    photos: {
-      source: 'icloud', // only source today; the discriminator reserves the slot for more
-      album: /^[A-Za-z0-9]{8,25}$/.test(raw.photos?.album ?? '') ? raw.photos.album : '',
-      screensaver: raw.photos?.screensaver === true,
-      // Photos' own rotation interval (card + ambient slideshow) — art.every
-      // no longer leaks into photo timing. Key order must match DEFAULT_CONFIG
-      // (the encode wire-strip compares JSON.stringify of the whole object).
-      every: Math.min(Math.max(num(raw.photos?.every, 30), 1), 360),
-    },
+    photos: (() => {
+      const p = raw.photos ?? {};
+      const source = p.source === 'gdrive' ? 'gdrive' : 'icloud';
+      // Per-source album shapes: iCloud = case-sensitive base62 token,
+      // Drive = folder id ([-\w], ~33 chars). Unknown sources fall back to
+      // icloud with an empty album (treated as unconfigured).
+      const album = source === 'gdrive'
+        ? (/^[-\w]{10,80}$/.test(p.album ?? '') ? p.album : '')
+        : (/^[A-Za-z0-9]{8,25}$/.test(p.album ?? '') ? p.album : '');
+      return {
+        source,
+        album,
+        screensaver: p.screensaver === true,
+        // Photos' own rotation interval (card + ambient slideshow). Key order
+        // must match DEFAULT_CONFIG (the encode wire-strip compares
+        // JSON.stringify of the whole object).
+        every: Math.min(Math.max(num(p.every, 30), 1), 360),
+      };
+    })(),
     worldclock: {
       cities: (() => {
         const seen = new Set();

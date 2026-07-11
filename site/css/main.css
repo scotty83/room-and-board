@@ -679,6 +679,11 @@ body.mode-ambient .gear { bottom: 7px; }
   border-color: var(--bad);
   background: rgba(248, 81, 73, 0.10);
 }
+/* During a resize gesture the placeholder lifts above the blocks (they're
+   grid items, so z-index applies): a shrink target lies inside the block's
+   footprint and is invisible beneath its opaque background otherwise.
+   4 stays under .edit-block.is-dragging's 5. */
+.editor__blocks.is-resize-gesture .edit-placeholder { z-index: 4; }
 .edit-block__size {
   position: absolute; left: 0; right: 0; bottom: 14px;
   text-align: center; font-size: 18px; color: var(--ink-faint);

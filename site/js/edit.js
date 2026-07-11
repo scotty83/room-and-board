@@ -250,6 +250,11 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       const start = rectOf(block.dataset.id);
       const origin = { x: down.clientX, y: down.clientY };
       block.classList.add('is-resizing');
+      // While resizing, the placeholder paints ABOVE the blocks (CSS keys off
+      // this class): a shrink target sits entirely inside the block's current
+      // footprint and would otherwise be hidden under its opaque background —
+      // the only feedback left was the NxN label.
+      blocksHost.classList.add('is-resize-gesture');
       const g = gesture(block, start, (e) => {
         const { w: cw, h: ch } = cell();
         return {
@@ -262,6 +267,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       const onUp = (e) => {
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
+        blocksHost.classList.remove('is-resize-gesture');
         g.update(e);
         g.finish();
       };

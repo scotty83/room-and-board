@@ -619,3 +619,55 @@ describe('/gdrive/album route', () => {
     expect(calls[0]).toContain('orderBy=createdTime');
   });
 });
+
+import { mapStatuspage, mapSlack, mapMicrosoft, mapGoogle, mapWebex, mapAws } from '../../worker/src/svcstatus.js';
+import spOk from './fixtures/svc-statuspage-ok.json';
+import spBad from './fixtures/svc-statuspage-degraded.json';
+import slackFx from './fixtures/svc-slack.json';
+import m365Fx from './fixtures/svc-m365.json';
+import googleFx from './fixtures/svc-google.json';
+import webexFx from './fixtures/svc-webex.json';
+import awsFx from './fixtures/svc-aws.json';
+
+describe('service status adapters', () => {
+  it('statuspage: ok and degraded (live Cloudflare sample)', () => {
+    expect(mapStatuspage(spOk).state).toBe('ok');
+    const bad = mapStatuspage(spBad);
+    expect(bad.state).toBe('minor');
+    expect(bad.note).toBe('Minor Service Outage');
+    expect(bad.incidents.length).toBeGreaterThan(0);
+    expect(bad.incidents[0].title.length).toBeGreaterThan(0);
+    expect(bad.incidents[0].update.length).toBeLessThanOrEqual(500);
+  });
+  it('slack: ok fixture, synthesized outage is major', () => {
+    expect(mapSlack(slackFx).state).toBe('ok');
+    const out = mapSlack({ status: 'active', active_incidents: [{ title: 'API errors', type: 'outage', date_created: 'x', notes: [{ body: 'working on it' }] }] });
+    expect(out.state).toBe('major');
+    expect(out.incidents[0].update).toBe('working on it');
+  });
+  it('m365: ok fixture, one IsUp:false is major with the name', () => {
+    expect(mapMicrosoft(m365Fx).state).toBe('ok');
+    const out = mapMicrosoft({ Services: [{ Id: 'x', Name: 'Exchange Online', IsUp: false, Message: 'mailbox issues' }] });
+    expect(out.state).toBe('major');
+    expect(out.note).toContain('Exchange Online');
+  });
+  it('google: all-ended fixture is ok, active incident is minor', () => {
+    expect(mapGoogle(googleFx, Date.now()).state).toBe('ok');
+    const out = mapGoogle([{ begin: '2026-07-11T00:00:00Z', external_desc: '**Gmail delays**\ndetail here' }], Date.now());
+    expect(out.state).toBe('minor');
+    expect(out.note).toBe('Gmail delays');
+  });
+  it('webex: maintenance-only fixture is ok, real incident degrades', () => {
+    expect(mapWebex(webexFx).state).toBe('ok'); // 3 unresolved, all maintenance
+    const out = mapWebex({ unResolvedIncidents: [{ incidentName: 'Meetings join failures', impact: 'major', createTime: 'x' }] });
+    expect(out.state).toBe('major');
+    expect(out.note).toBe('Meetings join failures');
+  });
+  it('aws: stale events are ok now, recent event degrades', () => {
+    expect(mapAws(awsFx, Date.now()).state).toBe('ok'); // events months old
+    const evDate = Number(awsFx[0].date) * 1000;
+    const out = mapAws(awsFx, evDate + 3600e3); // one hour after the event
+    expect(out.state).toBe('minor');
+    expect(out.note).toContain('Increased Error Rates');
+  });
+});

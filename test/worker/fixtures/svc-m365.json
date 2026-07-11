@@ -1,0 +1,34 @@
+{
+ "CID": "9b60ae55-bb3a-4020-a5db-0edd40127934",
+ "Title": "We're all good!",
+ "SubTitle": "Everything is up and running.",
+ "Services": [
+  {
+   "Id": "M365Consumer",
+   "Name": "Microsoft 365 (Consumer)",
+   "IsUp": true,
+   "Messages": null
+  },
+  {
+   "Id": "Outlook.com",
+   "Name": "Outlook.com",
+   "IsUp": true,
+   "Messages": null
+  },
+  {
+   "Id": "OneDriveConsumer",
+   "Name": "OneDrive",
+   "IsUp": true,
+   "Messages": null
+  },
+  {
+   "Id": "CopilotConsumer",
+   "Name": "Microsoft Copilot",
+   "IsUp": true,
+   "Messages": null
+  }
+ ],
+ "LastRefreshed": "Last refreshed: 2026-07-11 15:41:41Z (UTC)",
+ "IsAllUp": true,
+ "IsRightToLeft": false
+}

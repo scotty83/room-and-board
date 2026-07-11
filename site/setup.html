@@ -220,7 +220,10 @@
         </div>
         <button id="get-signage-url" type="button">Get signage URL (non-touch device)</button>
         <div id="url-out" class="code-out" hidden>
-          <input id="signage-url" readonly>
+          <div class="ziprow">
+            <input id="signage-url" readonly>
+            <button id="copy-signage-url" type="button">Copy</button>
+          </div>
           <p><span id="url-copied"></span>On the non-touch device set <b>WebEngine Mode: On</b>,
             <b>Standby Signage Mode: On</b>, <b>Standby Signage InteractionMode: NonInteractive</b>,
             and paste this as <b>Standby Signage Url</b>. Don't install the SignageManager macro there:

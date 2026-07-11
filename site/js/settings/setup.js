@@ -126,6 +126,7 @@ async function boot() {
 
   $('#get-code').addEventListener('click', getCode);
   $('#get-signage-url').addEventListener('click', getSignageUrl);
+  $('#copy-signage-url').addEventListener('click', copySignageUrl);
 
   $('#to-step-2').addEventListener('click', () => {
     applyStepTwo();
@@ -531,6 +532,22 @@ export function signageUrlFor(host, encoded) {
   return `https://${host}/#cfg=${encoded}`;
 }
 
+// Copy the generated URL: clipboard API first, else select the text and try
+// the legacy command so one tap still works on older phone browsers; worst
+// case the URL is left selected for a manual copy.
+async function copySignageUrl() {
+  const input = $('#signage-url');
+  try {
+    await navigator.clipboard.writeText(input.value);
+    $('#url-copied').textContent = 'Copied! ';
+  } catch {
+    input.focus();
+    input.select();
+    const ok = document.execCommand?.('copy');
+    $('#url-copied').textContent = ok ? 'Copied! ' : 'Copy blocked: the URL is selected; copy it manually. ';
+  }
+}
+
 async function getSignageUrl() {
   cfg.name = $('#name').value.trim();
   cfg.mode = $('#mode').value;
@@ -538,12 +555,7 @@ async function getSignageUrl() {
   const url = signageUrlFor(location.host, await encodeConfig(normalizeConfig(cfg)));
   $('#url-out').hidden = false;
   $('#signage-url').value = url;
-  try {
-    await navigator.clipboard.writeText(url);
-    $('#url-copied').textContent = 'Copied! ';
-  } catch {
-    $('#url-copied').textContent = 'Select and copy the URL above. ';
-  }
+  await copySignageUrl();
 }
 
 async function getCode() {

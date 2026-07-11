@@ -129,6 +129,11 @@ remove like any other.
 
 ### Daily extras
 
+- **Service Status** — subway-board rows for the cloud services your office
+  depends on (Webex, Zoom, Slack, Ubiquiti, Cloudflare, GitHub, Microsoft 365,
+  Google Workspace, AWS) from their public status pages; tap a degraded
+  service for the full incident detail. *Configure:* Settings → Service Status
+  (toggle services on/off). No API keys — all sources are public.
 - **This Day in History** — notable events on today's date (Wikimedia).
 - **Quote of the Day** / **Word of the Day** — a curated daily quote / word
   with definition and example.
@@ -266,6 +271,7 @@ the URL fragment and the dashboard returns configured.
 | MTA alert feeds (camsys) | Worker digest | raw subway feed ~800 KB → ~2 KB digest shared fleet-wide |
 | MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
 | Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); Photos' Drive source reports unconfigured until set |
+| Service status pages | Worker proxy, no keys | Statuspage instances (Zoom/Ubiquiti/Cloudflare/GitHub) + Slack/Microsoft/Google/Webex/AWS public JSON; failures report "Unknown", never fake green |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

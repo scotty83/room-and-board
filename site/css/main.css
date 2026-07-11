@@ -321,7 +321,9 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 }
 .welcome__inner h1 { font-size: 48px; }
 .welcome__inner p { font-size: 24px; color: var(--ink-dim); }
-.welcome__actions { display: flex; gap: 18px; justify-content: center; }
+/* Buttons are the fallback under the recommended QR path — a little extra
+   space above sets them apart as the "or, alternatively" group. */
+.welcome__actions { display: flex; gap: 18px; justify-content: center; margin-top: 12px; }
 .welcome__hint { font-size: 21px !important; color: var(--ink-faint) !important; }
 .welcome__qr { display: flex; justify-content: center; margin-top: 10px; }
 

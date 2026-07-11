@@ -201,12 +201,12 @@ function showWelcome() {
     <div class="welcome__inner">
       <h1>Welcome to your office display</h1>
       <p>Set it up from your phone or desktop, or start with sensible defaults and fine-tune later.</p>
-      <div class="welcome__actions">
-        <button class="btn btn--primary" data-action="quick-start">Quick start</button>
-        <button class="btn" data-action="enter-code">I have a setup code</button>
-      </div>
       <div class="qr welcome__qr"></div>
       <p class="welcome__hint">Scan to build a setup code on your phone — or visit <b>${location.host}/setup</b>.</p>
+      <div class="welcome__actions">
+        <button class="btn" data-action="enter-code">I have a setup code</button>
+        <button class="btn" data-action="quick-start">Quick start</button>
+      </div>
     </div>`;
   // The board's URL isn't visible to the person standing in front of it, so a
   // /setup hint alone can't get them there — the QR carries the full address.

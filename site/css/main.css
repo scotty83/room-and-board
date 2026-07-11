@@ -732,6 +732,10 @@ body.mode-ambient .gear { bottom: 7px; }
 .headline__age { font-size: 15px; color: var(--ink-faint); flex: none; }
 .headline__title { font-size: 21px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-width: 0; }
 .card--news.t-s .headline__title, .card--substack.t-s .headline__title, .card--bsky.t-s .headline__title { -webkit-line-clamp: 1; }
+/* Fill-to-fit's slack spender: the final headline rides leftover space with a
+   one-line ellipsized title (renderHeadlines adds this class only when the
+   full item wouldn't fit). */
+.headline--clamp .headline__title { -webkit-line-clamp: 1; }
 
 /* 7px padding keeps the contained logo inside the circle's inscribed square
    (44px circle inscribes ~31px; 4px padding left 36px — wide logos like the

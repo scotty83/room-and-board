@@ -1006,7 +1006,7 @@ function renderCode() {
     <p class="pane__hint">Or move this board's setup to your phone:</p>
     <button class="btn" data-qr>Show QR of current config</button>
     <div class="qr"></div>
-    <p class="pane__hint">Setting up a non-touch board? Show the QR, then copy the <b>signage URL</b> from the setup page it opens.</p>`;
+    <p class="pane__hint">Setting up a non-touch device? Scan the QR code, click through the options to get a pre-configured <b>signage URL</b>.</p>`;
   let code = '';
   const display = pane().querySelector('.code__display');
   const status = pane().querySelector('.code__status');

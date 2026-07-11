@@ -27,6 +27,7 @@ export const WIDGET_LABELS = {
   marketsnews: 'Markets News',
   art: 'Art slideshow',
   photos: 'Photos',
+  services: 'Service Status',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
@@ -61,6 +62,7 @@ export const SETUP_SECTIONS = [
   { id: 'art-field', group: 'Ambient', triggers: ['art'] },
   { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
   { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
+  { id: 'services-field', group: 'Daily Extras', triggers: ['services'] },
 ];
 
 // Which step-2 config sections + category dividers are visible for a set of
@@ -122,6 +124,7 @@ async function boot() {
   await renderNewsSources();
   renderPostsAccounts();
   renderPhotos();
+  renderServicesField();
   $('#mode').value = cfg.mode;
 
   $('#get-code').addEventListener('click', getCode);
@@ -519,6 +522,17 @@ function renderPhotos() {
         ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
         : "Couldn't open that album — check Public Website is on and the link is exact.";
     }
+  });
+}
+
+async function renderServicesField() {
+  const { SERVICE_CHOICES } = await import('../widgets/services.js');
+  $('#services-list').innerHTML = SERVICE_CHOICES.map(
+    ([id, label]) => `<label><input type="checkbox" data-svc="${id}" ${cfg.services.list.includes(id) ? 'checked' : ''}> ${label}</label>`,
+  ).join('');
+  $('#services-list').addEventListener('change', (e) => {
+    const id = e.target.dataset?.svc;
+    if (id) cfg.services.list = toggleIn(cfg.services.list, id);
   });
 }
 

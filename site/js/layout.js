@@ -35,6 +35,7 @@ export const MIN_SIZE = {
   news: [3, 2],
   substack: [3, 2],
   bsky: [3, 2],
+  services: [3, 2],
 };
 
 // Nine widgets in four 3-wide columns, tiling all 96 cells (Sean's board

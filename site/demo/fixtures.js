@@ -186,4 +186,19 @@ export const DEMO_VMS = {
     { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
   ] },
   marketsnews: { items: [{ title: 'Fed holds rates', source: 'CNBC', t: 1783000000000 }], nowMs: 1783000100000 },
+  services: {
+    updatedAt: 1783000000,
+    services: [
+      { id: 'webex', label: 'Webex', state: 'ok', note: 'All systems operational', incidents: [] },
+      { id: 'zoom', label: 'Zoom', state: 'ok', note: 'All systems operational', incidents: [] },
+      { id: 'slack', label: 'Slack', state: 'ok', note: 'All systems operational', incidents: [] },
+      // Degraded sample modeled on the real Cloudflare incident recorded 2026-07-11.
+      { id: 'cloudflare', label: 'Cloudflare', state: 'minor', note: 'Minor Service Outage', incidents: [
+        { title: 'Cloudflare Dashboard and API service issues', since: '2026-07-11T14:12:00.000Z',
+          update: 'Cloudflare is investigating elevated error rates on the Dashboard and API. Cached content and traffic proxying are unaffected.' },
+      ] },
+      { id: 'm365', label: 'Microsoft 365', state: 'ok', note: "We're all good!", incidents: [] },
+      { id: 'aws', label: 'AWS', state: 'unknown', note: 'Status unavailable', incidents: [] },
+    ],
+  },
 };

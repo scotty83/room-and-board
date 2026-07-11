@@ -46,6 +46,9 @@ const MODELS = {
   // Single-line 35px rows + 10px gap (shrunk so five zones fit a 3-tall
   // card); min height is 3 rows so tier s never applies.
   worldclock: listCapacity(45, 45),
+  // Name+state row (~34px) plus an occasional one-line incident note on
+  // degraded services; 52 budgets that mix (browser-audit calibrated).
+  services: listCapacity(52, 40),
 };
 
 export function itemCapacity(id, w, h) {
@@ -90,6 +93,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return `${n} posts`;
     case 'worldclock':
       return ofTotal(Math.min(n, cfg.worldclock?.cities?.length ?? n), cfg.worldclock?.cities?.length, 'cities');
+    case 'services':
+      return ofTotal(Math.min(n, cfg.services?.list?.length ?? n), cfg.services?.list?.length, 'services');
     case 'weather':
       return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
     default:

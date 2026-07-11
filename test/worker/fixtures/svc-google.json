@@ -1,0 +1,28 @@
+[
+ {
+  "id": "AWyE1SfEzpe8Qed49Rog",
+  "begin": "2026-06-30T09:03:00+00:00",
+  "end": "2026-07-01T03:45:00+00:00",
+  "modified": "2026-07-01T04:58:32+00:00",
+  "external_desc": "**Title**\nInbound emails from customers to Google Support are experiencing issues.\n**Description**\nWe are experiencing an issue with Google Cloud Support beginning on Tuesday, 2026-06-30 02:03 PDT.\nOur engineering team continues to investigate the issue.\nWe will provide an update by Tuesday, 2026-06-30 05:30 PDT with current details.\nWe apologize to all who are affected by the disruption.\n**Sympto",
+  "updates": [
+   {
+    "when": "2026-07-01T04:58:32+00:00",
+    "text": "**Title**\n[Resolved] Inbound emails from customers to Google Support were experiencing issues.\n**Description**\nThe issue with inbound emails to Google Cloud Support has been resolved for all affected customers as of Tuesday, 2026-06-30 20:45 PDT.\nFrom preliminary analysis, the engineering team ident"
+   }
+  ]
+ },
+ {
+  "id": "qqWhZSpoVLJWur1GfHfu",
+  "begin": "2026-06-22T19:30:00+00:00",
+  "end": "2026-06-23T00:46:00+00:00",
+  "modified": "2026-06-23T01:08:59+00:00",
+  "external_desc": "**Title**\nSome consumer Google Voice users are experiencing account suspensions.\n**Description**\nWe are experiencing an issue with Google Voice beginning at Monday, 2026-06-22 12:30 PDT.\nOur engineering team has identified the root cause and is actively working to mitigate the issue.\nWe will provide an update by Monday, 2026-06-22 17:30 PDT with current details.\nWe apologize to all who are affecte",
+  "updates": [
+   {
+    "when": "2026-06-23T01:08:59+00:00",
+    "text": "**Title**\nSome consumer Google Voice users experienced account suspensions.\n**Description**\nThe issue with Google Voice has been resolved for all affected users as of Monday, 2026-06-22 17:46 PDT\nOur engineers have mitigated the issue by rolling back to a previous version and reinstating suspended a"
+   }
+  ]
+ }
+]

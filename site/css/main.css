@@ -694,6 +694,20 @@ body.mode-ambient .gear { bottom: 7px; }
 
 .more-hint { font-size: 18px; color: var(--ink-faint); padding-top: 2px; }
 
+/* ---------- service status ---------- */
+.svc { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
+.svc__row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.svc__name { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.svc__state { font-size: 18px; font-weight: 600; white-space: nowrap; flex: none; }
+.svc__state--ok { color: var(--good); }
+.svc__state--minor { color: var(--warn); }
+.svc__state--major { color: var(--bad); }
+.svc__state--unknown { color: var(--ink-faint); }
+.svc__note { font-size: 17px; color: var(--warn); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.svc--tap { cursor: pointer; }
+/* Incident detail rides the shared text viewer; keep its paragraph breaks. */
+.text-viewer__body { white-space: pre-line; }
+
 .icon--btn { width: 28px; height: 28px; display: block; margin: 0 auto; }
 .gear { display: flex; align-items: center; justify-content: center; color: var(--ink-dim); }
 /* nowrap: the widget name never wraps to a second line — the corner note

@@ -10,6 +10,7 @@ import { capacityLabel } from './capacity.js';
 import { WIDGET_IDS } from './config.js';
 
 const TITLES = {
+  services: 'Service Status',
   weather: 'Weather',
   subway: 'Subway',
   lirr: 'LIRR',

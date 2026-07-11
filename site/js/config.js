@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -29,7 +29,7 @@ export const WIDGET_GROUPS = [
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
   { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
-  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd'] },
+  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services'] },
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({
@@ -52,6 +52,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   bus: Object.freeze({ legs: Object.freeze([]) }), // up to 2 route-first legs
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
+  services: Object.freeze({ list: Object.freeze(['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws']) }),
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   // Starter accounts (AI/tech/finance, politically neutral, verified active
@@ -213,6 +214,13 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : [...DEFAULT_CONFIG.marketsnews.sources];
       })(),
     },
+    services: {
+      list: (() => {
+        const picked = (Array.isArray(raw.services?.list) ? raw.services.list : [])
+          .filter((s) => DEFAULT_CONFIG.services.list.includes(s));
+        return picked.length ? picked : [...DEFAULT_CONFIG.services.list];
+      })(),
+    },
     njt: {
       station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
       alerts: raw.njt?.alerts !== false,
@@ -290,6 +298,7 @@ export async function encodeConfig(cfg) {
   if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
   if (wire.marketsnews && isDefault(wire.marketsnews.sources, DEFAULT_CONFIG.marketsnews.sources)) delete wire.marketsnews;
+  if (wire.services && isDefault(wire.services.list, DEFAULT_CONFIG.services.list)) delete wire.services;
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

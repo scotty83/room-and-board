@@ -1,0 +1,18 @@
+{
+ "status": {
+  "indicator": "minor",
+  "description": "Minor Service Outage"
+ },
+ "incidents": [
+  {
+   "name": "Workers AI experiencing degraded availability in some models",
+   "started_at": "2026-06-16T14:02:19.230Z",
+   "created_at": "2026-06-16T14:02:19.241Z",
+   "incident_updates": [
+    {
+     "body": "We are continuing to investigate this issue."
+    }
+   ]
+  }
+ ]
+}

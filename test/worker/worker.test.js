@@ -619,3 +619,88 @@ describe('/gdrive/album route', () => {
     expect(calls[0]).toContain('orderBy=createdTime');
   });
 });
+
+import { mapStatuspage, mapSlack, mapMicrosoft, mapGoogle, mapWebex, mapAws } from '../../worker/src/svcstatus.js';
+import spOk from './fixtures/svc-statuspage-ok.json';
+import spBad from './fixtures/svc-statuspage-degraded.json';
+import slackFx from './fixtures/svc-slack.json';
+import m365Fx from './fixtures/svc-m365.json';
+import googleFx from './fixtures/svc-google.json';
+import webexFx from './fixtures/svc-webex.json';
+import awsFx from './fixtures/svc-aws.json';
+
+describe('service status adapters', () => {
+  it('statuspage: ok and degraded (live Cloudflare sample)', () => {
+    expect(mapStatuspage(spOk).state).toBe('ok');
+    const bad = mapStatuspage(spBad);
+    expect(bad.state).toBe('minor');
+    expect(bad.note).toBe('Minor Service Outage');
+    expect(bad.incidents.length).toBeGreaterThan(0);
+    expect(bad.incidents[0].title.length).toBeGreaterThan(0);
+    expect(bad.incidents[0].update.length).toBeLessThanOrEqual(500);
+  });
+  it('slack: ok fixture, synthesized outage is major', () => {
+    expect(mapSlack(slackFx).state).toBe('ok');
+    const out = mapSlack({ status: 'active', active_incidents: [{ title: 'API errors', type: 'outage', date_created: 'x', notes: [{ body: 'working on it' }] }] });
+    expect(out.state).toBe('major');
+    expect(out.incidents[0].update).toBe('working on it');
+  });
+  it('m365: ok fixture, one IsUp:false is major with the name', () => {
+    expect(mapMicrosoft(m365Fx).state).toBe('ok');
+    const out = mapMicrosoft({ Services: [{ Id: 'x', Name: 'Exchange Online', IsUp: false, Message: 'mailbox issues' }] });
+    expect(out.state).toBe('major');
+    expect(out.note).toContain('Exchange Online');
+  });
+  it('google: all-ended fixture is ok, active incident is minor', () => {
+    expect(mapGoogle(googleFx, Date.now()).state).toBe('ok');
+    const out = mapGoogle([{ begin: '2026-07-11T00:00:00Z', external_desc: '**Gmail delays**\ndetail here' }], Date.now());
+    expect(out.state).toBe('minor');
+    expect(out.note).toBe('Gmail delays');
+  });
+  it('webex: maintenance-only fixture is ok, real incident degrades', () => {
+    expect(mapWebex(webexFx).state).toBe('ok'); // 3 unresolved, all maintenance
+    const out = mapWebex({ unResolvedIncidents: [{ incidentName: 'Meetings join failures', impact: 'major', createTime: 'x' }] });
+    expect(out.state).toBe('major');
+    expect(out.note).toBe('Meetings join failures');
+  });
+  it('aws: stale events are ok now, recent event degrades', () => {
+    expect(mapAws(awsFx, Date.now()).state).toBe('ok'); // events months old
+    const evDate = Number(awsFx[0].date) * 1000;
+    const out = mapAws(awsFx, evDate + 3600e3); // one hour after the event
+    expect(out.state).toBe('minor');
+    expect(out.note).toContain('Increased Error Rates');
+  });
+});
+
+describe('/services/status route', () => {
+  it('400s with no valid ids', async () => {
+    expect((await call('/services/status')).status).toBe(400);
+    expect((await call('/services/status?ids=bogus,nope')).status).toBe(400);
+  });
+  it('serves the digest and sorts the cache key', async () => {
+    await clearCache('svc:cloudflare,zoom');
+    stubFetch([
+      { match: /status\.zoom\.us/, body: spOk },
+      { match: /cloudflarestatus/, body: spBad },
+    ]);
+    const res = await call('/services/status?ids=zoom,cloudflare');
+    expect(res.status).toBe(200);
+    const digest = await res.json();
+    expect(digest.services).toHaveLength(2);
+    expect(digest.services[0]).toMatchObject({ id: 'zoom', state: 'ok' });
+    expect(digest.services[1]).toMatchObject({ id: 'cloudflare', state: 'minor' });
+    // permuted ids hit the same cache entry (no upstream stubs left)
+    const res2 = await call('/services/status?ids=cloudflare,zoom');
+    expect((await res2.json()).services).toHaveLength(2);
+  });
+  it('reports unknown for a failed service without failing the batch', async () => {
+    await clearCache('svc:github,slack');
+    stubFetch([
+      { match: /githubstatus/, body: 'nope', status: 500 },
+      { match: /status\.slack\.com/, body: slackFx },
+    ]);
+    const digest = await (await call('/services/status?ids=github,slack')).json();
+    expect(digest.services.find((s) => s.id === 'github').state).toBe('unknown');
+    expect(digest.services.find((s) => s.id === 'slack').state).toBe('ok');
+  });
+});

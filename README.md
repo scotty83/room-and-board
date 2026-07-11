@@ -1,6 +1,7 @@
-# Board Pro Digital Signage
+# Room & Board
 
-A lightweight, personal signage dashboard for Cisco Board Pro devices (gen1 + gen2)
+A lightweight, personal signage dashboard — **RoomBoard** (`roomboard.app`) —
+for Cisco Board Pro devices (gen1 + gen2)
 in private offices: weather, NYC-area transit boards (Subway status, LIRR,
 Metro-North, NJ Transit, PATH, NYC Ferry, Express Bus), market tickers, sports
 scores, headlines, public-domain art, and daily extras. Hosted entirely on the

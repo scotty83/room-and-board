@@ -69,7 +69,7 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
   const nowMs = vm.nowMs ?? Date.now();
   // Source + age stack above the full-width headline so neither ever
   // squeezes the other (at 3 cols the old side-by-side row truncated both).
-  const itemHtml = (i) => `<div class="headline">
+  const itemHtml = (i, clamp) => `<div class="headline${clamp ? ' headline--clamp' : ''}">
         <div class="headline__meta">
           <span class="headline__src">${escapeHtml(i.source)}</span>
           <span class="headline__age">${escapeHtml(ageLabel(i.t, nowMs))}</span>
@@ -78,9 +78,10 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
       </div>`;
   // Markup for the first n items, with a "+N more" hint when some are hidden
   // (the hint costs a row, so it's part of what we measure against).
-  const build = (n) => {
+  // clampLast renders the final item with its title clamped to one line.
+  const build = (n, clampLast = false) => {
     const hidden = vm.items.length - n;
-    return vm.items.slice(0, n).map(itemHtml).join('')
+    return vm.items.slice(0, n).map((it, idx) => itemHtml(it, clampLast && idx === n - 1)).join('')
       + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
   };
   // Static estimate from the capacity model. This is the final answer when
@@ -99,6 +100,15 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
       n += 1;
       el.innerHTML = build(n);
       if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); break; }
+    }
+    // The loops fit whole rows, so when the next item doesn't fit, up to a
+    // full two-line headline of slack can sit empty (visible on a 3x4 board
+    // card). Spend it on one more item with its title clamped to a single
+    // ellipsized line — a truncated headline beats blank space.
+    if (n < vm.items.length) {
+      n += 1;
+      el.innerHTML = build(n, true);
+      if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
     }
   }
 }

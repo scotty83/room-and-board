@@ -133,14 +133,18 @@ describe('renderHeadlines fill-to-fit', () => {
   // A fake card body: scrollHeight is derived from the rendered content
   // (rowPx per headline + hintPx if the "+N more" line is present), so we can
   // drive the measure loop without a real layout engine.
-  const fakeBody = ({ clientHeight = 0, rowPx = 60, hintPx = 25, dataH = 4 } = {}) => {
+  const fakeBody = ({ clientHeight = 0, rowPx = 60, hintPx = 25, clampPx = 35, dataH = 4 } = {}) => {
     let html = '';
     return {
       closest: () => ({ dataset: { w: '4', h: String(dataH) } }),
       clientHeight,
       get scrollHeight() {
+        // class="headline" only matches un-clamped rows (the clamped row's
+        // class attribute is "headline headline--clamp"), so the two heights
+        // can be modeled separately.
         const rows = (html.match(/class="headline"/g) || []).length;
-        return rows * rowPx + (html.includes('more-hint') ? hintPx : 0);
+        const clamped = (html.match(/headline--clamp/g) || []).length;
+        return rows * rowPx + clamped * clampPx + (html.includes('more-hint') ? hintPx : 0);
       },
       set innerHTML(v) { html = v; },
       get innerHTML() { return html; },
@@ -174,6 +178,23 @@ describe('renderHeadlines fill-to-fit', () => {
     renderHeadlines(el, vm(4), opts);
     expect(count(el)).toBe(4);
     expect(el.innerHTML).not.toContain('more-hint');
+  });
+  it('spends leftover slack on one extra title-clamped headline', () => {
+    // 4 full rows + hint = 265 ≤ 300, a 5th full row (325) overflows, but a
+    // clamped row fits exactly: 4*60 + 35 + 25 = 300.
+    const el = fakeBody({ clientHeight: 300, rowPx: 60, hintPx: 25, clampPx: 35 });
+    renderHeadlines(el, vm(30), opts);
+    expect(count(el)).toBe(4);                       // full rows
+    expect(el.innerHTML).toContain('headline--clamp'); // + one clamped row
+    expect(el.innerHTML).toContain('+25 more');      // 5 shown of 30
+    expect(el.scrollHeight).toBeLessThanOrEqual(el.clientHeight);
+  });
+  it('keeps the plain fit when even a clamped row cannot fit', () => {
+    // 5 full rows + hint = 325 exactly fills; a clamped 6th (360) overflows.
+    const el = fakeBody({ clientHeight: 325, rowPx: 60, hintPx: 25, clampPx: 35 });
+    renderHeadlines(el, vm(30), opts);
+    expect(count(el)).toBe(5);
+    expect(el.innerHTML).not.toContain('headline--clamp');
   });
 });
 

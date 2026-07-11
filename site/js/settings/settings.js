@@ -6,7 +6,7 @@ import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS,
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, parseAlbumToken } from '../util.js';
+import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
 import { zipLookup } from '../geo.js';
 import { alphaSections, toggleIn, applyNameKey, nameAutoCap } from './pickers.js';
@@ -304,16 +304,26 @@ function renderArt() {
 
 function renderPhotos() {
   const p = state.cfg.photos;
+  const src = p.source === 'gdrive' ? 'gdrive' : 'icloud';
   const set = p.album
     ? `<div class="kv"><span>Album</span><b>Configured</b>
         <button class="btn" data-clear-album>Remove</button></div>`
     : '';
+  const guide = src === 'gdrive'
+    ? `Show a <b>Google Drive folder</b> shared to anyone. In Drive: right-click the folder →
+      <b>Share</b> → set access to <b>Anyone with the link</b> → <b>Copy link</b>, then paste it here.`
+    : `Show an iCloud <b>Shared Album</b> with its <b>Public Website</b> turned on.
+      In the Photos app: open the album → its settings → enable <b>Public Website</b> → <b>Copy Link</b>,
+      then enter it here.`;
   pane().innerHTML = `
     <h2 class="pane__title">Photos</h2>
-    <p class="pane__hint">Show an iCloud <b>Shared Album</b> with its <b>Public Website</b> turned on.
-      In the Photos app: open the album → its settings → enable <b>Public Website</b> → <b>Copy Link</b>,
-      then enter it here. <b>This is a public link — anyone who has it can view the album, so add only
-      photos appropriate for a shared office display.</b></p>
+    <p class="pane__hint">Where the photos come from:</p>
+    <div class="rows">
+      <button class="row row--tap ${src === 'icloud' ? 'is-selected' : ''}" data-photo-src="icloud">iCloud Shared Album</button>
+      <button class="row row--tap ${src === 'gdrive' ? 'is-selected' : ''}" data-photo-src="gdrive">Google Drive folder</button>
+    </div>
+    <p class="pane__hint">${guide} <b>This is a public link — anyone who has it can view the photos, so add
+      only photos appropriate for a shared office display.</b></p>
     ${set}
     <div class="row">
       <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
@@ -324,11 +334,22 @@ function renderPhotos() {
       (m) => `<button class="row row--tap ${p.every === m ? 'is-selected' : ''}" data-every="${m}">
         Every ${m >= 60 ? `${m / 60} hour${m > 60 ? 's' : ''}` : `${m} minutes`}</button>`,
     ).join('')}</div>
-    <p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
-    <button class="btn" data-paste>Paste link</button>
-    <div class="photo-kb"></div>
+    ${src === 'gdrive'
+      ? `<p class="pane__hint">Paste the folder link (folder ids use characters the on-screen keyboard
+           can't type — use Paste here, or enter it on <b>${location.host}/setup</b> from your phone):</p>
+         <button class="btn" data-paste>Paste link</button>`
+      : `<p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
+         <button class="btn" data-paste>Paste link</button>
+         <div class="photo-kb"></div>`}
     <p class="code__status"></p>
     <div class="photo-preview"></div>`;
+  pane().querySelectorAll('[data-photo-src]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      if (btn.dataset.photoSrc === src) return;
+      state.cfg.photos = { ...state.cfg.photos, source: btn.dataset.photoSrc, album: '' };
+      renderPhotos();
+    }),
+  );
   pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg.photos.album = ''; renderPhotos(); });
   pane().querySelector('[data-ss]').addEventListener('click', () => { state.cfg.photos.screensaver = !state.cfg.photos.screensaver; renderPhotos(); });
   pane().querySelectorAll('[data-every]').forEach((btn) =>
@@ -340,24 +361,33 @@ function renderPhotos() {
   const status = pane().querySelector('.code__status');
   const preview = pane().querySelector('.photo-preview');
   const validate = async (raw) => {
-    const token = parseAlbumToken(raw);
-    if (!token) { status.textContent = "That doesn't look like an album link — check it and try again."; return; }
+    const id = src === 'gdrive' ? parseDriveFolder(raw) : parseAlbumToken(raw);
+    if (!id) { status.textContent = `That doesn't look like a ${src === 'gdrive' ? 'Drive folder' : 'album'} link — check it and try again.`; return; }
     status.textContent = 'Checking…';
+    preview.innerHTML = '';
     try {
-      const digest = await fetchJSON(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(token)}`);
+      const endpoint = src === 'gdrive'
+        ? `${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(id)}`
+        : `${WORKER_URL}/icloud/album?token=${encodeURIComponent(id)}`;
+      const res = await fetch(endpoint);
+      if (res.status === 503) { status.textContent = 'The server needs a Google Drive key (GDRIVE_KEY) — ask whoever runs it.'; return; }
+      const digest = await res.json();
       if (!digest.photos?.length) throw new Error('empty');
-      state.cfg.photos = { ...state.cfg.photos, source: 'icloud', album: token };
+      state.cfg.photos = { ...state.cfg.photos, source: src, album: id };
       status.textContent = `Found ${digest.photos.length} photo${digest.photos.length > 1 ? 's' : ''}.`;
       preview.innerHTML = `<img class="photo-preview__img" src="${escapeHtml(digest.photos[0].url)}" alt="">`;
     } catch {
-      status.textContent = "Couldn't open that album — check Public Website is on and the link/token is exact (it's case-sensitive).";
+      status.textContent = src === 'gdrive'
+        ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
+        : "Couldn't open that album — check Public Website is on and the link/token is exact (it's case-sensitive).";
       preview.innerHTML = '';
     }
   };
-  const kb = mountKeyboard(pane().querySelector('.photo-kb'), { onSubmit: validate });
+  const kb = src === 'icloud' ? mountKeyboard(pane().querySelector('.photo-kb'), { onSubmit: validate }) : null;
   pane().querySelector('[data-paste]').addEventListener('click', async () => {
-    try { const t = await navigator.clipboard.readText(); const tok = parseAlbumToken(t); if (tok) { kb.set(tok); validate(tok); } else { status.textContent = "That clipboard text isn't an album link — type the token instead."; } }
-    catch { status.textContent = 'Paste unavailable on this display — type the link instead.'; }
+    const parse = src === 'gdrive' ? parseDriveFolder : parseAlbumToken;
+    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { kb?.set(id); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
+    catch { status.textContent = src === 'gdrive' ? `Paste unavailable on this display — use ${location.host}/setup from your phone.` : 'Paste unavailable on this display — type the link instead.'; }
   });
 }
 

@@ -6,7 +6,7 @@ import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn } from './pickers.js';
 import { zipLookup } from '../geo.js';
-import { escapeHtml, parseAlbumToken } from '../util.js';
+import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
@@ -487,18 +487,38 @@ function renderPhotos() {
   $('#photos-every').value = String(cfg.photos.every);
   $('#photos-every').addEventListener('change', (e) => (cfg.photos.every = Number(e.target.value)));
   $('#photos-ss').addEventListener('change', (e) => (cfg.photos.screensaver = e.target.checked));
+  const srcOf = () => ($('#photos-source').value === 'gdrive' ? 'gdrive' : 'icloud');
+  const placeholders = { icloud: 'paste the album link', gdrive: 'paste the Drive folder link' };
+  $('#photos-source').value = cfg.photos.source === 'gdrive' ? 'gdrive' : 'icloud';
+  $('#photos-album').placeholder = placeholders[srcOf()];
   $('#photos-album').value = cfg.photos.album;
+  $('#photos-source').addEventListener('change', () => {
+    cfg.photos = { ...cfg.photos, source: srcOf(), album: '' };
+    $('#photos-album').value = '';
+    $('#photos-album').placeholder = placeholders[srcOf()];
+    $('#photos-status').textContent = '';
+  });
   $('#photos-add').addEventListener('click', async () => {
-    const token = parseAlbumToken($('#photos-album').value);
+    const src = srcOf();
+    const id = src === 'gdrive' ? parseDriveFolder($('#photos-album').value) : parseAlbumToken($('#photos-album').value);
     const status = $('#photos-status');
-    if (!token) { status.textContent = 'That doesn\'t look like an album link.'; return; }
+    if (!id) { status.textContent = `That doesn't look like a ${src === 'gdrive' ? 'Drive folder' : 'album'} link.`; return; }
     status.textContent = 'Checking…';
     try {
-      const digest = await (await fetch(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(token)}`)).json();
+      const endpoint = src === 'gdrive'
+        ? `${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(id)}`
+        : `${WORKER_URL}/icloud/album?token=${encodeURIComponent(id)}`;
+      const res = await fetch(endpoint);
+      if (res.status === 503) { status.textContent = 'The server needs a Google Drive key (GDRIVE_KEY).'; return; }
+      const digest = await res.json();
       if (!digest.photos?.length) throw new Error('empty');
-      cfg.photos = { ...cfg.photos, source: 'icloud', album: token };
+      cfg.photos = { ...cfg.photos, source: src, album: id };
       status.textContent = `Found ${digest.photos.length} photos.`;
-    } catch { status.textContent = "Couldn't open that album — check Public Website is on and the link is exact."; }
+    } catch {
+      status.textContent = src === 'gdrive'
+        ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
+        : "Couldn't open that album — check Public Website is on and the link is exact.";
+    }
   });
 }
 

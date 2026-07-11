@@ -1,0 +1,22 @@
+{
+  "files": [
+    { "id": "f1", "name": "sunset over jetty.jpg", "mimeType": "image/jpeg", "size": "496450",
+      "createdTime": "2026-07-09T18:00:00.000Z",
+      "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/FAKE1=s220",
+      "imageMediaMetadata": { "width": 2000, "height": 1123 } },
+    { "id": "f2", "name": "IMG_0042.png", "mimeType": "image/png", "size": "120000",
+      "createdTime": "2026-07-08T12:00:00.000Z",
+      "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/FAKE2=s220",
+      "imageMediaMetadata": { "width": 1123, "height": 2000 } },
+    { "id": "f3", "name": "no-thumb.jpg", "mimeType": "image/jpeg", "size": "1000",
+      "createdTime": "2026-07-07T12:00:00.000Z",
+      "imageMediaMetadata": { "width": 800, "height": 600 } },
+    { "id": "f4", "name": "no-dims.gif", "mimeType": "image/gif", "size": "1000",
+      "createdTime": "2026-07-06T12:00:00.000Z",
+      "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/FAKE4=s220" },
+    { "id": "f5", "name": "beach day.jpg", "mimeType": "image/jpeg", "size": "300000",
+      "createdTime": "2026-07-05T12:00:00.000Z",
+      "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/FAKE5=s220",
+      "imageMediaMetadata": { "width": 1600, "height": 900 } }
+  ]
+}

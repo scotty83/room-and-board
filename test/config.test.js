@@ -266,6 +266,15 @@ describe('photos config', () => {
     expect(normalizeConfig({ photos: { every: 0 } }).photos.every).toBe(1);
     expect(normalizeConfig({ photos: { every: 999 } }).photos.every).toBe(360);
   });
+  it('accepts a gdrive source with a folder-id album', () => {
+    const cfg = normalizeConfig({ photos: { source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz', screensaver: true, every: 15 } });
+    expect(cfg.photos).toEqual({ source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz', screensaver: true, every: 15 });
+    expect(normalizeConfig({ photos: { source: 'gdrive', album: 'nope!' } }).photos.album).toBe('');
+    expect(normalizeConfig({ photos: { source: 'gdrive', album: 'short' } }).photos.album).toBe('');
+    // icloud tokens are NOT valid gdrive ids by length alone — but a 10+ char
+    // icloud-looking string is structurally a valid id; the source disambiguates.
+    expect(normalizeConfig({ photos: { source: 'bogus', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz' } }).photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
+  });
 });
 
 describe('weather units', () => {
@@ -305,5 +314,21 @@ describe('bus legs config', () => {
     expect(out).toHaveLength(2);
     expect(out[0]).toEqual({ route: 'QM24', lineRef: 'MTABC_QM24', dir: 0, stopId: '550789', stopName: 'Madison Av / E 34 St' });
     expect(out[1]).toEqual({ route: 'x27', lineRef: 'MTA NYCT_X27', dir: 1, stopId: '504123', stopName: 'Some Stop' });
+  });
+});
+
+describe('parseDriveFolder', () => {
+  const ID = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
+  const load = async () => (await import('../site/js/util.js')).parseDriveFolder;
+  it('extracts the id from shared links', async () => {
+    const parseDriveFolder = await load();
+    expect(parseDriveFolder(`https://drive.google.com/drive/folders/${ID}?usp=sharing`)).toBe(ID);
+    expect(parseDriveFolder(`https://drive.google.com/drive/u/0/folders/${ID}`)).toBe(ID);
+  });
+  it('accepts a bare id and rejects junk', async () => {
+    const parseDriveFolder = await load();
+    expect(parseDriveFolder(ID)).toBe(ID);
+    expect(parseDriveFolder('not a link')).toBeNull();
+    expect(parseDriveFolder('')).toBeNull();
   });
 });

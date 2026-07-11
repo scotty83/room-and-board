@@ -46,6 +46,12 @@ export function photoManifest() {
 
 export async function fetchData(cfg, net) {
   const { source, album } = cfg.photos ?? {};
-  if (source !== 'icloud' || !album) return { photos: [] };
-  return mapPhotos(await net.fetchJSON(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(album)}`));
+  if (!album) return { photos: [] };
+  if (source === 'icloud') {
+    return mapPhotos(await net.fetchJSON(`${WORKER_URL}/icloud/album?token=${encodeURIComponent(album)}`));
+  }
+  if (source === 'gdrive') {
+    return mapPhotos(await net.fetchJSON(`${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(album)}`));
+  }
+  return { photos: [] };
 }

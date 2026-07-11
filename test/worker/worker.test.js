@@ -567,3 +567,53 @@ describe('bus legs', () => {
     expect(u).toContain('key=KEY');
   });
 });
+
+import { mapGdriveAlbum } from '../../worker/src/gdrive.js';
+import gdriveFixture from './fixtures/gdrive-files.json';
+
+describe('mapGdriveAlbum', () => {
+  it('maps the drive listing to the photo digest', () => {
+    const out = mapGdriveAlbum(gdriveFixture);
+    expect(out.stale).toBe(false);
+    expect(out.photos).toHaveLength(3); // no-thumb + no-dims entries skipped
+    expect(out.photos[0]).toEqual({
+      url: 'https://lh3.googleusercontent.com/drive-storage/FAKE1=s2048',
+      w: 2000, h: 1123, ar: 1.781, caption: 'sunset over jetty', date: '2026-07-09T18:00:00.000Z',
+    });
+    expect(out.photos[1].caption).toBe('IMG_0042');
+    expect(out.photos[2].url).toContain('FAKE5=s2048');
+  });
+  it('caps at 60 and preserves the API order (already newest-first)', () => {
+    const many = { files: Array.from({ length: 80 }, (_, i) => ({
+      name: `p${i}.jpg`, mimeType: 'image/jpeg', createdTime: `t${i}`,
+      thumbnailLink: `https://lh3.example/x${i}=s220`, imageMediaMetadata: { width: 100, height: 100 } })) };
+    const out = mapGdriveAlbum(many);
+    expect(out.photos).toHaveLength(60);
+    expect(out.photos[0].caption).toBe('p0');
+  });
+});
+
+describe('/gdrive/album route', () => {
+  const FOLDER = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
+  it('503s without GDRIVE_KEY', async () => {
+    const res = await call(`/gdrive/album?folder=${FOLDER}`);
+    expect(res.status).toBe(503);
+    expect((await res.json()).error).toBe('gdrive_not_configured');
+  });
+  it('400s on a malformed folder id', async () => {
+    const res = await call('/gdrive/album?folder=nope!', undefined, { GDRIVE_KEY: 'k' });
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe('bad_folder');
+  });
+  it('serves the digest from the listing (key + ordering on the wire)', async () => {
+    await clearCache(`gdrive:${FOLDER}`);
+    const calls = stubFetch([{ match: /googleapis\.com\/drive\/v3\/files/, body: gdriveFixture }]);
+    const res = await call(`/gdrive/album?folder=${FOLDER}`, undefined, { GDRIVE_KEY: 'testkey' });
+    expect(res.status).toBe(200);
+    const digest = await res.json();
+    expect(digest.photos).toHaveLength(3);
+    expect(digest.photos[0].url).toContain('=s2048');
+    expect(calls[0]).toContain('key=testkey');
+    expect(calls[0]).toContain('orderBy=createdTime');
+  });
+});

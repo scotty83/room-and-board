@@ -34,6 +34,16 @@ export function parseAlbumToken(input) {
   return /^[A-Za-z0-9]{8,25}$/.test(s) ? s : null;
 }
 
+// Extract a Google Drive folder id from a shared link
+// (drive.google.com/drive/folders/<id>, including /drive/u/N/folders/ variants
+// and ?usp=sharing suffixes) or accept a bare id. null when unrecognizable.
+export function parseDriveFolder(input) {
+  const s = String(input ?? '').trim();
+  const m = s.match(/folders\/([-\w]{10,80})/);
+  if (m) return m[1];
+  return /^[-\w]{10,80}$/.test(s) ? s : null;
+}
+
 // Deterministic per-calendar-day pick, shared by the quote and word widgets.
 export function dailyPick(list, date) {
   const start = Date.UTC(date.getFullYear(), 0, 0);

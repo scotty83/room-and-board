@@ -204,7 +204,7 @@ function showWelcome() {
       <div class="qr welcome__qr"></div>
       <p class="welcome__hint">Scan to build a setup code on your phone — or visit <b>${location.host}/setup</b>.</p>
       <div class="welcome__actions">
-        <button class="btn" data-action="enter-code">I have a setup code</button>
+        <button class="btn btn--primary" data-action="enter-code">I have a setup code</button>
         <button class="btn" data-action="quick-start">Quick start</button>
       </div>
     </div>`;

@@ -332,3 +332,12 @@ describe('parseDriveFolder', () => {
     expect(parseDriveFolder('')).toBeNull();
   });
 });
+
+describe('services config', () => {
+  const ALL = ['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws'];
+  it('defaults to all nine services and filters junk ids', () => {
+    expect(normalizeConfig({}).services.list).toEqual(ALL);
+    expect(normalizeConfig({ services: { list: ['zoom', 'bogus'] } }).services.list).toEqual(['zoom']);
+    expect(normalizeConfig({ services: { list: [] } }).services.list).toEqual(ALL);
+  });
+});

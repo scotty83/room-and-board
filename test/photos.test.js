@@ -30,3 +30,20 @@ describe('mapPhotos', () => {
     expect(mapPhotos(null).photos).toEqual([]);
   });
 });
+
+describe('fetchData source routing', () => {
+  const photos = () => import('../site/js/widgets/photos.js');
+  it('routes a gdrive source to /gdrive/album', async () => {
+    const { fetchData } = await photos();
+    const calls = [];
+    const net = { fetchJSON: (u) => { calls.push(u); return Promise.resolve({ photos: [{ url: 'x', ar: 1, caption: '', date: '' }] }); } };
+    const vm = await fetchData({ photos: { source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz' } }, net);
+    expect(calls[0]).toContain('/gdrive/album?folder=1RHow60mcBwzMturimQSbziK3hqCvP2lz');
+    expect(vm.photos).toHaveLength(1);
+  });
+  it('returns empty without fetching when unconfigured', async () => {
+    const { fetchData } = await photos();
+    const vm = await fetchData({ photos: { source: 'gdrive', album: '' } }, { fetchJSON: () => { throw new Error('no fetch'); } });
+    expect(vm.photos).toEqual([]);
+  });
+});

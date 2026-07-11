@@ -1,9 +1,9 @@
 // Produces an upload-ready macro for manual installation through a board's
 // web UI (when provision.js can't reach the codecs over the network).
-// Usage: SITE_URL=https://signage.rvc.tech node deploy/make-macro.js
+// Usage: SITE_URL=https://roomboard.app node deploy/make-macro.js
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
-const siteUrl = process.env.SITE_URL ?? 'https://signage.rvc.tech';
+const siteUrl = process.env.SITE_URL ?? 'https://roomboard.app';
 const src = new URL('../macro/SignageManager.js', import.meta.url);
 const outDir = new URL('./manual/', import.meta.url);
 

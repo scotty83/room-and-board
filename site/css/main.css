@@ -334,12 +334,15 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- gear ---------- */
 .gear {
-  /* Edit + settings FABs. On the dashboard they sit centered in the empty
-     --safe-bottom band BELOW the grid (grid edge is at 84px; a 56px FAB at
-     bottom:14px spans 14-70px), so they no longer overlap the lower-right
-     widget. The RoomOS bar is below the web viewport, so this stays tappable.
-     In ambient mode they drop onto the info strip. */
-  position: absolute; right: 28px; bottom: 14px;
+  /* Edit + settings FABs. BOARD-VERIFIED: on the dashboard the RoomOS
+     "Tap to start" bar OVERLAYS the bottom ~40 logical px of the viewport
+     (a FAB at bottom:14px was ~45% covered — 26 of 56px = the 40px bar).
+     The free strip between bar top (40px) and grid edge (84px) is only 44px,
+     so a 56px FAB can't fully fit: bottom:44px clears the bar with 4px to
+     spare and intrudes just ~16px into the lower-right widget (was 63px at
+     the old calc(--safe-bottom + 7px) spot). In ambient mode they drop onto
+     the info strip. */
+  position: absolute; right: 28px; bottom: 44px;
   width: 56px; height: 56px; border-radius: 50%;
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);

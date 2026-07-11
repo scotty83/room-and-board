@@ -13,6 +13,7 @@ import { fetchFerryDepartures } from './ferry.js';
 import { fetchSubstackPosts } from './posts.js';
 import { fetchIcloudAlbum } from './icloud.js';
 import { fetchGdriveAlbum } from './gdrive.js';
+import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -196,6 +197,13 @@ export default {
       const pub = url.searchParams.get('pub') ?? '';
       if (!/^[a-z0-9-]{2,64}$/.test(pub)) return json({ error: 'bad_pub' }, 400);
       return cached(url.origin, `sub:${pub}`, 600, () => fetchSubstackPosts(pub));
+    }
+
+    if (path === '/services/status' && request.method === 'GET') {
+      const ids = (url.searchParams.get('ids') ?? '').split(',').filter((id) => Object.hasOwn(SERVICES, id));
+      if (!ids.length) return json({ error: 'bad_ids' }, 400);
+      // Sorted ids in the key so permutations share one cache entry.
+      return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
     }
 
     if (path === '/gdrive/album' && request.method === 'GET') {

@@ -671,3 +671,36 @@ describe('service status adapters', () => {
     expect(out.note).toContain('Increased Error Rates');
   });
 });
+
+describe('/services/status route', () => {
+  it('400s with no valid ids', async () => {
+    expect((await call('/services/status')).status).toBe(400);
+    expect((await call('/services/status?ids=bogus,nope')).status).toBe(400);
+  });
+  it('serves the digest and sorts the cache key', async () => {
+    await clearCache('svc:cloudflare,zoom');
+    stubFetch([
+      { match: /status\.zoom\.us/, body: spOk },
+      { match: /cloudflarestatus/, body: spBad },
+    ]);
+    const res = await call('/services/status?ids=zoom,cloudflare');
+    expect(res.status).toBe(200);
+    const digest = await res.json();
+    expect(digest.services).toHaveLength(2);
+    expect(digest.services[0]).toMatchObject({ id: 'zoom', state: 'ok' });
+    expect(digest.services[1]).toMatchObject({ id: 'cloudflare', state: 'minor' });
+    // permuted ids hit the same cache entry (no upstream stubs left)
+    const res2 = await call('/services/status?ids=cloudflare,zoom');
+    expect((await res2.json()).services).toHaveLength(2);
+  });
+  it('reports unknown for a failed service without failing the batch', async () => {
+    await clearCache('svc:github,slack');
+    stubFetch([
+      { match: /githubstatus/, body: 'nope', status: 500 },
+      { match: /status\.slack\.com/, body: slackFx },
+    ]);
+    const digest = await (await call('/services/status?ids=github,slack')).json();
+    expect(digest.services.find((s) => s.id === 'github').state).toBe('unknown');
+    expect(digest.services.find((s) => s.id === 'slack').state).toBe('ok');
+  });
+});

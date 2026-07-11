@@ -628,6 +628,7 @@ import m365Fx from './fixtures/svc-m365.json';
 import googleFx from './fixtures/svc-google.json';
 import webexFx from './fixtures/svc-webex.json';
 import awsFx from './fixtures/svc-aws.json';
+import { decodeBomJson } from '../../worker/src/svcstatus.js';
 
 describe('service status adapters', () => {
   it('statuspage: ok and degraded (live Cloudflare sample)', () => {
@@ -702,5 +703,24 @@ describe('/services/status route', () => {
     const digest = await (await call('/services/status?ids=github,slack')).json();
     expect(digest.services.find((s) => s.id === 'github').state).toBe('unknown');
     expect(digest.services.find((s) => s.id === 'slack').state).toBe('ok');
+  });
+});
+
+describe('decodeBomJson (AWS UTF-16 quirk)', () => {
+  const encode = (str, be) => {
+    const bom = be ? [0xFE, 0xFF] : [0xFF, 0xFE];
+    const bytes = [...bom];
+    for (const ch of str) { const c = ch.charCodeAt(0);
+      if (be) bytes.push((c >> 8) & 0xff, c & 0xff); else bytes.push(c & 0xff, (c >> 8) & 0xff); }
+    return new Uint8Array(bytes).buffer;
+  };
+  it('parses big-endian (what AWS actually serves)', () => {
+    expect(decodeBomJson(encode('[{"a":1}]', true))).toEqual([{ a: 1 }]);
+  });
+  it('parses little-endian too', () => {
+    expect(decodeBomJson(encode('[{"a":1}]', false))).toEqual([{ a: 1 }]);
+  });
+  it('falls back to utf-8 with no BOM', () => {
+    expect(decodeBomJson(new TextEncoder().encode('[1,2,3]').buffer)).toEqual([1, 2, 3]);
   });
 });

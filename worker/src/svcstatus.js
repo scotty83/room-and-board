@@ -96,6 +96,17 @@ export function mapAws(json, nowMs) {
   };
 }
 
+// AWS serves data.json as UTF-16 with a BOM — and it's big-endian (FE FF),
+// which a hardcoded 'utf-16le' silently byte-swaps into garbage. Sniff the
+// BOM so either endianness (or a future switch to UTF-8) parses correctly.
+export function decodeBomJson(buffer) {
+  const b = new Uint8Array(buffer);
+  const enc = b[0] === 0xFE && b[1] === 0xFF ? 'utf-16be'
+    : b[0] === 0xFF && b[1] === 0xFE ? 'utf-16le'
+    : 'utf-8';
+  return JSON.parse(new TextDecoder(enc).decode(b).replace(/^﻿/, ''));
+}
+
 const MAPPERS = { statuspage: mapStatuspage, slack: mapSlack, microsoft: mapMicrosoft, google: mapGoogle, webex: mapWebex, aws: mapAws };
 
 export const SERVICES = {
@@ -113,12 +124,17 @@ export const SERVICES = {
 export async function fetchServiceStatuses(ids) {
   const settled = await Promise.allSettled(ids.map(async (id) => {
     const svc = SERVICES[id];
-    const res = await fetch(svc.url, { headers: { 'User-Agent': 'Mozilla/5.0 roomboard-status' } });
+    // Full browser UA: CloudFront (AWS's status CDN) rejects thin/bot agents
+    // from datacenter egress — same lesson as the Yahoo markets fetch.
+    const res = await fetch(svc.url, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',
+      },
+    });
     if (!res.ok) throw new Error(`svc ${id} ${res.status}`);
-    // AWS serves UTF-16 with a BOM; everything else is plain JSON.
-    const json = svc.adapter === 'aws'
-      ? JSON.parse(new TextDecoder('utf-16le').decode(await res.arrayBuffer()).replace(/^﻿/, ''))
-      : await res.json();
+    // AWS is UTF-16-with-BOM (see decodeBomJson); everything else is plain JSON.
+    const json = svc.adapter === 'aws' ? decodeBomJson(await res.arrayBuffer()) : await res.json();
     return { id, label: svc.label, ...MAPPERS[svc.adapter](json, Date.now()) };
   }));
   const services = settled.map((s, i) => (s.status === 'fulfilled' ? s.value

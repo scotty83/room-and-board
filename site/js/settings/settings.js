@@ -32,6 +32,7 @@ export const WIDGET_LABELS = {
   worldclock: 'World Clock',
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
+  citibike: 'Citi Bike',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',

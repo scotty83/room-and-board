@@ -708,6 +708,13 @@ body.mode-ambient .gear { bottom: 7px; }
 .svc__state--unknown { color: var(--ink-faint); }
 .svc__note { font-size: 17px; color: var(--warn); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .svc--tap { cursor: pointer; }
+
+/* ---------- citi bike ---------- */
+.cb { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; }
+.cb__name { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb__stat { font-size: 20px; color: var(--ink-dim); white-space: nowrap; flex: none; }
+.cb__stat--off { color: var(--ink-faint); }
+.cb__e { color: var(--accent); font-weight: 600; }
 /* Incident detail rides the shared text viewer; keep its paragraph breaks. */
 .text-viewer__body { white-space: pre-line; }
 

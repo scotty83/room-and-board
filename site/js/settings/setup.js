@@ -29,6 +29,7 @@ export const WIDGET_LABELS = {
   photos: 'Photos',
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
+  citibike: 'Citi Bike',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',

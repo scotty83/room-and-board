@@ -39,9 +39,10 @@ import * as bsky from './widgets/bsky.js';
 import * as photos from './widgets/photos.js';
 import * as services from './widgets/services.js';
 import * as apod from './widgets/apod.js';
+import * as citibike from './widgets/citibike.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, services, apod];
+const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, services, apod, citibike];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };

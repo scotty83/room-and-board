@@ -3,17 +3,11 @@
 // per day from the worker's /apod digest; tap opens the viewer with the
 // title, credit, and explanation.
 
-import { escapeHtml, setCardNote } from '../util.js';
+import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { openImageViewer } from '../imageshow.js';
 
 export const meta = { id: 'apod', title: 'NASA Daily Photo', refreshMs: 30 * 60 * 1000 };
-
-// "2026-07-11" -> "Jul 11" for the header note; blank on a bad/absent date.
-function fmtDay(iso) {
-  const t = Date.parse(`${iso}T00:00:00`);
-  return Number.isFinite(t) ? new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-}
 
 export function render(el, vm, cfg) {
   const p = vm.photo;
@@ -21,7 +15,8 @@ export function render(el, vm, cfg) {
     el.innerHTML = '<div class="empty">NASA photo unavailable</div>';
     return;
   }
-  setCardNote(el, fmtDay(p.date));
+  // No date note: APOD's date is the publish date (== today's dashboard clock),
+  // not a capture date — so it would just duplicate the header time.
   const credit = p.credit ? `© ${p.credit}` : '';
   el.innerHTML = `
     <figure class="artwork" role="button" tabindex="0" aria-label="View photo full screen">

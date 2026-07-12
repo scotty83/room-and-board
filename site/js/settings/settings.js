@@ -685,9 +685,14 @@ function qwertyKeypad(alphabet, extraKeys, actionsHtml) {
   const allowed = new Set(alphabet);
   const rows = QWERTY_ROWS.map((r) => [...r].filter((k) => allowed.has(k)));
   rows[rows.length - 1].push(...extraKeys); // symbols ride the short bottom row
+  // A bare ' ' extra would render as a blank key-sized button — invisible as a
+  // concept (Sean hit this in the Citi Bike search). Render it as a wide,
+  // labeled space bar instead; data-key stays ' ' so handlers are unchanged.
+  const keyHtml = (k) => (k === ' '
+    ? '<button class="key osk__key osk__key--space" data-key=" ">space</button>'
+    : `<button class="key osk__key" data-key="${k}">${k}</button>`);
   return `<div class="osk">${rows
-    .map((row) => `<div class="osk__row">${row
-      .map((k) => `<button class="key osk__key" data-key="${k}">${k}</button>`).join('')}</div>`)
+    .map((row) => `<div class="osk__row">${row.map(keyHtml).join('')}</div>`)
     .join('')}<div class="osk__row">${actionsHtml}</div></div>`;
 }
 

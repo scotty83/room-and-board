@@ -2,7 +2,7 @@
 // plus NWS active-alert banner. All time strings stay in the device-local
 // timezone Open-Meteo returns (timezone=auto) — no Date parsing of API times.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setCardNote } from '../util.js';
 import { icon } from '../icons.js';
 
 export const meta = { id: 'weather', title: 'Weather', refreshMs: 10 * 60 * 1000 };
@@ -143,6 +143,9 @@ export function fmtTemp(fTemp, units) {
 }
 
 export function render(el, vm, cfg) {
+  // Location note in the card header ("New York 10001", "London, England (GB)")
+  // — matters now that weather can track anywhere, not just the office.
+  setCardNote(el, cfg?.loc?.label ?? '');
   const units = cfg?.loc?.units ?? 'F';
 
   // Size class is stamped on the card by main.js (cardFor) before render runs.

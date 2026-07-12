@@ -4,8 +4,12 @@
 
 export function mapTfl(json) {
   const lines = (Array.isArray(json) ? json : []).map((l) => {
+    // Pick the MOST severe status when a line has several (TfL doesn't order
+    // them; lower statusSeverity = worse, Good Service = 10).
     const statuses = l.lineStatuses ?? [];
-    const st = statuses.find((s) => s.statusSeverityDescription !== 'Good Service') ?? statuses[0] ?? {};
+    const st = statuses.length
+      ? statuses.reduce((worst, s) => ((s.statusSeverity ?? 10) < (worst.statusSeverity ?? 10) ? s : worst))
+      : {};
     const status = st.statusSeverityDescription ?? 'Unknown';
     return {
       id: l.id, name: l.name, mode: l.modeName,

@@ -13,7 +13,7 @@ export function mapRidePath(json, nowSec) {
     const dirs = { ToNY: [], ToNJ: [] };
     for (const dest of st.destinations ?? []) {
       const label = dest?.label;
-      if (!(label in dirs)) continue;
+      if (!Object.hasOwn(dirs, label)) continue;
       for (const msg of dest.messages ?? []) {
         const secs = Number(msg?.secondsToArrival);
         if (!Number.isFinite(secs)) continue;

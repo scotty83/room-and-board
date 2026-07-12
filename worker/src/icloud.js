@@ -57,7 +57,13 @@ export function mapIcloudAlbum(ws, au, maxBytes) {
 
 export async function fetchIcloudAlbum(token, maxBytes = 3_000_000) {
   const stream = await callStream(token, `p${basePartition(token)}-sharedstreams.icloud.com`, 'webstream', { streamCtag: null });
-  const guids = (stream.json.photos ?? []).slice(0, MAX_PHOTOS).map((p) => p.photoGuid);
-  const assets = await callStream(token, stream.host, 'webasseturls', { photoGuids: guids });
-  return mapIcloudAlbum(stream.json, assets.json, maxBytes);
+  // Sort newest-first BEFORE capping at MAX_PHOTOS, so asset URLs are fetched
+  // for the newest 60 — the webstream isn't guaranteed newest-first, so slicing
+  // raw order could pin an >60-photo album to its oldest 60. (dateCreated is
+  // ISO-8601, so string compare sorts chronologically.)
+  const newest = [...(stream.json.photos ?? [])]
+    .sort((a, b) => String(b.dateCreated ?? '').localeCompare(String(a.dateCreated ?? '')))
+    .slice(0, MAX_PHOTOS);
+  const assets = await callStream(token, stream.host, 'webasseturls', { photoGuids: newest.map((p) => p.photoGuid) });
+  return mapIcloudAlbum({ ...stream.json, photos: newest }, assets.json, maxBytes);
 }

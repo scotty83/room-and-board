@@ -67,11 +67,12 @@ async function postCode(request, env, origin) {
   await cache.put(throttleKey, new Response('1', { headers: { 'Cache-Control': 'max-age=10' } }));
   for (let attempt = 0; attempt < 3; attempt++) {
     const code = randomCode();
-    if (await env.CODES.get(`code:${code}`)) continue; // collision, retry
     try {
+      if (await env.CODES.get(`code:${code}`)) continue; // collision, retry
       await env.CODES.put(`code:${code}`, body.cfg, { expirationTtl: CODE_TTL_S });
     } catch {
-      // KV write cap hit or namespace unavailable — clear error, not a raw 500.
+      // KV read/write cap hit or namespace unavailable — clear error, not a raw
+      // 500 (the collision probe is a read and can trip the quota too).
       return json({ error: 'code_service_unavailable' }, 503);
     }
     return json({ code, expiresInSeconds: CODE_TTL_S });
@@ -81,12 +82,19 @@ async function postCode(request, env, origin) {
 
 async function getCode(env, code) {
   const key = `code:${code.toUpperCase()}`;
-  const cfg = await env.CODES.get(key);
+  let cfg;
+  try {
+    cfg = await env.CODES.get(key);
+  } catch {
+    // KV read cap hit or namespace unavailable — clean 503, not a raw 500
+    // (an unthrottled redemption loop can otherwise drain the read quota).
+    return json({ error: 'code_service_unavailable' }, 503);
+  }
   if (cfg === null) return json({ error: 'not_found' }, 404);
   // Best-effort single use: KV deletes are eventually consistent (~60 s
   // globally), so a code may be redeemable more than once briefly. Codes
   // carry non-sensitive widget prefs and expire after an hour regardless.
-  await env.CODES.delete(key);
+  try { await env.CODES.delete(key); } catch { /* best-effort single-use */ }
   return json({ cfg });
 }
 
@@ -211,7 +219,7 @@ export default {
     }
 
     if (path === '/services/status' && request.method === 'GET') {
-      const ids = (url.searchParams.get('ids') ?? '').split(',').filter((id) => Object.hasOwn(SERVICES, id));
+      const ids = [...new Set((url.searchParams.get('ids') ?? '').split(',').filter((id) => Object.hasOwn(SERVICES, id)))].slice(0, 9);
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
@@ -277,8 +285,10 @@ export default {
       if (!env.MTA_BUS_KEY) return json({ error: 'bus_not_configured' }, 503);
       const legs = parseLegs(url.searchParams.get('legs') ?? '');
       if (!legs.length) return json({ stops: [] });
-      return cached(url.origin, `bus:${url.searchParams.get('legs')}`, 30,
-        () => fetchBusStops(env, legs));
+      // Key on the normalized parsed legs (sorted) so aliased/reordered raw
+      // query strings share one entry instead of minting duplicates.
+      const busKey = `bus:${legs.map((l) => `${l.stopId}:${l.lineRef}`).sort().join(',')}`;
+      return cached(url.origin, busKey, 30, () => fetchBusStops(env, legs));
     }
 
     return json({ error: 'not_found' }, 404);

@@ -106,11 +106,11 @@
 
       <section class="field" id="weather-field">
         <h2>Weather</h2>
-        <select id="loc-preset"></select>
         <div class="ziprow">
-          <input id="zip" type="text" inputmode="numeric" pattern="[0-9]{5}" placeholder="or ZIP code">
-          <button id="zip-go" type="button">Use ZIP</button>
+          <input id="loc-search" type="text" maxlength="40" placeholder="City or US ZIP">
+          <button id="loc-go" type="button">Search</button>
         </div>
+        <div id="loc-results" class="chips"></div>
         <p id="loc-current" class="hint"></p>
         <div class="segmented" role="group" aria-label="Temperature unit">
           <button class="seg" type="button" data-units="F">°F</button>

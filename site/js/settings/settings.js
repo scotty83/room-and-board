@@ -9,7 +9,7 @@ import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
-import { zipLookup } from '../geo.js';
+import { locationSearch } from '../geo.js';
 import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
@@ -49,17 +49,6 @@ import { BSKY_API } from '../widgets/posts.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 
-const PRESET_LOCATIONS = [
-  { label: 'Midtown Manhattan', lat: 40.754, lon: -73.984 },
-  { label: 'Lower Manhattan', lat: 40.707, lon: -74.011 },
-  { label: 'Downtown Brooklyn', lat: 40.694, lon: -73.985 },
-  { label: 'Long Island City', lat: 40.745, lon: -73.949 },
-  { label: 'Jersey City', lat: 40.728, lon: -74.078 },
-  { label: 'Newark', lat: 40.735, lon: -74.172 },
-  { label: 'White Plains', lat: 41.034, lon: -73.763 },
-  { label: 'Mineola', lat: 40.747, lon: -73.641 },
-  { label: 'Stamford', lat: 41.053, lon: -73.539 },
-];
 
 let state = null; // { cfg, root, section, stack }
 
@@ -990,63 +979,54 @@ function renderWorldclock() {
 }
 
 function renderWeather() {
-  pane().innerHTML = `
-    <h2 class="pane__title">Weather</h2>
-    <p class="pane__hint">Temperature unit:</p>
-    <div class="segmented" role="group" aria-label="Temperature unit">
-      <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
-      <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
-    </div>
-    <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
-    <div class="rows">${PRESET_LOCATIONS.map(
-      (p, i) =>
-        `<button class="row row--tap ${p.label === state.cfg.loc.label ? 'is-selected' : ''}" data-loc="${i}">
-          ${escapeHtml(p.label)}</button>`,
-    ).join('')}</div>
-    <p class="pane__hint">Or enter a ZIP code:</p>
-    <div class="zip">
-      <output class="zip__display" aria-live="polite"></output>
-      <div class="keypad keypad--zip">${[1, 2, 3, 4, 5, 6, 7, 8, 9, '⌫', 0, 'Go'].map(
-        (k) => `<button class="key" data-key="${k}">${k}</button>`,
-      ).join('')}</div>
-      <p class="zip__status"></p>
-    </div>`;
-  pane().querySelectorAll('[data-loc]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const p = PRESET_LOCATIONS[Number(btn.dataset.loc)];
-      state.cfg.loc = { lat: p.lat, lon: p.lon, label: p.label, units: state.cfg.loc.units };
-      renderWeather();
-    }),
-  );
-  let zip = '';
-  const display = pane().querySelector('.zip__display');
-  const status = pane().querySelector('.zip__status');
-  pane().querySelectorAll('[data-key]').forEach((btn) =>
-    btn.addEventListener('click', async () => {
-      const k = btn.dataset.key;
-      if (k === '⌫') zip = zip.slice(0, -1);
-      else if (k === 'Go') {
-        if (zip.length !== 5) return;
-        status.textContent = 'Looking up…';
-        try {
-          const loc = await zipLookup(zip);
-          if (!loc) throw new Error('no match');
-          state.cfg.loc = { ...loc, units: state.cfg.loc.units };
-          renderWeather();
+  let query = '';
+  let results = [];
+  let status = '';
+  const draw = () => {
+    pane().innerHTML = `
+      <h2 class="pane__title">Weather</h2>
+      <p class="pane__hint">Temperature unit:</p>
+      <div class="segmented" role="group" aria-label="Temperature unit">
+        <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
+        <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
+      </div>
+      <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
+      <p class="pane__hint">Search a city anywhere, or a 5-digit US ZIP:</p>
+      <output class="code__display" aria-live="polite">${escapeHtml(query) || '&nbsp;'}</output>
+      <div class="picklist">${results
+        .map((r, i) => `<button class="btn picklist__item" data-pick="${i}">${escapeHtml(r.label)}</button>`)
+        .join('')}</div>
+      ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-'],
+        '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Search">Search</button>')}
+      <p class="code__status">${escapeHtml(status)}</p>`;
+    pane().querySelectorAll('[data-units]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        state.cfg.loc = { ...state.cfg.loc, units: btn.dataset.units };
+        draw();
+      }));
+    pane().querySelectorAll('[data-pick]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const r = results[Number(btn.dataset.pick)];
+        // Picking sets units by region (US → °F, else °C); the toggle overrides.
+        state.cfg.loc = { lat: r.lat, lon: r.lon, label: r.label, units: r.cc === 'US' ? 'F' : 'C' };
+        query = ''; results = []; status = '';
+        draw();
+      }));
+    pane().querySelectorAll('[data-key]').forEach((btn) =>
+      btn.addEventListener('click', async () => {
+        const k = btn.dataset.key;
+        if (k === '⌫') query = query.slice(0, -1);
+        else if (k === 'Search') {
+          status = 'Searching…'; draw();
+          results = await locationSearch(query);
+          status = results.length ? '' : 'No matches — try a city name or a 5-digit US ZIP.';
+          draw();
           return;
-        } catch {
-          status.textContent = `Couldn't find ${zip} — try a nearby preset.`;
-        }
-      } else if (zip.length < 5) zip += k;
-      display.textContent = zip;
-    }),
-  );
-  pane().querySelectorAll('[data-units]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      state.cfg.loc = { ...state.cfg.loc, units: btn.dataset.units };
-      renderWeather();
-    }),
-  );
+        } else if (query.length < 30) query += k;
+        draw();
+      }));
+  };
+  draw();
 }
 
 function renderDisplay() {

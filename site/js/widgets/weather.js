@@ -195,6 +195,14 @@ export function render(el, vm, cfg) {
     <div class="wx-days">${dayTiles}</div>`;
 }
 
+// Rough US bounding boxes (continental, Alaska, Hawaii). Gates the US-only
+// NWS alerts call — a non-US point would 400 on every refresh otherwise.
+export function inUS(lat, lon) {
+  return (lat >= 24.5 && lat <= 49.5 && lon >= -125 && lon <= -66.9)
+    || (lat >= 51 && lat <= 72 && lon >= -170 && lon <= -129)
+    || (lat >= 18.5 && lat <= 22.5 && lon >= -160.5 && lon <= -154.5);
+}
+
 export async function fetchData(cfg, net) {
   const { lat, lon } = cfg.loc;
   const url =
@@ -205,10 +213,12 @@ export async function fetchData(cfg, net) {
     '&forecast_days=6&timezone=auto&temperature_unit=fahrenheit';
   const forecast = await net.fetchJSON(url);
   let alerts = null;
-  try {
-    alerts = await net.fetchJSON(`https://api.weather.gov/alerts/active?point=${lat},${lon}`);
-  } catch {
-    // Alerts are an enhancement; the widget renders without them.
+  if (inUS(lat, lon)) {
+    try {
+      alerts = await net.fetchJSON(`https://api.weather.gov/alerts/active?point=${lat},${lon}`);
+    } catch {
+      // Alerts are an enhancement; the widget renders without them.
+    }
   }
   return mapWeather(forecast, alerts);
 }

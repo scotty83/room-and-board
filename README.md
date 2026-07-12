@@ -62,9 +62,11 @@ remove like any other.
 ### Weather & sky
 
 - **Weather** — current conditions, an hourly temperature trend line, and a
-  multi-day forecast strip, with a National Weather Service alert banner when
-  one is active. *Configure:* Settings → Weather (pick a preset or enter a
-  ZIP; drives Air & Sky too; °F/°C toggle).
+  multi-day forecast strip, worldwide (Open-Meteo). US locations also get a
+  National Weather Service alert banner when one is active. *Configure:*
+  Settings → Weather (search any city worldwide or a 5-digit US ZIP; drives
+  Air & Sky too). Picking a location defaults the unit by region (US → °F,
+  elsewhere → °C); the °F/°C toggle overrides.
 - **Air & Sky** — labeled AQI and UV-index dials (color-coded by band), plus
   sunrise, sunset, and the moon phase. *Configure:* none — uses your weather location.
 

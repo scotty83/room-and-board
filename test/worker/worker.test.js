@@ -724,3 +724,47 @@ describe('decodeBomJson (AWS UTF-16 quirk)', () => {
     expect(decodeBomJson(new TextEncoder().encode('[1,2,3]').buffer)).toEqual([1, 2, 3]);
   });
 });
+
+import { mapApod, fetchApod } from '../../worker/src/apod.js';
+import apodWindow from './fixtures/apod-window.json'; // 7 days, 2019-05-06 is video
+
+describe('apod adapter', () => {
+  it('mapApod picks the newest image (array is date-ascending)', () => {
+    const d = mapApod(apodWindow);
+    expect(d.photo.date).toBe('2019-05-11');
+    expect(d.photo.url).toMatch(/^https?:/);
+    expect(d.photo.title.length).toBeGreaterThan(0);
+    expect(typeof d.photo.explanation).toBe('string');
+  });
+  it('mapApod skips a trailing video day', () => {
+    const d = mapApod(apodWindow.slice(0, 2)); // [05-05 image, 05-06 video]
+    expect(d.photo.date).toBe('2019-05-05');
+  });
+  it('mapApod returns photo:null when the window is all videos', () => {
+    const d = mapApod([{ date: '2019-05-06', media_type: 'video', url: 'x' }]);
+    expect(d.photo).toBeNull();
+  });
+  it('mapApod trims the copyright credit', () => {
+    const d = mapApod([{ date: '1', media_type: 'image', url: 'u', title: 't', copyright: '  Jane Doe\n' }]);
+    expect(d.photo.credit).toBe('Jane Doe');
+  });
+  it('fetchApod retries with yesterday on a 400 (today not posted yet)', async () => {
+    const img = [{ date: '2019-05-05', media_type: 'image', url: 'u', title: 't' }];
+    const spy = vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response('no data', { status: 400 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(img), { status: 200 }));
+    const d = await fetchApod({ NASA_KEY: 'K' });
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(d.photo.date).toBe('2019-05-05');
+    spy.mockRestore();
+  });
+  it('/apod route serves the digest and caches under "apod"', async () => {
+    await clearCache('apod');
+    stubFetch([{ match: /api\.nasa\.gov/, body: apodWindow }]);
+    const res = await call('/apod');
+    expect(res.status).toBe(200);
+    const digest = await res.json();
+    expect(digest.photo.date).toBe('2019-05-11');
+    await clearCache('apod');
+  });
+});

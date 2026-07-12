@@ -1,0 +1,215 @@
+[
+ {
+  "id": "bakerloo",
+  "name": "Bakerloo",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "central",
+  "name": "Central",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "circle",
+  "name": "Circle",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "district",
+  "name": "District",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Part Closure",
+    "reason": "DISTRICT LINE: Saturday 11 and Sunday 12 July, no service between Turnham Green and Ealing Broadway. Replacement bus services operate: Service PL3 operates between Hammersmith and Osterley via Turnham Green (Chiswick High Road), Chiswick Park, Gunnersbury, Acton Town, Ealing Common, Ealing Broadway, South Ealing, Northfields and Boston Manor. Service PL4: Gunnersbury (for District line) - Acton To"
+   }
+  ]
+ },
+ {
+  "id": "dlr",
+  "name": "DLR",
+  "modeName": "dlr",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Part Closure",
+    "reason": "DOCKLANDS LIGHT RAILWAY: Sunday 12 July, no service between Shadwell and Tower Gateway."
+   }
+  ]
+ },
+ {
+  "id": "elizabeth",
+  "name": "Elizabeth line",
+  "modeName": "elizabeth-line",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Reduced Service",
+    "reason": "Elizabeth line: All day on Sunday, 12 July, service will operate at a reduced frequency between Whitechapel and Shenfield while we undertake repairs following a line side fire at Stratford on Friday. Normal service will operate on the of the line."
+   },
+   {
+    "statusSeverityDescription": "Severe Delays",
+    "reason": "Severe delays between Paddington and Heathrow Terminals / Reading while we fix a track fault between Acton Main Line and Paddington. Tickets are being accepted by Great Western Railway and London Underground. All day on Sunday, 12 July, service will operate at a reduced frequency between Whitechapel and Shenfield while we undertake repairs following a line side fire at Stratford on Friday. GOOD SE"
+   }
+  ]
+ },
+ {
+  "id": "hammersmith-city",
+  "name": "Hammersmith & City",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "jubilee",
+  "name": "Jubilee",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "liberty",
+  "name": "Liberty",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "lioness",
+  "name": "Lioness",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "metropolitan",
+  "name": "Metropolitan",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Part Closure",
+    "reason": "METROPOLITAN LINE: Saturday 11 and Sunday 12 July, no service between Harrow-on-the-Hill and Uxbridge. There will also be no PICCADILLY LINE service between Hammersmith and Uxbridge. Replacement bus service ML1 operates between Harrow-on-the-Hill and Uxbridge via West Harrow (Treve Avenue), Rayners Lane, Eastcote, Ruislip Manor, Ruislip, West Ruislip (for Central line and Chiltern Railways), Icken"
+   }
+  ]
+ },
+ {
+  "id": "mildmay",
+  "name": "Mildmay",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "northern",
+  "name": "Northern",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "piccadilly",
+  "name": "Piccadilly",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Part Closure",
+    "reason": "PICCADILLY LINE: Saturday 11, from 0045, and all day Sunday 12 July, no service between Hammersmith and Heathrow (all terminals) / Uxbridge. The METROPOLITAN LINE will also be suspended between Harrow-on-the-Hill and Uxbridge. Use HEATHROW EXPRESS and ELIZABETH LINE for transfers between Heathrow terminals. Replacement bus services operate."
+   }
+  ]
+ },
+ {
+  "id": "suffragette",
+  "name": "Suffragette",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "victoria",
+  "name": "Victoria",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "waterloo-city",
+  "name": "Waterloo & City",
+  "modeName": "tube",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Planned Closure",
+    "reason": "Waterloo & City line: service operates 06:00 until 00:30, Monday to Friday only. There is no service on Saturdays, Sundays and on bank/public holidays."
+   }
+  ]
+ },
+ {
+  "id": "weaver",
+  "name": "Weaver",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ },
+ {
+  "id": "windrush",
+  "name": "Windrush",
+  "modeName": "overground",
+  "lineStatuses": [
+   {
+    "statusSeverityDescription": "Good Service",
+    "reason": null
+   }
+  ]
+ }
+]

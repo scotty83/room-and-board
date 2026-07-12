@@ -31,6 +31,7 @@ export const WIDGET_LABELS = {
   wotd: 'Word of the Day',
   worldclock: 'World Clock',
   services: 'Cloud Services',
+  apod: 'NASA Daily Photo',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',

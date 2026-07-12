@@ -26,6 +26,7 @@ import * as worldclock from '../site/js/widgets/worldclock.js';
 import * as photos from '../site/js/widgets/photos.js';
 import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import * as services from '../site/js/widgets/services.js';
+import * as apod from '../site/js/widgets/apod.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -55,6 +56,7 @@ const CASES = [
   ['photos', photos, ['Beach']],
   ['marketsnews', marketsnews, ['Fed holds rates']],
   ['services', services, ['Zoom', 'Operational', 'Cloudflare', 'Minor', 'Minor Service Outage']],
+  ['apod', apod, ['Messier 24', 'Chuck Ayoub']],
 ];
 
 describe('widget renderers', () => {

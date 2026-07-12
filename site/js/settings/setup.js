@@ -28,6 +28,7 @@ export const WIDGET_LABELS = {
   art: 'Art slideshow',
   photos: 'Photos',
   services: 'Cloud Services',
+  apod: 'NASA Daily Photo',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',

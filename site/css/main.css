@@ -298,6 +298,7 @@ html, body {
 }
 .slide-caption__title { font-size: 24px; font-weight: 600; }
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
+.slide-caption__desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; font-size: 22px; line-height: 1.35; color: var(--ink-dim); max-width: 70ch; }
 .strip {
   /* Original ~70px translucent info band at bottom:0, so its bottom edge meets
      the RoomOS bar (which sits just below the viewport). Not stretched. */

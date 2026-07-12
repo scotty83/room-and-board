@@ -9,6 +9,8 @@ import { mapSubstackPosts } from '../../worker/src/posts.js';
 import { mapIcloudAlbum } from '../../worker/src/icloud.js';
 import { newsFeedUrl } from '../../worker/src/news.js';
 import { parseLegs, siriUrl } from '../../worker/src/bus.js';
+import { njtDateToEpoch } from '../../worker/src/njt.js';
+import { mapMtaAlerts } from '../../worker/src/alerts.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -850,5 +852,39 @@ describe('tfl adapter', () => {
     expect(res.status).toBe(200);
     expect((await res.json()).lines).toHaveLength(19);
     await clearCache('tfl');
+  });
+});
+
+describe('review batch-2 worker fixes', () => {
+  it('njtDateToEpoch is correct across the spring-forward morning (two-pass offset)', () => {
+    // 03:30 EDT on 2026-03-08 (clocks sprang forward at 2AM) → 07:30 UTC.
+    expect(njtDateToEpoch('08-Mar-2026 03:30:00 AM')).toBe(Date.UTC(2026, 2, 8, 7, 30, 0) / 1000);
+    // a normal EDT day is unchanged: 08:15 EDT → 12:15 UTC.
+    expect(njtDateToEpoch('02-Jul-2026 08:15:00 AM')).toBe(Date.UTC(2026, 6, 2, 12, 15, 0) / 1000);
+    // a normal EST day: 08:15 EST → 13:15 UTC.
+    expect(njtDateToEpoch('02-Jan-2026 08:15:00 AM')).toBe(Date.UTC(2026, 0, 2, 13, 15, 0) / 1000);
+  });
+  it('parseLegs never throws on malformed input and drops colon-less pairs', () => {
+    expect(parseLegs('a%zz:b')).toEqual([]);        // bad %-escape → dropped, no URIError
+    expect(parseLegs('400123')).toEqual([]);         // no colon → dropped
+    expect(parseLegs('40012:MTA%20NYCT_BM1')).toEqual([{ stopId: '40012', lineRef: 'MTA NYCT_BM1' }]);
+  });
+  it('mapTfl reports the most-severe status when a line has several', () => {
+    const d = mapTfl([{ id: 'x', name: 'X', modeName: 'tube', lineStatuses: [
+      { statusSeverity: 10, statusSeverityDescription: 'Good Service' },
+      { statusSeverity: 6, statusSeverityDescription: 'Severe Delays', reason: 'signal failure' },
+      { statusSeverity: 9, statusSeverityDescription: 'Minor Delays' },
+    ] }]);
+    expect(d.lines[0].status).toBe('Severe Delays');
+    expect(d.lines[0].ok).toBe(false);
+  });
+  it('mapMtaAlerts unions routes for entities sharing a header instead of dropping one', () => {
+    const feed = { entity: [
+      { alert: { informed_entity: [{ route_id: 'A' }], header_text: { translation: [{ language: 'en', text: 'Delays in both directions.' }] } } },
+      { alert: { informed_entity: [{ route_id: 'C' }], header_text: { translation: [{ language: 'en', text: 'Delays in both directions.' }] } } },
+    ] };
+    const out = mapMtaAlerts(feed, 1000);
+    expect(out).toHaveLength(1);
+    expect(out[0].routes.sort()).toEqual(['A', 'C']);
   });
 });

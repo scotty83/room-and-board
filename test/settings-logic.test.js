@@ -393,3 +393,19 @@ describe('searchStations (Citi Bike picker)', () => {
     expect(searchStations(stations, 'W 2', new Set(), 1)).toHaveLength(1);
   });
 });
+
+import { isBridgeHost } from '../site/js/bridge.js';
+describe('isBridgeHost (fragment IP validation)', () => {
+  it('accepts IPv4/hostname/port and bracketed IPv6', () => {
+    expect(isBridgeHost('192.168.1.50')).toBe(true);
+    expect(isBridgeHost('board.local')).toBe(true);
+    expect(isBridgeHost('10.0.0.1:443')).toBe(true);
+    expect(isBridgeHost('[fe80::1]')).toBe(true);
+  });
+  it('rejects anything that could redirect the socket', () => {
+    expect(isBridgeHost('evil.com/ws?x=')).toBe(false);
+    expect(isBridgeHost('a@b')).toBe(false);
+    expect(isBridgeHost('has space')).toBe(false);
+    expect(isBridgeHost(undefined)).toBe(false);
+  });
+});

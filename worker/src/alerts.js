@@ -11,7 +11,7 @@ const FEEDS = {
 // GTFS-RT ServiceAlerts (JSON flavor) -> [{routes, header}], active now only.
 export function mapMtaAlerts(json, nowSec) {
   const out = [];
-  const seen = new Set();
+  const byKey = new Map();
   for (const entity of json.entity ?? []) {
     const alert = entity.alert;
     if (!alert) continue;
@@ -30,9 +30,16 @@ export function mapMtaAlerts(json, nowSec) {
     // Headers lead with "[A][C]" route tokens; the routes array carries that.
     const header = en.text.replace(/^(\s*\[[A-Z0-9]+\])+\s*/, '').trim();
     const key = header.slice(0, 80);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push({ routes, header });
+    // Same header for different routes: union the routes into the existing row
+    // instead of dropping the second entity (else a filtered route loses its alert).
+    const existing = byKey.get(key);
+    if (existing) {
+      for (const r of routes) if (!existing.routes.includes(r)) existing.routes.push(r);
+      continue;
+    }
+    const row = { routes: [...routes], header };
+    byKey.set(key, row);
+    out.push(row);
   }
   return out.slice(0, 30);
 }

@@ -14,11 +14,14 @@ export function njtDateToEpoch(str) {
   if (!m) return null;
   let hour = Number(m[4]) % 12;
   if (m[7] === 'PM') hour += 12;
-  const asUtc = Date.UTC(Number(m[3]), MONTHS[m[2]], Number(m[1]), hour, Number(m[5]), Number(m[6]));
-  // Determine the New York offset at that instant (handles EST/EDT).
-  const nyString = new Date(asUtc).toLocaleString('en-US', { timeZone: 'America/New_York' });
-  const nyAsUtc = Date.parse(`${nyString} UTC`);
-  return Math.round((asUtc + (asUtc - nyAsUtc)) / 1000);
+  const wall = Date.UTC(Number(m[3]), MONTHS[m[2]], Number(m[1]), hour, Number(m[5]), Number(m[6]));
+  // Two-pass offset: the NY offset must be sampled at the TRUE instant, not at
+  // wall-time-misread-as-UTC — otherwise a DST-transition morning lands an hour
+  // off (the offset differs by an hour across the ~5h gap). `add` is how much to
+  // add to wall-as-UTC to reach true UTC (+4h EDT, +5h EST).
+  const add = (t) => t - Date.parse(`${new Date(t).toLocaleString('en-US', { timeZone: 'America/New_York' })} UTC`);
+  const utc = wall + add(wall + add(wall));
+  return Math.round(utc / 1000);
 }
 
 export function mapNjtUpstream(json, station) {

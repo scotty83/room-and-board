@@ -26,15 +26,24 @@ export function mapSiriStop(json, stopId) {
   return { id: stopId, name: stopName, arrivals };
 }
 
+// Total (never throws): a bad %-escape or a colon-less pair yields null and is
+// dropped, so a crafted `legs` returns an empty result — a clean 400/empty, not
+// a Worker 500 from an unhandled URIError.
+const safeDecode = (s) => {
+  try { return decodeURIComponent(s); } catch { return null; }
+};
 export function parseLegs(param) {
   return (param || '')
     .split(',')
     .filter(Boolean)
     .map((pair) => {
       const i = pair.indexOf(':');
-      return { stopId: decodeURIComponent(pair.slice(0, i)), lineRef: decodeURIComponent(pair.slice(i + 1)) };
+      if (i < 0) return null;
+      const stopId = safeDecode(pair.slice(0, i));
+      const lineRef = safeDecode(pair.slice(i + 1));
+      return stopId && lineRef ? { stopId, lineRef } : null;
     })
-    .filter((l) => l.stopId && l.lineRef)
+    .filter(Boolean)
     .slice(0, 2);
 }
 

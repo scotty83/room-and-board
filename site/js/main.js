@@ -286,7 +286,13 @@ async function boot() {
   $('#edit').innerHTML = icon('pencil', 'icon--btn');
   initTextViewer($('#grid'));
   const fragment = parseFragment(location.hash);
-  window.__signage = { fragment, source: null }; // diagnostics surface
+  // Diagnostics surface — but the bridge passphrase (auth.p) must NOT sit on a
+  // global where injected script could read it. Expose only non-secret fields;
+  // connectBridge below uses the local `fragment` (with the passphrase) instead.
+  window.__signage = {
+    fragment: { cfg: fragment.cfg, auth: fragment.auth ? { u: fragment.auth.u, ip: fragment.auth.ip } : null },
+    source: null,
+  };
 
   if (DEMO) {
     cfg = normalizeConfig({

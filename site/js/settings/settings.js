@@ -189,7 +189,15 @@ const SECTION_RENDERERS = {
 };
 export const SECTION_IDS = Object.keys(SECTION_RENDERERS);
 
+// Bumped on every section navigation. An async renderer captures it before its
+// await and bails if it changed meanwhile, so a slow fetch can't overwrite the
+// pane the user has since navigated to (`navStale()` below).
+let navToken = 0;
+export function navStale(token) {
+  return token !== navToken;
+}
 function renderSection() {
+  navToken += 1;
   SECTION_RENDERERS[state.section]();
 }
 
@@ -410,6 +418,7 @@ function renderSubway() {
 
 function drillList(title, items, onPick) {
   const drill = pane().querySelector('.drill');
+  if (!drill) return; // navigated away mid-flight — the pane no longer has a .drill
   drill.innerHTML = `
     <div class="drill__head">
       <button class="iconbtn" data-back aria-label="Back">←</button>
@@ -432,7 +441,9 @@ function drillList(title, items, onPick) {
 
 let lirrStations = null;
 async function renderLirr() {
+  const _nav = navToken;
   lirrStations ??= await fetchJSON('data/stations-lirr.json');
+  if (navStale(_nav)) return;
   const byId = Object.fromEntries(lirrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">LIRR — Penn Station departures</h2>
@@ -463,7 +474,9 @@ async function renderLirr() {
 
 let mnrStations = null;
 async function renderMnr() {
+  const _nav = navToken;
   mnrStations ??= await fetchJSON('data/stations-mnr.json');
+  if (navStale(_nav)) return;
   const byId = Object.fromEntries(mnrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">Metro-North — Grand Central departures</h2>
@@ -493,6 +506,7 @@ async function renderMnr() {
 }
 
 async function renderNjt() {
+  const _nav = navToken;
   pane().innerHTML = `
     <h2 class="pane__title">NJ Transit</h2>
     <div class="kv"><span>Station</span><b>${escapeHtml(state.cfg.njt.station)}</b></div>
@@ -501,6 +515,7 @@ async function renderNjt() {
   bindAlertsToggle(renderNjt);
   try {
     const { stations } = await fetchJSON(`${WORKER_URL}/njt/stations`);
+    if (navStale(_nav)) return;
     drillList(
       'Choose a station',
       stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
@@ -510,8 +525,8 @@ async function renderNjt() {
       },
     );
   } catch {
-    pane().querySelector('.drill').innerHTML =
-      '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
+    const d = pane().querySelector('.drill');
+    if (d) d.innerHTML = '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
   }
 }
 
@@ -542,6 +557,7 @@ function renderPath() {
 
 let ferryStops = null;
 async function renderFerry() {
+  const _nav = navToken;
   pane().innerHTML = `
     <h2 class="pane__title">NYC Ferry</h2>
     <div class="kv"><span>Landing</span><b>Loading…</b></div>
@@ -560,14 +576,16 @@ async function renderFerry() {
       },
     );
   } catch {
-    pane().querySelector('.drill').innerHTML =
-      '<p class="pane__empty">Landing list unavailable — redeploy the site data.</p>';
+    const d = pane().querySelector('.drill');
+    if (d) d.innerHTML = '<p class="pane__empty">Landing list unavailable — redeploy the site data.</p>';
   }
 }
 
 let expressBus = null;
 async function renderBus() {
+  const _nav = navToken;
   expressBus ??= await fetchJSON('data/express-bus.json');
+  if (navStale(_nav)) return;
   const { expressRoutes, directionsForRoute, stopsForRouteDir } = await import('./pickers.js');
   const legs = state.cfg.bus.legs;
   const chips = legs
@@ -622,7 +640,9 @@ function renderTfl() {
 
 let cbStations = null; // citibike station bundle [{id,name}], fetched once
 async function renderCitibike() {
+  const _nav = navToken;
   cbStations ??= await fetchJSON('data/citibike-stations.json');
+  if (navStale(_nav)) return;
   let query = '';
   const draw = () => {
     const chosen = state.cfg.citibike.stations;
@@ -728,7 +748,9 @@ function renderMarkets() {
 
 let teamsData = null;
 async function renderSports() {
+  const _nav = navToken;
   teamsData ??= await fetchJSON('data/teams.json');
+  if (navStale(_nav)) return;
   const byKey = {};
   for (const l of teamsData.leagues) for (const t of l.teams) byKey[`${l.lg}:${t.id}`] = { ...t, label: l.label };
   const chips = state.cfg.sports.teams
@@ -775,7 +797,9 @@ async function renderSports() {
 }
 
 async function renderNews() {
+  const _nav = navToken;
   const { NEWS_SOURCES } = await import('../widgets/news.js');
+  if (navStale(_nav)) return;
   const groups = ['National', 'Local NYC'];
   pane().innerHTML = `
     <h2 class="pane__title">Headlines</h2>
@@ -800,7 +824,9 @@ async function renderNews() {
 }
 
 async function renderMarketsNews() {
+  const _nav = navToken;
   const { MARKET_SOURCES } = await import('../widgets/marketsnews.js');
+  if (navStale(_nav)) return;
   pane().innerHTML = `
     <h2 class="pane__title">Markets News</h2>
     <p class="pane__hint">Pick your finance sources — newest stories across all of them, merged.</p>
@@ -822,7 +848,9 @@ async function renderMarketsNews() {
 }
 
 async function renderServices() {
+  const _nav = navToken;
   const { SERVICE_CHOICES } = await import('../widgets/services.js');
+  if (navStale(_nav)) return;
   pane().innerHTML = `
     <h2 class="pane__title">Cloud Services</h2>
     <p class="pane__hint">Pick the cloud services to watch — each shows Operational or its current incident. Tap a degraded service on the card for the full picture.</p>

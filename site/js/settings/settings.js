@@ -121,7 +121,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
-    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'] ] },
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'] ] },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
@@ -191,7 +191,7 @@ function pane() {
 
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
-  path: renderPath, ferry: renderFerry, bus: renderBus, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
+  path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
@@ -606,6 +606,49 @@ async function renderBus() {
       });
     pickRoute();
   });
+}
+
+let cbStations = null; // citibike station bundle [{id,name}], fetched once
+async function renderCitibike() {
+  cbStations ??= await fetchJSON('data/citibike-stations.json');
+  let query = '';
+  const draw = () => {
+    const chosen = state.cfg.citibike.stations;
+    const chips = chosen
+      .map((s, i) => `<button class="chip" data-remove="${i}">${escapeHtml(s.name)} ✕</button>`).join('');
+    const chosenIds = new Set(chosen.map((s) => s.id));
+    const matches = query.length >= 2
+      ? cbStations.filter((s) => s.name.toUpperCase().includes(query) && !chosenIds.has(s.id)).slice(0, 20)
+      : [];
+    pane().innerHTML = `
+      <h2 class="pane__title">Citi Bike</h2>
+      <p class="pane__hint">Search a station by its cross-streets. Add up to 6.</p>
+      <div class="chips">${chips || '<span class="pane__empty">No stations — defaults return on save</span>'}</div>
+      <output class="code__display">${escapeHtml(query) || '&nbsp;'}</output>
+      <div class="picklist">${matches
+        .map((s) => `<button class="btn picklist__item" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`)
+        .join('') || (query.length >= 2 ? '<span class="pane__empty">No matches</span>' : '')}</div>
+      ${chosen.length < 6
+        ? qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-', '/'],
+          '<button class="key osk__key" data-key="⌫">⌫</button>')
+        : '<p class="pane__hint">Max 6 — remove one to add another.</p>'}`;
+    pane().querySelectorAll('[data-remove]').forEach((c) =>
+      c.addEventListener('click', () => { state.cfg.citibike.stations = chosen.filter((_, i) => i !== Number(c.dataset.remove)); draw(); }));
+    pane().querySelectorAll('[data-add]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (chosen.length >= 6) return;
+        state.cfg.citibike.stations = [...chosen, { id: b.dataset.add, name: b.dataset.name }];
+        query = ''; draw();
+      }));
+    pane().querySelectorAll('[data-key]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.key;
+        if (k === '⌫') query = query.slice(0, -1);
+        else if (query.length < 30) query += k;
+        draw();
+      }));
+  };
+  draw();
 }
 
 const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };

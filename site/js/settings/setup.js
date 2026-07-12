@@ -5,7 +5,7 @@ import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS,
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
-import { zipLookup } from '../geo.js';
+import { locationSearch } from '../geo.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
@@ -82,18 +82,6 @@ export function stepTwoVisibility(placed) {
   }
   return { sections, groups };
 }
-
-const PRESETS = [
-  ['Midtown Manhattan', 40.754, -73.984],
-  ['Lower Manhattan', 40.707, -74.011],
-  ['Downtown Brooklyn', 40.694, -73.985],
-  ['Long Island City', 40.745, -73.949],
-  ['Jersey City', 40.728, -74.078],
-  ['Newark', 40.735, -74.172],
-  ['White Plains', 41.034, -73.763],
-  ['Mineola', 40.747, -73.641],
-  ['Stamford', 41.053, -73.539],
-];
 
 let cfg = structuredClone(DEFAULT_CONFIG);
 
@@ -245,30 +233,25 @@ function renderSubwayLines() {
 }
 
 function renderLocation() {
-  $('#loc-preset').innerHTML =
-    `<option value="">Choose a preset…</option>` +
-    PRESETS.map(([label], i) => `<option value="${i}" ${label === cfg.loc.label ? 'selected' : ''}>${label}</option>`).join('');
   $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
-  $('#loc-preset').addEventListener('change', (e) => {
-    const p = PRESETS[Number(e.target.value)];
-    if (!p) return;
-    cfg.loc = { label: p[0], lat: p[1], lon: p[2], units: cfg.loc.units };
-    $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
-  });
-  $('#zip-go').addEventListener('click', async () => {
-    const zip = $('#zip').value.trim();
-    if (!/^\d{5}$/.test(zip)) return;
-    try {
-      const loc = await zipLookup(zip);
-      if (!loc) throw new Error('no match');
-      cfg.loc = { ...loc, units: cfg.loc.units };
-      $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
-    } catch {
-      $('#loc-current').textContent = `Couldn't find ${zip}`;
-    }
-  });
   const paintUnits = () => $('#weather-field').querySelectorAll('[data-units]').forEach((b) =>
     b.classList.toggle('is-active', b.dataset.units === (cfg.loc.units === 'C' ? 'C' : 'F')));
+  $('#loc-go').addEventListener('click', async () => {
+    const results = await locationSearch($('#loc-search').value);
+    $('#loc-results').innerHTML = results.length
+      ? results.map((r, i) => `<button type="button" class="btn" data-pick="${i}">${escapeHtml(r.label)}</button>`).join('')
+      : '<span class="hint">No matches — try a city name or a 5-digit US ZIP.</span>';
+    $('#loc-results').querySelectorAll('[data-pick]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const r = results[Number(b.dataset.pick)];
+        // Picking sets units by region (US → °F, else °C); the toggle overrides.
+        cfg.loc = { lat: r.lat, lon: r.lon, label: r.label, units: r.cc === 'US' ? 'F' : 'C' };
+        $('#loc-results').innerHTML = '';
+        $('#loc-search').value = '';
+        $('#loc-current').textContent = `Current: ${cfg.loc.label}`;
+        paintUnits();
+      }));
+  });
   paintUnits();
   $('#weather-field').querySelectorAll('[data-units]').forEach((b) =>
     b.addEventListener('click', () => { cfg.loc = { ...cfg.loc, units: b.dataset.units }; paintUnits(); }));

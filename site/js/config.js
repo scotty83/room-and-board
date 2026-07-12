@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -24,7 +24,7 @@ export const WIDGET_IDS = [
 // order + categories, and must remain an exact partition of WIDGET_IDS
 // (asserted in test/settings-logic.test.js).
 export const WIDGET_GROUPS = [
-  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus'] },
+  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike'] },
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
@@ -53,6 +53,11 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
   services: Object.freeze({ list: Object.freeze(['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws']) }),
+  citibike: Object.freeze({ stations: Object.freeze([
+    Object.freeze({ id: '66dc7c31-0aca-11e7-82f6-3863bb44ef7c', name: 'W 29 St & 9 Ave' }),
+    Object.freeze({ id: '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', name: '10 Ave & W 28 St' }),
+    Object.freeze({ id: '1869743938848725856', name: '9 Ave & W 33 St' }),
+  ]) }),
   sports: Object.freeze({ teams: Object.freeze([]) }), // [{lg, id}] up to 6
   news: Object.freeze({ sources: Object.freeze(['nyt-home', 'nyt-nyregion']) }),
   // Starter accounts (AI/tech/finance, politically neutral, verified active
@@ -221,6 +226,15 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : [...DEFAULT_CONFIG.services.list];
       })(),
     },
+    citibike: {
+      stations: (() => {
+        const picked = (Array.isArray(raw.citibike?.stations) ? raw.citibike.stations : [])
+          .filter((s) => s && typeof s.id === 'string' && typeof s.name === 'string')
+          .slice(0, 6)
+          .map((s) => ({ id: s.id, name: s.name }));
+        return picked.length ? picked : DEFAULT_CONFIG.citibike.stations.map((s) => ({ id: s.id, name: s.name }));
+      })(),
+    },
     njt: {
       station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
       alerts: raw.njt?.alerts !== false,
@@ -299,6 +313,7 @@ export async function encodeConfig(cfg) {
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
   if (wire.marketsnews && isDefault(wire.marketsnews.sources, DEFAULT_CONFIG.marketsnews.sources)) delete wire.marketsnews;
   if (wire.services && isDefault(wire.services.list, DEFAULT_CONFIG.services.list)) delete wire.services;
+  if (wire.citibike && isDefault(wire.citibike.stations, DEFAULT_CONFIG.citibike.stations)) delete wire.citibike;
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

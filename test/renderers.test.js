@@ -27,6 +27,7 @@ import * as photos from '../site/js/widgets/photos.js';
 import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import * as services from '../site/js/widgets/services.js';
 import * as apod from '../site/js/widgets/apod.js';
+import * as citibike from '../site/js/widgets/citibike.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -68,6 +69,22 @@ describe('widget renderers', () => {
       for (const t of expectedTexts) expect(text).toContain(t);
     });
   }
+
+  it('citibike joins config station names with live counts, dims closed stations', () => {
+    const host = el();
+    // Names come from cfg; counts from the digest — ids must line up (they do
+    // here, mirroring the default config the demo digest was recorded against).
+    const cfg = { citibike: { stations: [
+      { id: '66dc7c31-0aca-11e7-82f6-3863bb44ef7c', name: 'W 29 St & 9 Ave' },
+      { id: '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', name: '10 Ave & W 28 St' },
+      { id: '1869743938848725856', name: '9 Ave & W 33 St' },
+    ] } };
+    citibike.render(host, DEMO_VMS.citibike, cfg);
+    const text = host.textContent;
+    expect(text).toContain('W 29 St & 9 Ave');
+    expect(text).toContain('bikes');
+    expect(text).toContain('not renting'); // the ok:false demo station
+  });
 
   it('subway renders route bullets and flags alerting lines', () => {
     const host = el();

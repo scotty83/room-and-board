@@ -350,3 +350,17 @@ describe('apod widget id', () => {
     expect(WIDGET_GROUPS.flatMap((g) => g.ids)).toContain('apod');
   });
 });
+
+describe('citibike config', () => {
+  it('defaults to 3 office stations and caps custom at 6', () => {
+    expect(normalizeConfig({}).citibike.stations).toHaveLength(3);
+    const many = Array.from({ length: 9 }, (_, i) => ({ id: `x${i}`, name: `S${i}` }));
+    expect(normalizeConfig({ citibike: { stations: many } }).citibike.stations).toHaveLength(6);
+    expect(normalizeConfig({ citibike: { stations: [{ id: 'a' }] } }).citibike.stations).toHaveLength(3);
+  });
+  it('strips a default citibike from the wire (custom is longer)', async () => {
+    const def = await encodeConfig(normalizeConfig({}));
+    const custom = await encodeConfig(normalizeConfig({ citibike: { stations: [{ id: 'zzzzzzzz-0000-0000-0000-000000000000', name: 'Custom Station Far Away' }] } }));
+    expect(custom.length).toBeGreaterThan(def.length);
+  });
+});

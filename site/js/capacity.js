@@ -49,6 +49,7 @@ const MODELS = {
   // Name+state row (~34px) plus an occasional one-line incident note on
   // degraded services; 52 budgets that mix (browser-audit calibrated).
   services: listCapacity(52, 40),
+  citibike: listCapacity(44, 40),
 };
 
 export function itemCapacity(id, w, h) {
@@ -95,6 +96,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return ofTotal(Math.min(n, cfg.worldclock?.cities?.length ?? n), cfg.worldclock?.cities?.length, 'cities');
     case 'services':
       return ofTotal(Math.min(n, cfg.services?.list?.length ?? n), cfg.services?.list?.length, 'services');
+    case 'citibike':
+      return ofTotal(Math.min(n, cfg.citibike?.stations?.length ?? n), cfg.citibike?.stations?.length, 'stations');
     case 'weather':
       return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
     default:

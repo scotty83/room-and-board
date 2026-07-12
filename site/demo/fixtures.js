@@ -186,6 +186,11 @@ export const DEMO_VMS = {
     { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
   ] },
   marketsnews: { items: [{ title: 'Fed holds rates', source: 'CNBC', t: 1783000000000 }], nowMs: 1783000100000 },
+  citibike: { updatedAt: 1783000000, stations: [
+    { id: '66dc7c31-0aca-11e7-82f6-3863bb44ef7c', bikes: 7, ebikes: 3, docks: 12, ok: true },
+    { id: '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', bikes: 0, ebikes: 0, docks: 25, ok: true },
+    { id: '1869743938848725856', bikes: 4, ebikes: 0, docks: 0, ok: false },
+  ] },
   apod: { updatedAt: 1783000000, photo: {
     url: 'https://apod.nasa.gov/apod/image/2607/M24_1088.jpg',
     title: 'Messier 24: Sagittarius Star Cloud',

@@ -29,6 +29,7 @@ export const WIDGET_LABELS = {
   photos: 'Photos',
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
+  citibike: 'Citi Bike',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
@@ -53,6 +54,7 @@ export const SETUP_SECTIONS = [
   { id: 'path-field', group: 'Commute', triggers: ['path'] },
   { id: 'ferry-field', group: 'Commute', triggers: ['ferry'] },
   { id: 'bus-field', group: 'Commute', triggers: ['bus'] },
+  { id: 'citibike-field', group: 'Commute', triggers: ['citibike'] },
   { id: 'weather-field', group: 'Weather & Air', triggers: ['weather', 'aqi'] },
   { id: 'markets-field', group: 'Markets & Sports', triggers: ['markets'] },
   { id: 'marketsnews-field', group: 'Markets & Sports', triggers: ['marketsnews'] },
@@ -118,6 +120,7 @@ async function boot() {
   renderPath();
   await renderFerry();
   renderBusStops();
+  renderCitibikeField();
   renderTickers();
   await renderMarketsNewsSources();
   renderWorldclockPrefs();
@@ -400,6 +403,33 @@ async function renderNewsSources() {
 }
 
 let expressBusData = null;
+let cbStations = null; // citibike station bundle, fetched once
+async function renderCitibikeField() {
+  cbStations ??= await fetch('data/citibike-stations.json').then((r) => r.json());
+  const input = $('#citibike-search');
+  const list = $('#citibike-matches');
+  const chipsEl = $('#citibike-chips');
+  const drawChips = () => {
+    chipsEl.innerHTML = cfg.citibike.stations
+      .map((s, i) => `<button type="button" class="chip" data-remove="${i}">${escapeHtml(s.name)} ✕</button>`).join('');
+    chipsEl.querySelectorAll('[data-remove]').forEach((c) =>
+      c.addEventListener('click', () => { cfg.citibike.stations = cfg.citibike.stations.filter((_, i) => i !== Number(c.dataset.remove)); drawChips(); }));
+  };
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toUpperCase();
+    const chosenIds = new Set(cfg.citibike.stations.map((s) => s.id));
+    const matches = q.length >= 2 ? cbStations.filter((s) => s.name.toUpperCase().includes(q) && !chosenIds.has(s.id)).slice(0, 15) : [];
+    list.innerHTML = matches.map((s) => `<button type="button" class="btn" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`).join('');
+    list.querySelectorAll('[data-add]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (cfg.citibike.stations.length >= 6) return;
+        cfg.citibike.stations = [...cfg.citibike.stations, { id: b.dataset.add, name: b.dataset.name }];
+        input.value = ''; list.innerHTML = ''; drawChips();
+      }));
+  });
+  drawChips();
+}
+
 async function renderBusStops() {
   const { expressRoutes, directionsForRoute, stopsForRouteDir } = await import('./pickers.js');
   expressBusData ??= await fetch('data/express-bus.json').then((r) => r.json());

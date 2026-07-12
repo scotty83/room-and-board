@@ -126,6 +126,10 @@ remove like any other.
   folder → Share → **Anyone with the link** → Copy link (Drive needs a free
   API key on the Worker; see Data sources). ⚠️ Anyone with the link can view
   the photos — add only office-appropriate ones.
+- **NASA Daily Photo** — NASA's Astronomy Picture of the Day: the image + its
+  title, tap for full screen with the explanation. Changes once a day; video
+  days are skipped automatically. *Configure:* none (uses a free NASA key on the
+  Worker; see Data sources).
 
 ### Daily extras
 
@@ -272,6 +276,7 @@ the URL fragment and the dashboard returns configured.
 | MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
 | Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); Photos' Drive source reports unconfigured until set |
 | Service status pages | Worker proxy, no keys | Statuspage instances (Zoom/Ubiquiti/Cloudflare/GitHub) + Slack/Microsoft/Google/Webex/AWS public JSON; failures report "Unknown", never fake green |
+| NASA APOD | Worker + free key | `wrangler secret put NASA_KEY` (free key from api.nasa.gov); falls back to `DEMO_KEY` when unset — viable because the 1h fleet-shared cache stays under DEMO_KEY's daily cap, but the real key is preferred |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

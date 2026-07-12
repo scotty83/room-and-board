@@ -12,6 +12,11 @@ function captionMeta(item) {
   return `${escapeHtml(item.artist)}${item.year ? ` · ${escapeHtml(item.year)}` : ''}`;
 }
 
+// Optional third caption line (APOD explanation); clamped in CSS. Empty when absent.
+function captionDesc(item) {
+  return item.desc ? `<span class="slide-caption__desc">${escapeHtml(item.desc)}</span>` : '';
+}
+
 // Pointer-gesture classifier for the viewer: horizontal drags navigate,
 // small movements are taps (close), anything ambiguous is ignored.
 export function swipeAction(dx, dy) {
@@ -64,6 +69,7 @@ export function openImageViewer(current, cfg, { list = [] } = {}) {
     <div class="slide-caption">
       <span class="slide-caption__title">${escapeHtml(current.title)}</span>
       <span class="slide-caption__meta">${captionMeta(current)}</span>
+      ${captionDesc(current)}
     </div>
     <div class="strip"></div>`;
   const strip = viewer.querySelector('.strip');
@@ -94,7 +100,8 @@ function step(viewer, dir) {
     imgEl.alt = item.title;
     viewer.querySelector('.slide-caption').innerHTML = `
       <span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${captionMeta(item)}</span>`;
+      <span class="slide-caption__meta">${captionMeta(item)}</span>
+      ${captionDesc(item)}`;
   };
   img.onload = swap;
   img.onerror = swap; // show anyway; <img> will retry like the slideshow does

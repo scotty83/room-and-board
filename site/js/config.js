@@ -16,7 +16,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -28,7 +28,7 @@ export const WIDGET_GROUPS = [
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
-  { label: 'Ambient', ids: ['art', 'photos', 'worldclock'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'apod', 'worldclock'] },
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services'] },
 ];
 

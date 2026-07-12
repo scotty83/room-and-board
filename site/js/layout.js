@@ -28,6 +28,7 @@ export const MIN_SIZE = {
   wotd: [2, 2],
   art: [2, 2],
   photos: [2, 2],
+  apod: [3, 3],
   aqi: [2, 2],
   worldclock: [2, 3], // shortest card that fits a useful clock list (rows slice to fit)
   sports: [3, 2],

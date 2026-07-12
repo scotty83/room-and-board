@@ -5,6 +5,8 @@ import {
   encodeConfig,
   decodeConfig,
   pickNewest,
+  WIDGET_IDS,
+  WIDGET_GROUPS,
 } from '../site/js/config.js';
 
 describe('normalizeConfig', () => {
@@ -339,5 +341,12 @@ describe('services config', () => {
     expect(normalizeConfig({}).services.list).toEqual(ALL);
     expect(normalizeConfig({ services: { list: ['zoom', 'bogus'] } }).services.list).toEqual(['zoom']);
     expect(normalizeConfig({ services: { list: [] } }).services.list).toEqual(ALL);
+  });
+});
+
+describe('apod widget id', () => {
+  it('apod is a valid, grouped widget id', () => {
+    expect(WIDGET_IDS).toContain('apod');
+    expect(WIDGET_GROUPS.flatMap((g) => g.ids)).toContain('apod');
   });
 });

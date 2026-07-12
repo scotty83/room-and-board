@@ -14,6 +14,7 @@ import { fetchSubstackPosts } from './posts.js';
 import { fetchIcloudAlbum } from './icloud.js';
 import { fetchGdriveAlbum } from './gdrive.js';
 import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
+import { fetchApod } from './apod.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -204,6 +205,12 @@ export default {
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
+    }
+
+    if (path === '/apod' && request.method === 'GET') {
+      // Single global daily image — one cache key, 1h TTL (APOD changes once a
+      // day). NASA_KEY set; DEMO_KEY is the in-code fallback inside fetchApod.
+      return cached(url.origin, 'apod', 3600, () => fetchApod(env));
     }
 
     if (path === '/gdrive/album' && request.method === 'GET') {

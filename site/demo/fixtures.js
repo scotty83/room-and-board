@@ -186,6 +186,11 @@ export const DEMO_VMS = {
     { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
   ] },
   marketsnews: { items: [{ title: 'Fed holds rates', source: 'CNBC', t: 1783000000000 }], nowMs: 1783000100000 },
+  apod: { updatedAt: 1783000000, photo: {
+    url: 'https://apod.nasa.gov/apod/image/2607/M24_1088.jpg',
+    title: 'Messier 24: Sagittarius Star Cloud',
+    explanation: 'Unlike most entries in Charles Messier\'s famous catalog of deep sky objects, M24 is not a bright galaxy or star cluster but a rich star cloud toward the center of our Milky Way galaxy, a window into a spiral arm some 10,000 light-years away.',
+    credit: 'Chuck Ayoub', date: '2026-07-11' } },
   services: {
     updatedAt: 1783000000,
     services: [

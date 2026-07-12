@@ -55,7 +55,10 @@ export function render(el, vm, _cfg) {
 
 export function mapMarkets(payload) {
   if (!payload || payload.error || !Array.isArray(payload.indices)) {
-    return { updatedAt: null, stale: true, indices: [] };
+    // Throw rather than return an empty sentinel: startWidget's catch then
+    // preserves the last-good cache + stale mark, instead of a blank payload
+    // overwriting good data (and leaving a stale "as of" note in the header).
+    throw new Error('markets: unusable payload');
   }
   const indices = payload.indices.filter(
     (ix) =>

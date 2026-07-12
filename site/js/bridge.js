@@ -11,10 +11,18 @@ function b64urlToString(str) {
 // AllowDeviceCertificate: True` and `NetworkServices Websocket` enabled on the
 // board). Credentials are the temporary low-privilege account the macro
 // rotates. JSON-RPC 2.0; page->macro messages ride xCommand Message Send.
+// A plausible host: IPv4/hostname (+optional port) or bracketed IPv6. Rejects
+// anything with `/`, `@`, `?`, whitespace etc. so a crafted fragment can't
+// redirect the WebSocket to an attacker-chosen path/host.
+export function isBridgeHost(ip) {
+  return typeof ip === 'string'
+    && (/^[\w.-]{1,64}(:\d{1,5})?$/.test(ip) || /^\[[0-9a-fA-F:]+\](:\d{1,5})?$/.test(ip));
+}
+
 export function connectBridge(auth, { WS = globalThis.WebSocket, timeoutMs = 5000 } = {}) {
   return new Promise((resolve, reject) => {
-    if (!auth?.ip) {
-      reject(new Error('bridge: no device ip in auth fragment'));
+    if (!isBridgeHost(auth?.ip)) {
+      reject(new Error('bridge: missing or invalid device ip in auth fragment'));
       return;
     }
     const ws = new WS(

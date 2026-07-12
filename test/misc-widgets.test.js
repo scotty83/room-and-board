@@ -125,9 +125,10 @@ describe('mapMarkets (page side)', () => {
     expect(vm.indices).toHaveLength(1); // invalid row dropped
     expect(vm.indices[0].name).toBe('S&P 500');
   });
-  it('returns empty for error payloads', () => {
-    expect(mapMarkets(null).indices).toEqual([]);
-    expect(mapMarkets({ error: 'boom' }).indices).toEqual([]);
+  it('throws on unusable payloads so startWidget preserves the last-good cache', () => {
+    expect(() => mapMarkets(null)).toThrow();
+    expect(() => mapMarkets({ error: 'boom' })).toThrow();
+    expect(() => mapMarkets({ nope: true })).toThrow();
   });
 });
 

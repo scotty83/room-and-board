@@ -214,7 +214,15 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       }
       render(); // restores positions when nothing valid was previewed
     };
-    return { update, finish };
+    // Abort (pointercancel): clean up the preview without committing — leaves
+    // the layout unchanged.
+    const cancel = () => {
+      ph.hidden = true;
+      block.classList.remove('is-dragging', 'is-resizing');
+      block.style.transform = '';
+      render();
+    };
+    return { update, finish, cancel };
   }
 
   function bindDrag(block) {
@@ -232,18 +240,22 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
           y: start.y + Math.round((e.clientY - origin.y) / ch),
         };
       });
+      const unbind = () => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onCancel);
+      };
       const onMove = (e) => {
         block.style.transform = `translate(${e.clientX - origin.x}px, ${e.clientY - origin.y}px)`;
         g.update(e);
       };
-      const onUp = (e) => {
-        window.removeEventListener('pointermove', onMove);
-        window.removeEventListener('pointerup', onUp);
-        g.update(e);
-        g.finish();
-      };
+      const onUp = (e) => { unbind(); g.update(e); g.finish(); };
+      // pointercancel (system gesture / palm): drop the listeners and abort, or
+      // the next stray pointerup elsewhere would commit this dead gesture.
+      const onCancel = () => { unbind(); g.cancel(); };
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onCancel);
     });
   }
 
@@ -267,16 +279,18 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
           h: start.h + Math.round((e.clientY - origin.y) / ch),
         };
       });
-      const onMove = (e) => g.update(e);
-      const onUp = (e) => {
+      const unbind = () => {
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onCancel);
         blocksHost.classList.remove('is-resize-gesture');
-        g.update(e);
-        g.finish();
       };
+      const onMove = (e) => g.update(e);
+      const onUp = (e) => { unbind(); g.update(e); g.finish(); };
+      const onCancel = () => { unbind(); g.cancel(); };
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onCancel);
     });
   }
 

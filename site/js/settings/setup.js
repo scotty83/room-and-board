@@ -98,35 +98,14 @@ async function boot() {
   cfg = structuredClone(normalizeConfig(cfg));
 
   $('#name').value = cfg.name;
-  renderWidgets();
-  renderLocation();
-  await renderLirrDest();
-  await renderRailDest('mnr-dest', 'data/stations-mnr.json', 'mnr');
-  bindAlertCheck('mnr-alerts', 'mnr');
-  renderSubwayLines();
-  renderArtPrefs();
-  bindAlertCheck('lirr-alerts', 'lirr');
-  bindAlertCheck('njt-alerts', 'njt');
-  await renderNjt();
-  renderPath();
-  await renderFerry();
-  renderBusStops();
-  renderCitibikeField();
-  renderTflLines();
-  renderTickers();
-  await renderMarketsNewsSources();
-  renderWorldclockPrefs();
-  await renderTeams();
-  await renderNewsSources();
-  renderPostsAccounts();
-  renderPhotos();
-  renderServicesField();
   $('#mode').value = cfg.mode;
 
+  // Wire the critical controls FIRST — before any data-loading section render —
+  // so a flaky fetch or a Pages per-asset deploy skew (which throws an import
+  // SyntaxError) can't leave the Get-code / wizard buttons dead.
   $('#get-code').addEventListener('click', getCode);
   $('#get-signage-url').addEventListener('click', getSignageUrl);
   $('#copy-signage-url').addEventListener('click', copySignageUrl);
-
   $('#to-step-2').addEventListener('click', () => {
     applyStepTwo();
     $('#step-1').hidden = true;
@@ -138,6 +117,33 @@ async function boot() {
     $('#step-1').hidden = false;
     window.scrollTo(0, 0);
   });
+
+  // Each section renders independently: one failure is logged, not fatal, so a
+  // single broken field can't blank the rest of the setup form.
+  const safe = async (fn) => { try { await fn(); } catch (e) { console.error('[setup] section render failed', e); } };
+  await safe(renderWidgets);
+  await safe(renderLocation);
+  await safe(renderLirrDest);
+  await safe(() => renderRailDest('mnr-dest', 'data/stations-mnr.json', 'mnr'));
+  await safe(() => bindAlertCheck('mnr-alerts', 'mnr'));
+  await safe(renderSubwayLines);
+  await safe(renderArtPrefs);
+  await safe(() => bindAlertCheck('lirr-alerts', 'lirr'));
+  await safe(() => bindAlertCheck('njt-alerts', 'njt'));
+  await safe(renderNjt);
+  await safe(renderPath);
+  await safe(renderFerry);
+  await safe(renderBusStops);
+  await safe(renderCitibikeField);
+  await safe(renderTflLines);
+  await safe(renderTickers);
+  await safe(renderMarketsNewsSources);
+  await safe(renderWorldclockPrefs);
+  await safe(renderTeams);
+  await safe(renderNewsSources);
+  await safe(renderPostsAccounts);
+  await safe(renderPhotos);
+  await safe(renderServicesField);
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's

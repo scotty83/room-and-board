@@ -127,7 +127,11 @@ export function normalizeConfig(raw) {
       : raw.layout
     : null;
   const layout =
-    rawLayout && rawLayout.length
+    // An explicitly-present layout (even empty — the user removed every widget)
+    // is honored; only a truly ABSENT layout falls back to the legacy widgets
+    // list or the default. Previously `[]` failed the length check and silently
+    // resurrected the stale widgets list at scrambled default positions.
+    Array.isArray(rawLayout)
       ? normalizeLayout(rawLayout)
       : Array.isArray(raw.widgets)
         ? migrateWidgetsToLayout(raw.widgets)

@@ -364,3 +364,16 @@ describe('citibike config', () => {
     expect(custom.length).toBeGreaterThan(def.length);
   });
 });
+
+describe('tfl config', () => {
+  it('defaults to the 11 tube lines and drops junk ids', () => {
+    expect(normalizeConfig({}).tfl.lines).toHaveLength(11);
+    expect(normalizeConfig({ tfl: { lines: ['central', 'nope', 'central'] } }).tfl.lines).toEqual(['central']);
+    expect(normalizeConfig({ tfl: { lines: [] } }).tfl.lines).toHaveLength(11);
+  });
+  it('strips a default tfl from the wire (custom is longer)', async () => {
+    const def = await encodeConfig(normalizeConfig({}));
+    const custom = await encodeConfig(normalizeConfig({ tfl: { lines: ['central', 'elizabeth', 'dlr'] } }));
+    expect(custom.length).toBeGreaterThan(def.length);
+  });
+});

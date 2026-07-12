@@ -715,6 +715,19 @@ body.mode-ambient .gear { bottom: 7px; }
 .cb__stat { font-size: 20px; color: var(--ink-dim); white-space: nowrap; flex: none; }
 .cb__stat--off { color: var(--ink-faint); }
 .cb__e { color: var(--accent); font-weight: 600; }
+
+/* ---------- tfl status ---------- */
+.tfl { display: flex; align-items: center; gap: 10px; padding: 5px 0; }
+.tfl__dot { width: 14px; height: 14px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.tfl__name { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.tfl__status { font-size: 19px; color: var(--ink-dim); white-space: nowrap; flex: none; }
+.tfl--alert .tfl__status { color: var(--warn); font-weight: 600; }
+.tfl--tap { cursor: pointer; }
+.tflchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.tflchip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font-size: 19px; cursor: pointer; }
+.tflchip__dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.tflchip--off { opacity: 0.4; }
+.pane__subhead, .setup__subhead { font-size: 18px; color: var(--ink-dim); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.06em; }
 /* Incident detail rides the shared text viewer; keep its paragraph breaks. */
 .text-viewer__body { white-space: pre-line; }
 

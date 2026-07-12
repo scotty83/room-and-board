@@ -91,6 +91,10 @@ remove like any other.
 - **Citi Bike** — live bikes (e-bikes called out) and open docks at up to six
   stations; defaults to the stations nearest the office. *Configure:* Settings →
   Citi Bike (search a station by its cross-streets). Keyless.
+- **TfL Status** — London line status (Tube + Elizabeth line + DLR + Overground):
+  a coloured dot + name + "Good Service" / the current disruption per line you
+  pick; tap a disrupted line for the full reason. *Configure:* Settings → TfL
+  Status (toggle lines by mode). Keyless.
 
 ### Markets, sports & news
 
@@ -292,6 +296,7 @@ the URL fragment and the dashboard returns configured.
 | PANYNJ RidePATH (PATH) | Worker, keyless | no CORS upstream; 30 s cached digest, projected epochs |
 | NYC Ferry GTFS-RT | Worker, keyless | protobuf decoded Worker-side; trip/route names from bundled `data/ferry.json` |
 | Citi Bike GBFS | Worker, keyless | live `station_status` proxied + cached 60 s; station names from bundled `data/citibike-stations.json` (rebuild via `tools/build-citibike-data.js`) |
+| TfL Unified API | Worker, keyless | `Line/Mode/.../Status` proxied + cached 120 s; line names/colours in `site/js/tfl-lines.js`; optional `TFL_KEY` only raises rate limits |
 | Bundled words.json (word of the day) | none | curated 366+ list, zero network — shares `dailyPick` with quotes |
 | iCloud Shared Streams (photos) | Worker, keyless (unofficial) | webstream + webasseturls endpoints; CORS-locked Worker-side; digest cached ~30 min; signed image URLs fetched by the board via `<img>` |
 

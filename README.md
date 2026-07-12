@@ -88,6 +88,9 @@ remove like any other.
   express route QM/BM/SIM/X, then direction, then stop), in minutes or
   distance. *Configure:* Settings → Express Bus (needs a free BusTime key on
   the Worker; see Data sources — the picker works without it).
+- **Citi Bike** — live bikes (e-bikes called out) and open docks at up to six
+  stations; defaults to the stations nearest the office. *Configure:* Settings →
+  Citi Bike (search a station by its cross-streets). Keyless.
 
 ### Markets, sports & news
 
@@ -288,6 +291,7 @@ the URL fragment and the dashboard returns configured.
 | Wikimedia (history) | direct, keyless | |
 | PANYNJ RidePATH (PATH) | Worker, keyless | no CORS upstream; 30 s cached digest, projected epochs |
 | NYC Ferry GTFS-RT | Worker, keyless | protobuf decoded Worker-side; trip/route names from bundled `data/ferry.json` |
+| Citi Bike GBFS | Worker, keyless | live `station_status` proxied + cached 60 s; station names from bundled `data/citibike-stations.json` (rebuild via `tools/build-citibike-data.js`) |
 | Bundled words.json (word of the day) | none | curated 366+ list, zero network — shares `dailyPick` with quotes |
 | iCloud Shared Streams (photos) | Worker, keyless (unofficial) | webstream + webasseturls endpoints; CORS-locked Worker-side; digest cached ~30 min; signed image URLs fetched by the board via `<img>` |
 

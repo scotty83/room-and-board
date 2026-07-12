@@ -58,6 +58,7 @@ let cfg = null;
 // wedged, so it must not trigger a reload loop.
 let lastRender = Date.now();
 let slideshow = null;
+let slideshowStarting = false; // guards the await gap in startSlideshow
 const cancels = [];
 
 function cardFor(mod, rect) {
@@ -155,7 +156,12 @@ function renderStrip() {
 }
 
 async function startSlideshow() {
-  if (slideshow) return;
+  // `slideshow` is only assigned after the manifest await, so two near-
+  // simultaneous calls (applyMode runs once directly + once from schedule's
+  // immediate first tick) would both pass a `slideshow`-only guard and spawn a
+  // second, un-stoppable engine. The synchronous in-flight flag closes that gap.
+  if (slideshow || slideshowStarting) return;
+  slideshowStarting = true;
   try {
     const src = ambientSource(cfg);
     let manifest;
@@ -169,6 +175,7 @@ async function startSlideshow() {
     slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000 });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }
+  finally { slideshowStarting = false; }
 }
 
 function applyMode() {

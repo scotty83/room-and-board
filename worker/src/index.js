@@ -114,7 +114,12 @@ async function cached(origin, key, ttlS, fetcher) {
         headers: { 'Content-Type': 'application/json', 'Cache-Control': `max-age=${ttl}` },
       });
     try {
-      await Promise.all([cache.put(freshKey, entry(ttlS)), cache.put(staleKey, entry(STALE_TTL_S))]);
+      // A `partial` payload (some upstreams failed) is fine to serve fresh, but
+      // must NOT overwrite the complete 24h stale backup.
+      await Promise.all([
+        cache.put(freshKey, entry(ttlS)),
+        ...(fresh?.partial ? [] : [cache.put(staleKey, entry(STALE_TTL_S))]),
+      ]);
     } catch {
       // Caching is best-effort — a put failure must not drop the fresh payload
       // we already fetched.
@@ -146,7 +151,10 @@ async function fetchMarkets(symbols) {
   );
   const indices = settled.filter((s) => s.status === 'fulfilled').map((s) => s.value);
   if (!indices.length) throw new Error('yahoo: all symbols failed');
-  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, indices };
+  // Mark an incomplete batch so cached() won't promote it over a complete 24h
+  // stale backup (a later total outage should serve the full list, not this).
+  const partial = indices.length < symbols.length;
+  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, indices, ...(partial && { partial: true }) };
 }
 
 export default {

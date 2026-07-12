@@ -6,7 +6,11 @@ import { escapeHtml } from './util.js';
 
 export function stripData(caches, cfg) {
   const enabled = new Set(cfg.widgets);
-  const temp = enabled.has('weather') && caches.weather ? caches.weather.now?.temp ?? null : null;
+  // The weather VM stores canonical Fahrenheit and converts at the card's
+  // render; the strip must convert too or a °C board shows Fahrenheit here.
+  const rawF = enabled.has('weather') && caches.weather ? caches.weather.now?.temp ?? null : null;
+  const temp = rawF === null ? null
+    : (cfg.loc?.units === 'C' ? Math.round((rawF - 32) * 5 / 9) : rawF);
   const transit = [];
 
   if (enabled.has('lirr') && caches.lirr) {

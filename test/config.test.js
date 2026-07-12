@@ -377,3 +377,18 @@ describe('tfl config', () => {
     expect(custom.length).toBeGreaterThan(def.length);
   });
 });
+
+describe('config injection hardening', () => {
+  it('strips HTML-special chars from worldclock labels', () => {
+    const wc = normalizeConfig({ worldclock: { cities: [{ label: '<svg onload=alert(1)>', zone: 'America/New_York' }] } }).worldclock.cities;
+    expect(wc).toHaveLength(1);
+    expect(wc[0].label).not.toMatch(/[<>"'&]/);
+  });
+  it('drops sports teams whose lg/id fall outside the safe charset', () => {
+    const teams = normalizeConfig({ sports: { teams: [
+      { lg: '"><img src=x onerror=alert(1)>', id: 'a' },
+      { lg: 'eng.1', id: '359' },
+    ] } }).sports.teams;
+    expect(teams.map((t) => t.lg)).toEqual(['eng.1']);
+  });
+});

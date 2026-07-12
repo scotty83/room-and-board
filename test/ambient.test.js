@@ -261,3 +261,12 @@ describe('ambientSource', () => {
     expect(ambientSource({ widgets: [], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe(null);
   });
 });
+
+describe('stripData temperature units', () => {
+  it('converts the strip temp to the configured unit', () => {
+    const caches = { weather: { now: { temp: 84 } } };
+    expect(stripData(caches, { widgets: ['weather'], loc: { units: 'C' } }).temp).toBe(29);
+    expect(stripData(caches, { widgets: ['weather'], loc: { units: 'F' } }).temp).toBe(84);
+    expect(stripData(caches, { widgets: ['weather'] }).temp).toBe(84); // no loc → F default
+  });
+});

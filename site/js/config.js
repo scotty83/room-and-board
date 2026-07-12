@@ -165,7 +165,11 @@ export function normalizeConfig(raw) {
     },
     sports: {
       teams: (Array.isArray(raw.sports?.teams) ? raw.sports.teams : [])
-        .filter((t) => typeof t?.lg === 'string' && typeof t?.id === 'string')
+        // lg/id render into `data-team` attributes; constrain to the real
+        // league-key / id charset so a crafted config can't break out of the
+        // attribute (defense in depth behind the per-render escapeHtml).
+        .filter((t) => typeof t?.lg === 'string' && typeof t?.id === 'string'
+          && /^[a-z0-9.]{1,12}$/i.test(t.lg) && /^[a-z0-9]{1,12}$/i.test(t.id))
         .map((t) => ({ lg: t.lg, id: t.id.toLowerCase().slice(0, 8) }))
         .slice(0, 6),
     },
@@ -282,7 +286,10 @@ export function normalizeConfig(raw) {
         const seen = new Set();
         const list = (Array.isArray(raw.worldclock?.cities) ? raw.worldclock.cities : [])
           .filter((c) => typeof c?.label === 'string' && typeof c?.zone === 'string' && isZone(c.zone))
-          .map((c) => ({ label: c.label.trim().slice(0, 24), zone: c.zone }))
+          // Strip HTML-special chars: labels render into innerHTML on several
+          // surfaces; a legit city label never contains these (defense in depth
+          // behind the per-render escapeHtml).
+          .map((c) => ({ label: c.label.replace(/[<>"'&]/g, '').trim().slice(0, 24), zone: c.zone }))
           .filter((c) => c.label && !seen.has(`${c.label}|${c.zone}`) && !!seen.add(`${c.label}|${c.zone}`))
           .slice(0, 10);
         return list.length ? list : DEFAULT_CONFIG.worldclock.cities.map((c) => ({ ...c }));

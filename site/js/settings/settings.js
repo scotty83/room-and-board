@@ -734,7 +734,7 @@ async function renderSports() {
   const chips = state.cfg.sports.teams
     .map((sel) => {
       const t = byKey[`${sel.lg}:${sel.id}`];
-      return `<button class="chip" data-remove-team="${sel.lg}:${sel.id}">${t ? `${t.name} (${t.label})` : sel.id} ✕</button>`;
+      return `<button class="chip" data-remove-team="${escapeHtml(sel.lg)}:${escapeHtml(sel.id)}">${t ? `${escapeHtml(t.name)} (${escapeHtml(t.label)})` : escapeHtml(sel.id)} ✕</button>`;
     })
     .join('');
   pane().innerHTML = `

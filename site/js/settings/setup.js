@@ -261,7 +261,7 @@ function renderWorldclockPrefs() {
   const has = (label, zone) => cfg.worldclock.cities.some((c) => c.label === label && c.zone === zone);
   const rerender = () => {
     $('#wc-chips').innerHTML = cfg.worldclock.cities
-      .map((c, i) => `<button type="button" data-wc-rm="${i}">${c.label} ✕</button>`).join('');
+      .map((c, i) => `<button type="button" data-wc-rm="${i}">${escapeHtml(c.label)} ✕</button>`).join('');
     $('#wc-chips').querySelectorAll('[data-wc-rm]').forEach((b) =>
       b.addEventListener('click', () => {
         cfg.worldclock.cities = cfg.worldclock.cities.filter((_, i) => i !== Number(b.dataset.wcRm));
@@ -345,7 +345,7 @@ async function renderTeams() {
     chips.innerHTML = cfg.sports.teams
       .map((sel) => {
         const t = byKey[`${sel.lg}:${sel.id}`];
-        return `<button type="button" data-team="${sel.lg}:${sel.id}">${t ? t.name : sel.id} ✕</button>`;
+        return `<button type="button" data-team="${escapeHtml(sel.lg)}:${escapeHtml(sel.id)}">${escapeHtml(t ? t.name : sel.id)} ✕</button>`;
       })
       .join('');
     chips.querySelectorAll('[data-team]').forEach((b) =>

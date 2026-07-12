@@ -395,6 +395,29 @@ describe('/markets', () => {
     const res = await call('/markets');
     expect(res.status).toBe(502);
   });
+
+  it('a partial batch serves fresh but never overwrites the complete stale backup', async () => {
+    const key = 'markets:AAA,BBB';
+    await clearCache(key);
+    const y = (sym) => { const b = yahoo(100, 90); b.chart.result[0].meta.symbol = sym; return b; };
+    // 1. full success → both fresh + 24h stale hold the complete 2-index list
+    stubFetch([{ match: /chart\/AAA/, body: y('AAA') }, { match: /chart\/BBB/, body: y('BBB') }]);
+    expect((await (await call('/markets?symbols=aaa,bbb')).json()).indices).toHaveLength(2);
+    // 2. expire only the FRESH copy (simulate the 300s TTL lapsing)
+    await caches.default.delete(cacheKey('fresh', key));
+    // 3. one symbol now fails → partial fresh payload, flagged
+    stubFetch([{ match: /chart\/AAA/, body: y('AAA') }, { match: /chart\/BBB/, body: 'no', status: 500 }]);
+    const partial = await (await call('/markets?symbols=aaa,bbb')).json();
+    expect(partial.indices).toHaveLength(1);
+    expect(partial.partial).toBe(true);
+    // 4. expire fresh again; a total outage must serve the FULL backup, not the
+    //    crippled partial (the bug: step 3 would have poisoned the stale key)
+    await caches.default.delete(cacheKey('fresh', key));
+    stubFetch([{ match: /chart\/(AAA|BBB)/, body: 'no', status: 500, times: 2 }]);
+    const served = await (await call('/markets?symbols=aaa,bbb')).json();
+    expect(served.stale).toBe(true);
+    expect(served.indices).toHaveLength(2);
+  });
 });
 
 describe('/path/realtime', () => {

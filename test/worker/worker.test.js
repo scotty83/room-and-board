@@ -801,3 +801,31 @@ describe('citibike adapter', () => {
     await clearCache('citibike:' + [...CB_IDS].sort().join(','));
   });
 });
+
+import { mapTfl, fetchTfl } from '../../worker/src/tfl.js';
+import tflStatus from './fixtures/tfl-status.json';
+
+describe('tfl adapter', () => {
+  it('maps a disrupted line with its status and reason', () => {
+    const d = mapTfl(tflStatus);
+    const district = d.lines.find((l) => l.id === 'district');
+    expect(district.ok).toBe(false);
+    expect(district.status).not.toBe('Good Service');
+    expect(district.reason.length).toBeGreaterThan(0);
+  });
+  it('maps a good-service line as ok', () => {
+    const central = mapTfl(tflStatus).lines.find((l) => l.id === 'central');
+    expect(central.ok).toBe(true);
+  });
+  it('returns all 19 lines', () => {
+    expect(mapTfl(tflStatus).lines).toHaveLength(19);
+  });
+  it('/tfl/status serves the digest and caches under "tfl"', async () => {
+    await clearCache('tfl');
+    stubFetch([{ match: /api\.tfl\.gov\.uk/, body: tflStatus }]);
+    const res = await call('/tfl/status');
+    expect(res.status).toBe(200);
+    expect((await res.json()).lines).toHaveLength(19);
+    await clearCache('tfl');
+  });
+});

@@ -16,6 +16,7 @@ import { fetchGdriveAlbum } from './gdrive.js';
 import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
 import { fetchApod } from './apod.js';
 import { fetchCitibike } from './citibike.js';
+import { fetchTfl } from './tfl.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -219,6 +220,12 @@ export default {
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // 60s matches the GBFS feed ttl; sorted ids so permutations share a key.
       return cached(url.origin, `citibike:${[...ids].sort().join(',')}`, 60, () => fetchCitibike(ids));
+    }
+
+    if (path === '/tfl/status' && request.method === 'GET') {
+      // One fleet-wide digest of all 19 lines; the widget filters to the chosen
+      // set. 120s matches the Subway card's 2-minute cadence.
+      return cached(url.origin, 'tfl', 120, () => fetchTfl(env));
     }
 
     if (path === '/gdrive/album' && request.method === 'GET') {

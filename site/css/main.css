@@ -715,6 +715,8 @@ body.mode-ambient .gear { bottom: 7px; }
 .cb__stat { font-size: 20px; color: var(--ink-dim); white-space: nowrap; flex: none; }
 .cb__stat--off { color: var(--ink-faint); }
 .cb__e { color: var(--accent); font-weight: 600; }
+/* Search results for stations already on the card: visible but inert. */
+.picklist__item--added { opacity: 0.45; pointer-events: none; }
 
 /* ---------- tfl status ---------- */
 .tfl { display: flex; align-items: center; gap: 10px; padding: 5px 0; }

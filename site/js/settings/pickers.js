@@ -30,6 +30,18 @@ export function alphaSections(stations) {
   return sections;
 }
 
+// Citi Bike station name search. Already-chosen stations are INCLUDED and
+// flagged `added` — hiding them made searching a pre-populated default read
+// as "no results" (the picker renders them inert instead).
+export function searchStations(stations, query, chosenIds, max = 20) {
+  const q = String(query ?? '').trim().toUpperCase();
+  if (q.length < 2) return [];
+  return stations
+    .filter((s) => s.name.toUpperCase().includes(q))
+    .slice(0, max)
+    .map((s) => ({ ...s, added: chosenIds.has(s.id) }));
+}
+
 // Toggle membership of value in a list, returning a new list.
 export function toggleIn(list, value) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];

@@ -4,7 +4,7 @@
 import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
-import { toggleIn } from './pickers.js';
+import { toggleIn, searchStations } from './pickers.js';
 import { zipLookup } from '../geo.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
@@ -436,10 +436,11 @@ async function renderCitibikeField() {
       c.addEventListener('click', () => { cfg.citibike.stations = cfg.citibike.stations.filter((_, i) => i !== Number(c.dataset.remove)); drawChips(); }));
   };
   input.addEventListener('input', () => {
-    const q = input.value.trim().toUpperCase();
     const chosenIds = new Set(cfg.citibike.stations.map((s) => s.id));
-    const matches = q.length >= 2 ? cbStations.filter((s) => s.name.toUpperCase().includes(q) && !chosenIds.has(s.id)).slice(0, 15) : [];
-    list.innerHTML = matches.map((s) => `<button type="button" class="btn" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`).join('');
+    const matches = searchStations(cbStations, input.value, chosenIds, 15);
+    list.innerHTML = matches.map((s) => (s.added
+      ? `<span class="btn picklist__item--added">${escapeHtml(s.name)} ✓ Added</span>`
+      : `<button type="button" class="btn" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`)).join('');
     list.querySelectorAll('[data-add]').forEach((b) =>
       b.addEventListener('click', () => {
         if (cfg.citibike.stations.length >= 6) return;

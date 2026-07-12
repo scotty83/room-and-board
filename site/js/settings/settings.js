@@ -10,7 +10,7 @@ import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
 import { zipLookup } from '../geo.js';
-import { alphaSections, toggleIn, applyNameKey, nameAutoCap } from './pickers.js';
+import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
 export const WIDGET_LABELS = {
@@ -640,17 +640,17 @@ async function renderCitibike() {
     const chips = chosen
       .map((s, i) => `<button class="chip" data-remove="${i}">${escapeHtml(s.name)} ✕</button>`).join('');
     const chosenIds = new Set(chosen.map((s) => s.id));
-    const matches = query.length >= 2
-      ? cbStations.filter((s) => s.name.toUpperCase().includes(query) && !chosenIds.has(s.id)).slice(0, 20)
-      : [];
+    const matches = searchStations(cbStations, query, chosenIds);
     pane().innerHTML = `
       <h2 class="pane__title">Citi Bike</h2>
       <p class="pane__hint">Search a station by its cross-streets. Add up to 6.</p>
       <div class="chips">${chips || '<span class="pane__empty">No stations — defaults return on save</span>'}</div>
       <output class="code__display">${escapeHtml(query) || '&nbsp;'}</output>
       <div class="picklist">${matches
-        .map((s) => `<button class="btn picklist__item" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`)
-        .join('') || (query.length >= 2 ? '<span class="pane__empty">No matches</span>' : '')}</div>
+        .map((s) => (s.added
+          ? `<span class="btn picklist__item picklist__item--added">${escapeHtml(s.name)} ✓ Added</span>`
+          : `<button class="btn picklist__item" data-add="${s.id}" data-name="${escapeHtml(s.name)}">${escapeHtml(s.name)}</button>`))
+        .join('') || (query.trim().length >= 2 ? '<span class="pane__empty">No matches</span>' : '')}</div>
       ${chosen.length < 6
         ? qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-', '/'],
           '<button class="key osk__key" data-key="⌫">⌫</button>')

@@ -10,6 +10,7 @@ import {
   moveWidget,
   toggleIn,
   applyNameKey,
+  searchStations,
   nameAutoCap,
   NAME_MAX_LEN,
   expressRoutes,
@@ -369,5 +370,26 @@ describe('signageUrlFor (non-touch boards)', () => {
   });
   it('never carries auth', () => {
     expect(signageUrlFor('h.example', 'x')).not.toContain('auth');
+  });
+});
+
+describe('searchStations (Citi Bike picker)', () => {
+  const stations = [
+    { id: 'a', name: 'W 29 St & 9 Ave' },
+    { id: 'b', name: 'Broadway & W 29 St' },
+    { id: 'c', name: '10 Ave & W 28 St' },
+  ];
+  it('includes already-chosen stations, marked added (the pre-populated-default bug)', () => {
+    const out = searchStations(stations, 'W 29 ST', new Set(['a']));
+    expect(out.map((s) => s.id)).toEqual(['a', 'b']);
+    expect(out[0].added).toBe(true);
+    expect(out[1].added).toBe(false);
+  });
+  it('is case-insensitive and trims', () => {
+    expect(searchStations(stations, '  w 28  ', new Set())).toHaveLength(1);
+  });
+  it('returns nothing under 2 chars and respects the cap', () => {
+    expect(searchStations(stations, 'W', new Set())).toEqual([]);
+    expect(searchStations(stations, 'W 2', new Set(), 1)).toHaveLength(1);
   });
 });

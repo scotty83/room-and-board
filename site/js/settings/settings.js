@@ -5,6 +5,7 @@
 import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
+import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
@@ -122,7 +123,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
-    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'] ] },
+    ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'], ['tfl', 'TfL Status'] ] },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
@@ -192,7 +193,7 @@ function pane() {
 
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
-  path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
+  path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
@@ -607,6 +608,27 @@ async function renderBus() {
       });
     pickRoute();
   });
+}
+
+function renderTfl() {
+  const chosen = state.cfg.tfl.lines;
+  const groups = TFL_MODES.map((g) => {
+    const chips = TFL_LINES.filter((l) => l.mode === g).map((l) => {
+      const on = chosen.includes(l.id);
+      return `<button class="tflchip ${on ? '' : 'tflchip--off'}" data-line="${l.id}" role="switch" aria-checked="${on}">
+        <span class="tflchip__dot" style="background:${l.color}"></span>${escapeHtml(l.name)}</button>`;
+    }).join('');
+    return `<h3 class="pane__subhead">${g}</h3><div class="tflchips">${chips}</div>`;
+  }).join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">TfL Status</h2>
+    <p class="pane__hint">Pick the London lines to watch — each shows Good Service or the current disruption.</p>
+    ${groups}`;
+  pane().querySelectorAll('[data-line]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.tfl.lines = toggleIn(state.cfg.tfl.lines, chip.dataset.line);
+      renderTfl();
+    }));
 }
 
 let cbStations = null; // citibike station bundle [{id,name}], fetched once

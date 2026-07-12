@@ -9,6 +9,7 @@ import { zipLookup } from '../geo.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
+import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';
@@ -56,6 +57,7 @@ export const SETUP_SECTIONS = [
   { id: 'ferry-field', group: 'Commute', triggers: ['ferry'] },
   { id: 'bus-field', group: 'Commute', triggers: ['bus'] },
   { id: 'citibike-field', group: 'Commute', triggers: ['citibike'] },
+  { id: 'tfl-field', group: 'Commute', triggers: ['tfl'] },
   { id: 'weather-field', group: 'Weather & Air', triggers: ['weather', 'aqi'] },
   { id: 'markets-field', group: 'Markets & Sports', triggers: ['markets'] },
   { id: 'marketsnews-field', group: 'Markets & Sports', triggers: ['marketsnews'] },
@@ -122,6 +124,7 @@ async function boot() {
   await renderFerry();
   renderBusStops();
   renderCitibikeField();
+  renderTflLines();
   renderTickers();
   await renderMarketsNewsSources();
   renderWorldclockPrefs();
@@ -404,6 +407,22 @@ async function renderNewsSources() {
 }
 
 let expressBusData = null;
+function renderTflLines() {
+  const paint = () => {
+    $('#tfl-lines').innerHTML = TFL_MODES.map((g) => {
+      const chips = TFL_LINES.filter((l) => l.mode === g).map((l) => {
+        const on = cfg.tfl.lines.includes(l.id);
+        return `<button type="button" class="tflchip ${on ? '' : 'tflchip--off'}" data-l="${l.id}" role="switch" aria-checked="${on}">
+          <span class="tflchip__dot" style="background:${l.color}"></span>${escapeHtml(l.name)}</button>`;
+      }).join('');
+      return `<h3 class="setup__subhead">${g}</h3><div class="tflchips">${chips}</div>`;
+    }).join('');
+    $('#tfl-lines').querySelectorAll('[data-l]').forEach((b) =>
+      b.addEventListener('click', () => { cfg.tfl.lines = toggleIn(cfg.tfl.lines, b.dataset.l); paint(); }));
+  };
+  paint();
+}
+
 let cbStations = null; // citibike station bundle, fetched once
 async function renderCitibikeField() {
   cbStations ??= await fetch('data/citibike-stations.json').then((r) => r.json());

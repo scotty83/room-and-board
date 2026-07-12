@@ -129,10 +129,10 @@ remove like any other.
 
 ### Daily extras
 
-- **Cloud Service Status** — subway-board rows for the cloud services your office
+- **Cloud Services** — subway-board rows for the cloud services your office
   depends on (Webex, Zoom, Slack, Ubiquiti, Cloudflare, GitHub, Microsoft 365,
   Google Workspace, AWS) from their public status pages; tap a degraded
-  service for the full incident detail. *Configure:* Settings → Cloud Service Status
+  service for the full incident detail. *Configure:* Settings → Cloud Services
   (toggle services on/off). No API keys — all sources are public.
 - **This Day in History** — notable events on today's date (Wikimedia).
 - **Quote of the Day** / **Word of the Day** — a curated daily quote / word

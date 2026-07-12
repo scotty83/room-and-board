@@ -1,4 +1,4 @@
-// Cloud Service Status: subway-board-style rows for the cloud services the office
+// Cloud Services: subway-board-style rows for the cloud services the office
 // depends on, from their public status pages via the Worker's whitelisted
 // /services/status proxy. Degraded rows are tappable — the existing
 // full-screen text viewer shows the incident detail.
@@ -8,7 +8,7 @@ import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
 
-export const meta = { id: 'services', title: 'Cloud Service Status', refreshMs: 5 * 60 * 1000 };
+export const meta = { id: 'services', title: 'Cloud Services', refreshMs: 5 * 60 * 1000 };
 
 // [id, label] pairs for the settings pickers; ids mirror the Worker registry.
 export const SERVICE_CHOICES = [
@@ -38,7 +38,7 @@ export function render(el, vm, _cfg) {
   if (vm.updatedAt) setCardNote(el, `as of ${fmtTime(vm.updatedAt)}`);
   const all = vm.services ?? [];
   if (!all.length) {
-    el.innerHTML = '<div class="empty">Pick services in Settings → Cloud Service Status</div>';
+    el.innerHTML = '<div class="empty">Pick services in Settings → Cloud Services</div>';
     return;
   }
   const rowHtml = (s, i, dropNote) => `<div class="svc ${s.state !== 'ok' ? 'svc--tap' : ''}" data-svc="${i}">

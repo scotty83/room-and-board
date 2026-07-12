@@ -27,7 +27,7 @@ export const WIDGET_LABELS = {
   marketsnews: 'Markets News',
   art: 'Art slideshow',
   photos: 'Photos',
-  services: 'Cloud Service Status',
+  services: 'Cloud Services',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',

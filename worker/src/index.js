@@ -15,6 +15,7 @@ import { fetchIcloudAlbum } from './icloud.js';
 import { fetchGdriveAlbum } from './gdrive.js';
 import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
 import { fetchApod } from './apod.js';
+import { fetchCitibike } from './citibike.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -211,6 +212,13 @@ export default {
       // Single global daily image — one cache key, 1h TTL (APOD changes once a
       // day). NASA_KEY set; DEMO_KEY is the in-code fallback inside fetchApod.
       return cached(url.origin, 'apod', 3600, () => fetchApod(env));
+    }
+
+    if (path === '/citibike/status' && request.method === 'GET') {
+      const ids = (url.searchParams.get('ids') ?? '').split(',').filter(Boolean).slice(0, 6);
+      if (!ids.length) return json({ error: 'bad_ids' }, 400);
+      // 60s matches the GBFS feed ttl; sorted ids so permutations share a key.
+      return cached(url.origin, `citibike:${[...ids].sort().join(',')}`, 60, () => fetchCitibike(ids));
     }
 
     if (path === '/gdrive/album' && request.method === 'GET') {

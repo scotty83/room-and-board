@@ -768,3 +768,36 @@ describe('apod adapter', () => {
     await clearCache('apod');
   });
 });
+
+import { mapCitibike, fetchCitibike } from '../../worker/src/citibike.js';
+import cbStatus from './fixtures/citibike-status.json';
+const CB_IDS = ['66dc7c31-0aca-11e7-82f6-3863bb44ef7c', '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', '1869743938848725856'];
+
+describe('citibike adapter', () => {
+  it('maps counts and ok, preserving requested order', () => {
+    const d = mapCitibike(cbStatus, CB_IDS);
+    expect(d.stations.map((s) => s.id)).toEqual(CB_IDS);
+    const s = d.stations[2];
+    expect(s.bikes).toBe(22);
+    expect(s.ebikes).toBe(17);
+    expect(s.docks).toBe(70);
+    expect(s.ok).toBe(true);
+  });
+  it('marks a non-renting station ok:false', () => {
+    expect(mapCitibike(cbStatus, CB_IDS).stations[0].ok).toBe(false);
+  });
+  it('omits ids absent from the feed', () => {
+    const d = mapCitibike(cbStatus, [...CB_IDS, 'nope-id']);
+    expect(d.stations.find((s) => s.id === 'nope-id')).toBeUndefined();
+    expect(d.stations).toHaveLength(3);
+  });
+  it('/citibike/status 400s with no ids and serves the digest otherwise', async () => {
+    expect((await call('/citibike/status')).status).toBe(400);
+    await clearCache('citibike:' + [...CB_IDS].sort().join(','));
+    stubFetch([{ match: /station_status/, body: cbStatus }]);
+    const res = await call(`/citibike/status?ids=${CB_IDS.join(',')}`);
+    expect(res.status).toBe(200);
+    expect((await res.json()).stations).toHaveLength(3);
+    await clearCache('citibike:' + [...CB_IDS].sort().join(','));
+  });
+});

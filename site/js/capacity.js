@@ -50,6 +50,7 @@ const MODELS = {
   // degraded services; 52 budgets that mix (browser-audit calibrated).
   services: listCapacity(52, 40),
   citibike: listCapacity(44, 40),
+  tfl: listCapacity(44, 40),
 };
 
 export function itemCapacity(id, w, h) {
@@ -98,6 +99,8 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return ofTotal(Math.min(n, cfg.services?.list?.length ?? n), cfg.services?.list?.length, 'services');
     case 'citibike':
       return ofTotal(Math.min(n, cfg.citibike?.stations?.length ?? n), cfg.citibike?.stations?.length, 'stations');
+    case 'tfl':
+      return ofTotal(Math.min(n, cfg.tfl?.lines?.length ?? n), cfg.tfl?.lines?.length, 'lines');
     case 'weather':
       return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
     default:

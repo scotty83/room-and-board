@@ -12,6 +12,7 @@ import { WIDGET_IDS } from './config.js';
 const TITLES = {
   apod: 'NASA Daily Photo',
   citibike: 'Citi Bike',
+  tfl: 'TfL Status',
   services: 'Cloud Services',
   weather: 'Weather',
   subway: 'Subway',

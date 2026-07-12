@@ -186,6 +186,11 @@ export const DEMO_VMS = {
     { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
   ] },
   marketsnews: { items: [{ title: 'Fed holds rates', source: 'CNBC', t: 1783000000000 }], nowMs: 1783000100000 },
+  tfl: { updatedAt: 1783000000, lines: [
+    { id: 'central', name: 'Central', mode: 'Tube', ok: true, status: 'Good Service', reason: '' },
+    { id: 'victoria', name: 'Victoria', mode: 'Tube', ok: true, status: 'Good Service', reason: '' },
+    { id: 'district', name: 'District', mode: 'Tube', ok: false, status: 'Part Closure', reason: 'No service between Turnham Green and Richmond this weekend; use replacement buses.' },
+  ] },
   citibike: { updatedAt: 1783000000, stations: [
     { id: '66dc7c31-0aca-11e7-82f6-3863bb44ef7c', bikes: 7, ebikes: 3, docks: 12, ok: true },
     { id: '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', bikes: 0, ebikes: 0, docks: 25, ok: true },

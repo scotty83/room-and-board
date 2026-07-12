@@ -33,6 +33,7 @@ export const WIDGET_LABELS = {
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
   citibike: 'Citi Bike',
+  tfl: 'TfL Status',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   news: 'Headlines',

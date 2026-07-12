@@ -28,6 +28,7 @@ import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import * as services from '../site/js/widgets/services.js';
 import * as apod from '../site/js/widgets/apod.js';
 import * as citibike from '../site/js/widgets/citibike.js';
+import * as tfl from '../site/js/widgets/tfl.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -84,6 +85,17 @@ describe('widget renderers', () => {
     expect(text).toContain('W 29 St & 9 Ave');
     expect(text).toContain('bikes');
     expect(text).toContain('not renting'); // the ok:false demo station
+  });
+
+  it('tfl shows line status, dims + makes tappable a disrupted line', () => {
+    const host = el();
+    const cfg = { tfl: { lines: ['central', 'district', 'northern'] } }; // northern absent from digest
+    tfl.render(host, DEMO_VMS.tfl, cfg);
+    const text = host.textContent;
+    expect(text).toContain('Central');
+    expect(text).toContain('Good Service');
+    expect(text).toContain('Part Closure');
+    expect(host.querySelector('.tfl--tap')).not.toBeNull();
   });
 
   it('subway renders route bullets and flags alerting lines', () => {

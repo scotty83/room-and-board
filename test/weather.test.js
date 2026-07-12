@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFile } from 'node:fs/promises';
-import { mapWeather, wmoInfo } from '../site/js/widgets/weather.js';
+import { mapWeather, wmoInfo, inUS, fetchData } from '../site/js/widgets/weather.js';
 import { mapAqi, moonPhase } from '../site/js/widgets/aqi.js';
 
 const fixture = async (name) =>
@@ -95,5 +95,22 @@ describe('moonPhase', () => {
     const p = moonPhase(new Date(Date.UTC(2026, 1, 1, 22, 0)));
     expect(Math.abs(p.fraction - 0.5)).toBeLessThan(0.02);
     expect(p.name).toBe('Full Moon');
+  });
+});
+
+describe('inUS + alerts gating', () => {
+  it('covers NYC, Honolulu, Anchorage; excludes London and Berlin', () => {
+    expect(inUS(40.75, -73.99)).toBe(true);
+    expect(inUS(21.3, -157.8)).toBe(true);
+    expect(inUS(61.2, -149.9)).toBe(true);
+    expect(inUS(51.5, -0.12)).toBe(false);
+    expect(inUS(52.52, 13.4)).toBe(false);
+  });
+  it('fetchData skips the NWS alerts call for a non-US point', async () => {
+    const urls = [];
+    const net = { fetchJSON: async (u) => { urls.push(u); return { current: { time: '2026-07-12T10:00', temperature_2m: 70, apparent_temperature: 70, weather_code: 0 }, hourly: { time: [], temperature_2m: [], weather_code: [] }, daily: { time: [], temperature_2m_max: [], temperature_2m_min: [], weather_code: [], sunrise: ['x'], sunset: ['x'] } }; } };
+    await fetchData({ loc: { lat: 51.5, lon: -0.12, units: 'C' } }, net);
+    expect(urls).toHaveLength(1);
+    expect(urls[0]).not.toContain('api.weather.gov');
   });
 });

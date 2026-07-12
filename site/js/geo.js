@@ -12,3 +12,29 @@ export async function zipLookup(zip, fetchFn = fetch) {
     label: `${place['place name']} ${zip}`,
   };
 }
+
+// One search box, two upstreams: a 5-digit query is a US ZIP (zippopotam has
+// the right centroid + label; Open-Meteo's geocoder fumbles ZIPs), anything
+// else geocodes worldwide via Open-Meteo (keyless). Result: {lat, lon, label,
+// cc} — cc drives the regional °F/°C default when a result is picked.
+export async function locationSearch(query, fetchFn = fetch) {
+  const q = String(query ?? '').trim();
+  if (q.length < 2) return [];
+  try {
+    if (/^\d{5}$/.test(q)) {
+      const loc = await zipLookup(q, fetchFn);
+      return loc ? [{ ...loc, cc: 'US' }] : [];
+    }
+    const res = await fetchFn(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5`);
+    if (!res.ok) return [];
+    const results = (await res.json()).results ?? [];
+    return results.map((r) => ({
+      lat: r.latitude,
+      lon: r.longitude,
+      cc: r.country_code,
+      label: `${r.name}${r.admin1 ? `, ${r.admin1}` : ''}${r.country_code !== 'US' ? ` (${r.country_code})` : ''}`,
+    }));
+  } catch {
+    return []; // pickers show the no-match copy
+  }
+}

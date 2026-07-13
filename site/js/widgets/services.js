@@ -21,8 +21,10 @@ export const SERVICE_CHOICES = [
   ['m365', 'Microsoft 365'],
   ['gworkspace', 'Google Workspace'],
   ['aws', 'AWS'],
+  ['claude', 'Claude'],
+  ['openai', 'OpenAI'],
 ];
-export const DEFAULT_SERVICES = SERVICE_CHOICES.map(([id]) => id);
+export const DEFAULT_SERVICES = ['webex', 'slack', 'm365']; // mirrors DEFAULT_CONFIG.services.list
 
 const STATE_LABEL = { ok: 'Operational', minor: 'Minor issue', major: 'Major outage', unknown: 'Unknown' };
 

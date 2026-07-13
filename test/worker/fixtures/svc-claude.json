@@ -1,0 +1,10 @@
+{
+ "page": {
+  "name": "Claude"
+ },
+ "status": {
+  "indicator": "none",
+  "description": "All Systems Operational"
+ },
+ "incidents": []
+}

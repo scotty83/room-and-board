@@ -34,6 +34,8 @@ export const WIDGET_GROUPS = [
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services', 'chart'] },
 ];
 
+const SERVICE_IDS = ['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws', 'claude', 'openai'];
+
 export const DEFAULT_CONFIG = Object.freeze({
   v: 3,
   t: 0,
@@ -54,7 +56,8 @@ export const DEFAULT_CONFIG = Object.freeze({
   bus: Object.freeze({ legs: Object.freeze([]) }), // up to 2 route-first legs
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
-  services: Object.freeze({ list: Object.freeze(['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws']) }),
+  services: Object.freeze({ list: Object.freeze(['webex', 'slack', 'm365']) }), // first-enable default; SERVICE_IDS is the full menu
+
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
     Object.freeze({ id: '66dc7c31-0aca-11e7-82f6-3863bb44ef7c', name: 'W 29 St & 9 Ave' }),
@@ -235,7 +238,7 @@ export function normalizeConfig(raw) {
     services: {
       list: (() => {
         const picked = (Array.isArray(raw.services?.list) ? raw.services.list : [])
-          .filter((s) => DEFAULT_CONFIG.services.list.includes(s));
+          .filter((s) => SERVICE_IDS.includes(s)); // validate against ALL ids, not the default trio
         return picked.length ? picked : [...DEFAULT_CONFIG.services.list];
       })(),
     },

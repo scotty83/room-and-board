@@ -1,6 +1,6 @@
 // Boot and runtime orchestration for the signage dashboard.
 
-import { normalizeConfig, decodeConfig, DEFAULT_CONFIG } from './config.js';
+import { normalizeConfig, decodeConfig } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
 import { schedule } from './scheduler.js';
@@ -232,7 +232,8 @@ function showWelcome() {
     })
     .catch(() => {});
   welcome.querySelector('[data-action="quick-start"]').addEventListener('click', async () => {
-    cfg = normalizeConfig({ ...DEFAULT_CONFIG, t: Math.floor(Date.now() / 1000) });
+    const { QUICKSTART_CONFIG } = await import('./quickstart.js');
+    cfg = normalizeConfig({ ...QUICKSTART_CONFIG, t: Math.floor(Date.now() / 1000) });
     await saveConfig(cfg);
     welcome.hidden = true;
     $('#grid').hidden = false;

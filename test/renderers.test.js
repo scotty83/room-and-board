@@ -27,6 +27,7 @@ import * as photos from '../site/js/widgets/photos.js';
 import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import * as services from '../site/js/widgets/services.js';
 import * as apod from '../site/js/widgets/apod.js';
+import * as chart from '../site/js/widgets/chart.js';
 import * as citibike from '../site/js/widgets/citibike.js';
 import * as tfl from '../site/js/widgets/tfl.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
@@ -59,6 +60,7 @@ const CASES = [
   ['marketsnews', marketsnews, ['Fed holds rates']],
   ['services', services, ['Zoom', 'Operational', 'Cloudflare', 'Minor', 'Minor Service Outage']],
   ['apod', apod, ['Messier 24', 'Chuck Ayoub']],
+  ['chart', chart, ['Population Growth', 'Statista']],
 ];
 
 describe('widget renderers', () => {

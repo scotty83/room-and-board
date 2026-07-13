@@ -29,6 +29,7 @@ export const MIN_SIZE = {
   art: [2, 2],
   photos: [2, 2],
   apod: [3, 3],
+  chart: [3, 3],
   citibike: [3, 2],
   tfl: [3, 2],
   aqi: [2, 2],

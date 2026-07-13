@@ -153,7 +153,10 @@ remove like any other.
 - **This Day in History** — notable events on today's date (Wikimedia).
 - **Quote of the Day** / **Word of the Day** — a curated daily quote / word
   with definition and example.
-- *Configure:* none — all three rotate on their own, offline.
+- **Chart of the Day** — Statista's latest daily infographic; tap for full
+  screen with the description. Statista explicitly permits embedding their
+  infographics with attribution (CC BY-ND; their branding is part of the
+  image). *Configure:* none.
 
 ## Local development
 
@@ -303,6 +306,7 @@ the URL fragment and the dashboard returns configured.
 | Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); Photos' Drive source reports unconfigured until set |
 | Service status pages | Worker proxy, no keys | Statuspage instances (Zoom/Ubiquiti/Cloudflare/GitHub) + Slack/Microsoft/Google/Webex/AWS public JSON; failures report "Unknown", never fake green |
 | NASA APOD | Worker + free key | `wrangler secret put NASA_KEY` (free key from api.nasa.gov); falls back to `DEMO_KEY` when unset — viable because the 1h fleet-shared cache stays under DEMO_KEY's daily cap, but the real key is preferred |
+| Statista Chart of the Day | Worker, keyless | No feed exists — the worker scrapes the listing page (session-cookie SSO bounce walked manually, see `worker/src/chart.js`), cached 1 h; boards hotlink the infographic from `cdn.statcdn.com` (probe-verified: no referer/cookie checks). Scrape breaks if Statista reworks the page markup |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

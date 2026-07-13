@@ -458,13 +458,17 @@ body.mode-ambient .gear { bottom: 7px; }
 .kv:has(.btn) { padding: 8px 0; }
 .kv__small { font-size: 20px; font-weight: 400; color: var(--ink-dim); }
 
-/* Scheduled-mode window editor: tap ▲/▼ steppers around each time. */
-.sched { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 12px; }
+/* Scheduled-mode window editor: tap ▲/▼ steppers around each time. Steppers
+   get a fixed compact width (the .btn 34px side padding read as one long
+   strip of buttons); the dash and ✕ carry extra margin so the two time
+   groups and the remove control read as separate units. */
+.sched { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin: 12px 0 16px; }
 .sched__win { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.sched__step { min-width: 52px; }
+.sched__step { width: 64px; padding: 16px 0; text-align: center; }
 .sched__time { font-size: 22px; min-width: 130px; text-align: center; font-variant-numeric: tabular-nums; }
-.sched__dash { color: var(--ink-dim); }
-.sched__warn { color: var(--warn); font-size: 18px; }
+.sched__dash { color: var(--ink-dim); margin: 0 12px; }
+.sched__rm { margin-left: 20px; }
+.sched__warn { color: var(--warn); font-size: 18px; margin-left: 12px; }
 
 .drill { margin-top: 22px; max-width: 860px; }
 .drill__head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }

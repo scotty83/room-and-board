@@ -1065,9 +1065,9 @@ function renderDisplay() {
     <h2 class="pane__title">Display</h2>
     <p class="pane__hint">Mode</p>
     <div class="rows">
-      ${opt('mode', 'scheduled', 'Scheduled — dashboard on a timer, art otherwise')}
       ${opt('mode', 'dashboard', 'Always dashboard')}
       ${opt('mode', 'ambient', 'Always art')}
+      ${opt('mode', 'scheduled', 'Scheduled — dashboard on a timer, art otherwise')}
     </div>
     ${state.cfg.mode === 'scheduled' ? `<div class="sched">${state.cfg.schedule.map((w, i) => `
       <div class="sched__win">

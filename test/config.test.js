@@ -415,3 +415,17 @@ describe('mode + schedule', () => {
     expect(custom.length).toBeGreaterThan(def.length);
   });
 });
+
+describe('usage beacon flag', () => {
+  it('defaults on, honors explicit opt-out, survives the wire', async () => {
+    expect(normalizeConfig({}).beacon).toBe(true);
+    expect(normalizeConfig({ beacon: false }).beacon).toBe(false);
+    const dec = await decodeConfig(await encodeConfig(normalizeConfig({ beacon: false })));
+    expect(dec.beacon).toBe(false);
+  });
+  it('strips the default (true) from the wire', async () => {
+    const def = await encodeConfig(normalizeConfig({}));
+    const optOut = await encodeConfig(normalizeConfig({ beacon: false }));
+    expect(optOut.length).toBeGreaterThan(def.length);
+  });
+});

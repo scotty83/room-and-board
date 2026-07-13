@@ -17,6 +17,7 @@ import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
 import { fetchApod } from './apod.js';
 import { fetchCitibike } from './citibike.js';
 import { fetchTfl } from './tfl.js';
+import { parseBeacon, beaconDataPoint } from './fleet.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -172,6 +173,21 @@ export default {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
     if (path === '/code' && request.method === 'POST') return postCode(request, env, url.origin);
+
+    if (path === '/fleet' && request.method === 'POST') {
+      // Anonymous usage heartbeat → Analytics Engine (see fleet.js). No KV,
+      // no caching. A missing ANALYTICS binding (self-host without metrics)
+      // accepts and drops so boards never see an error. parseBeacon bounds
+      // the body size itself (oversized → 400).
+      const parsed = parseBeacon(await request.text());
+      if (!parsed) return json({ error: 'bad_beacon' }, 400);
+      try {
+        env.ANALYTICS?.writeDataPoint(beaconDataPoint(parsed));
+      } catch {
+        // Metrics are best-effort — never fail the board over a write error.
+      }
+      return new Response(null, { status: 204, headers: CORS });
+    }
 
     const codeMatch = /^\/code\/([A-Za-z0-9]{6})$/.exec(path);
     if (codeMatch && request.method === 'GET') return getCode(env, codeMatch[1]);

@@ -1258,6 +1258,12 @@ function renderDiag() {
     <div class="kv"><span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b></div>
     ${rows.join('')}
     <div class="kv"><span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b></div>
+    <div class="kv"><span>Anonymous usage ping</span>
+      <button class="toggle ${state.cfg.beacon ? 'is-on' : ''}" data-beacon role="switch" aria-checked="${state.cfg.beacon}">
+        <span class="toggle__knob"></span>
+      </button>
+    </div>
+    <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone — nothing personal. Helps the operator count active boards.</p>
     <div class="kv"><span>Display</span>
       <button class="btn btn--primary" data-reload>Reload display now</button>
     </div>
@@ -1266,6 +1272,10 @@ function renderDiag() {
       <button class="btn" data-reset>Reset this display</button>
     </div>
     <p class="pane__hint">Clear wipes this page's saved data — on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
+  pane().querySelector('[data-beacon]').addEventListener('click', () => {
+    state.cfg.beacon = !state.cfg.beacon;
+    renderDiag();
+  });
   pane().querySelector('[data-reload]').addEventListener('click', () => location.reload());
   const confirmThen = (btn, action) => {
     btn.addEventListener('click', async () => {

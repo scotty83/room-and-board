@@ -10,6 +10,7 @@ import { chooseBootConfig } from './boot.js';
 import { parseFragment } from './bridge.js';
 import { stripData, stripHtml } from './ambient.js';
 import { createSlideshow, swipeAction } from './imageshow.js';
+import { startBeacon } from './fleet.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
 import { initTextViewer } from './textviewer.js';
 import { icon } from './icons.js';
@@ -277,7 +278,10 @@ function startRuntime() {
   applyMode();
   cancels.push(schedule(applyMode, 60 * 1000, { jitter: 0 }));
   cancels.push(schedule(renderStrip, 30 * 1000, { jitter: 0 }));
-  if (!DEMO) startSelfHealing();
+  if (!DEMO) {
+    startSelfHealing();
+    cancels.push(startBeacon(() => cfg));
+  }
 }
 
 async function boot() {

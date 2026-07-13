@@ -13,3 +13,12 @@ routes = [
 [[kv_namespaces]]
 binding = "CODES"
 id = "5e78a137e235456bb0b63b5660812bff"
+
+# Anonymous usage heartbeat (POST /fleet — named to dodge ad-blocker lists).
+# The dataset is created on first write; query it via the Analytics Engine
+# SQL API (needs an account token). Self-hosters who don't want metrics can
+# delete this block — the route then accepts and drops pings instead of
+# erroring.
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "roomboard_usage"

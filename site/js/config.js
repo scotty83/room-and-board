@@ -87,6 +87,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   theme: 'dark',
+  beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
 });
 
 const MODES = ['scheduled', 'dashboard', 'ambient'];
@@ -315,6 +316,7 @@ export function normalizeConfig(raw) {
       return clean.length ? clean : DEFAULT_CONFIG.schedule.map((w) => ({ ...w }));
     })(),
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
+    beacon: raw.beacon !== false, // absent (older configs) → on
   };
 }
 
@@ -349,6 +351,7 @@ export async function encodeConfig(cfg) {
   if (wire.citibike && isDefault(wire.citibike.stations, DEFAULT_CONFIG.citibike.stations)) delete wire.citibike;
   if (wire.tfl && isDefault(wire.tfl.lines, DEFAULT_CONFIG.tfl.lines)) delete wire.tfl;
   if (wire.schedule && isDefault(wire.schedule, DEFAULT_CONFIG.schedule)) delete wire.schedule;
+  if (wire.beacon === DEFAULT_CONFIG.beacon) delete wire.beacon;
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

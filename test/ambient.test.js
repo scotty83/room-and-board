@@ -56,7 +56,7 @@ describe('createSlideshow', () => {
     expect(loadedSrcs.length).toBe(7);
   });
 
-  it('covers near-16:9 images and letterboxes the rest', async () => {
+  it('letterboxes every image on black (matches the full-screen viewer)', async () => {
     const host = document.createElement('div');
     const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0 });
     show.start();
@@ -67,8 +67,8 @@ describe('createSlideshow', () => {
       sizes.push(`${show.current().ar}:${active.style.backgroundSize}`);
     }
     show.stop();
-    // Shuffle order varies; assert the aspect→size mapping regardless.
-    expect(sizes.sort()).toEqual(['1.3:contain', '1.78:cover', '2.4:contain']);
+    // Every aspect now letterboxes (contain) — consistent with tap-in.
+    expect(sizes.sort()).toEqual(['1.3:contain', '1.78:contain', '2.4:contain']);
   });
 
   it('does nothing with an empty manifest', async () => {

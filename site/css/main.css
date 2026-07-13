@@ -284,8 +284,9 @@ html, body {
 .slideshow { position: absolute; inset: 0; background: #000; touch-action: none; /* swipes must reach the pointer handlers, not the browser's pan gesture */ }
 .slide {
   position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  background-repeat: no-repeat; /* letterboxed (contain) art must sit on the black bg, not tile */
+  /* Contain + centered + no-repeat: letterbox every work on the black bg,
+     matching the full-screen viewer (show() also sets contain inline). */
+  background-size: contain; background-position: center; background-repeat: no-repeat;
   opacity: 0;
   transition: opacity 2.5s ease-in-out;
 }

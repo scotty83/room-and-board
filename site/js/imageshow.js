@@ -143,10 +143,10 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   function show(item) {
     const next = layers[1 - active];
     next.style.backgroundImage = `url("${item.img}")`;
-    // Near-16:9 works fill the screen; anything else letterboxes on black
-    // rather than losing large parts of the canvas to a cover crop.
-    const nearScreen = item.ar && item.ar >= 1.55 && item.ar <= 2.1;
-    next.style.backgroundSize = nearScreen ? 'cover' : 'contain';
+    // Always letterbox on black — matches the full-screen viewer's
+    // object-fit:contain, so a work looks the same in ambient and when tapped
+    // into, and the full canvas is never cropped.
+    next.style.backgroundSize = 'contain';
     next.setAttribute('data-active', '');
     layers[active].removeAttribute('data-active');
     active = 1 - active;

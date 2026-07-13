@@ -9,6 +9,7 @@
 
 import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
 import { TFL_TUBE_IDS, TFL_LINE_IDS } from './tfl-lines.js';
+import { DEFAULT_SCHEDULE } from './modes.js';
 
 export const ART_CATS = [
   ['european', 'European'],
@@ -84,10 +85,11 @@ export const DEFAULT_CONFIG = Object.freeze({
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes
   mode: 'dashboard',
+  schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   theme: 'dark',
 });
 
-const MODES = ['auto', 'dashboard', 'ambient'];
+const MODES = ['scheduled', 'dashboard', 'ambient'];
 const THEMES = ['dark', 'light'];
 const MAX_NAME = 24;
 
@@ -299,7 +301,19 @@ export function normalizeConfig(raw) {
         return list.length ? list : DEFAULT_CONFIG.worldclock.cities.map((c) => ({ ...c }));
       })(),
     },
-    mode: MODES.includes(raw.mode) ? raw.mode : DEFAULT_CONFIG.mode,
+    mode: (() => {
+      const m = raw.mode === 'auto' ? 'scheduled' : raw.mode; // legacy Auto → Scheduled
+      return MODES.includes(m) ? m : DEFAULT_CONFIG.mode;
+    })(),
+    schedule: (() => {
+      const q = (n) => Math.min(1440, Math.max(0, Math.round(n / 15) * 15));
+      const clean = (Array.isArray(raw.schedule) ? raw.schedule : [])
+        .filter((w) => Number.isFinite(w?.start) && Number.isFinite(w?.end))
+        .map((w) => ({ start: q(w.start), end: q(w.end) }))
+        .filter((w) => w.start < w.end)
+        .slice(0, 4);
+      return clean.length ? clean : DEFAULT_CONFIG.schedule.map((w) => ({ ...w }));
+    })(),
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
   };
 }
@@ -334,6 +348,7 @@ export async function encodeConfig(cfg) {
   if (wire.services && isDefault(wire.services.list, DEFAULT_CONFIG.services.list)) delete wire.services;
   if (wire.citibike && isDefault(wire.citibike.stations, DEFAULT_CONFIG.citibike.stations)) delete wire.citibike;
   if (wire.tfl && isDefault(wire.tfl.lines, DEFAULT_CONFIG.tfl.lines)) delete wire.tfl;
+  if (wire.schedule && isDefault(wire.schedule, DEFAULT_CONFIG.schedule)) delete wire.schedule;
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

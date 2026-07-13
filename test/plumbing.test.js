@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
 import { loadConfig, saveConfig, loadCache, saveCache } from '../site/js/store.js';
 import { schedule } from '../site/js/scheduler.js';
-import { resolveMode } from '../site/js/modes.js';
+import { resolveMode, stepTime, fmtHM } from '../site/js/modes.js';
 import { normalizeConfig, encodeConfig } from '../site/js/config.js';
 
 // store.js resolves storage via window.localStorage; provide a conformant
@@ -116,13 +116,36 @@ describe('resolveMode', () => {
     expect(resolveMode(cfg('dashboard'), at(23))).toBe('dashboard');
     expect(resolveMode(cfg('ambient'), at(8))).toBe('ambient');
   });
-  it('auto: dashboard during commute windows, ambient otherwise', () => {
-    expect(resolveMode(cfg('auto'), at(6))).toBe('dashboard');
-    expect(resolveMode(cfg('auto'), at(9, 59))).toBe('dashboard');
-    expect(resolveMode(cfg('auto'), at(10))).toBe('ambient');
-    expect(resolveMode(cfg('auto'), at(15))).toBe('dashboard');
-    expect(resolveMode(cfg('auto'), at(19, 59))).toBe('dashboard');
-    expect(resolveMode(cfg('auto'), at(20))).toBe('ambient');
-    expect(resolveMode(cfg('auto'), at(2))).toBe('ambient');
+  it('scheduled with the default schedule matches the old commute windows', () => {
+    // cfg('scheduled') has no `schedule` → resolveMode falls back to DEFAULT_SCHEDULE.
+    expect(resolveMode(cfg('scheduled'), at(6))).toBe('dashboard');
+    expect(resolveMode(cfg('scheduled'), at(9, 59))).toBe('dashboard');
+    expect(resolveMode(cfg('scheduled'), at(10))).toBe('ambient'); // end exclusive
+    expect(resolveMode(cfg('scheduled'), at(15))).toBe('dashboard');
+    expect(resolveMode(cfg('scheduled'), at(19, 59))).toBe('dashboard');
+    expect(resolveMode(cfg('scheduled'), at(20))).toBe('ambient');
+    expect(resolveMode(cfg('scheduled'), at(2))).toBe('ambient');
+  });
+  it('scheduled honors a custom schedule; empty schedule → always art', () => {
+    const custom = { mode: 'scheduled', schedule: [{ start: 480, end: 1020 }] }; // 8am–5pm
+    expect(resolveMode(custom, at(9))).toBe('dashboard');
+    expect(resolveMode(custom, at(17))).toBe('ambient'); // 17:00 == end, exclusive
+    expect(resolveMode(custom, at(6))).toBe('ambient');
+    expect(resolveMode({ mode: 'scheduled', schedule: [] }, at(9))).toBe('ambient');
+  });
+});
+
+describe('stepTime / fmtHM', () => {
+  it('steps 15 minutes and wraps a day', () => {
+    expect(stepTime(600, 1)).toBe(615);
+    expect(stepTime(0, -1)).toBe(1425);
+    expect(stepTime(1425, 1)).toBe(0);
+  });
+  it('formats 12-hour with AM/PM (noon and midnight)', () => {
+    expect(fmtHM(0)).toBe('12:00 AM');
+    expect(fmtHM(360)).toBe('6:00 AM');
+    expect(fmtHM(720)).toBe('12:00 PM');
+    expect(fmtHM(1215)).toBe('8:15 PM');
+    expect(fmtHM(1440)).toBe('12:00 AM');
   });
 });

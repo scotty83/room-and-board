@@ -137,7 +137,7 @@ describe('encode/decode round trip', () => {
       subway: { lines: ['4', '5', '6'] },
       lirr: { dest: '171' },
       njt: { station: 'NY' },
-      mode: 'auto',
+      mode: 'scheduled',
       theme: 'dark',
     });
     const enc = await encodeConfig(cfg);
@@ -390,5 +390,28 @@ describe('config injection hardening', () => {
       { lg: 'eng.1', id: '359' },
     ] } }).sports.teams;
     expect(teams.map((t) => t.lg)).toEqual(['eng.1']);
+  });
+});
+
+describe('mode + schedule', () => {
+  it('migrates legacy auto → scheduled with the default windows', () => {
+    const c = normalizeConfig({ mode: 'auto' });
+    expect(c.mode).toBe('scheduled');
+    expect(c.schedule).toEqual([{ start: 360, end: 600 }, { start: 900, end: 1200 }]);
+  });
+  it('normalizes schedule: 15-min round, clamp, drop start>=end, cap 4, default when empty', () => {
+    const s = normalizeConfig({ schedule: [
+      { start: 367, end: 597 },  // 367→360, 597→600 (nearest 15)
+      { start: 700, end: 700 },  // 705==705 after rounding → start>=end, dropped
+      { start: -30, end: 5000 }, // clamps to 0..1440
+    ] }).schedule;
+    expect(s).toEqual([{ start: 360, end: 600 }, { start: 0, end: 1440 }]);
+    expect(normalizeConfig({ schedule: [] }).schedule).toHaveLength(2);
+    expect(normalizeConfig({ schedule: Array(9).fill({ start: 60, end: 120 }) }).schedule).toHaveLength(4);
+  });
+  it('strips a default schedule from the wire (custom is longer)', async () => {
+    const def = await encodeConfig(normalizeConfig({}));
+    const custom = await encodeConfig(normalizeConfig({ mode: 'scheduled', schedule: [{ start: 480, end: 1020 }] }));
+    expect(custom.length).toBeGreaterThan(def.length);
   });
 });

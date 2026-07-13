@@ -70,6 +70,15 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
   background: var(--bg-card-2); border: none; border-radius: 20px; font-size: 0.95rem;
 }
 
+/* TfL line picker — /setup loads only setup.css, so these mirror main.css's
+   .tflchip rules (were missing here: no gap → chips overlapped; no --off dim →
+   selection looked like it did nothing; no dot size → invisible dots). */
+.setup__subhead { font-size: 0.8rem; color: var(--ink-dim); margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+.tflchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.tflchip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: none; background: var(--bg-card-2); color: var(--ink); font-size: 1rem; min-height: 44px; }
+.tflchip__dot { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
+.tflchip--off { opacity: 0.4; }
+
 .code-out { margin-top: 18px; background: var(--bg-card); border-radius: 14px; padding: 20px; }
 .code-out output { font-size: 2.6rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 8px; }
 .code-out p { color: var(--ink-dim); }

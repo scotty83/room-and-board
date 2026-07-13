@@ -43,6 +43,14 @@ describe('capacityLabel', () => {
     expect(capacityLabel('markets', 4, 2, cfg)).toBe('shows 2 of 7 tickers');
     expect(capacityLabel('markets', 4, 8, cfg)).toBe('shows all 7 tickers');
   });
+  it('weather forecast label matches what render actually shows (big = w>=5||h>=5)', () => {
+    // small tier (incl. the reported 3×4): 6 hourly · 4-day
+    expect(capacityLabel('weather', 3, 4, cfg)).toBe('6 hourly · 4-day forecast');
+    expect(capacityLabel('weather', 4, 4, cfg)).toBe('6 hourly · 4-day forecast');
+    // big tier by height OR width
+    expect(capacityLabel('weather', 4, 5, cfg)).toBe('8 hourly · 5-day forecast');
+    expect(capacityLabel('weather', 5, 4, cfg)).toBe('8 hourly · 5-day forecast');
+  });
   it('describes subway lines against the selection', () => {
     expect(capacityLabel('subway', 4, 2, cfg)).toBe('shows 2 of 4 lines');
     expect(capacityLabel('subway', 4, 4, cfg)).toBe('shows all 4 lines');

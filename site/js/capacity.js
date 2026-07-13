@@ -101,8 +101,12 @@ export function capacityLabel(id, w, h, cfg = {}) {
       return ofTotal(Math.min(n, cfg.citibike?.stations?.length ?? n), cfg.citibike?.stations?.length, 'stations');
     case 'tfl':
       return ofTotal(Math.min(n, cfg.tfl?.lines?.length ?? n), cfg.tfl?.lines?.length, 'lines');
-    case 'weather':
-      return h >= 5 ? '8 hourly · 5-day forecast' : `${w <= 4 ? 6 : 8} hourly · 2-day forecast`;
+    case 'weather': {
+      // Must match weather.js render exactly: big = w>=5||h>=5 → 8 hourly/5 days,
+      // else 6 hourly/4 days. (Was hardcoded "2-day" with a mismatched threshold.)
+      const big = w >= 5 || h >= 5;
+      return `${big ? 8 : 6} hourly · ${big ? 5 : 4}-day forecast`;
+    }
     default:
       return null;
   }

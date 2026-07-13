@@ -18,6 +18,7 @@ import { fetchApod } from './apod.js';
 import { fetchCitibike } from './citibike.js';
 import { fetchTfl } from './tfl.js';
 import { parseBeacon, beaconDataPoint } from './fleet.js';
+import { fetchChart } from './chart.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -239,6 +240,12 @@ export default {
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
+    }
+
+    if (path === '/chart' && request.method === 'GET') {
+      // Statista Chart of the Day — one global daily infographic, scraped from
+      // the listing page (see chart.js). 1h TTL; new charts post weekdays.
+      return cached(url.origin, 'chart', 3600, () => fetchChart());
     }
 
     if (path === '/apod' && request.method === 'GET') {

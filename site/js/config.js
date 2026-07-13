@@ -18,7 +18,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -31,7 +31,7 @@ export const WIDGET_GROUPS = [
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
   { label: 'Ambient', ids: ['art', 'photos', 'apod', 'worldclock'] },
-  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services'] },
+  { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services', 'chart'] },
 ];
 
 export const DEFAULT_CONFIG = Object.freeze({

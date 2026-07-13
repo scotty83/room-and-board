@@ -196,6 +196,13 @@ export const DEMO_VMS = {
     { id: '66dc51e9-0aca-11e7-82f6-3863bb44ef7c', bikes: 0, ebikes: 0, docks: 25, ok: true },
     { id: '1869743938848725856', bikes: 4, ebikes: 0, docks: 0, ok: false },
   ] },
+  chart: { updatedAt: 1783000000, chart: {
+    id: '28744',
+    title: 'How Global Population Growth Is Slowing',
+    desc: 'This chart shows the annual growth rate of the world population from 1950 to 2100 (projected).',
+    date: '2026-07-10',
+    url: 'https://cdn.statcdn.com/Infographic/images/normal/28744.jpeg',
+    link: 'https://www.statista.com/chart/28744/world-population-growth-timeline-and-forecast/' } },
   apod: { updatedAt: 1783000000, photo: {
     url: 'https://apod.nasa.gov/apod/image/2607/M24_1088.jpg',
     title: 'Messier 24: Sagittarius Star Cloud',

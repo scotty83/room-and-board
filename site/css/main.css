@@ -229,6 +229,9 @@ html, body {
 /* ---------- art card ---------- */
 .artwork { display: flex; flex-direction: column; height: 100%; gap: 10px; }
 .artwork__img { flex: 1; min-height: 0; width: 100%; object-fit: cover; border-radius: 10px; background: var(--bg-card-2); }
+/* Data images (Chart of the Day): never crop — letterbox on the card tone.
+   Art/photos keep the aesthetic cover crop; the viewer always shows full. */
+.artwork--contain .artwork__img { object-fit: contain; }
 .artwork__caption { display: flex; flex-direction: column; gap: 2px; }
 .artwork__title { font-size: 22px; font-weight: 600; }
 .artwork__artist { font-size: 20px; color: var(--ink-dim); }

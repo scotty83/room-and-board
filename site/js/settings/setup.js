@@ -123,6 +123,7 @@ async function boot() {
   const safe = async (fn) => { try { await fn(); } catch (e) { console.error('[setup] section render failed', e); } };
   await safe(renderWidgets);
   await safe(renderLocation);
+  await safe(renderSchedule);
   await safe(renderLirrDest);
   await safe(() => renderRailDest('mnr-dest', 'data/stations-mnr.json', 'mnr'));
   await safe(() => bindAlertCheck('mnr-alerts', 'mnr'));
@@ -235,6 +236,35 @@ function renderSubwayLines() {
       }),
     );
   };
+  paint();
+}
+
+const M2HM = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
+const HM2M = (s) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+function renderSchedule() {
+  const sel = $('#mode'), editor = $('#schedule-editor'), rows = $('#schedule-rows');
+  sel.value = cfg.mode;
+  const paint = () => {
+    editor.hidden = sel.value !== 'scheduled';
+    rows.innerHTML = cfg.schedule.map((w, i) => `<div class="sched-row">
+      <input type="time" step="900" data-i="${i}" data-t="start" value="${M2HM(w.start)}">
+      <span>–</span>
+      <input type="time" step="900" data-i="${i}" data-t="end" value="${M2HM(w.end)}">
+      ${cfg.schedule.length > 1 ? `<button type="button" data-rm="${i}">✕</button>` : ''}
+    </div>`).join('');
+    rows.querySelectorAll('input[type="time"]').forEach((inp) =>
+      inp.addEventListener('change', () => {
+        if (!inp.value) return; // don't clobber on a cleared field
+        cfg.schedule[Number(inp.dataset.i)][inp.dataset.t] = HM2M(inp.value);
+      }));
+    rows.querySelectorAll('[data-rm]').forEach((b) =>
+      b.addEventListener('click', () => { cfg.schedule = cfg.schedule.filter((_, i) => i !== Number(b.dataset.rm)); paint(); }));
+  };
+  sel.addEventListener('change', paint);
+  $('#schedule-add').addEventListener('click', () => {
+    if (cfg.schedule.length < 4) cfg.schedule = [...cfg.schedule, { start: 540, end: 1020 }];
+    paint();
+  });
   paint();
 }
 

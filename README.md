@@ -126,7 +126,10 @@ remove like any other.
 - **Art** — a rotating public-domain artwork (Met / Art Institute of Chicago /
   Cleveland); tap it for full screen, and swipe there to browse. Also powers the
   ambient screensaver. *Configure:* Settings → Art (rotation interval; optional
-  collections). Ambient vs dashboard is set under Settings → Display.
+  collections). Whether the board shows the dashboard or ambient art is set
+  under **Settings → Display**: *Always dashboard*, *Always art*, or
+  **Scheduled** — the dashboard shows during your own daily time windows (up to
+  four, 15-minute steps) and art shows the rest of the time.
 - **Photos** — a rotating slideshow from an **iCloud Shared Album** or a
   **public Google Drive folder**; tap for full screen, swipe to browse. Can
   replace Art as the ambient screensaver. *Configure:* Settings → Photos →

@@ -458,6 +458,14 @@ body.mode-ambient .gear { bottom: 7px; }
 .kv:has(.btn) { padding: 8px 0; }
 .kv__small { font-size: 20px; font-weight: 400; color: var(--ink-dim); }
 
+/* Scheduled-mode window editor: tap ▲/▼ steppers around each time. */
+.sched { display: flex; flex-direction: column; gap: 12px; margin: 4px 0 12px; }
+.sched__win { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.sched__step { min-width: 52px; }
+.sched__time { font-size: 22px; min-width: 130px; text-align: center; font-variant-numeric: tabular-nums; }
+.sched__dash { color: var(--ink-dim); }
+.sched__warn { color: var(--warn); font-size: 18px; }
+
 .drill { margin-top: 22px; max-width: 860px; }
 .drill__head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
 .drill__head h3 { font-size: 26px; }

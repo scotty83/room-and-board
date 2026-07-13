@@ -10,6 +10,7 @@ import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { mountKeyboard } from './keyboard.js';
 import { locationSearch } from '../geo.js';
+import { stepTime, fmtHM } from '../modes.js';
 import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
@@ -1064,10 +1065,24 @@ function renderDisplay() {
     <h2 class="pane__title">Display</h2>
     <p class="pane__hint">Mode</p>
     <div class="rows">
-      ${opt('mode', 'auto', 'Auto — dashboard at commute times, art otherwise')}
+      ${opt('mode', 'scheduled', 'Scheduled — dashboard on a timer, art otherwise')}
       ${opt('mode', 'dashboard', 'Always dashboard')}
       ${opt('mode', 'ambient', 'Always art')}
     </div>
+    ${state.cfg.mode === 'scheduled' ? `<div class="sched">${state.cfg.schedule.map((w, i) => `
+      <div class="sched__win">
+        <button class="btn sched__step" data-i="${i}" data-t="start" data-d="-1">▼</button>
+        <span class="sched__time">${fmtHM(w.start)}</span>
+        <button class="btn sched__step" data-i="${i}" data-t="start" data-d="1">▲</button>
+        <span class="sched__dash">–</span>
+        <button class="btn sched__step" data-i="${i}" data-t="end" data-d="-1">▼</button>
+        <span class="sched__time">${fmtHM(w.end)}</span>
+        <button class="btn sched__step" data-i="${i}" data-t="end" data-d="1">▲</button>
+        ${state.cfg.schedule.length > 1 ? `<button class="btn sched__rm" data-rm="${i}">✕</button>` : ''}
+        ${w.start >= w.end ? '<span class="sched__warn">end must be after start</span>' : ''}
+      </div>`).join('')}
+      ${state.cfg.schedule.length < 4 ? '<button class="btn" data-add-win>Add window</button>' : ''}
+    </div>` : ''}
     <p class="pane__hint">Greeting name</p>
     <div class="kv"><span>Shown as</span><b>${escapeHtml(state.cfg.name || 'not set')}</b>
       <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
@@ -1080,6 +1095,23 @@ function renderDisplay() {
     btn.addEventListener('click', () => {
       const [group, value] = btn.dataset.set.split(':');
       state.cfg[group] = value;
+      renderDisplay();
+    }),
+  );
+  pane().querySelectorAll('[data-t]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.i), key = btn.dataset.t, d = Number(btn.dataset.d);
+      state.cfg.schedule[i][key] = stepTime(state.cfg.schedule[i][key], d);
+      renderDisplay();
+    }),
+  );
+  pane().querySelector('[data-add-win]')?.addEventListener('click', () => {
+    state.cfg.schedule = [...state.cfg.schedule, { start: 540, end: 1020 }]; // 9:00 AM–5:00 PM
+    renderDisplay();
+  });
+  pane().querySelectorAll('[data-rm]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.schedule = state.cfg.schedule.filter((_, i) => i !== Number(btn.dataset.rm));
       renderDisplay();
     }),
   );

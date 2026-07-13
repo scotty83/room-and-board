@@ -1089,7 +1089,7 @@ function renderDisplay() {
       ${state.cfg.name ? '<button class="btn" data-clear-name>Remove</button>' : ''}</div>
     <div class="namepad" hidden>
       <output class="code__display" aria-live="polite">·</output>
-      <div class="keypad keypad--code namepad__keys"></div>
+      <div class="namepad__keys"></div>
     </div>`;
   pane().querySelectorAll('[data-set]').forEach((btn) =>
     btn.addEventListener('click', () => {
@@ -1122,21 +1122,28 @@ function renderDisplay() {
   const pad = pane().querySelector('.namepad');
   const display = pad.querySelector('.code__display');
   const keys = pad.querySelector('.namepad__keys');
-  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   // Explicit case, saved verbatim (see applyNameKey): auto-caps the first
   // letter of each word, Shift overrides for camelCase, '-' for hyphenated.
+  // QWERTY layout in the shared .osk styles; labels follow the shift state.
   let nameState = { value: state.cfg.name, shift: nameAutoCap(state.cfg.name) };
   function paintPad() {
     const { value, shift } = nameState;
     display.textContent = value || '·';
-    keys.innerHTML = LETTERS.map(
-      (k) => `<button class="key" data-nkey="${k}">${shift ? k : k.toLowerCase()}</button>`,
-    ).join('')
-      + '<button class="key" data-nkey="-">-</button>'
-      + `<button class="key ${shift ? 'is-on' : ''}" data-nkey="Shift">⇧</button>`
-      + '<button class="key key--wide" data-nkey="Space">␣</button>'
-      + '<button class="key" data-nkey="Backspace">⌫</button>'
-      + '<button class="key key--wide" data-nkey="Done">Done</button>';
+    const letter = (k) => `<button class="key osk__key" data-nkey="${k}">${shift ? k : k.toLowerCase()}</button>`;
+    keys.innerHTML = `<div class="osk">
+      <div class="osk__row">${[...'QWERTYUIOP'].map(letter).join('')}</div>
+      <div class="osk__row">${[...'ASDFGHJKL'].map(letter).join('')}</div>
+      <div class="osk__row">
+        <button class="key osk__key ${shift ? 'is-on' : ''}" data-nkey="Shift">⇧</button>
+        ${[...'ZXCVBNM'].map(letter).join('')}
+        <button class="key osk__key" data-nkey="Backspace">⌫</button>
+      </div>
+      <div class="osk__row">
+        <button class="key osk__key" data-nkey="-">-</button>
+        <button class="key osk__key osk__key--space" data-nkey="Space">space</button>
+        <button class="key osk__key osk__key--wide" data-nkey="Done">Done</button>
+      </div>
+    </div>`;
     keys.querySelectorAll('[data-nkey]').forEach((btn) =>
       btn.addEventListener('click', () => {
         const k = btn.dataset.nkey;

@@ -68,7 +68,7 @@ describe('capacityLabel', () => {
     expect(capacityLabel('marketsnews', 4, 4, cfg)).toBe('4 headlines');
   });
   it('describes weather tiers and stays quiet for non-lists', () => {
-    expect(capacityLabel('weather', 4, 4, cfg)).toBe('6 hourly · 2-day forecast');
+    expect(capacityLabel('weather', 4, 4, cfg)).toBe('6 hourly · 4-day forecast');
     expect(capacityLabel('weather', 6, 6, cfg)).toBe('8 hourly · 5-day forecast');
     expect(capacityLabel('art', 2, 2, cfg)).toBeNull();
   });

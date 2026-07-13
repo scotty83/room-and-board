@@ -110,18 +110,18 @@ async function saveAndClose() {
 // (Future: Markets and My Teams become groups once the Markets-news / Teams-news
 // feed widgets land.)
 export const NAV_MODEL = [
+  { type: 'item', id: 'display', label: 'Display' },
   { type: 'item', id: 'widgets', label: 'Widgets' },
+  { type: 'item', id: 'weather', label: 'Weather' },
+  { type: 'item', id: 'worldclock', label: 'World Clock' },
+  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'], ['tfl', 'TfL Status'] ] },
-  { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
-  { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
-  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
-  { type: 'item', id: 'worldclock', label: 'World Clock' },
+  { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'item', id: 'services', label: 'Cloud Services' },
-  { type: 'item', id: 'display', label: 'Display' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },
 ];
@@ -691,19 +691,21 @@ const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500'
 // appear (setup codes have no I/L/O/U on purpose). Reuses the photos
 // keyboard's .osk row/key styles so every on-board keyboard reads the same.
 const QWERTY_ROWS = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
-function qwertyKeypad(alphabet, extraKeys, actionsHtml) {
+function qwertyKeypad(alphabet, extraKeys, actionsHtml, { lower = false } = {}) {
   const allowed = new Set(alphabet);
   const rows = QWERTY_ROWS.map((r) => [...r].filter((k) => allowed.has(k)));
-  rows[rows.length - 1].push(...extraKeys); // symbols ride the short bottom row
-  // A bare ' ' extra would render as a blank key-sized button — invisible as a
-  // concept (Sean hit this in the Citi Bike search). Render it as a wide,
-  // labeled space bar instead; data-key stays ' ' so handlers are unchanged.
-  const keyHtml = (k) => (k === ' '
+  rows[rows.length - 1].push(...extraKeys.filter((k) => k !== ' ')); // symbols ride the short bottom row
+  const cased = (k) => (lower ? k.toLowerCase() : k);
+  const keyHtml = (k) => `<button class="key osk__key" data-key="${cased(k)}">${cased(k)}</button>`;
+  // The space bar is a wide, labeled key (a bare ' ' renders as a blank
+  // key-sized button — Sean hit this in the Citi Bike search) and sits on the
+  // bottom actions row, the same spot as the greeting-name pad's space bar.
+  const space = extraKeys.includes(' ')
     ? '<button class="key osk__key osk__key--space" data-key=" ">space</button>'
-    : `<button class="key osk__key" data-key="${k}">${k}</button>`);
+    : '';
   return `<div class="osk">${rows
     .map((row) => `<div class="osk__row">${row.map(keyHtml).join('')}</div>`)
-    .join('')}<div class="osk__row">${actionsHtml}</div></div>`;
+    .join('')}<div class="osk__row">${space}${actionsHtml}</div></div>`;
 }
 
 function renderMarkets() {
@@ -888,7 +890,7 @@ function renderFollowPane(opts) {
     <button class="btn btn--primary" data-add>${opts.addLabel}</button>
     <div class="acct-pad" hidden>
       <output class="code__display" aria-live="polite"></output>
-      <div class="keypad keypad--code"></div>
+      <div class="acct-pad__keys"></div>
       <p class="code__status"></p>
     </div>`;
   pane().querySelectorAll('[data-rm-acct]').forEach((chip) =>
@@ -900,16 +902,14 @@ function renderFollowPane(opts) {
   const pad = pane().querySelector('.acct-pad');
   const display = pad.querySelector('.code__display');
   const status = pad.querySelector('.code__status');
-  const keys = pad.querySelector('.keypad');
+  const keys = pad.querySelector('.acct-pad__keys');
   let id = '';
   pane().querySelector('[data-add]').addEventListener('click', () => {
     id = '';
-    keys.innerHTML =
-      'abcdefghijklmnopqrstuvwxyz0123456789-.'.split('')
-        .map((k) => `<button class="key" data-key="${k}">${k}</button>`)
-        .join('') +
-      (opts.suffixKey ? `<button class="key key--wide" data-key="${opts.suffixKey}">·${opts.suffixKey.slice(1)}</button>` : '') +
-      '<button class="key" data-key="⌫">⌫</button><button class="key key--wide" data-key="Check">Check</button>';
+    keys.innerHTML = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', ['.', '-'],
+      (opts.suffixKey ? `<button class="key osk__key osk__key--wide" data-key="${opts.suffixKey}">·${opts.suffixKey.slice(1)}</button>` : '') +
+      '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--wide osk__key--primary" data-key="Check">Check</button>',
+      { lower: true }); // handles/slugs are lowercase — keys type what they show
     pad.hidden = false;
     display.textContent = '';
     status.textContent = '';

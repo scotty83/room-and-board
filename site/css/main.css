@@ -486,16 +486,12 @@ body.mode-ambient .gear { bottom: 7px; }
   display: block; font-size: 52px; letter-spacing: 0.35em;
   font-variant-numeric: tabular-nums; margin: 16px 0; min-height: 64px;
 }
-.keypad { display: grid; gap: 10px; max-width: 640px; }
-.keypad--zip { grid-template-columns: repeat(3, 1fr); max-width: 320px; }
-.keypad--code { grid-template-columns: repeat(8, 1fr); }
 .key {
   min-height: 64px; font-size: 26px; font-weight: 600;
   border: none; border-radius: 12px; cursor: pointer;
   background: var(--bg-card); color: var(--ink);
 }
 .key:active { background: var(--bg-card-2); }
-.key--wide { grid-column: span 2; }
 .code__status, .zip__status { font-size: 22px; color: var(--warn); margin-top: 14px; min-height: 30px; }
 .segmented { display: inline-flex; border: 1px solid var(--bg-card-2); border-radius: 10px; overflow: hidden; }
 .seg { min-height: 48px; padding: 0 22px; font-size: 22px; border: none; background: none; color: var(--ink-dim); cursor: pointer; }

@@ -2,9 +2,11 @@
 
 A lightweight, personal signage dashboard — **RoomBoard** (`roomboard.app`) —
 for Cisco Board Pro devices (gen1 + gen2)
-in private offices: weather, NYC-area transit boards (Subway status, LIRR,
-Metro-North, NJ Transit, PATH, NYC Ferry, Express Bus), market tickers, sports
-scores, headlines, public-domain art, and daily extras. Hosted entirely on the
+in private offices: worldwide weather, transit boards (NYC Subway status, LIRR,
+Metro-North, NJ Transit, PATH, NYC Ferry, Express Bus, Citi Bike; London TfL
+status), market tickers, sports scores, headlines, cloud-service status,
+public-domain art, photo slideshows, and daily extras (NASA's photo of the
+day, Statista's chart of the day, and more). Hosted entirely on the
 public internet, personalized per device **without authentication**, with
 preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
 
@@ -23,8 +25,13 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
 │ /markets         tickers via Yahoo, cached 5 min             │
 │ /alerts/*        MTA service-alert digests (subway/lirr/mnr) │
 │ /sports/team     ESPN digest + live scoreboard score join    │
-│ /news/*, /bus/stops    RSS whitelist proxy · SIRI bus proxy  │
-│ /path/realtime, /ferry/departures   PATH + NYC Ferry digests │
+│ /news/*, /posts/substack     RSS + posts whitelist proxies   │
+│ /bus/stops, /path/realtime, /ferry/departures,               │
+│ /citibike/status, /tfl/status      more transit digests      │
+│ /icloud/album, /gdrive/album       photo-album digests       │
+│ /services/status, /apod, /chart    status pages · NASA photo │
+│                                    · Statista chart of day   │
+│ /fleet           anonymous usage ping → Analytics Engine     │
 └──────────────────────────────────────────────────────────────┘
 ┌─ Each Board Pro ─────────────────────────────────────────────┐
 │ SignageManager macro + Signage_Storage vault (inactive macro)│
@@ -37,7 +44,9 @@ Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
   a ~120-line protobuf reader, oracle-tested against `gtfs-realtime-bindings`),
   art (Met/AIC), and history (Wikimedia) are fetched **directly from the
   browser** — all verified CORS-open and keyless. Everything else (subway alert
-  digests, PATH, ferry, sports, news, bus) rides the Worker's Cache-API layer.
+  digests, PATH, ferry, bus, Citi Bike, TfL, sports, news, Substack, photo
+  albums, cloud-service status, NASA photo, the Statista chart) rides the
+  Worker's Cache-API layer.
 - Config is deflate+base64url JSON (~200 chars). localStorage is primary;
   every save is mirrored to the macro vault over the device's own WebSocket
   xAPI, and the macro re-seeds the page through the URL fragment after a wipe.

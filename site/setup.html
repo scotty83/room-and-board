@@ -226,10 +226,15 @@
       <section class="field">
         <h2>Display mode</h2>
         <select id="mode">
-          <option value="auto">Auto — dashboard at commute times, art otherwise</option>
+          <option value="scheduled">Scheduled — dashboard on a timer, art otherwise</option>
           <option value="dashboard">Always dashboard</option>
           <option value="ambient">Always art</option>
         </select>
+        <div id="schedule-editor" hidden>
+          <p class="hint">Dashboard shows during these windows; art shows the rest of the time.</p>
+          <div id="schedule-rows"></div>
+          <button id="schedule-add" type="button">Add window</button>
+        </div>
       </section>
 
       <h2 class="setup__group" data-group="Daily Extras">Daily Extras</h2>

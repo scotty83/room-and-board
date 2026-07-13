@@ -316,6 +316,51 @@ Rebuild ferry landings/trips after NYC Ferry schedule changes:
 destination labels — the widget falls back to each trip's last stop name).
 Refresh test fixtures: `node tools/record-fixtures.js`.
 
+## Security
+
+Room & Board is a **read-only** signage app that renders **public** data feeds.
+It has no user accounts, no passwords, and holds no personal data beyond an
+optional first-name greeting — a deliberately small attack surface, and the code
+is written to keep it that way.
+
+**Client (board + phone)**
+- **Output encoding everywhere.** Every third-party feed string (headlines,
+  transit alerts, status-page incidents, captions) is HTML-escaped at render.
+  Configuration that arrives in the URL fragment is sanitized in
+  `normalizeConfig` — labels stripped of markup, ids constrained to their
+  charset — before it can reach the DOM.
+- **Content-Security-Policy.** Both pages ship a strict CSP (`script-src 'self'`,
+  `object-src 'none'`, `base-uri 'none'`, …) as defense-in-depth: an injected
+  inline handler or foreign script is blocked even if encoding were bypassed.
+- **No dynamic code.** No `eval`, `new Function`, `document.write`, or
+  `postMessage` handlers; scripts and modules load only from the same origin.
+
+**Worker (API proxy)**
+- **No SSRF.** Caller input is regex- or allow-list-validated before it reaches
+  the path or query of a fixed upstream host — it can't redirect the Worker to
+  an arbitrary host.
+- **Secrets stay server-side.** Optional API keys (MTA BusTime, Google Drive,
+  NASA) live as Worker secrets, are URL-encoded into upstream requests, and are
+  never returned to the client or written to logs.
+- **Bounded & resilient.** Responses cache in the Cache API (never KV); routes
+  validate and cap their parameters; upstream failures degrade to stale-or-empty
+  rather than a wrong answer.
+
+**Macro-managed boards (Cisco RoomOS)**
+- The page↔device bridge uses a **low-privilege account whose passphrase rotates
+  on every boot**; the passphrase is never placed on a JavaScript global, and the
+  device address is format-validated before use.
+- Setup codes are short-lived (1 hour), best-effort single-use, and carry only
+  widget preferences — no secrets.
+
+**Review & testing.** The codebase has been through a multi-pass security and
+correctness review (SSRF, XSS/injection, cache poisoning, secret handling, and
+long-running-device reliability); findings were fixed and are covered by the
+test suite (`npm test` — 400+ cases across site and Worker).
+
+**Reporting a vulnerability.** Please open a private security advisory via
+GitHub's *Report a vulnerability* rather than a public issue.
+
 ## Repo map
 
 ```

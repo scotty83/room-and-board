@@ -7,7 +7,10 @@ name = "signage-api"
 main = "src/index.js"
 compatibility_date = "2026-06-01"
 routes = [
-  { pattern = "api.roomboard.app", custom_domain = true }
+  { pattern = "api.roomboard.app", custom_domain = true },
+  # Backup alias (re-enabled 2026-07-13): pages served from the rvc.tech
+  # fallback site target this host (see site/js/env.js).
+  { pattern = "signage-api.rvc.tech", custom_domain = true }
 ]
 
 [[kv_namespaces]]

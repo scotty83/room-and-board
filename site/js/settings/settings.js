@@ -58,8 +58,9 @@ export async function openSettings(cfg, { focus } = {}) {
   state = {
     cfg: structuredClone(cfg),
     root: document.querySelector('#settings-root'),
-    section: focus === 'code' ? 'code' : 'widgets',
-    openGroup: navGroupForSection(focus === 'code' ? 'code' : 'widgets'),
+    // Land on the nav's first entry (Display) unless asked to focus elsewhere.
+    section: focus === 'code' ? 'code' : NAV_MODEL[0].id,
+    openGroup: navGroupForSection(focus === 'code' ? 'code' : NAV_MODEL[0].id),
     stack: [],
     dirty: false,
   };
@@ -1063,7 +1064,7 @@ function renderDisplay() {
     <button class="row row--tap ${state.cfg[group] === value ? 'is-selected' : ''}" data-set="${group}:${value}">${label}</button>`;
   pane().innerHTML = `
     <h2 class="pane__title">Display</h2>
-    <p class="pane__hint">Mode</p>
+    <p class="pane__label">Mode</p>
     <div class="rows">
       ${opt('mode', 'dashboard', 'Always dashboard')}
       ${opt('mode', 'ambient', 'Always art')}
@@ -1083,7 +1084,7 @@ function renderDisplay() {
       </div>`).join('')}
       ${state.cfg.schedule.length < 4 ? '<button class="btn" data-add-win>Add window</button>' : ''}
     </div>` : ''}
-    <p class="pane__hint">Greeting name</p>
+    <p class="pane__label">Greeting name</p>
     <div class="kv"><span>Shown as</span><b>${escapeHtml(state.cfg.name || 'not set')}</b>
       <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
       ${state.cfg.name ? '<button class="btn" data-clear-name>Remove</button>' : ''}</div>

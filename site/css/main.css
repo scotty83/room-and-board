@@ -405,6 +405,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
+/* Sub-section label inside a pane (e.g. Display's Mode / Greeting name):
+   bigger and brighter than a hint so the groups read as separate settings. */
+.pane__label { font-size: 25px; font-weight: 600; color: var(--ink); margin: 26px 0 12px; }
 .pane__empty { font-size: 21px; color: var(--ink-faint); }
 .pane__rule { border: none; border-top: 1px solid var(--bg-card-2); margin: 28px 0; }
 

@@ -336,11 +336,15 @@ describe('parseDriveFolder', () => {
 });
 
 describe('services config', () => {
-  const ALL = ['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws'];
-  it('defaults to all nine services and filters junk ids', () => {
-    expect(normalizeConfig({}).services.list).toEqual(ALL);
+  const DEFAULT_TRIO = ['webex', 'slack', 'm365'];
+  it('defaults to Webex/Slack/M365 and filters junk ids', () => {
+    expect(normalizeConfig({}).services.list).toEqual(DEFAULT_TRIO);
     expect(normalizeConfig({ services: { list: ['zoom', 'bogus'] } }).services.list).toEqual(['zoom']);
-    expect(normalizeConfig({ services: { list: [] } }).services.list).toEqual(ALL);
+    expect(normalizeConfig({ services: { list: [] } }).services.list).toEqual(DEFAULT_TRIO);
+  });
+  it('keeps every non-default service a board already picked (ids validate against the full menu)', () => {
+    const picked = ['zoom', 'ubiquiti', 'cloudflare', 'github', 'gworkspace', 'aws', 'claude', 'openai'];
+    expect(normalizeConfig({ services: { list: picked } }).services.list).toEqual(picked);
   });
 });
 

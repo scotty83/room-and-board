@@ -649,6 +649,8 @@ import { mapStatuspage, mapSlack, mapMicrosoft, mapGoogle, mapWebex, mapAws } fr
 import spOk from './fixtures/svc-statuspage-ok.json';
 import spBad from './fixtures/svc-statuspage-degraded.json';
 import slackFx from './fixtures/svc-slack.json';
+import claudeFx from './fixtures/svc-claude.json';
+import openaiFx from './fixtures/svc-openai.json';
 import m365Fx from './fixtures/svc-m365.json';
 import googleFx from './fixtures/svc-google.json';
 import webexFx from './fixtures/svc-webex.json';
@@ -728,6 +730,17 @@ describe('/services/status route', () => {
     const digest = await (await call('/services/status?ids=github,slack')).json();
     expect(digest.services.find((s) => s.id === 'github').state).toBe('unknown');
     expect(digest.services.find((s) => s.id === 'slack').state).toBe('ok');
+  });
+  it('serves Claude and OpenAI (openai: incident.io compat feed, no incidents key)', async () => {
+    await clearCache('svc:claude,openai');
+    stubFetch([
+      { match: /status\.claude\.com/, body: claudeFx },
+      { match: /status\.openai\.com/, body: openaiFx },
+    ]);
+    const digest = await (await call('/services/status?ids=claude,openai')).json();
+    expect(digest.services[0]).toMatchObject({ id: 'claude', label: 'Claude', state: 'ok' });
+    expect(digest.services[1]).toMatchObject({ id: 'openai', label: 'OpenAI', state: 'ok' });
+    expect(digest.services[1].incidents).toEqual([]);
   });
 });
 

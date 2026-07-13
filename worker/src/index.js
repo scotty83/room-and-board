@@ -236,7 +236,7 @@ export default {
     }
 
     if (path === '/services/status' && request.method === 'GET') {
-      const ids = [...new Set((url.searchParams.get('ids') ?? '').split(',').filter((id) => Object.hasOwn(SERVICES, id)))].slice(0, 9);
+      const ids = [...new Set((url.searchParams.get('ids') ?? '').split(',').filter((id) => Object.hasOwn(SERVICES, id)))].slice(0, 11);
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));

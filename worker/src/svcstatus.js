@@ -119,6 +119,10 @@ export const SERVICES = {
   gworkspace: { label: 'Google Workspace', adapter: 'google', url: 'https://www.google.com/appsstatus/dashboard/incidents.json' },
   webex: { label: 'Webex', adapter: 'webex', url: 'https://service-status.webex.com/customer/dashServices/891?commercial=true' },
   aws: { label: 'AWS', adapter: 'aws', url: 'https://status.aws.amazon.com/data.json' },
+  claude: { label: 'Claude', adapter: 'statuspage', url: 'https://status.claude.com/api/v2/summary.json' },
+  // incident.io statuspage-compat feed: same shape, but no `incidents` key —
+  // the adapter's ?? [] fallback covers it (state still tracks the indicator).
+  openai: { label: 'OpenAI', adapter: 'statuspage', url: 'https://status.openai.com/api/v2/summary.json' },
 };
 
 export async function fetchServiceStatuses(ids) {

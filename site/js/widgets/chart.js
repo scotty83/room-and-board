@@ -16,13 +16,12 @@ export function render(el, vm, cfg) {
     el.innerHTML = '<div class="empty">Chart unavailable</div>';
     return;
   }
+  // No card caption: the infographic embeds its own title and the Statista
+  // branding — a caption would just repeat both (Sean flagged the duplicate).
+  // The tap viewer still shows title/description/credit.
   el.innerHTML = `
     <figure class="artwork artwork--contain" role="button" tabindex="0" aria-label="View chart full screen">
       <img class="artwork__img" src="${escapeHtml(c.url)}" alt="${escapeHtml(c.title)}" loading="lazy">
-      <figcaption class="artwork__caption">
-        <span class="artwork__title">${escapeHtml(c.title)}</span>
-        <span class="artwork__artist">Statista</span>
-      </figcaption>
     </figure>`;
   el.querySelector('.artwork').addEventListener('click', () =>
     openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [] }));

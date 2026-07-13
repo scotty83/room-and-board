@@ -60,7 +60,6 @@ const CASES = [
   ['marketsnews', marketsnews, ['Fed holds rates']],
   ['services', services, ['Zoom', 'Operational', 'Cloudflare', 'Minor', 'Minor Service Outage']],
   ['apod', apod, ['Messier 24', 'Chuck Ayoub']],
-  ['chart', chart, ['Population Growth', 'Statista']],
 ];
 
 describe('widget renderers', () => {
@@ -72,6 +71,17 @@ describe('widget renderers', () => {
       for (const t of expectedTexts) expect(text).toContain(t);
     });
   }
+
+  it('chart renders the infographic image only — no caption (title/branding are in the image)', () => {
+    const host = el();
+    chart.render(host, DEMO_VMS.chart, CFG);
+    const img = host.querySelector('.artwork__img');
+    expect(img.getAttribute('src')).toContain('cdn.statcdn.com/Infographic/images/normal/28744.jpeg');
+    expect(img.getAttribute('alt')).toContain('Population Growth');
+    expect(host.querySelector('.artwork--contain')).toBeTruthy(); // data images never crop
+    expect(host.querySelector('.artwork__caption')).toBeNull();
+    expect(host.textContent.trim()).toBe('');
+  });
 
   it('citibike joins config station names with live counts, dims closed stations', () => {
     const host = el();

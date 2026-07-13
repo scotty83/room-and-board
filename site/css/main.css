@@ -285,6 +285,7 @@ html, body {
 .slide {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
+  background-repeat: no-repeat; /* letterboxed (contain) art must sit on the black bg, not tile */
   opacity: 0;
   transition: opacity 2.5s ease-in-out;
 }

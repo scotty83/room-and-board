@@ -455,7 +455,9 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .chip--on { background: var(--accent); color: #0d1117; }
 .kv { display: flex; align-items: center; gap: 16px; min-height: 60px; font-size: 23px; }
-.kv span { color: var(--ink-dim); min-width: 260px; }
+/* Direct children only: the label column. A descendant selector here bled
+   min-width:260px into nested spans (it inflated the usage-ping toggle knob). */
+.kv > span { color: var(--ink-dim); min-width: 260px; }
 /* Button rows (diagnostics Display/Storage) nearly fill the row, so adjacent
    ones butt together — give them vertical breathing room the text rows get for free. */
 .kv:has(.btn) { padding: 8px 0; }

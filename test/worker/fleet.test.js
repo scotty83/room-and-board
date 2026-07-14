@@ -47,12 +47,19 @@ describe('parseBeacon', () => {
 });
 
 describe('beaconDataPoint', () => {
-  it('maps to the Analytics Engine shape indexed by device', () => {
-    expect(beaconDataPoint(parseBeacon(JSON.stringify(VALID)))).toEqual({
+  it('maps to the Analytics Engine shape indexed by device, country last', () => {
+    const p = { ...parseBeacon(JSON.stringify(VALID)), country: 'US' };
+    expect(beaconDataPoint(p)).toEqual({
       indexes: [VALID.deviceId],
-      blobs: [VALID.deviceId, VALID.version, VALID.mode, VALID.tz, 'weather,subway,markets'],
+      blobs: [VALID.deviceId, VALID.version, VALID.mode, VALID.tz, 'weather,subway,markets', 'US'],
       doubles: [3],
     });
+  });
+  it('defaults country to XX when absent or malformed (never trusts the payload)', () => {
+    const base = parseBeacon(JSON.stringify(VALID));
+    expect(beaconDataPoint(base).blobs[5]).toBe('XX');
+    expect(beaconDataPoint({ ...base, country: 'usa' }).blobs[5]).toBe('XX'); // not alpha-2
+    expect(beaconDataPoint({ ...base, country: '<b>' }).blobs[5]).toBe('XX');
   });
 });
 
@@ -72,6 +79,14 @@ describe('POST /fleet', () => {
   it('accepts quietly when the ANALYTICS binding is absent (self-host without metrics)', async () => {
     const res = await call('/fleet', { method: 'POST', body: JSON.stringify(VALID) }, { ANALYTICS: undefined });
     expect(res.status).toBe(204);
+  });
+  it('stamps the edge-derived country from the CF-IPCountry header', async () => {
+    const writeDataPoint = vi.fn();
+    const res = await call('/fleet', {
+      method: 'POST', body: JSON.stringify(VALID), headers: { 'CF-IPCountry': 'GB' },
+    }, { ANALYTICS: { writeDataPoint } });
+    expect(res.status).toBe(204);
+    expect(writeDataPoint.mock.calls[0][0].blobs[5]).toBe('GB');
   });
   it('refuses oversized bodies', async () => {
     const writeDataPoint = vi.fn();

@@ -182,8 +182,11 @@ export default {
       // the body size itself (oversized → 400).
       const parsed = parseBeacon(await request.text());
       if (!parsed) return json({ error: 'bad_beacon' }, 400);
+      // Country is edge-derived (request.cf.country, CF-IPCountry header at the
+      // edge) — the board never sends location. fleet.js validates/defaults it.
+      const geo = request.cf?.country ?? request.headers.get('CF-IPCountry');
       try {
-        env.ANALYTICS?.writeDataPoint(beaconDataPoint(parsed));
+        env.ANALYTICS?.writeDataPoint(beaconDataPoint({ ...parsed, country: geo }));
       } catch {
         // Metrics are best-effort — never fail the board over a write error.
       }

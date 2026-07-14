@@ -4,3 +4,6 @@ node_modules/
 deploy/devices.csv
 *.log
 .DS_Store
+
+# fleet-stats secret (NAS-side)
+stats/.env

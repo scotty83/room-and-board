@@ -1,10 +1,10 @@
 {
   "name": "room-and-board",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
+  "description": "Lightweight signage dashboard for Cisco Board Pro / RoomOS devices — widgets, photo frame, zero-auth setup",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scotty83/room-and-board.git"
   },
   "scripts": {
     "test": "vitest run && vitest run -c worker/vitest.config.js",
@@ -15,9 +15,9 @@
     "deploy:site": "CF_PAGES_COMMIT_SHA=$(git rev-parse HEAD) node tools/stamp-version.js && wrangler pages deploy site --project-name signage --branch main --commit-dirty=true && git checkout site/version.json",
     "deploy:macro": "node deploy/make-macro.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["signage", "cisco", "roomos", "board-pro", "dashboard", "cloudflare-workers"],
+  "author": "Sean Scott",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.17.0",

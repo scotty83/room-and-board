@@ -5,3 +5,10 @@ deploy/devices.csv
 *.log
 .DS_Store
 
+# Local AI-assistant tooling and internal dev docs — kept out of the public repo.
+graphify-out/
+.superpowers/
+.impeccable/
+.claude/
+docs/superpowers/
+

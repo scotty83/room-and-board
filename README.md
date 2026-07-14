@@ -10,8 +10,6 @@ day, Statista's chart of the day, and more). Hosted entirely on the
 public internet, personalized per device **without authentication**, with
 preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
 
-Design spec: `docs/superpowers/specs/2026-07-02-board-pro-signage-design.md`.
-
 ## How it works
 
 ```
@@ -203,8 +201,20 @@ Point a Pages project at this repo:
   the project's Custom domains — DNS + TLS are automatic when the zone is in
   the same Cloudflare account.
 
-Set the deployed Worker URL in `site/js/env.js` (`WORKER_URL`) before the
-first deploy.
+Two values are specific to this deployment and **must be changed in a fork**:
+
+- **`site/js/env.js` (`WORKER_URL`)** — point it at *your* Worker before the
+  first deploy, e.g.
+
+  ```js
+  export const WORKER_URL = 'https://signage-api.yourdomain.com';
+  ```
+
+  (The shipped file routes to this project's own `api.roomboard.app` plus a
+  backup domain; a fork that keeps it would send every board's requests — and
+  the anonymous usage pings below — to the original operator's Worker.)
+- **`package.json` `deploy:site`** — the script hardcodes
+  `--project-name signage`; replace it with your Pages project's name.
 
 ### 2. Worker
 
@@ -243,7 +253,13 @@ dataset (`roomboard_usage`, binding in `wrangler.toml`) queryable via its SQL
 API for active-device counts, widget adoption, and the fields above. Board
 owners can switch the ping off under **Settings → Diagnostics**; self-hosters
 who want no metrics at all can delete the `analytics_engine_datasets` block —
-the route then accepts and discards pings so boards never see an error. (The
+the route then accepts and discards pings so boards never see an error.
+
+> **⚠ Self-hosters:** the beacon defaults **on** and posts to `WORKER_URL`.
+> If a fork ships with the original `site/js/env.js`, its boards report their
+> widget adoption to *this* project's Worker, not yours — change `WORKER_URL`
+> (step 1 above) and deploy your own Worker so the pings land in your own
+> dataset (or nowhere, if you removed the binding). (The
 route and module are named `fleet`, not `beacon`/`analytics`, on purpose:
 ad-blocker filter lists match those keywords, and a blocked module import
 would take the whole dashboard down in a desktop preview.)
@@ -427,5 +443,4 @@ macro/      SignageManager RoomOS macro (vault + bridge + signage URL)
 deploy/     provision.js fleet setup over jsxapi
 tools/      data builders (stations, art manifest, fixtures)
 test/       vitest suites (+ worker pool project in worker/vitest.config.js)
-docs/       design spec and implementation plan
 ```

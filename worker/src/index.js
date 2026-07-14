@@ -17,7 +17,7 @@ import { fetchServiceStatuses, SERVICES } from './svcstatus.js';
 import { fetchApod } from './apod.js';
 import { fetchCitibike } from './citibike.js';
 import { fetchTfl } from './tfl.js';
-import { parseBeacon, beaconDataPoint } from './fleet.js';
+import { parseBeacon, beaconDataPoint, deviceModel } from './fleet.js';
 import { fetchChart } from './chart.js';
 
 const CORS = {
@@ -183,10 +183,12 @@ export default {
       const parsed = parseBeacon(await request.text());
       if (!parsed) return json({ error: 'bad_beacon' }, 400);
       // Country is edge-derived (request.cf.country, CF-IPCountry header at the
-      // edge) — the board never sends location. fleet.js validates/defaults it.
+      // edge); model is parsed from the RoomOS WebEngine User-Agent — the board
+      // never sends either. fleet.js validates/defaults both.
       const geo = request.cf?.country ?? request.headers.get('CF-IPCountry');
+      const model = deviceModel(request.headers.get('User-Agent'));
       try {
-        env.ANALYTICS?.writeDataPoint(beaconDataPoint({ ...parsed, country: geo }));
+        env.ANALYTICS?.writeDataPoint(beaconDataPoint({ ...parsed, country: geo, model }));
       } catch {
         // Metrics are best-effort — never fail the board over a write error.
       }

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
-import { parseBeacon, beaconDataPoint } from '../../worker/src/fleet.js';
+import { parseBeacon, beaconDataPoint, deviceModel } from '../../worker/src/fleet.js';
 
 const ctx = { waitUntil() {}, passThroughOnException() {} };
 const call = (path, init, extraEnv = {}) =>
@@ -46,18 +46,32 @@ describe('parseBeacon', () => {
   });
 });
 
+describe('deviceModel', () => {
+  it('parses the model from a RoomOS WebEngine User-Agent', () => {
+    expect(deviceModel('Mozilla/5.0 (Linux; RoomOS; Cisco Board Pro) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.14.2 Chrome/77 Safari/537.36')).toBe('Cisco Board Pro');
+    expect(deviceModel('Mozilla/5.0 (Linux; RoomOS; Cisco Webex Desk Pro) AppleWebKit/537.36')).toBe('Cisco Webex Desk Pro');
+  });
+  it('handles a malformed model paren and defaults non-RoomOS traffic to other', () => {
+    // Legacy Board 70 UA has an unbalanced paren before AppleWebKit.
+    expect(deviceModel('Mozilla/5.0 (Linux; RoomOS; Cisco Webex Board (70) AppleWebKit/537.36')).toBe('Cisco Webex Board');
+    expect(deviceModel('Mozilla/5.0 (Macintosh; Intel Mac OS X) Chrome/149 Safari/537.36')).toBe('other');
+    expect(deviceModel(null)).toBe('other');
+  });
+});
+
 describe('beaconDataPoint', () => {
-  it('maps to the Analytics Engine shape indexed by device, country last', () => {
-    const p = { ...parseBeacon(JSON.stringify(VALID)), country: 'US' };
+  it('maps to the Analytics Engine shape indexed by device, country then model last', () => {
+    const p = { ...parseBeacon(JSON.stringify(VALID)), country: 'US', model: 'Cisco Board Pro' };
     expect(beaconDataPoint(p)).toEqual({
       indexes: [VALID.deviceId],
-      blobs: [VALID.deviceId, VALID.version, VALID.mode, VALID.tz, 'weather,subway,markets', 'US'],
+      blobs: [VALID.deviceId, VALID.version, VALID.mode, VALID.tz, 'weather,subway,markets', 'US', 'Cisco Board Pro'],
       doubles: [3],
     });
   });
-  it('defaults country to XX when absent or malformed (never trusts the payload)', () => {
+  it('defaults country to XX and model to other when absent (never trusts the payload)', () => {
     const base = parseBeacon(JSON.stringify(VALID));
     expect(beaconDataPoint(base).blobs[5]).toBe('XX');
+    expect(beaconDataPoint(base).blobs[6]).toBe('other');
     expect(beaconDataPoint({ ...base, country: 'usa' }).blobs[5]).toBe('XX'); // not alpha-2
     expect(beaconDataPoint({ ...base, country: '<b>' }).blobs[5]).toBe('XX');
   });
@@ -80,13 +94,15 @@ describe('POST /fleet', () => {
     const res = await call('/fleet', { method: 'POST', body: JSON.stringify(VALID) }, { ANALYTICS: undefined });
     expect(res.status).toBe(204);
   });
-  it('stamps the edge-derived country from the CF-IPCountry header', async () => {
+  it('stamps the edge country and the RoomOS model from request headers', async () => {
     const writeDataPoint = vi.fn();
     const res = await call('/fleet', {
-      method: 'POST', body: JSON.stringify(VALID), headers: { 'CF-IPCountry': 'GB' },
+      method: 'POST', body: JSON.stringify(VALID),
+      headers: { 'CF-IPCountry': 'GB', 'User-Agent': 'Mozilla/5.0 (Linux; RoomOS; Cisco Board Pro G2) AppleWebKit/537.36' },
     }, { ANALYTICS: { writeDataPoint } });
     expect(res.status).toBe(204);
     expect(writeDataPoint.mock.calls[0][0].blobs[5]).toBe('GB');
+    expect(writeDataPoint.mock.calls[0][0].blobs[6]).toBe('Cisco Board Pro G2');
   });
   it('refuses oversized bodies', async () => {
     const writeDataPoint = vi.fn();

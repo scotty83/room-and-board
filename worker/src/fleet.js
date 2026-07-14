@@ -32,13 +32,23 @@ export function parseBeacon(text) {
 // board — the board sends no location). 'XX' when unknown/absent.
 const country = (c) => (typeof c === 'string' && /^[A-Z]{2}$/.test(c) ? c : 'XX');
 
+// Cisco RoomOS WebEngine puts the device model in its User-Agent:
+//   Mozilla/5.0 (Linux; RoomOS; Cisco Board Pro) AppleWebKit/...
+// Parse it edge-side from the UA header (the board sends nothing). Non-RoomOS
+// traffic (a desktop preview, the e2e test) has no such segment → 'other'.
+export function deviceModel(ua) {
+  const m = /RoomOS;\s*([^)]+)/i.exec(String(ua ?? ''));
+  if (!m) return 'other';
+  return m[1].replace(/\s*\(.*$/, '').trim().replace(/\s+/g, ' ').slice(0, 40) || 'other';
+}
+
 // Analytics Engine shape. The index is the device id so AE's sampling keys on
 // devices, not pings; blobs carry the dimensions, doubles the widget count.
-// p.country is stamped by the route from request geo, not the payload.
+// p.country and p.model are stamped by the route from the request, not the payload.
 export function beaconDataPoint(p) {
   return {
     indexes: [p.deviceId],
-    blobs: [p.deviceId, p.version, p.mode, p.tz, p.widgets.join(','), country(p.country)],
+    blobs: [p.deviceId, p.version, p.mode, p.tz, p.widgets.join(','), country(p.country), p.model || 'other'],
     doubles: [p.widgets.length],
   };
 }

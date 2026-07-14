@@ -5,10 +5,10 @@ import { summarize } from '../stats/summarize.js';
 // 'markets'); the older row must lose. deviceC has no country.
 const NOW = Date.parse('2026-07-13T18:00:00Z');
 const rows = [
-  { device: 'a', version: 'v2', mode: 'scheduled', tz: 'America/New_York', widgets: 'weather,subway', country: 'US', ts: '2026-07-13T17:00:00Z' },
-  { device: 'b', version: 'v2', mode: 'dashboard', tz: 'Europe/London', widgets: 'weather,tfl', country: 'GB', ts: '2026-07-13T16:00:00Z' },
-  { device: 'a', version: 'v1', mode: 'scheduled', tz: 'America/New_York', widgets: 'weather,subway,markets', country: 'US', ts: '2026-07-11T09:00:00Z' },
-  { device: 'c', version: 'v2', mode: 'ambient', tz: 'America/New_York', widgets: 'weather', country: 'XX', ts: '2026-07-08T10:00:00Z' },
+  { device: 'a', version: 'v2', mode: 'scheduled', tz: 'America/New_York', widgets: 'weather,subway', country: 'US', model: 'Cisco Board Pro G2', ts: '2026-07-13T17:00:00Z' },
+  { device: 'b', version: 'v2', mode: 'dashboard', tz: 'Europe/London', widgets: 'weather,tfl', country: 'GB', model: 'Cisco Board Pro', ts: '2026-07-13T16:00:00Z' },
+  { device: 'a', version: 'v1', mode: 'scheduled', tz: 'America/New_York', widgets: 'weather,subway,markets', country: 'US', model: 'Cisco Board Pro G2', ts: '2026-07-11T09:00:00Z' },
+  { device: 'c', version: 'v2', mode: 'ambient', tz: 'America/New_York', widgets: 'weather', country: 'XX', model: 'other', ts: '2026-07-08T10:00:00Z' },
 ];
 
 describe('summarize', () => {
@@ -27,9 +27,11 @@ describe('summarize', () => {
     expect(s.widgets.find((w) => w.id === 'tfl').label).toBe('TfL Status');
   });
 
-  it('tallies mode / country / version and the 24h active count', () => {
+  it('tallies mode / country / model / version and the 24h active count', () => {
     expect(s.modes).toEqual(expect.arrayContaining([{ key: 'scheduled', n: 1 }, { key: 'dashboard', n: 1 }, { key: 'ambient', n: 1 }]));
     expect(s.countries.find((c) => c.key === 'US').n).toBe(1);
+    // deviceA's latest (Board Pro G2) wins over its older row; c is the non-board sentinel.
+    expect(s.models).toEqual(expect.arrayContaining([{ key: 'Cisco Board Pro G2', n: 1 }, { key: 'Cisco Board Pro', n: 1 }, { key: 'other', n: 1 }]));
     expect(s.activeBoards24h).toBe(2); // a (17:00) + b (16:00); c is 5 days old
     expect(s.pings).toBe(512);
     expect(s.avgWidgets).toBe(1.7); // (2 + 2 + 1) / 3

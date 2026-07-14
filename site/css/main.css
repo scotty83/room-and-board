@@ -540,11 +540,22 @@ body.mode-ambient .gear { bottom: 7px; }
   width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
   background: rgba(248, 81, 73, 0.2); color: var(--bad); font-size: 22px;
 }
+/* Resize chip: a filled square whose visual IS the touch target — testers
+   aimed at the old thin corner bracket instead of the (invisible) hit area.
+   The ::after pad forgives near-misses just outside the chip. */
 .edit-handle {
-  position: absolute; bottom: 6px; right: 6px;
-  width: 56px; height: 56px; cursor: nwse-resize; touch-action: none;
-  border-right: 4px solid var(--accent); border-bottom: 4px solid var(--accent);
-  border-bottom-right-radius: 12px;
+  position: absolute; bottom: 8px; right: 8px;
+  width: 64px; height: 64px; cursor: nwse-resize; touch-action: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--accent); border-radius: 12px;
+  background: rgba(88, 166, 255, 0.22); color: var(--accent);
+  transition: background 0.15s, transform 0.15s ease-out;
+}
+.edit-handle::after { content: ''; position: absolute; inset: -12px; }
+.edit-handle:active { background: rgba(88, 166, 255, 0.4); transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .edit-handle { transition: background 0.15s; }
+  .edit-handle:active { transform: none; }
 }
 .editor__bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 24px; }
 .edit-tray { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }

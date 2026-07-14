@@ -9,6 +9,10 @@ import { GRID, MIN_SIZE, firstFit, placeWithPush } from './layout.js';
 import { capacityLabel } from './capacity.js';
 import { WIDGET_IDS } from './config.js';
 
+// Diagonal two-headed arrow (↖↘ — the axis a corner-resize actually moves
+// along). Lives inside the filled resize chip; stroke follows the chip color.
+const RESIZE_ICON = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9 4 4m0 0v5m0-5h5M15 15l5 5m0 0v-5m0 5h-5"/></svg>`;
+
 const TITLES = {
   apod: 'NASA Daily Photo',
   chart: 'Chart of the Day',
@@ -121,7 +125,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
           <span class="edit-block__title">${TITLES[r.id] ?? r.id}</span>
           <span class="edit-block__size">${sizeLabel(r)}${capOf(r.id, r.w, r.h) ? `<br>${capOf(r.id, r.w, r.h)}` : ''}</span>
           <button class="edit-remove" data-remove="${r.id}" aria-label="Remove ${TITLES[r.id]}">✕</button>
-          <span class="edit-handle" data-resize="${r.id}" aria-label="Resize ${TITLES[r.id]}"></span>
+          <span class="edit-handle" data-resize="${r.id}" aria-label="Resize ${TITLES[r.id]}">${RESIZE_ICON}</span>
         </div>`,
       )
       .join('');

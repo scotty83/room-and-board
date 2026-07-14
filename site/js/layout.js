@@ -19,6 +19,7 @@ export const MIN_SIZE = {
   mnr: [3, 2],
   bus: [3, 3],
   njt: [3, 2],
+  amtrak: [3, 2],
   path: [3, 2],
   ferry: [3, 2],
   markets: [3, 2],

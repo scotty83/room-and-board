@@ -18,7 +18,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -26,7 +26,7 @@ export const WIDGET_IDS = [
 // order + categories, and must remain an exact partition of WIDGET_IDS
 // (asserted in test/settings-logic.test.js).
 export const WIDGET_GROUPS = [
-  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'path', 'ferry', 'bus', 'citibike', 'tfl'] },
+  { label: 'Commute', ids: ['subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl'] },
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup', 'f1'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
@@ -83,6 +83,7 @@ export const DEFAULT_CONFIG = Object.freeze({
     { id: 'simonwillison.net', label: 'Simon Willison' },
   ].map(Object.freeze)) }),
   njt: Object.freeze({ station: 'NY', alerts: true }),
+  amtrak: Object.freeze({ dest: '', alerts: true }), // NYP (Moynihan) board destination filter ('' = all trains)
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
@@ -260,6 +261,10 @@ export function normalizeConfig(raw) {
     njt: {
       station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
       alerts: raw.njt?.alerts !== false,
+    },
+    amtrak: {
+      dest: str(raw.amtrak?.dest, '', 5), // Amtrak station code (e.g. PHL); '' = all NYP departures
+      alerts: raw.amtrak?.alerts !== false,
     },
     path: {
       station: /^[A-Z0-9]{3}$/.test(raw.path?.station ?? '') ? raw.path.station : DEFAULT_CONFIG.path.station,

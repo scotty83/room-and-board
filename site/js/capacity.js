@@ -24,6 +24,7 @@ const MODELS = {
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),
   njt: listCapacity(80, 56),
+  amtrak: listCapacity(80, 56), // two-line train rows, same pitch as the other rail boards
   path: listCapacity(58, 44), // single-line rows, subway-like density
   ferry: listCapacity(80, 56), // two-line train rows
   // Row budget shared between each stop's header (~28px) and its arrival rows
@@ -74,6 +75,7 @@ export function capacityLabel(id, w, h, cfg = {}) {
     case 'lirr':
     case 'mnr':
     case 'njt':
+    case 'amtrak':
       return `next ${n} trains`;
     case 'bus':
       return `next ${n} buses`;

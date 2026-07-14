@@ -91,6 +91,11 @@ remove like any other.
 - **NJ Transit** — departures for one rail station, with track and status; a
   delayed-but-boardable train stays on the board past its scheduled minute.
   *Configure:* Settings → NJ Transit (pick a station; toggle alerts).
+- **Amtrak** — departures from Moynihan Train Hall / New York Penn (NYP), with
+  route, train number, status, and platform when assigned. Filter to trains
+  stopping at your destination (named in the card corner) to see the arrival
+  time there; unfiltered rows show the terminus. *Configure:* Settings → Amtrak
+  (pick a destination; toggle alerts).
 - **PATH** — next trains at one station as colored line dots + minutes; choose
   one direction or both. *Configure:* Settings → PATH.
 - **NYC Ferry** — next departures from one landing, with route name and color.
@@ -337,6 +342,7 @@ the URL fragment and the dashboard returns configured.
 | NASA APOD | Worker + free key | `wrangler secret put NASA_KEY` (free key from api.nasa.gov); falls back to `DEMO_KEY` when unset — viable because the 1h fleet-shared cache stays under DEMO_KEY's daily cap, but the real key is preferred |
 | Statista Chart of the Day | Worker, keyless | No feed exists — the worker scrapes the listing page (session-cookie SSO bounce walked manually, see `worker/src/chart.js`), cached 1 h; boards hotlink the infographic from `cdn.statcdn.com` (probe-verified: no referer/cookie checks). Scrape breaks if Statista reworks the page markup |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
+| Amtraker (Amtrak) | Worker, keyless | unofficial community API (no official public Amtrak feed); worker filters the all-trains feed to NYP departures, caches 60 s fleet-wide, empty/stale-tolerant; destination filter is client-side over each train's downstream stops (`worker/src/amtrak.js`) |
 | Jolpica-F1 (Formula 1) | Worker, keyless | Ergast successor, not CORS-open; worker fans out next race + last result + driver/constructor standings, merges + caches 1 h, serves partial on upstream failure (`worker/src/f1.js`) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

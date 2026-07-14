@@ -61,6 +61,22 @@ export const DEMO_VMS = {
       { min: 41, time: 1783002460, dest: 'Bay Head', line: 'North Jersey Coast', track: '5', status: '' },
     ],
   },
+  amtrak: {
+    station: 'NYP', updatedAt: 1783000000, stale: false,
+    alerts: [{ header: 'Northeast Regional trains are operating with reduced frequency this weekend due to track work south of Philadelphia.' }],
+    departures: [
+      { t: 1783000720, sch: 1783000720, dest: 'Washington Union', destCode: 'WAS', route: 'Northeast Regional', num: '171', status: 'On time', platform: null,
+        stops: [['NWK', 1783001200], ['TRE', 1783002400], ['PHL', 1783003600], ['BAL', 1783006000], ['WAS', 1783007800]] },
+      { t: 1783001580, sch: 1783001280, dest: 'Boston South', destCode: 'BOS', route: 'Acela', num: '2151', status: '5 min late', platform: '7',
+        stops: [['STM', 1783003000], ['NHV', 1783004500], ['BOS', 1783012000]] },
+      { t: 1783002400, sch: 1783002400, dest: 'Albany-Rensselaer', destCode: 'ALB', route: 'Empire Service', num: '233', status: 'On time', platform: null,
+        stops: [['YNY', 1783003000], ['CRT', 1783003600], ['POU', 1783005000], ['ALB', 1783010000]] },
+      { t: 1783003300, sch: 1783003300, dest: 'Harrisburg', destCode: 'HAR', route: 'Keystone', num: '643', status: 'On time', platform: null,
+        stops: [['NWK', 1783003800], ['TRE', 1783004800], ['PHL', 1783006000], ['LNC', 1783009000], ['HAR', 1783010800]] },
+      { t: 1783004200, sch: 1783004200, dest: 'Boston South', destCode: 'BOS', route: 'Northeast Regional', num: '175', status: 'On time', platform: null,
+        stops: [['NHV', 1783007000], ['PVD', 1783011000], ['BOS', 1783013000]] },
+    ],
+  },
   path: {
     station: '33S',
     sections: [

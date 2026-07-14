@@ -225,6 +225,10 @@ html, body {
 .train__dest { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .train__line { font-size: 20px; color: var(--ink-dim); }
 .train__track { background: var(--bg-card-2); border-radius: 8px; padding: 6px 10px; font-size: 20px; color: var(--accent); white-space: nowrap; }
+/* Amtrak status pill (right column): on-time neutral, delays warn, cancelled bad. */
+.train__status { align-self: center; font-size: 18px; color: var(--ink-dim); white-space: nowrap; }
+.train__status.is-warn { color: var(--warn); }
+.train__status.is-bad { color: var(--bad); }
 
 /* ---------- art card ---------- */
 .artwork { display: flex; flex-direction: column; height: 100%; gap: 10px; }

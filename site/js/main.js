@@ -22,6 +22,7 @@ import * as lirr from './widgets/lirr.js';
 import * as mnr from './widgets/mnr.js';
 import * as bus from './widgets/bus.js';
 import * as njt from './widgets/njt.js';
+import * as amtrak from './widgets/amtrak.js';
 import * as pathw from './widgets/path.js';
 import * as ferry from './widgets/ferry.js';
 import * as art from './widgets/art.js';
@@ -46,7 +47,7 @@ import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, services, apod, chart, citibike, tfl, f1];
+const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, services, apod, chart, citibike, tfl, f1];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };

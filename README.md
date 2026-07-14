@@ -211,18 +211,33 @@ Without NJT credentials everything else still works; the NJT widget shows
 "unavailable" (worker returns `njt_not_configured`).
 
 **Usage metrics (optional).** Boards send an anonymous hourly heartbeat to
-`POST /fleet` — a random locally-generated device id, the widget ids on the
-layout, the display mode, the running version, and the IANA timezone. No
-names, no coordinates, no request contents. (The path and module are named
-`fleet`, not `beacon`/`analytics`, on purpose: ad-blocker filter lists match
-those keywords and a blocked module import would take the whole dashboard
-down in a desktop preview.) The worker writes each ping to a
+`POST /fleet`. Exactly what is collected, for transparency:
+
+**Sent by the board** (in the request body):
+- a **random device id** generated on the board (a UUID in `localStorage`; not tied to any account, regenerated if storage is cleared),
+- the **widget ids** on its layout (e.g. `weather,subway,markets`),
+- the **display mode** (`scheduled` / `dashboard` / `ambient`),
+- the running **site version**,
+- the **IANA timezone** (e.g. `America/New_York`).
+
+**Derived by the worker** from the request (the board sends neither):
+- the **country** — an ISO code (`US`, `GB`, …) from Cloudflare's edge geolocation. Country-level only; **no IP address is stored** and nothing finer than country,
+- the **Cisco device model** — parsed from the RoomOS WebEngine User-Agent (`Cisco Board Pro`, `Cisco Desk Pro`, …); non-RoomOS traffic records as `other`.
+
+**Never collected:** the greeting name, chosen stations/locations/coordinates,
+album links, IP addresses, or any widget content. The device id is random and
+carries no identity.
+
+Each ping is written to a
 [Workers Analytics Engine](https://developers.cloudflare.com/analytics/analytics-engine/)
-dataset (`roomboard_usage`, binding in `wrangler.toml`) that you can query
-with its SQL API for active-device counts and widget adoption. Board owners
-can switch the ping off under **Settings → Diagnostics**; self-hosters who
-don't want metrics at all can delete the `analytics_engine_datasets` block —
-the route then accepts and discards pings so boards never see an error.
+dataset (`roomboard_usage`, binding in `wrangler.toml`) queryable via its SQL
+API for active-device counts, widget adoption, and the fields above. Board
+owners can switch the ping off under **Settings → Diagnostics**; self-hosters
+who want no metrics at all can delete the `analytics_engine_datasets` block —
+the route then accepts and discards pings so boards never see an error. (The
+route and module are named `fleet`, not `beacon`/`analytics`, on purpose:
+ad-blocker filter lists match those keywords, and a blocked module import
+would take the whole dashboard down in a desktop preview.)
 
 > **Verify on first live run:** the RailData response mapping in
 > `worker/src/njt.js` follows community clients; confirm the field names

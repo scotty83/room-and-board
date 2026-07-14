@@ -10,6 +10,21 @@ day, Statista's chart of the day, and more). Hosted entirely on the
 public internet, personalized per device **without authentication**, with
 preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
 
+![A Room & Board dashboard: weather, public-domain art, world clock, markets, quote of the day, World Cup, and headlines](docs/screenshots/dashboard-classic.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/dashboard-data-dense.png" alt="A denser layout: NASA daily photo, Formula 1, Air & Sky, subway status with a live alert, cloud-service status, and Statista's chart of the day"></td>
+    <td width="50%"><img src="docs/screenshots/edit-mode.png" alt="On-board edit mode: drag, resize, add and remove cards directly on the touchscreen"></td>
+  </tr>
+</table>
+
+![Full-screen art screensaver with the ambient clock and temperature band](docs/screenshots/art-screensaver.jpeg)
+
+*Two example layouts; the on-board edit mode (every card drags and resizes on
+the touchscreen, with live capacity hints); and the full-screen art screensaver
+with its ambient info band.*
+
 ## How it works
 
 ```

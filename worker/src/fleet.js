@@ -28,12 +28,17 @@ export function parseBeacon(text) {
   };
 }
 
+// Country is the ISO-3166 alpha-2 the edge resolved for the request (NOT the
+// board — the board sends no location). 'XX' when unknown/absent.
+const country = (c) => (typeof c === 'string' && /^[A-Z]{2}$/.test(c) ? c : 'XX');
+
 // Analytics Engine shape. The index is the device id so AE's sampling keys on
 // devices, not pings; blobs carry the dimensions, doubles the widget count.
+// p.country is stamped by the route from request geo, not the payload.
 export function beaconDataPoint(p) {
   return {
     indexes: [p.deviceId],
-    blobs: [p.deviceId, p.version, p.mode, p.tz, p.widgets.join(',')],
+    blobs: [p.deviceId, p.version, p.mode, p.tz, p.widgets.join(','), country(p.country)],
     doubles: [p.widgets.length],
   };
 }

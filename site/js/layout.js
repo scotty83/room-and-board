@@ -36,6 +36,7 @@ export const MIN_SIZE = {
   worldclock: [2, 3], // shortest card that fits a useful clock list (rows slice to fit)
   sports: [3, 2],
   worldcup: [3, 2],
+  f1: [3, 4],
   news: [3, 2],
   substack: [3, 2],
   bsky: [3, 2],

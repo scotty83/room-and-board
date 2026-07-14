@@ -30,6 +30,7 @@ import * as apod from '../site/js/widgets/apod.js';
 import * as chart from '../site/js/widgets/chart.js';
 import * as citibike from '../site/js/widgets/citibike.js';
 import * as tfl from '../site/js/widgets/tfl.js';
+import * as f1 from '../site/js/widgets/f1.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -494,5 +495,45 @@ describe('weather render honors cfg.loc.units', () => {
     weather.render(el, vm, { loc: { units: 'C' } });
     expect(el.textContent).toContain('29°');   // 84°F → 29°C
     expect(el.textContent).not.toContain('84°');
+  });
+});
+
+describe('f1 render', () => {
+  it('renders next race, podium, and both standings from the demo VM', () => {
+    const el = document.createElement('div');
+    f1.render(el, DEMO_VMS.f1, CFG);
+    // Next race as heading + date/location beneath it.
+    expect(el.textContent).toContain('Belgian Grand Prix');
+    expect(el.textContent).toContain('Spa-Francorchamps');
+    // Previous-race podium.
+    expect(el.textContent).toContain('British Grand Prix');
+    expect(el.textContent).toContain('Leclerc');
+    expect(el.textContent).toContain('Russell');
+    expect(el.textContent).toContain('Hamilton');
+    // Driver + constructor standings.
+    expect(el.textContent).toContain('Antonelli');
+    expect(el.textContent).toContain('Mercedes');
+    expect(el.textContent).toContain('Ferrari');
+    // Team-color dots and a driver country flag.
+    expect(el.querySelector('.f1-dot')).toBeTruthy();
+    expect(el.querySelector('.f1-flag')).toBeTruthy();
+  });
+
+  it('falls back to the raw team name when the constructorId is unknown', () => {
+    const el = document.createElement('div');
+    const vm = {
+      updatedAt: 1783000000, stale: false, next: null, lastRace: null, podium: null,
+      drivers: [{ pos: 1, name: 'Doe', nat: 'British', cid: 'brand_new_team', pts: 10 }],
+      teams: [{ pos: 1, cid: 'brand_new_team', name: 'Brand New Team', pts: 10 }],
+    };
+    f1.render(el, vm, CFG);
+    expect(el.textContent).toContain('Doe');
+    expect(el.textContent).toContain('Brand New Team');
+  });
+
+  it('shows a non-empty state when there is no data', () => {
+    const el = document.createElement('div');
+    f1.render(el, { updatedAt: 0, stale: false, next: null, lastRace: null, podium: null, drivers: [], teams: [] }, CFG);
+    expect(el.textContent.length).toBeGreaterThan(0);
   });
 });

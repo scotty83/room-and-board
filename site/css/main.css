@@ -732,6 +732,24 @@ body.mode-ambient .gear { bottom: 7px; }
 
 .more-hint { font-size: 18px; color: var(--ink-faint); padding-top: 2px; }
 
+/* ---------- Formula 1 ---------- */
+.f1-next { margin-bottom: 12px; }
+.f1-next__hd { font-size: 22px; font-weight: 600; }
+.f1-next__tag { font-size: 15px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 6px; }
+.f1-next__meta { font-size: 18px; color: var(--ink-dim); margin-top: 2px; }
+.f1-sec { margin-bottom: 12px; }
+.f1-sec__h, .f1-col .f1-sec__h { font-size: 16px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-dim); margin-bottom: 6px; font-weight: 600; }
+.f1-row { display: flex; align-items: center; gap: 7px; font-size: 21px; padding: 3px 0; }
+.f1-pos { width: 24px; text-align: right; color: var(--ink-faint); font-size: 18px; font-variant-numeric: tabular-nums; flex: none; }
+.f1-row--p1 .f1-pos { color: var(--warn); font-weight: 700; }
+.f1-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); }
+.f1-flag { font-size: 20px; flex: none; }
+.f1-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.f1-team, .f1-pts { color: var(--ink-dim); font-size: 18px; flex: none; font-variant-numeric: tabular-nums; }
+.f1-team { max-width: 42%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.f1-cols { display: flex; gap: 18px; }
+.f1-col { flex: 1; min-width: 0; }
+
 /* ---------- service status ---------- */
 .svc { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
 .svc__row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }

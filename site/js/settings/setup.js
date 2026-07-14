@@ -40,6 +40,7 @@ export const WIDGET_LABELS = {
   worldclock: 'World Clock',
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
+  f1: 'Formula 1',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',

@@ -117,6 +117,10 @@ remove like any other.
   across MLB/NFL/NBA/NHL/MLS/EPL).
 - **World Cup 2026** — live / upcoming / recent matches during the tournament.
   *Configure:* none.
+- **Formula 1** — next Grand Prix, last race's podium, and the driver and
+  constructor standings. Team-colour dots and driver country flags; the layout
+  adapts to the card size (standings side-by-side when wide, stacked when
+  narrow). *Configure:* none.
 - **Markets News** — newest finance stories merged across the sources you
   enable (MarketWatch, WSJ Markets, FT Markets, CNBC, NYT Business, Yahoo
   Finance on by default; Seeking Alpha opt-in). *Configure:* Settings →
@@ -333,6 +337,7 @@ the URL fragment and the dashboard returns configured.
 | NASA APOD | Worker + free key | `wrangler secret put NASA_KEY` (free key from api.nasa.gov); falls back to `DEMO_KEY` when unset — viable because the 1h fleet-shared cache stays under DEMO_KEY's daily cap, but the real key is preferred |
 | Statista Chart of the Day | Worker, keyless | No feed exists — the worker scrapes the listing page (session-cookie SSO bounce walked manually, see `worker/src/chart.js`), cached 1 h; boards hotlink the infographic from `cdn.statcdn.com` (probe-verified: no referer/cookie checks). Scrape breaks if Statista reworks the page markup |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
+| Jolpica-F1 (Formula 1) | Worker, keyless | Ergast successor, not CORS-open; worker fans out next race + last result + driver/constructor standings, merges + caches 1 h, serves partial on upstream failure (`worker/src/f1.js`) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |
 | Bluesky public AppView (latest posts) | direct, keyless | CORS-open; also validates handles when adding accounts |

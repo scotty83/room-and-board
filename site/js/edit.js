@@ -38,6 +38,7 @@ const TITLES = {
   worldclock: 'World Clock',
   sports: 'My Teams',
   worldcup: 'World Cup',
+  f1: 'Formula 1',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',

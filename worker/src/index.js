@@ -19,6 +19,7 @@ import { fetchCitibike } from './citibike.js';
 import { fetchTfl } from './tfl.js';
 import { parseBeacon, beaconDataPoint, deviceModel } from './fleet.js';
 import { fetchChart } from './chart.js';
+import { fetchF1 } from './f1.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -245,6 +246,12 @@ export default {
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
+    }
+
+    if (path === '/f1' && request.method === 'GET') {
+      // One global digest (next race + last podium + standings) from Jolpica,
+      // fanned out and merged in fetchF1. 1h TTL — F1 data changes weekly.
+      return cached(url.origin, 'f1', 3600, () => fetchF1());
     }
 
     if (path === '/chart' && request.method === 'GET') {

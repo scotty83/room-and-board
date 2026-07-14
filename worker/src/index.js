@@ -20,6 +20,7 @@ import { fetchTfl } from './tfl.js';
 import { parseBeacon, beaconDataPoint, deviceModel } from './fleet.js';
 import { fetchChart } from './chart.js';
 import { fetchF1 } from './f1.js';
+import { fetchAmtrak } from './amtrak.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -252,6 +253,13 @@ export default {
       // One global digest (next race + last podium + standings) from Jolpica,
       // fanned out and merged in fetchF1. 1h TTL — F1 data changes weekly.
       return cached(url.origin, 'f1', 3600, () => fetchF1());
+    }
+
+    if (path === '/amtrak/departures' && request.method === 'GET') {
+      // NYP (Moynihan) Amtrak departure board from the keyless Amtraker feed,
+      // filtered to NYP and cached fleet-wide 60s. Filtering by destination is
+      // client-side (each departure carries its downstream stops).
+      return cached(url.origin, 'amtrak', 60, () => fetchAmtrak());
     }
 
     if (path === '/chart' && request.method === 'GET') {

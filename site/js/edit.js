@@ -24,6 +24,7 @@ const TITLES = {
   lirr: 'LIRR',
   mnr: 'Metro-North',
   njt: 'NJ Transit',
+  amtrak: 'Amtrak',
   path: 'PATH',
   ferry: 'NYC Ferry',
   bus: 'Express Bus',

@@ -20,6 +20,7 @@ export const WIDGET_LABELS = {
   lirr: 'LIRR (Penn Station)',
   mnr: 'Metro-North (Grand Central)',
   njt: 'NJ Transit',
+  amtrak: 'Amtrak (Moynihan)',
   path: 'PATH',
   ferry: 'NYC Ferry',
   bus: 'Express Bus',
@@ -119,7 +120,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'worldclock', label: 'World Clock' },
   { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
   { type: 'group', label: 'Commute', items: [
-    ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'],
+    ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'], ['amtrak', 'Amtrak'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'], ['tfl', 'TfL Status'] ] },
   { type: 'group', label: 'Markets', items: [['markets', 'Markets'], ['marketsnews', 'Markets News']] },
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
@@ -185,7 +186,7 @@ function pane() {
 }
 
 const SECTION_RENDERERS = {
-  widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt,
+  widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
@@ -473,6 +474,39 @@ async function renderLirr() {
   pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
     state.cfg.lirr.dest = '';
     renderLirr();
+  });
+}
+
+let amtrakStations = null;
+async function renderAmtrak() {
+  const _nav = navToken;
+  amtrakStations ??= await fetchJSON('data/stations-amtrak.json');
+  if (navStale(_nav)) return;
+  const byId = Object.fromEntries(amtrakStations.map((s) => [s.id, s]));
+  pane().innerHTML = `
+    <h2 class="pane__title">Amtrak — Moynihan / Penn departures</h2>
+    <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination — the arrival time there shows per train.</p>
+    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station')}</b>
+      <button class="btn" data-pick-dest>Change</button>
+      ${state.cfg.amtrak.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${alertsToggleHtml('amtrak')}
+    <div class="drill"></div>`;
+  bindAlertsToggle(renderAmtrak);
+  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
+    drillList(
+      'Destination station',
+      alphaSections(amtrakStations).flatMap((sec) =>
+        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      ),
+      (pick) => {
+        state.cfg.amtrak.dest = pick.value.id;
+        renderAmtrak();
+      },
+    );
+  });
+  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
+    state.cfg.amtrak.dest = '';
+    renderAmtrak();
   });
 }
 

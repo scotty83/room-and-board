@@ -21,6 +21,7 @@ export const WIDGET_LABELS = {
   lirr: 'LIRR (Penn Station)',
   mnr: 'Metro-North (GCT)',
   njt: 'NJ Transit',
+  amtrak: 'Amtrak (Moynihan)',
   path: 'PATH',
   ferry: 'NYC Ferry',
   bus: 'Express Bus',
@@ -55,6 +56,7 @@ export const SETUP_SECTIONS = [
   { id: 'lirr-field', group: 'Commute', triggers: ['lirr'] },
   { id: 'mnr-field', group: 'Commute', triggers: ['mnr'] },
   { id: 'njt-field', group: 'Commute', triggers: ['njt'] },
+  { id: 'amtrak-field', group: 'Commute', triggers: ['amtrak'] },
   { id: 'path-field', group: 'Commute', triggers: ['path'] },
   { id: 'ferry-field', group: 'Commute', triggers: ['ferry'] },
   { id: 'bus-field', group: 'Commute', triggers: ['bus'] },
@@ -133,6 +135,8 @@ async function boot() {
   await safe(renderArtPrefs);
   await safe(() => bindAlertCheck('lirr-alerts', 'lirr'));
   await safe(() => bindAlertCheck('njt-alerts', 'njt'));
+  await safe(() => renderRailDest('amtrak-dest', 'data/stations-amtrak.json', 'amtrak'));
+  await safe(() => bindAlertCheck('amtrak-alerts', 'amtrak'));
   await safe(renderNjt);
   await safe(renderPath);
   await safe(renderFerry);

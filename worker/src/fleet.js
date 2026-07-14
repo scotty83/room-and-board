@@ -18,7 +18,10 @@ export function parseBeacon(text) {
   }
   if (typeof b?.deviceId !== 'string' || !/^[a-f0-9-]{8,64}$/i.test(b.deviceId)) return null;
   if (!Array.isArray(b.widgets)) return null;
-  const widgets = [...new Set(b.widgets.filter((w) => typeof w === 'string' && /^[a-z]{2,20}$/.test(w)))].slice(0, 32);
+  // Widget ids are a leading letter then lowercase alphanumerics (e.g. 'f1',
+  // 'worldcup') — digits MUST be allowed or numbered widgets like f1 get
+  // silently dropped from adoption. Still rejects markup, numeric-only, oversized.
+  const widgets = [...new Set(b.widgets.filter((w) => typeof w === 'string' && /^[a-z][a-z0-9]{1,19}$/.test(w)))].slice(0, 32);
   return {
     deviceId: b.deviceId.toLowerCase(),
     widgets,

@@ -33,6 +33,13 @@ describe('parseBeacon', () => {
     expect(p.widgets.length).toBeLessThanOrEqual(32);
     expect(new Set(p.widgets).size).toBe(p.widgets.length);
   });
+  it('keeps widget ids with digits (f1) but drops numeric-only ids', () => {
+    const p = parseBeacon(JSON.stringify({ ...VALID, widgets: ['f1', 'worldcup', '42', 'a1b2'] }));
+    expect(p.widgets).toContain('f1');
+    expect(p.widgets).toContain('worldcup');
+    expect(p.widgets).toContain('a1b2');
+    expect(p.widgets).not.toContain('42'); // must start with a letter
+  });
   it('rejects malformed bodies', () => {
     expect(parseBeacon('not json')).toBeNull();
     expect(parseBeacon(JSON.stringify({ widgets: [] }))).toBeNull(); // no deviceId

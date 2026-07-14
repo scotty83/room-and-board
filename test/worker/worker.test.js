@@ -102,21 +102,24 @@ describe('/code exchange', () => {
   });
 });
 
-// Upstream fixtures in NJT RailData's response shape (verify against the
-// live API when credentials arrive; the mapping is isolated in njt.js).
+// Upstream fixtures in NJT RailData's real response shape (verified against the
+// live API 2026-07-14; mapping isolated in njt.js). getStationSchedule returns
+// an ARRAY of station objects, departures nested in ITEMS, no live track/status
+// (TRACK holds the line name), and includes Amtrak trains + arrivals we drop.
 const TOKEN_RESPONSE = { UserToken: 'tok-1' };
-const SCHEDULE_RESPONSE = {
-  STATION_2CHAR: 'NY',
-  ITEMS: [
-    {
-      SCHED_DEP_DATE: '02-Jul-2026 08:15:00 AM',
-      DESTINATION: 'Trenton',
-      TRACK: '3',
-      LINE: 'Northeast Corridor',
-      STATUS: 'BOARDING',
-    },
-  ],
-};
+const SCHEDULE_RESPONSE = [
+  {
+    STATION_2CHAR: 'NY',
+    STATIONNAME: 'New York',
+    ITEMS: [
+      { SCHED_DEP_DATE: '02-Jul-2026 08:15:00 AM', DESTINATION: 'Trenton &#9992', TRACK: 'Northeast Corridor Line', LINE: 'Northeast Corridor Line', TRAIN_ID: '3919', DIRECTION: 'Westbound' }, // NJT; airport entity decodes
+      { SCHED_DEP_DATE: '02-Jul-2026 08:20:00 AM', DESTINATION: 'Dover', TRACK: 'Morris & Essex Line', LINE: 'Morris & Essex Line', TRAIN_ID: '6621', DIRECTION: 'Westbound' }, // NJT
+      { SCHED_DEP_DATE: '02-Jul-2026 08:25:00 AM', DESTINATION: 'Washington', TRACK: 'ACELA', LINE: 'ACELA', TRAIN_ID: 'A2151', DIRECTION: 'Westbound' }, // Amtrak (letter id) — dropped
+      { SCHED_DEP_DATE: '02-Jul-2026 08:28:00 AM', DESTINATION: 'Baltimore', TRACK: 'Northeast Corridor Line', LINE: 'Northeast Corridor Line', TRAIN_ID: 'A2121', DIRECTION: 'Westbound' }, // Amtrak sharing the NJT line name — dropped by the numeric-id rule
+      { SCHED_DEP_DATE: '02-Jul-2026 08:30:00 AM', DESTINATION: 'New York', TRACK: 'North Jersey Coast Line', LINE: 'North Jersey Coast Line', TRAIN_ID: '3288', DIRECTION: 'Eastbound' }, // NJT arrival at NY — dropped
+    ],
+  },
+];
 
 describe('/njt/departures', () => {
   beforeEach(() => clearCache('njt:NY'));
@@ -137,11 +140,20 @@ describe('/njt/departures', () => {
     const body = await res.json();
     expect(body.station).toBe('NY');
     expect(body.stale).toBe(false);
-    expect(body.trains).toHaveLength(1);
+    // Only the two NJT departures survive: both Amtrak trains (letter ids, one
+    // sharing the NJT line name) and the New-York-bound arrival are filtered out.
+    expect(body.trains).toHaveLength(2);
+    const dests = body.trains.map((t) => t.dest);
+    expect(dests).not.toContain('Washington'); // Amtrak (ACELA) dropped
+    expect(dests).not.toContain('Baltimore'); // Amtrak sharing the NJT line name dropped
+    expect(dests).not.toContain('New York'); // arrival dropped
     const train = body.trains[0];
-    expect(train.dest).toBe('Trenton');
-    expect(train.track).toBe('3');
-    expect(train.line).toBe('Northeast Corridor');
+    expect(train.dest).toContain('Trenton'); // "Trenton ✈" after entity decode
+    expect(train.dest).toContain('✈'); // &#9992 decoded to the airport glyph
+    expect(train.dest).not.toContain('&#'); // no raw HTML entity leaks to the board
+    expect(train.track).toBeNull(); // this endpoint has no real track number
+    expect(train.status).toBe(''); // nor a live status
+    expect(train.line).toBe('Northeast Corridor Line');
     // 08:15 AM America/New_York on 2026-07-02 is 12:15 UTC (EDT).
     expect(train.time).toBe(Date.UTC(2026, 6, 2, 12, 15, 0) / 1000);
 
@@ -154,7 +166,7 @@ describe('/njt/departures', () => {
     const before = calls.length;
     const res2 = await call('/njt/departures?station=NY', {}, NJT_ENV);
     expect(res2.status).toBe(200);
-    expect((await res2.json()).trains).toHaveLength(1);
+    expect((await res2.json()).trains).toHaveLength(2);
     expect(calls.length).toBe(before);
   });
 
@@ -166,7 +178,7 @@ describe('/njt/departures', () => {
     ]);
     const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
     expect(res.status).toBe(200);
-    expect((await res.json()).trains).toHaveLength(1);
+    expect((await res.json()).trains).toHaveLength(2);
   });
 
   it('serves stale data when upstream fails after a success', async () => {
@@ -184,7 +196,7 @@ describe('/njt/departures', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.stale).toBe(true);
-    expect(body.trains).toHaveLength(1);
+    expect(body.trains).toHaveLength(2);
   });
 
   it('502s when upstream fails with no cached copy', async () => {

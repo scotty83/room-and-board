@@ -101,9 +101,12 @@ remove like any other.
   with live minutes, track, and service alerts. *Configure:* their Settings
   sections; optionally filter to trains stopping at one station (named in the
   card corner), and toggle the alert banner.
-- **NJ Transit** — departures for one rail station, with track and status; a
-  delayed-but-boardable train stays on the board past its scheduled minute.
-  *Configure:* Settings → NJ Transit (pick a station; toggle alerts).
+- **NJ Transit** — scheduled departures from one NJT rail station (default New
+  York Penn) — time, destination, and line. RailData's schedule feed carries no
+  live track or per-train status, so live delays and disruptions show as a
+  service-alert banner instead. Amtrak trains that share the station are filtered
+  out (they have their own card). *Configure:* Settings → NJ Transit (pick the
+  origin station; toggle alerts).
 - **Amtrak** — departures from Moynihan Train Hall / New York Penn (NYP), with
   route, train number, status, and platform when assigned. Filter to trains
   stopping at your destination (named in the card corner) to see the arrival
@@ -379,7 +382,7 @@ the URL fragment and the dashboard returns configured.
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |
 | Bluesky public AppView (latest posts) | direct, keyless | CORS-open; also validates handles when adding accounts |
 | TrainTime (LIRR tracks) | direct, unofficial | feature-detected; drops silently if the host vanishes |
-| NJ Transit RailData | Worker + credentials | their ToS **requires** serving from a non-NJT server |
+| NJ Transit RailData | Worker + credentials | their ToS **requires** serving from a non-NJT server; auth is your developer-portal login (no separate key) exchanged for a session token — RailData caps token requests (~daily), so the worker caches it and only re-fetches on failure. `getStationSchedule` is a whole-day timetable per station (array of station objects; departures nested in `ITEMS`) with no live track/status — delays arrive via `getStationMSG` as alerts; NJT vs Amtrak is split by numeric-vs-letter train id (`worker/src/njt.js`) |
 | Yahoo Finance (markets) | Worker, unofficial | browser UA + 5 min cache; widget hides if it breaks |
 | Met + AIC + Cleveland (art) | build-time manifest | CC0 works; `node tools/build-art-manifest.js` to refresh |
 | Wikimedia (history) | direct, keyless | |

@@ -24,17 +24,43 @@ export function njtDateToEpoch(str) {
   return Math.round(utc / 1000);
 }
 
+// Decode NJT's HTML numeric entities (e.g. "&#9992" -> ✈, the Newark Airport
+// marker) and collapse whitespace, so the digest carries clean text (the widget
+// HTML-escapes on render, which would otherwise show a literal "&#9992").
+const decodeEntities = (s) =>
+  String(s ?? '')
+    .replace(/&#(\d+);?/g, (_, n) => { try { return String.fromCodePoint(Number(n)); } catch { return ''; } })
+    .replace(/\s+/g, ' ')
+    .trim();
+
+// getStationSchedule returns an ARRAY of station objects; the day's whole
+// timetable is nested in the matching station's ITEMS. Verified against the live
+// API 2026-07-14: it carries both directions plus Amtrak trains that share the
+// station, and has NO real-time track or status — its TRACK field holds the line
+// name and there is no STATUS field. So per-train track/status are dropped (live
+// delays surface via getStationMSG -> alerts); trains terminating here (arrivals)
+// and Amtrak trains are filtered out — NJT train ids are numeric while Amtrak's
+// are letter-prefixed (e.g. "A2121"), which cleanly separates the two even when
+// they share a line name. The site widget slices this whole-day list down to the
+// next upcoming departures.
 export function mapNjtUpstream(json, station) {
-  const items = Array.isArray(json?.ITEMS) ? json.ITEMS : [];
+  const st = Array.isArray(json)
+    ? (json.find((s) => s?.STATION_2CHAR === station) ?? json[0])
+    : json; // tolerate a bare {ITEMS} object too
+  const items = Array.isArray(st?.ITEMS) ? st.ITEMS : (Array.isArray(json?.ITEMS) ? json.ITEMS : []);
+  const stationName = String(st?.STATIONNAME ?? '').trim();
   const trains = items
+    .filter((it) => /^\d+$/.test(String(it?.TRAIN_ID ?? ''))) // numeric id = NJ Transit; letter-prefixed = Amtrak
     .map((it) => ({
       time: njtDateToEpoch(it.SCHED_DEP_DATE),
-      dest: String(it.DESTINATION ?? ''),
-      line: String(it.LINE ?? ''),
-      track: it.TRACK ? String(it.TRACK) : null,
-      status: String(it.STATUS ?? ''),
+      dest: decodeEntities(it.DESTINATION),
+      line: String(it.LINE ?? '').trim(),
+      track: null, // this endpoint's TRACK is the line name, not a track number
+      status: '', // getStationSchedule carries no live status
     }))
-    .filter((t) => t.time !== null)
+    .filter((t) =>
+      t.time !== null &&
+      t.dest && t.dest !== stationName) // drop trains terminating here (arrivals, not departures)
     .sort((a, b) => a.time - b.time);
   return { station, updatedAt: Math.floor(Date.now() / 1000), stale: false, trains };
 }

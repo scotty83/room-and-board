@@ -558,14 +558,17 @@ body.mode-ambient .gear { bottom: 7px; }
   .edit-handle:active { transform: none; }
 }
 .editor__bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 24px; }
-.edit-tray { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.edit-tray { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .edit-tray__label { font-size: 22px; color: var(--ink-dim); }
+/* Compact metrics: min-height 56px stays (the board's touch floor); the width
+   savings come from tighter padding and no per-chip "(no room)" suffix. */
 .edit-tray__chip {
-  font-size: 22px; padding: 14px 22px; min-height: 56px;
+  font-size: 20px; padding: 10px 16px; min-height: 56px;
   border: none; border-radius: 28px; cursor: pointer;
   background: var(--bg-card); color: var(--ink);
 }
 .edit-tray__chip:disabled { opacity: 0.4; cursor: default; }
+.edit-tray__legend { flex-basis: 100%; font-size: 17px; color: var(--ink-dim); opacity: 0.8; }
 .editor__actions { display: flex; gap: 14px; }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }

@@ -129,16 +129,22 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
         </div>`,
       )
       .join('');
+    // Blocked chips are dimmed (plus one shared legend line) rather than each
+    // carrying a "(no room)" suffix — with 20+ widgets the repeated text
+    // wrapped the tray to 5 rows and squeezed the grid preview above it.
+    let anyBlocked = false;
     tray.innerHTML =
       '<span class="edit-tray__label">Add:</span>' +
       WIDGET_IDS.filter((id) => !rectOf(id))
         .map((id) => {
           const fits = firstFit(layout, id, MIN_SIZE[id]) !== null;
+          anyBlocked ||= !fits;
           const [mw, mh] = MIN_SIZE[id];
-          return `<button class="edit-tray__chip" data-add="${id}" ${fits ? '' : 'disabled'}>
-            + ${TITLES[id]} <small>${mw}×${mh}</small>${fits ? '' : ' (no room)'}</button>`;
+          return `<button class="edit-tray__chip" data-add="${id}" ${fits ? '' : 'disabled title="No room at its minimum size"'}>
+            + ${TITLES[id]} <small>${mw}×${mh}</small></button>`;
         })
-        .join('');
+        .join('') +
+      (anyBlocked ? '<span class="edit-tray__legend">faded = no room at its minimum size</span>' : '');
 
     blocksHost.querySelectorAll('[data-remove]').forEach((btn) =>
       btn.addEventListener('click', (e) => {

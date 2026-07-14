@@ -4,7 +4,7 @@
 // Unicode emoji (zero assets). Balanced/adaptive: standings sit side-by-side
 // when the card is wide, stacked when narrow, measured to fit like the news card.
 
-import { escapeHtml, fmtTime, setCardNote } from '../util.js';
+import { escapeHtml } from '../util.js';
 import { WORKER_URL } from '../env.js';
 
 export const meta = { id: 'f1', title: 'Formula 1', refreshMs: 30 * 60 * 1000 };
@@ -40,7 +40,9 @@ const flagOf = (nat) => {
 const dot = (cid) => `<span class="f1-dot" style="background:${teamColor(cid)}"></span>`;
 
 export function render(el, vm, _cfg) {
-  if (vm.updatedAt) setCardNote(el, `as of ${fmtTime(vm.updatedAt)}`);
+  // No "as of" stamp: F1 data only changes after a race (weekly), never
+  // intraday, so a minute-resolution timestamp would be misleading noise.
+  // Outage staleness is still shown by the card frame's .is-stale dimming.
   const { next, lastRace, podium, drivers = [], teams = [] } = vm;
   if (!next && !podium && !drivers.length && !teams.length) {
     el.innerHTML = '<div class="empty">F1 data unavailable</div>';

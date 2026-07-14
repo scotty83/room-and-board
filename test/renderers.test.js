@@ -31,6 +31,7 @@ import * as chart from '../site/js/widgets/chart.js';
 import * as citibike from '../site/js/widgets/citibike.js';
 import * as tfl from '../site/js/widgets/tfl.js';
 import * as f1 from '../site/js/widgets/f1.js';
+import * as amtrak from '../site/js/widgets/amtrak.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -535,5 +536,50 @@ describe('f1 render', () => {
     const el = document.createElement('div');
     f1.render(el, { updatedAt: 0, stale: false, next: null, lastRace: null, podium: null, drivers: [], teams: [] }, CFG);
     expect(el.textContent.length).toBeGreaterThan(0);
+  });
+});
+
+describe('amtrak render', () => {
+  const now = Math.floor(Date.now() / 1000);
+  const vm = {
+    station: 'NYP', updatedAt: now, stale: false,
+    alerts: [{ header: 'Reduced weekend service on the Northeast Regional.' }],
+    departures: [
+      { t: now + 720, sch: now + 720, dest: 'Washington', destCode: 'WAS', route: 'Northeast Regional', num: '171', status: 'On time', platform: null,
+        stops: [['PHL', now + 4980], ['WAS', now + 9600]] },
+      { t: now + 2280, sch: now + 2280, dest: 'Boston South', destCode: 'BOS', route: 'Acela', num: '2151', status: '5 min late', platform: '7',
+        stops: [['NHV', now + 5000]] },
+    ],
+  };
+
+  it('shows terminus, train, platform and an alert row when unfiltered', () => {
+    const el = document.createElement('div');
+    amtrak.render(el, vm, { amtrak: { dest: '', alerts: true } });
+    expect(el.textContent).toContain('Washington');
+    expect(el.textContent).toContain('Northeast Regional');
+    expect(el.textContent).toContain('171');
+    expect(el.textContent).toContain('Trk 7'); // platform shown when present
+    expect(el.querySelector('.talert')).toBeTruthy();
+    expect(el.querySelector('.train__status.is-warn')).toBeTruthy(); // "5 min late"
+  });
+
+  it('filters to trains that serve the chosen destination and drops the rest', () => {
+    const el = document.createElement('div');
+    amtrak.render(el, { ...vm, destName: 'Philadelphia' }, { amtrak: { dest: 'PHL', alerts: true } });
+    expect(el.textContent).toContain('Northeast Regional'); // 171 serves PHL downstream
+    expect(el.textContent).not.toContain('Acela'); // 2151 does not stop at PHL
+    expect(el.textContent).toContain('arr'); // shows arrival time at the chosen stop
+  });
+
+  it('hides alert rows when the alerts toggle is off', () => {
+    const el = document.createElement('div');
+    amtrak.render(el, vm, { amtrak: { dest: '', alerts: false } });
+    expect(el.querySelector('.talert')).toBeNull();
+  });
+
+  it('shows an empty state when there are no departures', () => {
+    const el = document.createElement('div');
+    amtrak.render(el, { station: 'NYP', updatedAt: now, stale: false, alerts: [], departures: [] }, { amtrak: { dest: '', alerts: true } });
+    expect(el.textContent).toContain('No departures');
   });
 });

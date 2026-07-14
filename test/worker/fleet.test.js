@@ -47,9 +47,13 @@ describe('parseBeacon', () => {
 });
 
 describe('deviceModel', () => {
-  it('parses the model from a RoomOS WebEngine User-Agent', () => {
-    expect(deviceModel('Mozilla/5.0 (Linux; RoomOS; Cisco Board Pro) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.14.2 Chrome/77 Safari/537.36')).toBe('Cisco Board Pro');
-    expect(deviceModel('Mozilla/5.0 (Linux; RoomOS; Cisco Webex Desk Pro) AppleWebKit/537.36')).toBe('Cisco Webex Desk Pro');
+  it('parses ANY RoomOS model, not just boards (model-agnostic)', () => {
+    const ua = (m) => `Mozilla/5.0 (Linux; RoomOS; ${m}) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.14.2 Chrome/77 Safari/537.36`;
+    expect(deviceModel(ua('Cisco Board Pro'))).toBe('Cisco Board Pro');
+    expect(deviceModel(ua('Cisco Webex Desk Pro'))).toBe('Cisco Webex Desk Pro');
+    expect(deviceModel(ua('Cisco Room Bar'))).toBe('Cisco Room Bar');
+    expect(deviceModel(ua('Cisco Room Navigator'))).toBe('Cisco Room Navigator');
+    expect(deviceModel(ua('Cisco Board Pro G2'))).toBe('Cisco Board Pro G2');
   });
   it('handles a malformed model paren and defaults non-RoomOS traffic to other', () => {
     // Legacy Board 70 UA has an unbalanced paren before AppleWebKit.

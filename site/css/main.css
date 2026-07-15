@@ -329,7 +329,14 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   max-width: 760px; text-align: center; display: flex; flex-direction: column; gap: 22px;
   background: var(--bg-card); border-radius: var(--radius); padding: 48px 56px;
 }
-.welcome__inner h1 { font-size: 48px; }
+/* Onboarding brand lockup. Pivot the composition on the wordmark's "&" (~12.5%
+   right of the lockup's own centre) so the wordmark reads centred under the
+   heading while the board glyph anchors to the left; %-based so it's
+   scale-independent. */
+.welcome__logo { align-self: center; width: 340px; max-width: 70%; height: auto; transform: translateX(-12.5%); }
+/* 40px keeps the heading on one line in the 760px card, with margin to spare for
+   the board's system-font metrics. */
+.welcome__inner h1 { font-size: 40px; }
 .welcome__inner p { font-size: 24px; color: var(--ink-dim); }
 /* Buttons are the fallback under the recommended QR path — a little extra
    space above sets them apart as the "or, alternatively" group. */
@@ -409,6 +416,10 @@ body.mode-ambient .gear { bottom: 7px; }
   .settings__chev, .settings__navkids { transition: none; }
 }
 .settings__railfoot { display: flex; flex-direction: column; gap: 10px; flex: none; }
+/* Brand wordmark beneath the footer buttons, set apart by space alone
+   (calm-utility — no divider needed). Decorative; the dialog is already
+   labelled "Settings". */
+.settings__lockup { align-self: center; width: 216px; max-width: 100%; height: auto; margin-top: 18px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }

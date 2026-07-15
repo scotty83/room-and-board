@@ -13,3 +13,6 @@ graphify-out/
 docs/superpowers/
 
 RoomOS.md
+
+# Source archives (the extracted assets/ folder is what ships).
+*.zip

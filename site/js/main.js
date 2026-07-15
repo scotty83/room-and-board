@@ -213,6 +213,7 @@ function showWelcome() {
   $('#grid').hidden = true;
   welcome.innerHTML = `
     <div class="welcome__inner">
+      <img class="welcome__logo" src="assets/room-and-board-lockup-dark.svg" alt="Room & Board" width="340" height="88">
       <h1>Welcome to your office display</h1>
       <p>Set it up from your phone or desktop, or start with sensible defaults and fine-tune later.</p>
       <div class="qr welcome__qr"></div>

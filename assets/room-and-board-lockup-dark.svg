@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 373 96" width="373" height="96" font-family="-apple-system, &#39;SF Pro Display&#39;, &#39;Segoe UI&#39;, Roboto, sans-serif">
+  <rect x="6" y="16" width="84" height="64" rx="11" fill="none" stroke="#e8edf4" stroke-width="5"></rect>
+  
+  <circle cx="48" cy="22" r="2.4" fill="#e8edf4"></circle>
+  <rect x="20" y="33" width="13" height="13" rx="3.5" fill="#58a6ff"></rect>
+  <rect x="39" y="33" width="37" height="13" rx="3.5" fill="#313d52"></rect>
+  <rect x="20" y="52" width="37" height="13" rx="3.5" fill="#313d52"></rect>
+  <rect x="63" y="52" width="13" height="13" rx="3.5" fill="#313d52"></rect>
+  <text x="110" y="49" font-size="36" font-weight="700" dominant-baseline="middle" textLength="90.0" lengthAdjust="spacingAndGlyphs" fill="#e8edf4">room</text>
+  <rect x="212" y="27" width="42" height="42" rx="11" fill="#58a6ff"></rect>
+  <text x="221.13" y="59.38" font-size="32" font-weight="800" fill="#0d1117">&amp;</text>
+  <text x="266" y="49" font-size="36" font-weight="700" dominant-baseline="middle" textLength="100.0" lengthAdjust="spacingAndGlyphs" fill="#e8edf4">board</text>
+</svg>

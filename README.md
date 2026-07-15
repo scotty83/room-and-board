@@ -1,4 +1,9 @@
-# Room & Board
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/room-and-board-lockup-dark.png">
+    <img alt="Room &amp; Board" src="assets/room-and-board-lockup-mono.png" width="380">
+  </picture>
+</p>
 
 A lightweight, personal signage dashboard — **RoomBoard** (`roomboard.app`) —
 for Cisco Board Pro devices (gen1 + gen2)

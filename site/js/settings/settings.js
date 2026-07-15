@@ -127,6 +127,7 @@ export const NAV_MODEL = [
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'item', id: 'services', label: 'Cloud Services' },
+  { type: 'item', id: 'chart', label: 'Chart of the Day' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },
 ];
@@ -189,7 +190,7 @@ function pane() {
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
-  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
@@ -902,6 +903,82 @@ async function renderMarketsNews() {
     btn.addEventListener('click', () => {
       state.cfg.marketsnews.sources = toggleIn(state.cfg.marketsnews.sources, btn.dataset.src);
       renderMarketsNews();
+    }),
+  );
+}
+
+async function renderChart() {
+  const _nav = navToken;
+  const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
+  if (navStale(_nav)) return;
+  const c = state.cfg.chart;
+  const topicLabel = CHART_TOPICS.find(([, slug]) => slug === c.topic)?.[0] ?? 'Any topic';
+  const termChips = c.excludeTerms
+    .map((t, i) => `<button class="chip" data-rm-term="${i}">${escapeHtml(t)} ✕</button>`)
+    .join('');
+  pane().innerHTML = `
+    <h2 class="pane__title">Chart of the Day</h2>
+    <p class="pane__hint">A daily Statista infographic. Choose a topic, or leave it on Any topic for the newest chart across everything.</p>
+    <div class="kv"><span>Topic</span><b>${escapeHtml(topicLabel)}</b>
+      <button class="btn" data-pick-topic>Change</button>
+      ${c.topic ? '<button class="btn" data-clear-topic>Any topic</button>' : ''}</div>
+    <div class="row">
+      <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
+        <span class="toggle__knob"></span>
+      </button>
+      <span class="row__label">Hide politics charts</span>
+    </div>
+    <p class="pane__hint">Also skip any chart mentioning these words (title or description):</p>
+    <div class="chips">${termChips || '<span class="pane__empty">No extra words</span>'}</div>
+    <output class="code__display" aria-live="polite"></output>
+    ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-'],
+      '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Add">Add</button>',
+      { lower: true })}
+    <p class="code__status"></p>
+    <div class="drill"></div>`;
+  pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
+    state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
+    renderChart();
+  });
+  pane().querySelectorAll('[data-rm-term]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.chart.excludeTerms = c.excludeTerms.filter((_, i) => i !== Number(chip.dataset.rmTerm));
+      renderChart();
+    }),
+  );
+  pane().querySelector('[data-pick-topic]').addEventListener('click', () => {
+    drillList(
+      'Topic',
+      [{ html: 'Any topic', value: '' }, ...CHART_TOPICS.map(([label, slug]) => ({ html: escapeHtml(label), value: slug }))],
+      (pick) => {
+        state.cfg.chart.topic = pick.value;
+        renderChart();
+      },
+    );
+  });
+  pane().querySelector('[data-clear-topic]')?.addEventListener('click', () => {
+    state.cfg.chart.topic = '';
+    renderChart();
+  });
+  let term = '';
+  const display = pane().querySelector('.code__display');
+  const status = pane().querySelector('.code__status');
+  pane().querySelectorAll('[data-key]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.key;
+      if (k === '⌫') term = term.slice(0, -1);
+      else if (k === 'Add') {
+        const t = term.toLowerCase().trim();
+        if (!t) return;
+        if (c.excludeTerms.includes(t) || c.excludeTerms.length >= 12) {
+          status.textContent = c.excludeTerms.length >= 12 ? 'That’s the max (12 words).' : 'Already on the list.';
+          return;
+        }
+        state.cfg.chart.excludeTerms = [...c.excludeTerms, t];
+        renderChart();
+        return;
+      } else if (term.length < 40) term += k;
+      display.textContent = term;
     }),
   );
 }

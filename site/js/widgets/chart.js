@@ -10,8 +10,37 @@ import { openImageViewer } from '../imageshow.js';
 
 export const meta = { id: 'chart', title: 'Chart of the Day', refreshMs: 30 * 60 * 1000 };
 
+// Built-in politics/Trump terms, gated by cfg.chart.excludePolitics. Matched
+// against title+desc case-insensitively (see pickChart). Kept conservative so
+// an on-topic economics chart isn't dropped for a passing mention.
+const POLITICS_TERMS = [
+  'trump', 'biden', 'election', 'congress', 'senate', 'republican', 'democrat',
+  'gop', 'white house', 'campaign', 'poll', 'ballot', 'voter',
+];
+
+// From the newest-first charts[], pick the first whose title+desc matches none
+// of the active exclude terms; fall back to charts[0] if every card matches (a
+// filtered-to-empty card is worse than one slightly off-topic entry).
+export function pickChart(charts, cfg) {
+  const list = Array.isArray(charts) ? charts : [];
+  if (!list.length) return null;
+  const c = cfg?.chart ?? {};
+  const terms = [
+    ...(c.excludePolitics === false ? [] : POLITICS_TERMS),
+    ...(Array.isArray(c.excludeTerms) ? c.excludeTerms : []),
+  ].map((t) => String(t).toLowerCase().trim()).filter(Boolean);
+  if (!terms.length) return list[0];
+  const clean = list.find((ch) => {
+    const hay = `${ch.title ?? ''} ${ch.desc ?? ''}`.toLowerCase();
+    return !terms.some((t) => hay.includes(t));
+  });
+  return clean ?? list[0];
+}
+
 export function render(el, vm, cfg) {
-  const c = vm.chart;
+  // Worker now returns charts[] (newest-first); pick the first non-excluded.
+  // Legacy `chart` singular kept as a fallback for a stale cached payload.
+  const c = pickChart(vm.charts, cfg) ?? vm.chart;
   if (!c || !c.url) {
     el.innerHTML = '<div class="empty">Chart unavailable</div>';
     return;
@@ -27,6 +56,11 @@ export function render(el, vm, cfg) {
     openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [] }));
 }
 
-export async function fetchData(_cfg, net) {
-  return net.fetchJSON(`${WORKER_URL}/chart`);
+export async function fetchData(cfg, net) {
+  // A configured topic re-points the scrape at the per-topic Statista page; the
+  // worker validates the slug and caches it under `chart:<topic>` (the global
+  // default stays one fleet-wide entry). Client-side filtering picks the card.
+  const topic = cfg?.chart?.topic;
+  const qs = topic ? `?topic=${encodeURIComponent(topic)}` : '';
+  return net.fetchJSON(`${WORKER_URL}/chart${qs}`);
 }

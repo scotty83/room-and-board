@@ -9,6 +9,7 @@
 
 import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
 import { TFL_TUBE_IDS, TFL_LINE_IDS } from './tfl-lines.js';
+import { CHART_TOPIC_SLUGS } from './widgets/chart-topics.js';
 import { DEFAULT_SCHEDULE } from './modes.js';
 
 export const ART_CATS = [
@@ -57,6 +58,9 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
   services: Object.freeze({ list: Object.freeze(['webex', 'slack', 'm365']) }), // first-enable default; SERVICE_IDS is the full menu
+  // Chart of the Day: hide-politics on by default (client-side keyword filter),
+  // optional user exclude terms, topic '' = global listing (CHART_TOPICS slugs).
+  chart: Object.freeze({ excludePolitics: true, excludeTerms: Object.freeze([]), topic: '' }),
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -236,6 +240,19 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : [...DEFAULT_CONFIG.marketsnews.sources];
       })(),
     },
+    chart: {
+      // Client-side hide-politics filter (on unless explicitly disabled).
+      excludePolitics: raw.chart?.excludePolitics !== false,
+      // Freeform user exclude terms: lowercase, trimmed, de-duped, short-capped.
+      excludeTerms: (() => {
+        const seen = new Set();
+        return strList(raw.chart?.excludeTerms, 12)
+          .map((t) => t.toLowerCase().trim().slice(0, 40))
+          .filter((t) => t && !seen.has(t) && !!seen.add(t));
+      })(),
+      // Topic must be a curated slug or '' (global listing); unknown → ''.
+      topic: CHART_TOPIC_SLUGS.has(raw.chart?.topic) ? raw.chart.topic : '',
+    },
     services: {
       list: (() => {
         const picked = (Array.isArray(raw.services?.list) ? raw.services.list : [])
@@ -355,6 +372,7 @@ export async function encodeConfig(cfg) {
   if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
   if (wire.marketsnews && isDefault(wire.marketsnews.sources, DEFAULT_CONFIG.marketsnews.sources)) delete wire.marketsnews;
+  if (wire.chart && isDefault(wire.chart, DEFAULT_CONFIG.chart)) delete wire.chart; // all-default → re-derives on decode
   if (wire.services && isDefault(wire.services.list, DEFAULT_CONFIG.services.list)) delete wire.services;
   if (wire.citibike && isDefault(wire.citibike.stations, DEFAULT_CONFIG.citibike.stations)) delete wire.citibike;
   if (wire.tfl && isDefault(wire.tfl.lines, DEFAULT_CONFIG.tfl.lines)) delete wire.tfl;

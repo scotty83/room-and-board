@@ -18,17 +18,15 @@ const POLITICS_TERMS = [
   'gop', 'white house', 'campaign', 'poll', 'ballot', 'voter',
 ];
 
-// From the newest-first charts[], pick the first whose title+desc matches none
-// of the active exclude terms; fall back to charts[0] if every card matches (a
-// filtered-to-empty card is worse than one slightly off-topic entry).
+// From the newest-first charts[], pick the first whose title+desc mentions no
+// politics terms (when the hide-politics filter is on); fall back to charts[0]
+// if every card matches (a filtered-to-empty card is worse than one off-topic).
 export function pickChart(charts, cfg) {
   const list = Array.isArray(charts) ? charts : [];
   if (!list.length) return null;
   const c = cfg?.chart ?? {};
-  const terms = [
-    ...(c.excludePolitics === false ? [] : POLITICS_TERMS),
-    ...(Array.isArray(c.excludeTerms) ? c.excludeTerms : []),
-  ].map((t) => String(t).toLowerCase().trim()).filter(Boolean);
+  const terms = (c.excludePolitics === false ? [] : POLITICS_TERMS)
+    .map((t) => String(t).toLowerCase().trim()).filter(Boolean);
   if (!terms.length) return list[0];
   const clean = list.find((ch) => {
     const hay = `${ch.title ?? ''} ${ch.desc ?? ''}`.toLowerCase();

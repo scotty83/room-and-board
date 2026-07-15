@@ -894,9 +894,6 @@ async function renderChart() {
   if (navStale(_nav)) return;
   const c = state.cfg.chart;
   const topicLabel = CHART_TOPICS.find(([, slug]) => slug === c.topic)?.[0] ?? 'Any topic';
-  const termChips = c.excludeTerms
-    .map((t, i) => `<button class="chip" data-rm-term="${i}">${escapeHtml(t)} ✕</button>`)
-    .join('');
   pane().innerHTML = `
     <h2 class="pane__title">Chart of the Day</h2>
     <p class="pane__hint">A daily Statista infographic. Choose a topic, or leave it on Any topic for the newest chart across everything.</p>
@@ -909,24 +906,11 @@ async function renderChart() {
       </button>
       <span class="row__label">Hide politics charts</span>
     </div>
-    <p class="pane__hint">Also skip any chart mentioning these words (title or description):</p>
-    <div class="chips">${termChips || '<span class="pane__empty">No extra words</span>'}</div>
-    <output class="code__display" aria-live="polite"></output>
-    ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-'],
-      '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Add">Add</button>',
-      { lower: true })}
-    <p class="code__status"></p>
     <div class="drill"></div>`;
   pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
     state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
     renderChart();
   });
-  pane().querySelectorAll('[data-rm-term]').forEach((chip) =>
-    chip.addEventListener('click', () => {
-      state.cfg.chart.excludeTerms = c.excludeTerms.filter((_, i) => i !== Number(chip.dataset.rmTerm));
-      renderChart();
-    }),
-  );
   pane().querySelector('[data-pick-topic]').addEventListener('click', () => {
     drillList(
       'Topic',
@@ -941,27 +925,6 @@ async function renderChart() {
     state.cfg.chart.topic = '';
     renderChart();
   });
-  let term = '';
-  const display = pane().querySelector('.code__display');
-  const status = pane().querySelector('.code__status');
-  pane().querySelectorAll('[data-key]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      const k = btn.dataset.key;
-      if (k === '⌫') term = term.slice(0, -1);
-      else if (k === 'Add') {
-        const t = term.toLowerCase().trim();
-        if (!t) return;
-        if (c.excludeTerms.includes(t) || c.excludeTerms.length >= 12) {
-          status.textContent = c.excludeTerms.length >= 12 ? 'That’s the max (12 words).' : 'Already on the list.';
-          return;
-        }
-        state.cfg.chart.excludeTerms = [...c.excludeTerms, t];
-        renderChart();
-        return;
-      } else if (term.length < 40) term += k;
-      display.textContent = term;
-    }),
-  );
 }
 
 async function renderServices() {

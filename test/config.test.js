@@ -234,15 +234,13 @@ describe('path/ferry/wotd config (v3 additive)', () => {
 });
 
 describe('chart config (v3 additive)', () => {
-  it('defaults to politics-hidden, no extra terms, any topic', () => {
+  it('defaults to politics-hidden, any topic', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.chart).toEqual({ excludePolitics: true, excludeTerms: [], topic: '' });
+    expect(cfg.chart).toEqual({ excludePolitics: true, topic: '' });
   });
-  it('honors an explicit politics opt-out and sanitizes exclude terms', () => {
-    const cfg = normalizeConfig({ chart: { excludePolitics: false, excludeTerms: ['Trump', 'TRUMP', '  Crypto  ', 42, ''] } });
+  it('honors an explicit politics opt-out', () => {
+    const cfg = normalizeConfig({ chart: { excludePolitics: false } });
     expect(cfg.chart.excludePolitics).toBe(false);
-    // lowercased, trimmed, de-duped, non-strings dropped
-    expect(cfg.chart.excludeTerms).toEqual(['trump', 'crypto']);
   });
   it('accepts a curated topic slug and rejects an unknown one', () => {
     expect(normalizeConfig({ chart: { topic: 'technology' } }).chart.topic).toBe('technology');
@@ -252,10 +250,10 @@ describe('chart config (v3 additive)', () => {
   });
   it('strips a default chart from the wire but keeps a customized one', async () => {
     const plainDec = await decodeConfig(await encodeConfig(normalizeConfig({})));
-    expect(plainDec.chart).toEqual({ excludePolitics: true, excludeTerms: [], topic: '' }); // re-derived on decode
-    const custom = normalizeConfig({ chart: { excludePolitics: false, topic: 'sports', excludeTerms: ['crypto'] } });
+    expect(plainDec.chart).toEqual({ excludePolitics: true, topic: '' }); // re-derived on decode
+    const custom = normalizeConfig({ chart: { excludePolitics: false, topic: 'sports' } });
     const dec = await decodeConfig(await encodeConfig(custom));
-    expect(dec.chart).toEqual({ excludePolitics: false, excludeTerms: ['crypto'], topic: 'sports' });
+    expect(dec.chart).toEqual({ excludePolitics: false, topic: 'sports' });
   });
 });
 

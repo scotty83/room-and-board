@@ -75,7 +75,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   services: Object.freeze({ list: Object.freeze(['webex', 'slack', 'm365']) }), // first-enable default; SERVICE_IDS is the full menu
   // Chart of the Day: hide-politics on by default (client-side keyword filter),
   // optional user exclude terms, topic '' = global listing (CHART_TOPICS slugs).
-  chart: Object.freeze({ excludePolitics: true, excludeTerms: Object.freeze([]), topic: '' }),
+  chart: Object.freeze({ excludePolitics: true, topic: '' }),
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -258,13 +258,6 @@ export function normalizeConfig(raw) {
     chart: {
       // Client-side hide-politics filter (on unless explicitly disabled).
       excludePolitics: raw.chart?.excludePolitics !== false,
-      // Freeform user exclude terms: lowercase, trimmed, de-duped, short-capped.
-      excludeTerms: (() => {
-        const seen = new Set();
-        return strList(raw.chart?.excludeTerms, 12)
-          .map((t) => t.toLowerCase().trim().slice(0, 40))
-          .filter((t) => t && !seen.has(t) && !!seen.add(t));
-      })(),
       // Topic must be a curated slug or '' (global listing); unknown → ''.
       topic: CHART_TOPIC_SLUGS.has(raw.chart?.topic) ? raw.chart.topic : '',
     },

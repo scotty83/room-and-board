@@ -228,15 +228,12 @@ describe('pickChart (chart exclude/pick logic)', () => {
   it('with excludePolitics off, returns charts[0] unchanged', () => {
     expect(pickChart(charts, { chart: { excludePolitics: false } }).id).toBe('1');
   });
-  it('matches terms case-insensitively across title AND desc', () => {
-    // "growth" only appears in card 2 (title + desc); excluding it must skip it.
-    const cfg = { chart: { excludePolitics: false, excludeTerms: ['GROWTH'] } };
-    expect(pickChart(charts, cfg).id).toBe('1'); // first card, no growth
-  });
-  it('applies user excludeTerms on top of the politics filter', () => {
-    const cfg = { chart: { excludePolitics: true, excludeTerms: ['ai'] } };
-    // card 1 politics, card 3 has "AI" → only card 2 survives
-    expect(pickChart(charts, cfg).id).toBe('2');
+  it('matches politics terms case-insensitively across title AND desc', () => {
+    const cards = [
+      { id: 'x', title: 'Market Report', desc: 'The latest SENATE budget vote' }, // politics term in desc, upper-case
+      { id: 'y', title: 'Coffee Trends', desc: 'consumption is up' },
+    ];
+    expect(pickChart(cards, { chart: { excludePolitics: true } }).id).toBe('y');
   });
   it('falls back to charts[0] when every card is excluded (never blanks)', () => {
     const allPolitics = [

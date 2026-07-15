@@ -50,7 +50,7 @@ export const WIDGET_LABELS = {
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';
-import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
+import { OFFICES, zoneLabel, zonesByRegion } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 
 
@@ -1044,9 +1044,8 @@ function renderWorldclock() {
     <div class="chips">${OFFICES.map(([label, zone], i) =>
       `<button class="chip ${has(label, zone) ? 'chip--on' : ''}" data-office="${i}">${label}</button>`).join('')}</div>
     ${zonesApi ? `<p class="pane__hint">Or any time zone:</p>
-    <div class="drill"><div class="drill__list">${Intl.supportedValuesOf('timeZone')
-      .map((z) => `<button class="drill__item" data-zone="${z}"><span class="drill__letter">${escapeHtml(zoneLabel(z))}</span> <small>${escapeHtml(z)}</small></button>`)
-      .join('')}</div></div>` : ''}`;
+    <button class="btn" data-add-zone>Add any time zone</button>
+    <div class="drill"></div>` : ''}`;
   const set = (list) => { state.cfg.worldclock.cities = list.slice(0, 10); renderWorldclock(); };
   pane().querySelectorAll('[data-rm]').forEach((b) =>
     b.addEventListener('click', () => set(cities().filter((_, i) => i !== Number(b.dataset.rm)))));
@@ -1055,12 +1054,24 @@ function renderWorldclock() {
       const [label, zone] = OFFICES[Number(b.dataset.office)];
       set(has(label, zone) ? cities().filter((c) => !(c.label === label && c.zone === zone)) : [...cities(), { label, zone }]);
     }));
-  pane().querySelectorAll('[data-zone]').forEach((b) =>
-    b.addEventListener('click', () => {
-      const zone = b.dataset.zone;
-      const label = zoneLabel(zone);
-      if (!has(label, zone)) set([...cities(), { label, zone }]);
-    }));
+  pane().querySelector('[data-add-zone]')?.addEventListener('click', () => {
+    state.stack = [];
+    const byRegion = zonesByRegion(Intl.supportedValuesOf('timeZone'));
+    const pickRegion = () => drillList('Region',
+      Object.keys(byRegion).map((r) => ({ html: escapeHtml(r), value: r })),
+      (r) => { state.stack.push(pickRegion); pickZone(r.value); });
+    const pickZone = (region) => drillList(region,
+      byRegion[region].map((z) => ({
+        html: `<span class="drill__letter">${escapeHtml(zoneLabel(z))}</span> <small>${escapeHtml(z)}</small>`,
+        value: z,
+      })),
+      (it) => {
+        const zone = it.value;
+        const label = zoneLabel(zone);
+        if (!has(label, zone)) set([...cities(), { label, zone }]);
+      });
+    pickRegion();
+  });
 }
 
 function renderWeather() {

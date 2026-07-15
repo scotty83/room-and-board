@@ -27,6 +27,20 @@ export const OFFICES = [
 // "America/Indiana/Indianapolis" -> "Indianapolis"
 export const zoneLabel = (zone) => zone.split('/').pop().replace(/_/g, ' ');
 
+// Group ~400 IANA zones by the segment before the first "/" (so
+// "America/Argentina/Buenos_Aires" lands under "America"); zones with no "/"
+// (UTC, GMT, etc.) share a synthetic bucket. Input is alphabetical, so the
+// keys and each group's zones come out sorted.
+export function zonesByRegion(zones) {
+  const out = {};
+  for (const zone of zones) {
+    const slash = zone.indexOf('/');
+    const region = slash === -1 ? 'UTC / Other' : zone.slice(0, slash);
+    (out[region] ??= []).push(zone);
+  }
+  return out;
+}
+
 const dayKey = (date, timeZone) =>
   new Intl.DateTimeFormat('en-CA', timeZone ? { timeZone, dateStyle: 'short' } : { dateStyle: 'short' }).format(date);
 

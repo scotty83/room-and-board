@@ -7,7 +7,7 @@ import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
 import { locationSearch } from '../geo.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
-import { OFFICES, zoneLabel } from '../widgets/worldclock.js';
+import { OFFICES, zoneLabel, zonesByRegion } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
@@ -321,8 +321,16 @@ function renderWorldclockPrefs() {
       }));
   };
   const zones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
-  $('#wc-zone').innerHTML = zones.map((z) => `<option value="${z}">${zoneLabel(z)} — ${z}</option>`).join('');
-  if (!zones.length) { $('#wc-zone').hidden = true; $('#wc-add').hidden = true; }
+  const byRegion = zonesByRegion(zones);
+  const regions = Object.keys(byRegion);
+  const fillZones = (region) => {
+    $('#wc-zone').innerHTML = (byRegion[region] || [])
+      .map((z) => `<option value="${z}">${zoneLabel(z)} — ${z}</option>`).join('');
+  };
+  $('#wc-region').innerHTML = regions.map((r) => `<option value="${r}">${r}</option>`).join('');
+  if (regions.length) fillZones(regions[0]);
+  $('#wc-region').addEventListener('change', () => fillZones($('#wc-region').value));
+  if (!zones.length) { $('#wc-region').hidden = true; $('#wc-zone').hidden = true; $('#wc-add').hidden = true; }
   $('#wc-add').addEventListener('click', () => {
     const zone = $('#wc-zone').value;
     if (!zone) return;

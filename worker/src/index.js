@@ -18,7 +18,7 @@ import { fetchApod } from './apod.js';
 import { fetchCitibike } from './citibike.js';
 import { fetchTfl } from './tfl.js';
 import { parseBeacon, beaconDataPoint, deviceModel } from './fleet.js';
-import { fetchChart } from './chart.js';
+import { fetchChart, CHART_TOPICS } from './chart.js';
 import { fetchF1 } from './f1.js';
 import { fetchAmtrak } from './amtrak.js';
 
@@ -254,9 +254,17 @@ export default {
     }
 
     if (path === '/chart' && request.method === 'GET') {
-      // Statista Chart of the Day — one global daily infographic, scraped from
-      // the listing page (see chart.js). 1h TTL; new charts post weekdays.
-      return cached(url.origin, 'chart', 3600, () => fetchChart());
+      // Statista Chart of the Day — scraped from the listing page (see chart.js),
+      // 1h TTL; new charts post weekdays. `?topic=` re-points the scrape at a
+      // per-topic page — validated against the curated CHART_TOPICS allowlist so
+      // an unknown slug can't blank the card. No topic → the global cache key
+      // (one fleet-wide entry); a valid topic → `chart:<topic>`.
+      const topic = url.searchParams.get('topic') ?? '';
+      if (topic && !CHART_TOPICS.some(([, slug]) => slug === topic)) {
+        return json({ error: 'bad_topic' }, 400);
+      }
+      const chartKey = topic ? `chart:${topic}` : 'chart';
+      return cached(url.origin, chartKey, 3600, () => fetchChart(topic));
     }
 
     if (path === '/apod' && request.method === 'GET') {

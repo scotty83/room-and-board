@@ -7,6 +7,7 @@ import { mapMarkets } from '../site/js/widgets/markets.js';
 import { mapBus } from '../site/js/widgets/bus.js';
 import { mapSiriStop } from '../worker/src/bus.js';
 import { mapYahooChart } from '../worker/src/markets.js';
+import { pickChart } from '../site/js/widgets/chart.js';
 
 const fixture = async (name) =>
   JSON.parse(await readFile(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -208,5 +209,44 @@ describe('mapBus (legs)', () => {
     const vm = mapBus(payload, 1000, sharedLegs);
     expect(vm.stops[0].route).toBe('QM1');
     expect(vm.stops[1].route).toBe('QM2');
+  });
+});
+
+describe('pickChart (chart exclude/pick logic)', () => {
+  const charts = [
+    { id: '1', title: 'Trump Approval Sinks', desc: 'poll of voters' },
+    { id: '2', title: 'How Global Population Growth Is Slowing', desc: 'annual growth rate' },
+    { id: '3', title: 'AI Chip Sales Surge', desc: 'GPU demand' },
+  ];
+  it('with excludePolitics on (default), skips the politics card for the next clean one', () => {
+    expect(pickChart(charts, { chart: { excludePolitics: true } }).id).toBe('2');
+  });
+  it('treats a missing chart config as politics-on (default)', () => {
+    expect(pickChart(charts, {}).id).toBe('2');
+    expect(pickChart(charts, undefined).id).toBe('2');
+  });
+  it('with excludePolitics off, returns charts[0] unchanged', () => {
+    expect(pickChart(charts, { chart: { excludePolitics: false } }).id).toBe('1');
+  });
+  it('matches terms case-insensitively across title AND desc', () => {
+    // "growth" only appears in card 2 (title + desc); excluding it must skip it.
+    const cfg = { chart: { excludePolitics: false, excludeTerms: ['GROWTH'] } };
+    expect(pickChart(charts, cfg).id).toBe('1'); // first card, no growth
+  });
+  it('applies user excludeTerms on top of the politics filter', () => {
+    const cfg = { chart: { excludePolitics: true, excludeTerms: ['ai'] } };
+    // card 1 politics, card 3 has "AI" → only card 2 survives
+    expect(pickChart(charts, cfg).id).toBe('2');
+  });
+  it('falls back to charts[0] when every card is excluded (never blanks)', () => {
+    const allPolitics = [
+      { id: 'a', title: 'Election Poll', desc: '' },
+      { id: 'b', title: 'Senate Race', desc: 'ballot' },
+    ];
+    expect(pickChart(allPolitics, { chart: { excludePolitics: true } }).id).toBe('a');
+  });
+  it('returns null for an empty or missing list', () => {
+    expect(pickChart([], {})).toBeNull();
+    expect(pickChart(undefined, {})).toBeNull();
   });
 });

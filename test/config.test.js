@@ -233,6 +233,32 @@ describe('path/ferry/wotd config (v3 additive)', () => {
   });
 });
 
+describe('chart config (v3 additive)', () => {
+  it('defaults to politics-hidden, no extra terms, any topic', () => {
+    const cfg = normalizeConfig({});
+    expect(cfg.chart).toEqual({ excludePolitics: true, excludeTerms: [], topic: '' });
+  });
+  it('honors an explicit politics opt-out and sanitizes exclude terms', () => {
+    const cfg = normalizeConfig({ chart: { excludePolitics: false, excludeTerms: ['Trump', 'TRUMP', '  Crypto  ', 42, ''] } });
+    expect(cfg.chart.excludePolitics).toBe(false);
+    // lowercased, trimmed, de-duped, non-strings dropped
+    expect(cfg.chart.excludeTerms).toEqual(['trump', 'crypto']);
+  });
+  it('accepts a curated topic slug and rejects an unknown one', () => {
+    expect(normalizeConfig({ chart: { topic: 'technology' } }).chart.topic).toBe('technology');
+    expect(normalizeConfig({ chart: { topic: 'consumer goods' } }).chart.topic).toBe('consumer goods');
+    expect(normalizeConfig({ chart: { topic: 'not-a-real-topic' } }).chart.topic).toBe('');
+    expect(normalizeConfig({ chart: { topic: 42 } }).chart.topic).toBe('');
+  });
+  it('strips a default chart from the wire but keeps a customized one', async () => {
+    const plainDec = await decodeConfig(await encodeConfig(normalizeConfig({})));
+    expect(plainDec.chart).toEqual({ excludePolitics: true, excludeTerms: [], topic: '' }); // re-derived on decode
+    const custom = normalizeConfig({ chart: { excludePolitics: false, topic: 'sports', excludeTerms: ['crypto'] } });
+    const dec = await decodeConfig(await encodeConfig(custom));
+    expect(dec.chart).toEqual({ excludePolitics: false, excludeTerms: ['crypto'], topic: 'sports' });
+  });
+});
+
 describe('substack/bsky config', () => {
   it('defaults to the starter accounts and sanitizes entries', () => {
     const cfg = normalizeConfig({});

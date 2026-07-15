@@ -73,6 +73,7 @@ export const SETUP_SECTIONS = [
   { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
   { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
   { id: 'services-field', group: 'Daily Extras', triggers: ['services'] },
+  { id: 'chart-field', group: 'Daily Extras', triggers: ['chart'] },
 ];
 
 // Which step-2 config sections + category dividers are visible for a set of
@@ -151,6 +152,7 @@ async function boot() {
   await safe(renderPostsAccounts);
   await safe(renderPhotos);
   await safe(renderServicesField);
+  await safe(renderChartField);
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -426,6 +428,18 @@ async function renderMarketsNewsSources() {
     const id = e.target.dataset.mn;
     if (id) cfg.marketsnews.sources = toggleIn(cfg.marketsnews.sources, id);
   });
+}
+
+async function renderChartField() {
+  const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
+  const sel = $('#chart-topic');
+  sel.innerHTML = `<option value="">Any topic</option>${CHART_TOPICS.map(
+    ([label, slug]) => `<option value="${escapeHtml(slug)}" ${cfg.chart.topic === slug ? 'selected' : ''}>${escapeHtml(label)}</option>`,
+  ).join('')}`;
+  sel.addEventListener('change', () => { cfg.chart.topic = sel.value; });
+  const pol = $('#chart-politics');
+  pol.checked = cfg.chart.excludePolitics;
+  pol.addEventListener('change', () => { cfg.chart.excludePolitics = pol.checked; });
 }
 
 async function renderNewsSources() {

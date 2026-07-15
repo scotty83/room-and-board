@@ -136,7 +136,7 @@ describe('encode/decode round trip', () => {
       ],
       subway: { lines: ['4', '5', '6'] },
       lirr: { dest: '171' },
-      njt: { station: 'NY' },
+      njt: { lines: ['Northeast Corridor Line', 'Morris & Essex Line'] },
       mode: 'scheduled',
       theme: 'dark',
     });
@@ -157,7 +157,7 @@ describe('encode/decode round trip', () => {
       subway: { lines: ['4', '5', '6', 'N', 'Q', 'R', 'A', 'C', 'E', 'L'] },
       lirr: { dest: '171' },
       mnr: { dest: '105' },
-      njt: { station: 'NY' },
+      njt: { lines: ['Northeast Corridor Line', 'North Jersey Coast Line', 'Morris & Essex Line', 'Montclair-Boonton Line', 'Gladstone Branch', 'Raritan Valley Line'] },
       bus: { stops: ['550685', '401234'] },
       sports: { teams: [{ lg: 'mlb', id: 'nym' }, { lg: 'nfl', id: 'nyj' }, { lg: 'nba', id: 'nyk' }, { lg: 'nhl', id: 'nyr' }, { lg: 'mls', id: 'nyc' }, { lg: 'epl', id: 'ars' }] },
       markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOG', 'META'] },
@@ -175,10 +175,11 @@ describe('encode/decode round trip', () => {
     const enc = await encodeConfig(cfg);
     // 2048-char URL minus ~100 chars of bridge auth leaves ~1900 for the
     // fragment; the fully-maxed config (10 tickers, 10 clock cities, 7 feeds,
-    // 12 fully-custom follow accounts) measures ~1120, so 1200 still guards
-    // ~1.6x headroom. Default follow lists are stripped from the wire and
-    // re-derived on decode, so untouched boards stay far smaller.
-    expect(enc.length).toBeLessThan(1200);
+    // 12 fully-custom follow accounts, all 6 NJT line-name strings) measures
+    // ~1280, so 1350 still guards ~1.4x headroom. Default follow lists are
+    // stripped from the wire and re-derived on decode, so untouched boards stay
+    // far smaller.
+    expect(enc.length).toBeLessThan(1350);
 
     const plain = await encodeConfig(normalizeConfig({}));
     expect(plain.length).toBeLessThan(700); // starter lists never ship

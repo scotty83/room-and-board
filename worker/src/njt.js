@@ -33,6 +33,10 @@ const decodeEntities = (s) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+// The board is pinned to New York Penn Station: the widget mirrors LIRR/Amtrak
+// (Penn-fixed, client-side line filter), so the upstream station is always NY.
+const PENN = 'NY';
+
 // getStationSchedule returns an ARRAY of station objects; the day's whole
 // timetable is nested in the matching station's ITEMS. Verified against the live
 // API 2026-07-14: it carries both directions plus Amtrak trains that share the
@@ -43,26 +47,37 @@ const decodeEntities = (s) =>
 // are letter-prefixed (e.g. "A2121"), which cleanly separates the two even when
 // they share a line name. The site widget slices this whole-day list down to the
 // next upcoming departures.
-export function mapNjtUpstream(json, station) {
+//
+// Arrivals INTO Penn share the same ITEMS list as departures and previously
+// leaked in as fake departures whenever their terminus wasn't literally "New
+// York" (the old dest !== stationName check). getStationSchedule carries a
+// DIRECTION field per train; at Penn, departures head out ("Westbound") while
+// NY-bound arrivals come in ("Eastbound"), so we drop the inbound direction.
+const PENN_ARRIVAL_DIRECTION = 'Eastbound'; // trains INTO Penn; departures are the other direction — VERIFY against live board before merge to main
+export function mapNjtUpstream(json, station = PENN) {
   const st = Array.isArray(json)
-    ? (json.find((s) => s?.STATION_2CHAR === station) ?? json[0])
+    ? (json.find((s) => s?.STATION_2CHAR === PENN) ?? json[0])
     : json; // tolerate a bare {ITEMS} object too
   const items = Array.isArray(st?.ITEMS) ? st.ITEMS : (Array.isArray(json?.ITEMS) ? json.ITEMS : []);
   const stationName = String(st?.STATIONNAME ?? '').trim();
+  const arrivalDir = PENN_ARRIVAL_DIRECTION.toLowerCase();
   const trains = items
     .filter((it) => /^\d+$/.test(String(it?.TRAIN_ID ?? ''))) // numeric id = NJ Transit; letter-prefixed = Amtrak
     .map((it) => ({
       time: njtDateToEpoch(it.SCHED_DEP_DATE),
       dest: decodeEntities(it.DESTINATION),
       line: String(it.LINE ?? '').trim(),
+      direction: String(it.DIRECTION ?? ''),
       track: null, // this endpoint's TRACK is the line name, not a track number
       status: '', // getStationSchedule carries no live status
     }))
     .filter((t) =>
       t.time !== null &&
-      t.dest && t.dest !== stationName) // drop trains terminating here (arrivals, not departures)
+      t.dest &&
+      t.direction.toLowerCase() !== arrivalDir && // drop arrivals INTO Penn (inbound direction)
+      t.dest !== stationName) // safety: also drop anything terminating here by name
     .sort((a, b) => a.time - b.time);
-  return { station, updatedAt: Math.floor(Date.now() / 1000), stale: false, trains };
+  return { station: PENN, updatedAt: Math.floor(Date.now() / 1000), stale: false, trains };
 }
 
 async function form(url, params) {
@@ -157,12 +172,14 @@ export function mapNjtMessages(json) {
     .slice(0, 4);
 }
 
-export async function fetchNjtDepartures(env, station) {
+// The station is always New York Penn (the board mirrors LIRR/Amtrak); the
+// `station` arg is ignored so old callers still resolve to Penn.
+export async function fetchNjtDepartures(env, _station) {
   const run = async (fresh) => {
     const token = await njtToken(env, fresh);
-    const vm = mapNjtUpstream(await form(`${BASE}/getStationSchedule`, { token, station }), station);
+    const vm = mapNjtUpstream(await form(`${BASE}/getStationSchedule`, { token, station: PENN }), PENN);
     try {
-      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token, station }));
+      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token, station: PENN }));
     } catch {
       vm.alerts = [];
     }
@@ -174,19 +191,4 @@ export async function fetchNjtDepartures(env, station) {
     if (!isAuthError(err)) throw err; // transient failure: let cached() serve stale, don't burn a token
     return run(true); // token expired: re-authenticate once
   }
-}
-
-export async function fetchNjtStations(env) {
-  const run = async (fresh) => form(`${BASE}/getStationList`, { token: await njtToken(env, fresh) });
-  let json;
-  try {
-    json = await run(false);
-  } catch (err) {
-    if (!isAuthError(err)) throw err;
-    json = await run(true);
-  }
-  const items = Array.isArray(json) ? json : json?.STATIONS ?? [];
-  return items
-    .map((s) => ({ code: String(s.STATION_2CHAR ?? s.code ?? ''), name: String(s.STATIONNAME ?? s.name ?? '') }))
-    .filter((s) => s.code && s.name);
 }

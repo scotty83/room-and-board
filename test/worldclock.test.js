@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { worldTimes, zoneLabel, OFFICES } from '../site/js/widgets/worldclock.js';
+import { worldTimes, zoneLabel, OFFICES, zonesByRegion } from '../site/js/widgets/worldclock.js';
 
 const FIVE = [
   { label: 'New York', zone: 'America/New_York' },
@@ -61,5 +61,49 @@ describe('OFFICES + zoneLabel', () => {
     expect(zoneLabel('America/New_York')).toBe('New York');
     expect(zoneLabel('America/Indiana/Indianapolis')).toBe('Indianapolis');
     expect(zoneLabel('UTC')).toBe('UTC');
+  });
+});
+
+describe('zonesByRegion', () => {
+  it('keys each zone by the segment before the first slash', () => {
+    const by = zonesByRegion(['America/New_York', 'Europe/London', 'Asia/Kolkata']);
+    expect(by.America).toEqual(['America/New_York']);
+    expect(by.Europe).toEqual(['Europe/London']);
+    expect(by.Asia).toEqual(['Asia/Kolkata']);
+  });
+
+  it('buckets slashless zones under "UTC / Other"', () => {
+    const by = zonesByRegion(['UTC', 'GMT', 'America/New_York']);
+    expect(by['UTC / Other']).toEqual(['UTC', 'GMT']);
+    expect(by.America).toEqual(['America/New_York']);
+    expect(Object.keys(by)).not.toContain('UTC');
+  });
+
+  it('groups multi-segment ids by only their first segment', () => {
+    const by = zonesByRegion(['America/Argentina/Buenos_Aires', 'America/Indiana/Indianapolis', 'America/New_York']);
+    expect(Object.keys(by)).toEqual(['America']);
+    expect(by.America).toEqual([
+      'America/Argentina/Buenos_Aires',
+      'America/Indiana/Indianapolis',
+      'America/New_York',
+    ]);
+  });
+
+  it('preserves input order within a group (already alphabetical upstream)', () => {
+    const by = zonesByRegion(['Asia/Dubai', 'Asia/Kolkata', 'Asia/Tokyo']);
+    expect(by.Asia).toEqual(['Asia/Dubai', 'Asia/Kolkata', 'Asia/Tokyo']);
+  });
+
+  it('groups the real IANA list without dropping zones', () => {
+    const zones = Intl.supportedValuesOf('timeZone');
+    const by = zonesByRegion(zones);
+    const flat = Object.values(by).flat();
+    expect(flat).toHaveLength(zones.length);
+    expect(by.America.length).toBeGreaterThan(0);
+    for (const [region, zs] of Object.entries(by)) {
+      for (const z of zs) {
+        expect(z.includes('/') ? z.slice(0, z.indexOf('/')) : 'UTC / Other').toBe(region);
+      }
+    }
   });
 });

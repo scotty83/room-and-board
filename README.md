@@ -12,7 +12,7 @@ status), market tickers, sports scores, headlines, cloud-service status,
 public-domain art, photo slideshows, and daily extras (NASA's photo of the
 day, Statista's chart of the day, and more). Hosted entirely on the
 public internet, personalized per device **without authentication**, with
-preferences that survive reboots, RoomOS upgrades, and even web-storage wipes.
+preferences that survive reboots, RoomOS upgrades.
 
 ![A Room & Board dashboard: weather, public-domain art, world clock, markets, quote of the day, World Cup, and headlines](docs/screenshots/dashboard-classic.png)
 

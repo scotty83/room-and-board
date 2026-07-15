@@ -5,9 +5,8 @@
   </picture>
 </p>
 
-A lightweight, personal signage dashboard — **RoomBoard** (`roomboard.app`) —
-for Cisco Board Pro devices (gen1 + gen2)
-in private offices: worldwide weather, transit boards (NYC Subway status, LIRR,
+A lightweight, personal signage dashboard — **Room & Board** (`roomboard.app`) —
+for touch enabled Cisco RoomOS endpoints such as the Board Pro and Desk Pro: worldwide weather, transit boards (NYC Subway status, LIRR,
 Metro-North, NJ Transit, PATH, NYC Ferry, Express Bus, Citi Bike; London TfL
 status), market tickers, sports scores, headlines, cloud-service status,
 public-domain art, photo slideshows, and daily extras (NASA's photo of the

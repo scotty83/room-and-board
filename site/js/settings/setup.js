@@ -1,7 +1,7 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
@@ -502,17 +502,16 @@ async function renderBusStops() {
   paintChips();
 }
 
-async function renderNjt() {
-  try {
-    const { stations } = await (await fetch(`${WORKER_URL}/njt/stations`)).json();
-    $('#njt-station').innerHTML = stations
-      .map((s) => `<option value="${s.code}">${s.name}</option>`)
-      .join('');
-  } catch {
-    // keep the default option; the widget still works once the proxy is up
-  }
-  $('#njt-station').value = cfg.njt.station;
-  $('#njt-station').addEventListener('change', (e) => (cfg.njt.station = e.target.value));
+// New York Penn is fixed (mirrors LIRR/Amtrak); the user filters by line. No
+// selection = all lines. Modeled on the Markets News source checkboxes.
+function renderNjt() {
+  $('#njt-lines').innerHTML = NJT_LINES.map(
+    (l) => `<label><input type="checkbox" data-njt="${escapeHtml(l)}" ${cfg.njt.lines.includes(l) ? 'checked' : ''}> ${escapeHtml(l)}</label>`,
+  ).join('');
+  $('#njt-lines').addEventListener('change', (e) => {
+    const line = e.target.dataset.njt;
+    if (line) cfg.njt.lines = toggleIn(cfg.njt.lines, line);
+  });
 }
 
 // Shared follow-list field (substack pubs / bsky handles): chips + one

@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -544,47 +544,28 @@ async function renderMnr() {
   });
 }
 
-// Station list is fetched once per settings session and cached here (like the
-// bundled mnrStations/lirrStations above). Re-rendering after a pick reuses it,
-// so choosing a station no longer re-fetches /njt/stations — that repeated fetch
-// was both the visible flicker and, on a cold token cache, a getToken burst.
-let njtStations = null;
-async function renderNjt() {
-  const _nav = navToken;
-  if (!njtStations) {
-    pane().innerHTML = `<h2 class="pane__title">NJ Transit</h2><p class="pane__hint">Loading stations…</p>`;
-    try {
-      njtStations = (await fetchJSON(`${WORKER_URL}/njt/stations`)).stations;
-    } catch {
-      njtStations = null;
-    }
-    if (navStale(_nav)) return;
-  }
-  if (!njtStations?.length) {
-    pane().innerHTML = `
-      <h2 class="pane__title">NJ Transit</h2>
-      <p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>`;
-    return;
-  }
-  const byCode = Object.fromEntries(njtStations.map((s) => [s.code, s]));
+// The board is pinned to New York Penn Station (mirrors LIRR/Amtrak); the user
+// filters departures by line. Empty selection = all lines. Modeled on the
+// subway/TfL line multi-selects — no station fetch, so no flicker or getToken burst.
+function renderNjt() {
+  const chosen = state.cfg.njt.lines;
+  const lineChips = NJT_LINES.map((l) => {
+    const on = chosen.includes(l);
+    return `<button class="chip ${on ? 'chip--on' : ''}" data-line="${escapeHtml(l)}"
+      role="switch" aria-checked="${on}">${escapeHtml(l)}</button>`;
+  }).join('');
   pane().innerHTML = `
-    <h2 class="pane__title">NJ Transit</h2>
-    <p class="pane__hint">Shows departures from your station.</p>
-    <div class="kv"><span>Station</span><b>${escapeHtml(byCode[state.cfg.njt.station]?.name ?? state.cfg.njt.station)}</b>
-      <button class="btn" data-pick-station>Change</button></div>
-    ${alertsToggleHtml('njt')}
-    <div class="drill"></div>`;
+    <h2 class="pane__title">NJ Transit — Penn Station departures</h2>
+    <p class="pane__hint">Departures from New York Penn Station. Pick the lines to show — leave all off to show every line.</p>
+    <div class="chips">${lineChips}</div>
+    ${alertsToggleHtml('njt')}`;
   bindAlertsToggle(renderNjt);
-  pane().querySelector('[data-pick-station]').addEventListener('click', () => {
-    drillList(
-      'Choose a station',
-      njtStations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      (pick) => {
-        state.cfg.njt.station = pick.value.code;
-        renderNjt();
-      },
-    );
-  });
+  pane().querySelectorAll('[data-line]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.njt.lines = toggleIn(state.cfg.njt.lines, chip.dataset.line);
+      renderNjt();
+    }),
+  );
 }
 
 function renderPath() {

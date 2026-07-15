@@ -36,6 +36,21 @@ export const WIDGET_GROUPS = [
 
 const SERVICE_IDS = ['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws', 'claude', 'openai'];
 
+// NJ Transit rail lines served from New York Penn Station. The widget is
+// Penn-fixed (mirrors LIRR/Amtrak) and filters departures by line client-side;
+// [] = all lines. These must match the LINE strings the getStationSchedule feed
+// emits verbatim — VERIFY against the live board before merge to main. Single
+// source of truth shared by the default, validation, and the settings/setup pickers.
+export const NJT_LINES = [
+  'Northeast Corridor Line',
+  'North Jersey Coast Line',
+  'Morris & Essex Line',
+  'Montclair-Boonton Line',
+  'Gladstone Branch',
+  'Raritan Valley Line',
+];
+const NJT_LINE_SET = new Set(NJT_LINES);
+
 export const DEFAULT_CONFIG = Object.freeze({
   v: 3,
   t: 0,
@@ -82,7 +97,7 @@ export const DEFAULT_CONFIG = Object.freeze({
     { id: 'emollick.bsky.social', label: 'Ethan Mollick' },
     { id: 'simonwillison.net', label: 'Simon Willison' },
   ].map(Object.freeze)) }),
-  njt: Object.freeze({ station: 'NY', alerts: true }),
+  njt: Object.freeze({ lines: Object.freeze([]), alerts: true }), // New York Penn departures; [] = all lines
   amtrak: Object.freeze({ dest: '', alerts: true }), // NYP (Moynihan) board destination filter ('' = all trains)
   path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
@@ -259,7 +274,10 @@ export function normalizeConfig(raw) {
       })(),
     },
     njt: {
-      station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
+      // New York Penn is fixed; the user filters by line (intersect against the
+      // known NYP-served set, dedupe). [] = all lines. Old station-based configs
+      // fall through to all lines — no migration needed.
+      lines: [...new Set((Array.isArray(raw.njt?.lines) ? raw.njt.lines : []).filter((l) => NJT_LINE_SET.has(l)))],
       alerts: raw.njt?.alerts !== false,
     },
     amtrak: {

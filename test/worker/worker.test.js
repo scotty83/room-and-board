@@ -106,17 +106,20 @@ describe('/code exchange', () => {
 // live API 2026-07-14; mapping isolated in njt.js). getStationSchedule returns
 // an ARRAY of station objects, departures nested in ITEMS, no live track/status
 // (TRACK holds the line name), and includes Amtrak trains + arrivals we drop.
+// The station is pinned to New York Penn (NY): departures are "Westbound",
+// NY-bound arrivals are "Eastbound" and get dropped by the direction filter.
 const TOKEN_RESPONSE = { UserToken: 'tok-1' };
 const SCHEDULE_RESPONSE = [
   {
     STATION_2CHAR: 'NY',
     STATIONNAME: 'New York',
     ITEMS: [
-      { SCHED_DEP_DATE: '02-Jul-2026 08:15:00 AM', DESTINATION: 'Trenton &#9992', TRACK: 'Northeast Corridor Line', LINE: 'Northeast Corridor Line', TRAIN_ID: '3919', DIRECTION: 'Westbound' }, // NJT; airport entity decodes
-      { SCHED_DEP_DATE: '02-Jul-2026 08:20:00 AM', DESTINATION: 'Dover', TRACK: 'Morris & Essex Line', LINE: 'Morris & Essex Line', TRAIN_ID: '6621', DIRECTION: 'Westbound' }, // NJT
+      { SCHED_DEP_DATE: '02-Jul-2026 08:15:00 AM', DESTINATION: 'Trenton &#9992', TRACK: 'Northeast Corridor Line', LINE: 'Northeast Corridor Line', TRAIN_ID: '3919', DIRECTION: 'Westbound' }, // NJT departure; airport entity decodes
+      { SCHED_DEP_DATE: '02-Jul-2026 08:20:00 AM', DESTINATION: 'Dover', TRACK: 'Morris & Essex Line', LINE: 'Morris & Essex Line', TRAIN_ID: '6621', DIRECTION: 'Westbound' }, // NJT departure
       { SCHED_DEP_DATE: '02-Jul-2026 08:25:00 AM', DESTINATION: 'Washington', TRACK: 'ACELA', LINE: 'ACELA', TRAIN_ID: 'A2151', DIRECTION: 'Westbound' }, // Amtrak (letter id) — dropped
       { SCHED_DEP_DATE: '02-Jul-2026 08:28:00 AM', DESTINATION: 'Baltimore', TRACK: 'Northeast Corridor Line', LINE: 'Northeast Corridor Line', TRAIN_ID: 'A2121', DIRECTION: 'Westbound' }, // Amtrak sharing the NJT line name — dropped by the numeric-id rule
-      { SCHED_DEP_DATE: '02-Jul-2026 08:30:00 AM', DESTINATION: 'New York', TRACK: 'North Jersey Coast Line', LINE: 'North Jersey Coast Line', TRAIN_ID: '3288', DIRECTION: 'Eastbound' }, // NJT arrival at NY — dropped
+      { SCHED_DEP_DATE: '02-Jul-2026 08:26:00 AM', DESTINATION: 'Long Branch', TRACK: 'North Jersey Coast Line', LINE: 'North Jersey Coast Line', TRAIN_ID: '3244', DIRECTION: 'Eastbound' }, // NJT arrival INTO Penn terminating elsewhere — dropped by DIRECTION (name check would MISS this)
+      { SCHED_DEP_DATE: '02-Jul-2026 08:30:00 AM', DESTINATION: 'New York', TRACK: 'North Jersey Coast Line', LINE: 'North Jersey Coast Line', TRAIN_ID: '3288', DIRECTION: 'Eastbound' }, // NJT arrival at NY (terminus literally "New York") — dropped
     ],
   },
 ];
@@ -125,7 +128,7 @@ describe('/njt/departures', () => {
   beforeEach(() => clearCache('njt:NY'));
 
   it('503s when secrets are not configured', async () => {
-    const res = await call('/njt/departures?station=NY');
+    const res = await call('/njt/departures');
     expect(res.status).toBe(503);
     expect((await res.json()).error).toBe('njt_not_configured');
   });
@@ -135,18 +138,22 @@ describe('/njt/departures', () => {
       { match: /getToken/, body: TOKEN_RESPONSE },
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
     ]);
-    const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.station).toBe('NY');
     expect(body.stale).toBe(false);
     // Only the two NJT departures survive: both Amtrak trains (letter ids, one
-    // sharing the NJT line name) and the New-York-bound arrival are filtered out.
+    // sharing the NJT line name) and both Eastbound arrivals into Penn (one
+    // terminating elsewhere, one literally "New York") are filtered out.
     expect(body.trains).toHaveLength(2);
     const dests = body.trains.map((t) => t.dest);
     expect(dests).not.toContain('Washington'); // Amtrak (ACELA) dropped
     expect(dests).not.toContain('Baltimore'); // Amtrak sharing the NJT line name dropped
-    expect(dests).not.toContain('New York'); // arrival dropped
+    expect(dests).not.toContain('New York'); // Eastbound arrival (name match) dropped
+    expect(dests).not.toContain('Long Branch'); // Eastbound arrival terminating elsewhere dropped by DIRECTION
+    // Every surviving train is a departure (Westbound), never an arrival.
+    expect(body.trains.every((t) => t.direction === 'Westbound')).toBe(true);
     const train = body.trains[0];
     expect(train.dest).toContain('Trenton'); // "Trenton ✈" after entity decode
     expect(train.dest).toContain('✈'); // &#9992 decoded to the airport glyph
@@ -164,7 +171,7 @@ describe('/njt/departures', () => {
 
     // Second call inside the TTL is served from cache without touching upstream.
     const before = calls.length;
-    const res2 = await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const res2 = await call('/njt/departures', {}, NJT_ENV);
     expect(res2.status).toBe(200);
     expect((await res2.json()).trains).toHaveLength(2);
     expect(calls.length).toBe(before);
@@ -176,7 +183,7 @@ describe('/njt/departures', () => {
       { match: /getStationSchedule/, body: 'expired', status: 401 },
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
     ]);
-    const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
     expect((await res.json()).trains).toHaveLength(2);
   });
@@ -188,11 +195,11 @@ describe('/njt/departures', () => {
       { match: /getStationMSG/, body: [], times: 5 },
     ]);
     // First fleet-cache-miss fetch authenticates and caches the token.
-    await call('/njt/departures?station=NY', {}, NJT_ENV);
+    await call('/njt/departures', {}, NJT_ENV);
     // Expire the digest cache (both layers) but keep the token — simulates a fresh
     // isolate 60 s later that lost its in-memory state but shares the colo cache.
     await clearCache('njt:NY');
-    await call('/njt/departures?station=NY', {}, NJT_ENV);
+    await call('/njt/departures', {}, NJT_ENV);
     const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
     expect(tokenCalls).toBe(1); // the second fetch reused the cached token — no extra getToken
   });
@@ -203,13 +210,14 @@ describe('/njt/departures', () => {
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE, times: 5 },
       { match: /getStationMSG/, body: [], times: 5 },
     ]);
-    // Two independent fetches race on a cold token cache (different stations, so
-    // the result cache can't dedupe them). Without an in-flight guard each would
-    // read the empty cache and mint its own token — the burst that drained the
-    // 10/day getToken cap. The in-flight promise collapses them to one mint.
+    // Two independent fetches race on a cold token cache. cached() doesn't dedupe
+    // concurrent misses, so both reach fetchNjtDepartures -> njtToken. Without an
+    // in-flight guard each would read the empty cache and mint its own token —
+    // the burst that drained the 10/day getToken cap. The in-flight promise
+    // collapses them to one mint.
     await Promise.all([
-      call('/njt/departures?station=NY', {}, NJT_ENV),
-      call('/njt/departures?station=NP', {}, NJT_ENV),
+      call('/njt/departures', {}, NJT_ENV),
+      call('/njt/departures', {}, NJT_ENV),
     ]);
     const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
     expect(tokenCalls).toBe(1);
@@ -220,13 +228,13 @@ describe('/njt/departures', () => {
       { match: /getToken/, body: TOKEN_RESPONSE },
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
     ]);
-    await call('/njt/departures?station=NY', {}, NJT_ENV);
+    await call('/njt/departures', {}, NJT_ENV);
     await caches.default.delete(cacheKey('fresh', 'njt:NY')); // expire fresh, keep stale backup
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'err', status: 500, times: 2 },
     ]);
-    const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.stale).toBe(true);
@@ -238,12 +246,8 @@ describe('/njt/departures', () => {
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'err', status: 500, times: 2 },
     ]);
-    const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(502);
-  });
-
-  it('rejects missing station', async () => {
-    expect((await call('/njt/departures', {}, NJT_ENV)).status).toBe(400);
   });
 });
 

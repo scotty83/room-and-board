@@ -1,4 +1,4 @@
-name: tests
+name: ci
 
 on:
   push:
@@ -16,3 +16,22 @@ jobs:
       - run: npm ci
       # Site suite (happy-dom) + worker suite (workerd pool).
       - run: npm test
+
+  deploy-site:
+    # Publishes the site to the production Pages project (`signage`, which serves
+    # roomboard.app) after tests pass. Push-to-main only — skipped on PRs. Reuses
+    # the same `deploy:site` the maintainer used to run by hand; stamp-version.js
+    # stamps version.json with the commit SHA so boards self-refresh hourly.
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run deploy:site
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

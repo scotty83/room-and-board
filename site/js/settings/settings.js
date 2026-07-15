@@ -1061,10 +1061,16 @@ function renderWorldclock() {
       Object.keys(byRegion).map((r) => ({ html: escapeHtml(r), value: r })),
       (r) => { state.stack.push(pickRegion); pickZone(r.value); });
     const pickZone = (region) => drillList(region,
-      byRegion[region].map((z) => ({
-        html: `<span class="drill__letter">${escapeHtml(zoneLabel(z))}</span> <small>${escapeHtml(z)}</small>`,
-        value: z,
-      })),
+      byRegion[region].map((z) => {
+        // The region is already chosen, so drop the redundant prefix: show the
+        // city, plus any middle segment (e.g. Argentina) that disambiguates it.
+        const rest = z.includes('/') ? z.slice(z.indexOf('/') + 1) : '';
+        const mid = rest.includes('/') ? rest.slice(0, rest.lastIndexOf('/')).replace(/_/g, ' ') : '';
+        return {
+          html: `${escapeHtml(zoneLabel(z))}${mid ? ` <small>${escapeHtml(mid)}</small>` : ''}`,
+          value: z,
+        };
+      }),
       (it) => {
         const zone = it.value;
         const label = zoneLabel(zone);

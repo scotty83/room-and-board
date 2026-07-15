@@ -502,6 +502,7 @@ body.mode-ambient .gear { bottom: 7px; }
   border: none; border-radius: 12px; cursor: pointer;
   background: var(--bg-card); color: var(--ink);
   display: flex; align-items: center; gap: 12px;
+  text-align: left; /* names that wrap (e.g. "Atlantic City Rail Terminal") would otherwise inherit the button default (center) and look misaligned next to short ones */
 }
 .drill__letter { color: var(--accent); }
 

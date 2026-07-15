@@ -101,8 +101,16 @@ async function writeToken(token) {
   }
 }
 
+// Dedupes concurrent mints within one isolate: when several requests hit a cold
+// token cache at once (e.g. a burst of station-list/departure calls near
+// midnight), the first mint's promise is shared by the rest instead of each one
+// spending a getToken call. The Cache API is the cross-isolate guard; this is the
+// same-isolate guard. Reset in resetNjtToken so it can't leak between test cases.
+let tokenInFlight = null;
+
 // Test hook: clear the cached token so state can't leak between cases.
 export async function resetNjtToken() {
+  tokenInFlight = null;
   try {
     await caches.default.delete(TOKEN_KEY);
   } catch {
@@ -116,12 +124,23 @@ async function njtToken(env, fresh = false) {
   if (!fresh) {
     const cached = await readToken();
     if (cached) return cached;
+    if (tokenInFlight) return tokenInFlight; // a concurrent caller is already minting — join it
   }
-  const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
-  const token = tok?.UserToken;
-  if (!token) throw new Error('njt token missing');
-  await writeToken(token);
-  return token;
+  const mint = (async () => {
+    const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
+    const token = tok?.UserToken;
+    if (!token) throw new Error('njt token missing');
+    await writeToken(token);
+    return token;
+  })();
+  // Only publish the non-forced mint: a `fresh` re-auth knows the current token
+  // is bad, so it must not be handed to callers still holding the stale one.
+  if (!fresh) tokenInFlight = mint;
+  try {
+    return await mint;
+  } finally {
+    if (!fresh && tokenInFlight === mint) tokenInFlight = null;
+  }
 }
 
 // True when an upstream error was a token rejection (expired/invalid). Only these

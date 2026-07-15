@@ -544,29 +544,47 @@ async function renderMnr() {
   });
 }
 
+// Station list is fetched once per settings session and cached here (like the
+// bundled mnrStations/lirrStations above). Re-rendering after a pick reuses it,
+// so choosing a station no longer re-fetches /njt/stations — that repeated fetch
+// was both the visible flicker and, on a cold token cache, a getToken burst.
+let njtStations = null;
 async function renderNjt() {
   const _nav = navToken;
+  if (!njtStations) {
+    pane().innerHTML = `<h2 class="pane__title">NJ Transit</h2><p class="pane__hint">Loading stations…</p>`;
+    try {
+      njtStations = (await fetchJSON(`${WORKER_URL}/njt/stations`)).stations;
+    } catch {
+      njtStations = null;
+    }
+    if (navStale(_nav)) return;
+  }
+  if (!njtStations?.length) {
+    pane().innerHTML = `
+      <h2 class="pane__title">NJ Transit</h2>
+      <p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>`;
+    return;
+  }
+  const byCode = Object.fromEntries(njtStations.map((s) => [s.code, s]));
   pane().innerHTML = `
     <h2 class="pane__title">NJ Transit</h2>
-    <div class="kv"><span>Station</span><b>${escapeHtml(state.cfg.njt.station)}</b></div>
+    <p class="pane__hint">Shows departures from your station.</p>
+    <div class="kv"><span>Station</span><b>${escapeHtml(byCode[state.cfg.njt.station]?.name ?? state.cfg.njt.station)}</b>
+      <button class="btn" data-pick-station>Change</button></div>
     ${alertsToggleHtml('njt')}
-    <div class="drill"><p class="pane__hint">Loading stations…</p></div>`;
+    <div class="drill"></div>`;
   bindAlertsToggle(renderNjt);
-  try {
-    const { stations } = await fetchJSON(`${WORKER_URL}/njt/stations`);
-    if (navStale(_nav)) return;
+  pane().querySelector('[data-pick-station]').addEventListener('click', () => {
     drillList(
       'Choose a station',
-      stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+      njtStations.map((s) => ({ html: escapeHtml(s.name), value: s })),
       (pick) => {
         state.cfg.njt.station = pick.value.code;
         renderNjt();
       },
     );
-  } catch {
-    const d = pane().querySelector('.drill');
-    if (d) d.innerHTML = '<p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>';
-  }
+  });
 }
 
 function renderPath() {

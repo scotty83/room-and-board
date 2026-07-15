@@ -197,6 +197,24 @@ describe('/njt/departures', () => {
     expect(tokenCalls).toBe(1); // the second fetch reused the cached token — no extra getToken
   });
 
+  it('dedupes concurrent cold-cache token mints (getToken fires once)', async () => {
+    const calls = stubFetch([
+      { match: /getToken/, body: TOKEN_RESPONSE, times: 5 },
+      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE, times: 5 },
+      { match: /getStationMSG/, body: [], times: 5 },
+    ]);
+    // Two independent fetches race on a cold token cache (different stations, so
+    // the result cache can't dedupe them). Without an in-flight guard each would
+    // read the empty cache and mint its own token — the burst that drained the
+    // 10/day getToken cap. The in-flight promise collapses them to one mint.
+    await Promise.all([
+      call('/njt/departures?station=NY', {}, NJT_ENV),
+      call('/njt/departures?station=NP', {}, NJT_ENV),
+    ]);
+    const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
+    expect(tokenCalls).toBe(1);
+  });
+
   it('serves stale data when upstream fails after a success', async () => {
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE },

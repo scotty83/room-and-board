@@ -1,5 +1,7 @@
 # Cloudflare Worker: NJT proxy + setup-code exchange + markets.
-# Deploy: npx wrangler deploy (from worker/). Secrets:
+# Deploy: auto-deploys via GitHub Actions (.github/workflows/deploy-worker.yml)
+# on push to main when worker/ changes; manual fallback `npm run deploy:worker`
+# (= npx wrangler deploy, from worker/). Secrets:
 #   npx wrangler secret put NJT_USER
 #   npx wrangler secret put NJT_PASS
 # Replace the KV id with your namespace: npx wrangler kv namespace create CODES

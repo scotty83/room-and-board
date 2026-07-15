@@ -72,12 +72,62 @@ async function form(url, params) {
   return res.json();
 }
 
-let cachedToken = null;
+// The RailData session token is the scarce resource: getToken is capped at just
+// 10 requests/day (verified in the portal 2026-07-14), while the data endpoints
+// allow 40,000/day. So the token is cached in the Cache API — NOT module-level
+// memory — so it survives Cloudflare isolate eviction and is reused across every
+// board and every fresh isolate in a colo. getToken then fires only ~once per
+// token lifetime (driven by the 401 path below), not on each cold start. The TTL
+// is a long ceiling; real refresh happens when the token actually expires upstream
+// and a request gets a 401.
+const TOKEN_KEY = 'https://njt-token.roomboard.internal/token';
+const TOKEN_TTL = 24 * 3600; // seconds
 
-// Test hook: module-level token state must not leak between test cases.
-export function resetNjtToken() {
-  cachedToken = null;
+async function readToken() {
+  try {
+    const hit = await caches.default.match(TOKEN_KEY);
+    if (hit) return (await hit.text()) || null;
+  } catch {
+    // Cache unavailable (e.g. some test contexts) — fall back to a fresh token.
+  }
+  return null;
 }
+
+async function writeToken(token) {
+  try {
+    await caches.default.put(TOKEN_KEY, new Response(token, { headers: { 'Cache-Control': `max-age=${TOKEN_TTL}` } }));
+  } catch {
+    // Best effort: a failed cache write just means the next call re-authenticates.
+  }
+}
+
+// Test hook: clear the cached token so state can't leak between cases.
+export async function resetNjtToken() {
+  try {
+    await caches.default.delete(TOKEN_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+// Return a usable token, minting a new one only when the cache is empty or when
+// `fresh` forces it (after a 401). A minted token is cached for reuse.
+async function njtToken(env, fresh = false) {
+  if (!fresh) {
+    const cached = await readToken();
+    if (cached) return cached;
+  }
+  const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
+  const token = tok?.UserToken;
+  if (!token) throw new Error('njt token missing');
+  await writeToken(token);
+  return token;
+}
+
+// True when an upstream error was a token rejection (expired/invalid). Only these
+// justify spending one of the 10 daily getToken calls; every other failure falls
+// through to the cached()-served stale response instead.
+const isAuthError = (err) => /\b401\b/.test(String(err?.message ?? ''));
 
 // Station advisories ride along with departures; failures leave alerts [].
 export function mapNjtMessages(json) {
@@ -89,49 +139,32 @@ export function mapNjtMessages(json) {
 }
 
 export async function fetchNjtDepartures(env, station) {
-  const getSchedule = async () => {
-    if (!cachedToken) {
-      const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
-      cachedToken = tok?.UserToken;
-      if (!cachedToken) throw new Error('njt token missing');
-    }
-    return form(`${BASE}/getStationSchedule`, { token: cachedToken, station });
-  };
-  const withAlerts = async () => {
-    const vm = mapNjtUpstream(await getSchedule(), station);
+  const run = async (fresh) => {
+    const token = await njtToken(env, fresh);
+    const vm = mapNjtUpstream(await form(`${BASE}/getStationSchedule`, { token, station }), station);
     try {
-      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token: cachedToken, station }));
+      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token, station }));
     } catch {
       vm.alerts = [];
     }
     return vm;
   };
   try {
-    return await withAlerts();
+    return await run(false);
   } catch (err) {
-    // One retry with a fresh token covers expiry-driven failures.
-    cachedToken = null;
-    return withAlerts();
+    if (!isAuthError(err)) throw err; // transient failure: let cached() serve stale, don't burn a token
+    return run(true); // token expired: re-authenticate once
   }
 }
 
 export async function fetchNjtStations(env) {
-  const getList = async () => {
-    if (!cachedToken) {
-      const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
-      cachedToken = tok?.UserToken;
-      if (!cachedToken) throw new Error('njt token missing');
-    }
-    return form(`${BASE}/getStationList`, { token: cachedToken });
-  };
+  const run = async (fresh) => form(`${BASE}/getStationList`, { token: await njtToken(env, fresh) });
   let json;
   try {
-    json = await getList();
-  } catch {
-    // One retry with a fresh token covers expiry-driven failures (mirrors
-    // fetchNjtDepartures).
-    cachedToken = null;
-    json = await getList();
+    json = await run(false);
+  } catch (err) {
+    if (!isAuthError(err)) throw err;
+    json = await run(true);
   }
   const items = Array.isArray(json) ? json : json?.STATIONS ?? [];
   return items

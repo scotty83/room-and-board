@@ -45,9 +45,9 @@ function stubFetch(routes) {
   return calls;
 }
 
-afterEach(() => {
+afterEach(async () => {
   vi.unstubAllGlobals();
-  resetNjtToken();
+  await resetNjtToken(); // clears the Cache-API session token so it can't leak between cases
 });
 
 describe('CORS and routing', () => {
@@ -179,6 +179,22 @@ describe('/njt/departures', () => {
     const res = await call('/njt/departures?station=NY', {}, NJT_ENV);
     expect(res.status).toBe(200);
     expect((await res.json()).trains).toHaveLength(2);
+  });
+
+  it('reuses the Cache-API session token across fetches (getToken fires once)', async () => {
+    const calls = stubFetch([
+      { match: /getToken/, body: TOKEN_RESPONSE, times: 5 },
+      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE, times: 5 },
+      { match: /getStationMSG/, body: [], times: 5 },
+    ]);
+    // First fleet-cache-miss fetch authenticates and caches the token.
+    await call('/njt/departures?station=NY', {}, NJT_ENV);
+    // Expire the digest cache (both layers) but keep the token — simulates a fresh
+    // isolate 60 s later that lost its in-memory state but shares the colo cache.
+    await clearCache('njt:NY');
+    await call('/njt/departures?station=NY', {}, NJT_ENV);
+    const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
+    expect(tokenCalls).toBe(1); // the second fetch reused the cached token — no extra getToken
   });
 
   it('serves stale data when upstream fails after a success', async () => {

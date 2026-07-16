@@ -254,6 +254,16 @@ function renderWidgets() {
 
 /* ---------- shared: service-alerts toggle ---------- */
 
+// Full-width tap-row for pick-a-value settings: label left, value + chevron
+// right; the ENTIRE row is the touch target (replaces the old .kv container
+// with a small Change button marooned at the end).
+function navRow(label, value, attr) {
+  return `<button class="row row--nav" ${attr}>
+    <span class="row__label row__label--dim">${label}</span>
+    <span class="row__value">${value} <span class="row__chev">›</span></span>
+  </button>`;
+}
+
 function alertsToggleHtml(group) {
   const on = state.cfg[group].alerts;
   return `<div class="row">
@@ -317,8 +327,8 @@ function renderPhotos() {
   const p = state.cfg.photos;
   const src = p.source === 'gdrive' ? 'gdrive' : 'icloud';
   const set = p.album
-    ? `<div class="kv"><span>Album</span><b>Configured</b>
-        <button class="btn" data-clear-album>Remove</button></div>`
+    ? `<div class="row"><span class="row__label row__label--dim">Album</span><span class="row__value">Configured</span>
+        <button class="btn btn--ghost" data-clear-album>Remove</button></div>`
     : '';
   const guide = src === 'gdrive'
     ? `Show a <b>Google Drive folder</b> shared to anyone. In Drive: right-click the folder →
@@ -455,27 +465,24 @@ async function renderLirr() {
   pane().innerHTML = `
     <h2 class="pane__title">LIRR — Penn Station departures</h2>
     <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station — the branch shows per train, so multi-branch destinations just work.</p>
-    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station')}</b>
-      <button class="btn" data-pick-dest>Change</button>
-      ${state.cfg.lirr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
     ${alertsToggleHtml('lirr')}
     <div class="drill"></div>`;
   bindAlertsToggle(renderLirr);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
     drillList(
       'Destination station',
-      alphaSections(lirrStations).flatMap((sec) =>
-        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      ),
+      // "Any station" leads the list — it replaces the old separate
+      // "Show all trains" button beside the row.
+      [{ html: 'Any station <small>(show all trains)</small>', value: null },
+        ...alphaSections(lirrStations).flatMap((sec) =>
+          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+        )],
       (pick) => {
-        state.cfg.lirr.dest = pick.value.id;
+        state.cfg.lirr.dest = pick.value?.id ?? '';
         renderLirr();
       },
     );
-  });
-  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
-    state.cfg.lirr.dest = '';
-    renderLirr();
   });
 }
 
@@ -488,27 +495,22 @@ async function renderAmtrak() {
   pane().innerHTML = `
     <h2 class="pane__title">Amtrak — Moynihan / Penn departures</h2>
     <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination — the arrival time there shows per train.</p>
-    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station')}</b>
-      <button class="btn" data-pick-dest>Change</button>
-      ${state.cfg.amtrak.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station'), 'data-pick-dest')}
     ${alertsToggleHtml('amtrak')}
     <div class="drill"></div>`;
   bindAlertsToggle(renderAmtrak);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
     drillList(
       'Destination station',
-      alphaSections(amtrakStations).flatMap((sec) =>
-        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      ),
+      [{ html: 'Any station <small>(show all trains)</small>', value: null },
+        ...alphaSections(amtrakStations).flatMap((sec) =>
+          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+        )],
       (pick) => {
-        state.cfg.amtrak.dest = pick.value.id;
+        state.cfg.amtrak.dest = pick.value?.id ?? '';
         renderAmtrak();
       },
     );
-  });
-  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
-    state.cfg.amtrak.dest = '';
-    renderAmtrak();
   });
 }
 
@@ -521,27 +523,22 @@ async function renderMnr() {
   pane().innerHTML = `
     <h2 class="pane__title">Metro-North — Grand Central departures</h2>
     <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station — the line shows per train.</p>
-    <div class="kv"><span>Trains stopping at</span><b>${escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station')}</b>
-      <button class="btn" data-pick-dest>Change</button>
-      ${state.cfg.mnr.dest ? '<button class="btn" data-clear-dest>Show all trains</button>' : ''}</div>
+    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
     ${alertsToggleHtml('mnr')}
     <div class="drill"></div>`;
   bindAlertsToggle(renderMnr);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
     drillList(
       'Destination station',
-      alphaSections(mnrStations).flatMap((sec) =>
-        sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      ),
+      [{ html: 'Any station <small>(show all trains)</small>', value: null },
+        ...alphaSections(mnrStations).flatMap((sec) =>
+          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
+        )],
       (pick) => {
-        state.cfg.mnr.dest = pick.value.id;
+        state.cfg.mnr.dest = pick.value?.id ?? '';
         renderMnr();
       },
     );
-  });
-  pane().querySelector('[data-clear-dest]')?.addEventListener('click', () => {
-    state.cfg.mnr.dest = '';
-    renderMnr();
   });
 }
 
@@ -599,12 +596,12 @@ async function renderFerry() {
   const _nav = navToken;
   pane().innerHTML = `
     <h2 class="pane__title">NYC Ferry</h2>
-    <div class="kv"><span>Landing</span><b>Loading…</b></div>
+    <div class="row"><span class="row__label row__label--dim">Landing</span><span class="row__value" data-landing>Loading…</span></div>
     <div class="drill"></div>`;
   try {
     ferryStops ??= (await fetchJSON('data/ferry.json')).stops;
     const byId = Object.fromEntries(ferryStops.map((s) => [s.id, s]));
-    pane().querySelector('.kv b').textContent =
+    pane().querySelector('[data-landing]').textContent =
       byId[state.cfg.ferry.landing]?.name ?? state.cfg.ferry.landing;
     drillList(
       'Choose a landing',
@@ -1146,7 +1143,7 @@ function renderWeather() {
         <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
         <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
       </div>
-      <div class="kv"><span>Current</span><b>${escapeHtml(state.cfg.loc.label)}</b></div>
+      <div class="row"><span class="row__label row__label--dim">Current</span><span class="row__value">${escapeHtml(state.cfg.loc.label)}</span></div>
       <p class="pane__hint">Search a city anywhere, or a 5-digit US ZIP:</p>
       <output class="code__display" aria-live="polite">${escapeHtml(query) || '&nbsp;'}</output>
       <div class="picklist">${results
@@ -1212,9 +1209,8 @@ function renderDisplay() {
     </div>` : ''}
     ${clockFormatMarkup()}
     <p class="pane__label">Greeting name</p>
-    <div class="kv"><span>Shown as</span><b>${escapeHtml(state.cfg.name || 'not set')}</b>
-      <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
-      ${state.cfg.name ? '<button class="btn" data-clear-name>Remove</button>' : ''}</div>
+    ${navRow('Shown as', escapeHtml(state.cfg.name || 'not set'), 'data-edit-name')}
+    ${state.cfg.name ? '<button class="btn btn--ghost" data-clear-name>Remove name</button>' : ''}
     <div class="namepad" hidden>
       <output class="code__display" aria-live="polite">·</output>
       <div class="namepad__keys"></div>
@@ -1377,25 +1373,28 @@ function renderDiag() {
   const rows = state.cfg.layout.map(({ id }) => {
     const cache = loadCache(id);
     const age = cache ? Math.round((Date.now() / 1000 - cache.t) / 60) : null;
-    return `<div class="kv"><span>${WIDGET_LABELS[id]}</span>
-      <b>${age === null ? 'no data yet' : age < 1 ? 'fresh' : `${age} min ago`}</b></div>`;
+    return `<span>${WIDGET_LABELS[id]}</span>
+      <b>${age === null ? 'no data yet' : age < 1 ? 'fresh' : `${age} min ago`}</b>`;
   });
   pane().innerHTML = `
     <h2 class="pane__title">Diagnostics</h2>
-    <div class="kv"><span>Config source</span><b>${window.__signage?.source ?? '—'}</b></div>
-    <div class="kv"><span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b></div>
-    ${rows.join('')}
-    <div class="kv"><span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b></div>
-    <div class="kv"><span>Anonymous usage ping</span>
+    <div class="kv-grid">
+      <span>Config source</span><b>${window.__signage?.source ?? '—'}</b>
+      <span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b>
+      ${rows.join('')}
+      <span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b>
+    </div>
+    <div class="row">
       <button class="toggle ${state.cfg.beacon ? 'is-on' : ''}" data-beacon role="switch" aria-checked="${state.cfg.beacon}">
         <span class="toggle__knob"></span>
       </button>
+      <span class="row__label">Anonymous usage ping</span>
     </div>
     <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone — nothing personal. Helps the operator count active boards.</p>
-    <div class="kv"><span>Display</span>
-      <button class="btn btn--primary" data-reload>Reload display now</button>
-    </div>
-    <div class="kv"><span>Storage</span>
+    <p class="pane__label">Display</p>
+    <div class="btnrow"><button class="btn btn--primary" data-reload>Reload display now</button></div>
+    <p class="pane__label">Storage</p>
+    <div class="btnrow">
       <button class="btn" data-clear>Clear web storage (test vault recovery)</button>
       <button class="btn" data-reset>Reset this display</button>
     </div>

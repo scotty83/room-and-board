@@ -441,6 +441,7 @@ body.mode-ambient .gear { bottom: 7px; }
   display: flex; align-items: center; gap: 18px;
   min-height: 64px; padding: 8px 18px;
   background: var(--bg-card); border-radius: 12px;
+  max-width: 860px; /* standalone rows sit on the same spine as .rows */
 }
 .row__label { font-size: 24px; flex: 1; }
 .row__actions { display: flex; gap: 10px; }
@@ -490,13 +491,24 @@ body.mode-ambient .gear { bottom: 7px; }
   background: transparent; color: var(--ink);
 }
 .chip--on { background: var(--accent); border-color: var(--accent); color: #06131f; }
-.kv { display: flex; align-items: center; gap: 16px; min-height: 60px; font-size: 23px; }
-/* Direct children only: the label column. A descendant selector here bled
-   min-width:260px into nested spans (it inflated the usage-ping toggle knob). */
-.kv > span { color: var(--ink-dim); min-width: 260px; }
-/* Button rows (diagnostics Display/Storage) nearly fill the row, so adjacent
-   ones butt together — give them vertical breathing room the text rows get for free. */
-.kv:has(.btn) { padding: 8px 0; }
+/* Label/value rows (Batch 2 of the settings unification) replace the old .kv
+   gutter rows. row--nav is a full-width tap target ("Trains stopping at —
+   Any station ›"): the WHOLE row opens the picker, so no small button sits
+   marooned at the end of a long invisible container. */
+.row--nav { border: none; cursor: pointer; width: 100%; max-width: 860px; color: var(--ink); font-size: 23px; text-align: left; }
+.row--nav:active { outline: 2px solid var(--accent); }
+.row__label--dim { color: var(--ink-dim); }
+.row__value { margin-left: auto; font-weight: 600; display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+.row__chev { color: var(--ink-faint); font-size: 22px; }
+.row .btn--ghost { min-width: 0; min-height: 48px; } /* compact in-row action (Remove) */
+/* Read-only fact sheet (Diagnostics): quiet two-column grid — the label
+   gutter is exactly as wide as the longest label, not a fixed 260px. */
+.kv-grid { display: grid; grid-template-columns: max-content 1fr; gap: 14px 32px; font-size: 22px; max-width: 1000px; align-items: baseline; margin: 6px 0 24px; }
+.kv-grid > span { color: var(--ink-dim); }
+.kv-grid > b { font-weight: 600; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 0 24px; }
+/* .kv (the 260px-gutter label/value rows) retired in Batch 2 — replaced by
+   .row--nav tap-rows, .row value rows, and the Diagnostics .kv-grid. */
 .kv__small { font-size: 20px; font-weight: 400; color: var(--ink-dim); }
 
 /* Scheduled-mode window editor: tap ▲/▼ steppers around each time. Steppers

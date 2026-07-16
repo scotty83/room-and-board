@@ -1070,3 +1070,20 @@ body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
   .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
   .settings__navitem.is-active, .edit-block__title) { font-weight: 500; }
+/* Buttons take Webex Frame's native pill language: white fill for the
+   primary action, transparent with a white-alpha ring otherwise, regular
+   weight. Sizes stay ours (64px touch floor for arm's-length boards). */
+body.theme-momentum .btn {
+  border-radius: 999px;
+  background: none;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 400;
+}
+body.theme-momentum .btn:active { background: rgba(255, 255, 255, 0.11); }
+body.theme-momentum .btn--primary {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.95);
+}
+body.theme-momentum .btn--primary:active { background: rgba(255, 255, 255, 0.8); }
+body.theme-momentum .btn--ghost { border-color: transparent; background: none; }

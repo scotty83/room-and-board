@@ -329,9 +329,9 @@ function renderPhotos() {
   pane().innerHTML = `
     <h2 class="pane__title">Photos</h2>
     <p class="pane__hint">Where the photos come from:</p>
-    <div class="rows">
-      <button class="row row--tap ${src === 'icloud' ? 'is-selected' : ''}" data-photo-src="icloud">iCloud Shared Album</button>
-      <button class="row row--tap ${src === 'gdrive' ? 'is-selected' : ''}" data-photo-src="gdrive">Google Drive folder</button>
+    <div class="segmented" role="group" aria-label="Photo source">
+      <button class="seg ${src === 'icloud' ? 'is-active' : ''}" data-photo-src="icloud">iCloud Shared Album</button>
+      <button class="seg ${src === 'gdrive' ? 'is-active' : ''}" data-photo-src="gdrive">Google Drive Folder</button>
     </div>
     <p class="pane__hint">${guide} <b>This is a public link — anyone who has it can view the photos, so add
       only photos appropriate for a shared office display.</b></p>

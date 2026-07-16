@@ -34,10 +34,26 @@ import * as f1 from '../site/js/widgets/f1.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath } from '../site/js/widgets/markets.js';
+import { sparkPath, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
+
+describe('normalizeSymbol (ticker entry)', () => {
+  it('maps a £ prefix to the LSE .L suffix (UK-user notation)', () => {
+    expect(normalizeSymbol('£CBG')).toBe('CBG.L');
+    expect(normalizeSymbol('£cbg')).toBe('CBG.L');
+    expect(normalizeSymbol('£CBG.L')).toBe('CBG.L'); // no double suffix
+  });
+  it('strips a $ prefix and trims/uppercases', () => {
+    expect(normalizeSymbol('$AAPL')).toBe('AAPL');
+    expect(normalizeSymbol('  aapl ')).toBe('AAPL');
+  });
+  it('leaves indexes and suffixed symbols alone', () => {
+    expect(normalizeSymbol('^GSPC')).toBe('^GSPC');
+    expect(normalizeSymbol('SAP.DE')).toBe('SAP.DE');
+  });
+});
 
 describe('clock (topbar) time format', () => {
   const time = (cfg) => { const d = el(); clock.render(d, null, cfg); return d.querySelector('.topbar__time').textContent; };

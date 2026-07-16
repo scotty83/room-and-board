@@ -8,7 +8,7 @@ import { toggleIn, searchStations } from './pickers.js';
 import { locationSearch } from '../geo.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { OFFICES, zoneLabel, zonesByRegion } from '../widgets/worldclock.js';
-import { symbolKnown } from '../widgets/markets.js';
+import { symbolKnown, normalizeSymbol } from '../widgets/markets.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { SUBWAY_LINES } from '../widgets/subway.js';
 import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
@@ -362,7 +362,9 @@ function renderTickers() {
   };
   renderChips();
   $('#sym-add').addEventListener('click', async () => {
-    const t = $('#sym-code').value.trim().toUpperCase();
+    // Normalize BEFORE validating: "£CBG" used to fail the regex silently
+    // (the £ never even produced a message) — now it becomes CBG.L.
+    const t = normalizeSymbol($('#sym-code').value);
     if (!(/^[\^A-Z0-9.\-]{1,10}$/.test(t) && cfg.markets.symbols.length < 10 && !cfg.markets.symbols.includes(t))) return;
     const btn = $('#sym-add');
     btn.disabled = true;
@@ -373,7 +375,8 @@ function renderTickers() {
       $('#sym-status').textContent = '';
       renderChips();
     } else {
-      $('#sym-status').textContent = `${t} isn't a known ticker — check the symbol.`;
+      const tip = /^[A-Z]{1,6}$/.test(t) ? ' If it trades outside the US, add the exchange suffix — London CBG.L, Frankfurt SAP.DE, Toronto SHOP.TO.' : '';
+      $('#sym-status').textContent = `${t} isn't a known ticker — check the symbol.${tip}`;
     }
     btn.disabled = false;
   });

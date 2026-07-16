@@ -76,6 +76,19 @@ export function mapMarkets(payload) {
 // True when the quote source recognizes the symbol. Both settings surfaces
 // validate adds with this — a syntactically-valid unknown ticker otherwise
 // saves fine and then silently never appears on the card.
+// User notation -> Yahoo symbol. Strips a $ prefix ($AAPL); maps a £ prefix to
+// the London Stock Exchange suffix (£CBG -> CBG.L — Yahoo keys LSE listings
+// with .L, and UK users write their tickers with a leading £).
+export function normalizeSymbol(raw) {
+  let t = String(raw ?? '').trim().toUpperCase();
+  if (t.startsWith('$')) t = t.slice(1);
+  if (t.startsWith('£')) {
+    t = t.slice(1);
+    if (!t.endsWith('.L')) t += '.L';
+  }
+  return t;
+}
+
 export async function symbolKnown(symbol, fetchFn = fetch) {
   try {
     const res = await fetchFn(`${WORKER_URL}/markets?symbols=${encodeURIComponent(symbol)}`);

@@ -807,7 +807,7 @@ function renderMarkets() {
     .join('');
   pane().innerHTML = `
     <h2 class="pane__title">Markets</h2>
-    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Remove any you don't want — the defaults are just entries like the rest. Larger cards show more tickers — the edit screen tells you how many fit.</p>
+    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Non-US listings use the exchange suffix — London CBG.L, Frankfurt SAP.DE, Tokyo 7203.T. Remove any you don't want — the defaults are just entries like the rest.</p>
     <div class="chips">${chips || '<span class="pane__empty">No tickers — defaults return on save</span>'}</div>
     <output class="code__display" aria-live="polite"></output>
     ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', ['^', '.', '-'],
@@ -834,7 +834,7 @@ function renderMarkets() {
           renderMarkets();
           return;
         }
-        status.textContent = `${ticker} isn't a known ticker — check the symbol.`;
+        status.textContent = `${ticker} isn't a known ticker — check the symbol.${/^[A-Z]{1,6}$/.test(ticker) ? ' Non-US listings need the exchange suffix — e.g. CBG.L for London.' : ''}`;
       } else if (ticker.length < 10) ticker += k;
       display.textContent = ticker;
     }),

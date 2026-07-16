@@ -359,8 +359,11 @@ function renderPhotos() {
            can't type — use Paste here, or enter it on <b>${location.host}/setup</b> from your phone):</p>
          <button class="btn" data-paste>Paste link</button>`
       : `<p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
-         <button class="btn" data-paste>Paste link</button>
-         <div class="photo-kb"></div>`}
+         <div class="btnrow">
+           <button class="btn" data-paste>Paste link</button>
+           <button class="btn btn--ghost" data-type>Type it instead</button>
+         </div>
+         <div class="photo-kb" hidden></div>`}
     <p class="code__status"></p>
     <div class="photo-preview"></div>`;
   pane().querySelectorAll('[data-photo-src]').forEach((btn) =>
@@ -403,10 +406,24 @@ function renderPhotos() {
       preview.innerHTML = '';
     }
   };
-  const kb = src === 'icloud' ? mountKeyboard(pane().querySelector('.photo-kb'), { onSubmit: validate }) : null;
+  // The keyboard reveals on demand: mounted eagerly it pushed its own action
+  // row (with ⌫/Check) below the 1080 fold with no hint it existed. Revealing
+  // on tap + scrolling it fully into view keeps every key on screen.
+  let kb = null;
+  const kbHost = src === 'icloud' ? pane().querySelector('.photo-kb') : null;
+  const revealKb = () => {
+    if (!kbHost) return;
+    kb ??= mountKeyboard(kbHost, { onSubmit: validate });
+    kbHost.hidden = false;
+    kbHost.scrollIntoView({ block: 'end' });
+  };
+  pane().querySelector('[data-type]')?.addEventListener('click', (e) => {
+    e.currentTarget.hidden = true;
+    revealKb();
+  });
   pane().querySelector('[data-paste]').addEventListener('click', async () => {
     const parse = src === 'gdrive' ? parseDriveFolder : parseAlbumToken;
-    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { kb?.set(id); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
+    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { if (kb) kb.set(id); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
     catch { status.textContent = src === 'gdrive' ? `Paste unavailable on this display — use ${location.host}/setup from your phone.` : 'Paste unavailable on this display — type the link instead.'; }
   });
 }

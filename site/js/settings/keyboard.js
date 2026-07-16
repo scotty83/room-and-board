@@ -1,10 +1,11 @@
 import { escapeHtml } from '../util.js';
 
+// Digits lead, matching every other keypad on the board (qwertyKeypad's order).
 const ROWS = [
+  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
   ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
-  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
 ];
 
 // A full case-capable on-screen keyboard (the board avoids the native OSK).

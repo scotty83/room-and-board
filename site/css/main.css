@@ -1051,7 +1051,10 @@ body.theme-momentum .wx-now__temp,
 body.theme-momentum .index__price,
 body.theme-momentum .train__min > span,
 body.theme-momentum .wc-row__time,
-body.theme-momentum .sky__aqi-value { font-weight: 300; }
+body.theme-momentum .sky__aqi-value,
+body.theme-momentum .strip__time,
+body.theme-momentum .strip__temp,
+body.theme-momentum .strip__transit b { font-weight: 300; }
 /* Ambient text over photos gets the native depth treatment (Cisco's Webex
    Frame ships this exact shadow on the same gen-1 hardware; the no-shadow
    rule is for animated elements, and these sit static above the slides). */
@@ -1064,6 +1067,6 @@ body.theme-momentum .slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); 
    intentionally bold. */
 body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
   .slide-caption__title, .headline__title, .wx-now__label, .wx-trend__row > span,
-  .stop-group__name, .train__dest, .alert, .strip__temp, .f1-next__hd,
+  .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
   .settings__navitem.is-active, .edit-block__title) { font-weight: 500; }

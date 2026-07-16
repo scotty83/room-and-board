@@ -277,14 +277,15 @@ function bindAlertsToggle(rerender) {
 /* ---------- art ---------- */
 
 const ART_INTERVALS = [5, 15, 30, 60, 120];
+// Compact label for the interval segmented control: 5m · 15m · 30m · 1h · 2h.
+const intervalLabel = (m) => (m >= 60 ? `${m / 60}h` : `${m}m`);
 
 function renderArt() {
   pane().innerHTML = `
     <h2 class="pane__title">Art</h2>
     <p class="pane__hint">How often the artwork changes (slideshow and dashboard card):</p>
-    <div class="rows">${ART_INTERVALS.map(
-      (m) => `<button class="row row--tap ${state.cfg.art.every === m ? 'is-selected' : ''}" data-every="${m}">
-        Every ${m >= 60 ? `${m / 60} hour${m > 60 ? 's' : ''}` : `${m} minutes`}</button>`,
+    <div class="segmented" role="group" aria-label="How often the artwork changes">${ART_INTERVALS.map(
+      (m) => `<button class="seg ${state.cfg.art.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
     <p class="pane__hint">Collections to show — none selected means all:</p>
     <div class="rows">${ART_CATS.map(([id, label]) => {
@@ -340,9 +341,8 @@ function renderPhotos() {
       <span class="row__label">Use these photos as the screensaver (replaces art)</span>
     </div>
     <p class="pane__hint">How often the photo changes (slideshow and dashboard card):</p>
-    <div class="rows">${ART_INTERVALS.map(
-      (m) => `<button class="row row--tap ${p.every === m ? 'is-selected' : ''}" data-every="${m}">
-        Every ${m >= 60 ? `${m / 60} hour${m > 60 ? 's' : ''}` : `${m} minutes`}</button>`,
+    <div class="segmented" role="group" aria-label="How often the photo changes">${ART_INTERVALS.map(
+      (m) => `<button class="seg ${p.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
     ${src === 'gdrive'
       ? `<p class="pane__hint">Paste the folder link (folder ids use characters the on-screen keyboard

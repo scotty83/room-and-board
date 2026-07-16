@@ -688,7 +688,9 @@ async function renderCitibike() {
     const chips = chosen
       .map((s, i) => `<button class="chip" data-remove="${i}">${escapeHtml(s.name)} ✕</button>`).join('');
     const chosenIds = new Set(chosen.map((s) => s.id));
-    const matches = searchStations(cbStations, query, chosenIds);
+    // Cap at 8: on the 860px spine 20 matches wrap into ~10 rows and shove the
+    // keyboard below the fold mid-search — keep typing to narrow instead.
+    const matches = searchStations(cbStations, query, chosenIds, 8);
     pane().innerHTML = `
       <h2 class="pane__title">Citi Bike</h2>
       <p class="pane__hint">Search a station by its cross-streets. Add up to 6.</p>

@@ -1292,7 +1292,7 @@ function renderCode() {
   pane().innerHTML = `
     <h2 class="pane__title">Setup code</h2>
     <p class="pane__hint">Build your configuration at <b>${location.host}/setup</b> on any device, then enter the 6-character code here.</p>
-    <output class="code__display" aria-live="polite">······</output>
+    <output class="code__display code__display--pin" aria-live="polite">······</output>
     ${qwertyKeypad('ABCDEFGHJKMNPQRSTVWXYZ0123456789', [],
       '<button class="key osk__key osk__key--wide" data-key="⌫">⌫</button>')}
     <p class="code__status"></p>
@@ -1300,7 +1300,7 @@ function renderCode() {
     <p class="pane__hint">Share this board's setup: get a code to write down, then enter it on another board (Settings → Setup code) or at <b>${location.host}/setup</b>.</p>
     <button class="btn" data-export>Get a code for this board</button>
     <div class="code-export" hidden>
-      <output class="code__display" aria-live="polite"></output>
+      <output class="code__display code__display--pin" aria-live="polite"></output>
       <p class="pane__hint code-export__note"></p>
     </div>
     <hr class="pane__rule">

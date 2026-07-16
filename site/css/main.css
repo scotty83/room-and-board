@@ -344,12 +344,19 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 .welcome__hint { font-size: 21px !important; color: var(--ink-faint) !important; }
 .welcome__qr { display: flex; justify-content: center; margin-top: 10px; }
 
+/* One button standard (settings-UX unification): every .btn shares the same
+   visual mass — 64px control height, 160px floor so short labels ("Reset",
+   "Change") stop rendering as mismatched small buttons. Three tiers:
+   primary (accent, max one per pane) / secondary (default) / ghost. */
 .btn {
-  font-size: 24px; padding: 16px 34px; border-radius: 14px;
-  border: 1px solid var(--ink-faint); background: var(--bg-card);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 64px; min-width: 160px;
+  font-size: 23px; padding: 0 30px; border-radius: 12px;
+  border: 1px solid rgba(147, 160, 180, 0.16); background: var(--bg-card);
   color: var(--ink); cursor: pointer;
 }
 .btn--primary { background: var(--accent); border-color: var(--accent); color: #06131f; font-weight: 700; }
+.btn--ghost { background: transparent; border-color: transparent; color: var(--ink-dim); }
 
 /* ---------- gear ---------- */
 .gear {
@@ -456,30 +463,33 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .wgroup__rows { display: flex; flex-direction: column; gap: 8px; }
 
+/* 56px tall: the board's touch floor (was 76x44 — under the floor). */
 .toggle {
-  width: 76px; height: 44px; border-radius: 22px; border: none; cursor: pointer;
+  width: 96px; height: 56px; border-radius: 28px; border: none; cursor: pointer;
   background: var(--bg-card-2); position: relative; flex: none;
   transition: background 0.2s;
 }
 .toggle__knob {
-  position: absolute; top: 4px; left: 4px; width: 36px; height: 36px;
+  position: absolute; top: 4px; left: 4px; width: 48px; height: 48px;
   border-radius: 50%; background: var(--ink-faint);
   transition: transform 0.2s ease-out, background 0.2s;
 }
 .toggle.is-on { background: rgba(88, 166, 255, 0.35); }
-.toggle.is-on .toggle__knob { transform: translateX(32px); background: var(--accent); }
+.toggle.is-on .toggle__knob { transform: translateX(40px); background: var(--accent); }
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;
   background: var(--bg-card-2); color: var(--ink); font-size: 26px;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
+/* One chip primitive: the shipped outline language (transparent + hairline,
+   radius 12) — the old solid radius-28 pill read as a different control. */
 .chip {
   font-size: 22px; padding: 14px 20px; min-height: 56px;
-  border: none; border-radius: 28px; cursor: pointer;
-  background: var(--bg-card-2); color: var(--ink);
+  border: 1px solid rgba(147, 160, 180, 0.16); border-radius: 12px; cursor: pointer;
+  background: transparent; color: var(--ink);
 }
-.chip--on { background: var(--accent); color: #0d1117; }
+.chip--on { background: var(--accent); border-color: var(--accent); color: #06131f; }
 .kv { display: flex; align-items: center; gap: 16px; min-height: 60px; font-size: 23px; }
 /* Direct children only: the label column. A descendant selector here bled
    min-width:260px into nested spans (it inflated the usage-ping toggle knob). */
@@ -495,7 +505,7 @@ body.mode-ambient .gear { bottom: 7px; }
    groups and the remove control read as separate units. */
 .sched { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin: 12px 0 16px; }
 .sched__win { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.sched__step { width: 64px; padding: 16px 0; text-align: center; }
+.sched__step { width: 64px; min-width: 64px; padding: 0; text-align: center; } /* compact square stepper — exempt from the .btn 160px floor */
 .sched__time { font-size: 22px; min-width: 130px; text-align: center; font-variant-numeric: tabular-nums; }
 .sched__dash { color: var(--ink-dim); margin: 0 12px; }
 .sched__rm { margin-left: 20px; }
@@ -514,10 +524,13 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .drill__letter { color: var(--accent); }
 
+/* ONE keyboard display style. Default tracking suits words (city names,
+   tickers, handles); the wide 0.35em survives as --pin for fixed-length codes. */
 .code__display, .zip__display {
-  display: block; font-size: 52px; letter-spacing: 0.35em;
+  display: block; font-size: 52px; letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums; margin: 16px 0; min-height: 64px;
 }
+.code__display--pin { letter-spacing: 0.35em; }
 .key {
   min-height: 64px; font-size: 26px; font-weight: 600;
   border: none; border-radius: 12px; cursor: pointer;
@@ -643,7 +656,6 @@ body.mode-ambient .gear { bottom: 7px; }
 .edit-tray__group[hidden] { display: none; }
 .edit-tray__legend { width: 100%; font-size: 16px; color: var(--ink-faint); margin: 12px 0 0; }
 .editor__actions { display: flex; gap: 12px; flex: none; }
-.editor__actions .btn--ghost { background: transparent; border-color: transparent; color: var(--ink-dim); }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
 }
@@ -854,7 +866,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .tfl--alert .tfl__status { color: var(--warn); font-weight: 600; }
 .tfl--tap { cursor: pointer; }
 .tflchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-.tflchip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font-size: 19px; cursor: pointer; }
+/* Joined the standard chip primitive: 56px touch floor (was ~41px), 20px type
+   floor, outline treatment; the line-colour dot stays inside. */
+.tflchip { display: inline-flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(147, 160, 180, 0.16); background: transparent; color: var(--ink); font-size: 20px; cursor: pointer; }
 .tflchip__dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
 .tflchip--off { opacity: 0.4; }
 .pane__subhead, .setup__subhead { font-size: 18px; color: var(--ink-dim); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -918,8 +932,12 @@ body.mode-ambient .gear { bottom: 7px; }
 .wc-flag { width: 26px; height: 26px; object-fit: contain; vertical-align: -5px; margin-right: 5px; border-radius: 3px; }
 
 /* ---------- on-screen keyboard (OSK) ---------- */
-.osk { display: flex; flex-direction: column; gap: 10px; }
-.osk__display { display: block; font-size: 40px; letter-spacing: 0.08em; min-height: 56px; margin: 10px 0; word-break: break-all; }
+/* Keyboards live on the same 860px left spine as the pane content — the old
+   uncapped block centered its rows across the full pane, putting the keys a
+   ~700px saccade away from the field the user is reading. Rows stay centered
+   WITHIN the block (that's what keeps the QWERTY stagger). */
+.osk { display: flex; flex-direction: column; gap: 10px; max-width: 860px; }
+.osk__display { display: block; font-size: 52px; letter-spacing: 0.12em; min-height: 64px; margin: 10px 0; word-break: break-all; }
 .osk__row { display: flex; gap: 10px; justify-content: center; }
 .osk__key { min-width: 72px; min-height: 64px; font-size: 28px; }
 .osk__key--wide { min-width: 150px; }

@@ -19,7 +19,7 @@ const MODELS = {
   // ~67px row pitch (name+price stacked over a 28px spark, +10px row-gap) with
   // headroom for the "+N more" hint. 69 (was a too-tall 78) makes a 4x3 fit 3
   // index rows instead of 2 — verified overflow-safe with the hint at 3–8 tall.
-  markets: listCapacity(69, 40),
+  markets: listCapacity(69, 36), // shallow rows are spark-less ~33px — 36 fits all 3 tickers at 3x2
   subway: listCapacity(58, 42),
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),

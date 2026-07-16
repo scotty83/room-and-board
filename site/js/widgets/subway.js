@@ -41,9 +41,10 @@ export function render(el, vm, _cfg) {
   }
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('subway', w, h);
-  // When truncating, alerting lines take priority over Good Service rows.
+  // When truncating, alerting lines take priority over Good Service rows,
+  // and the "+N more" hint takes one row of the budget (like newscore).
   const rows = vm.lines.length > cap
-    ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, cap)
+    ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, Math.max(1, cap - 1))
     : vm.lines;
   const hidden = vm.lines.length - rows.length;
   el.innerHTML = rows

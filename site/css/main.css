@@ -747,6 +747,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* 2x2 minimum: the two dials fill the whole body — no sky rows; value at
    the 34px primary-data floor */
 .card--aqi[data-w="2"].t-s .sky { gap: 6px; }
+.card--aqi[data-w="2"].t-s .sky__stats { gap: 6px; } /* stacked dials: 12px gap overflows the 121px body by 4 */
 .card--aqi[data-w="2"].t-s .sky__aqi { gap: 0; }
 .card--aqi[data-w="2"].t-s .sky__aqi-value { font-size: 34px; }
 .card--aqi[data-w="2"].t-s .sky__row { display: none; }
@@ -815,6 +816,11 @@ body.mode-ambient .gear { bottom: 7px; }
 .card--wotd.t-narrow .wotd__word { font-size: 32px; }
 .card--wotd.t-narrow .wotd__def { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card--wotd.t-narrow .wotd__ex { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* 2x2 (shallow AND narrow): both rules above apply with equal specificity and
+   the later 3-line clamp was winning — the definition then overflowed the
+   centered flex column and hard-clipped mid-line. Two lines is the budget. */
+.card--wotd.t-s.t-narrow .wotd__def { -webkit-line-clamp: 2; }
+.card--wotd.t-s .wotd { justify-content: flex-start; }
 
 /* ---------- edit-mode gesture preview ---------- */
 .edit-placeholder {

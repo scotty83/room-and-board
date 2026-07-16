@@ -5,7 +5,7 @@ import { itemCapacity, capacityLabel } from '../site/js/capacity.js';
 // common default (tier m), h=6/8 a tall card (tier l).
 describe('itemCapacity', () => {
   it('scales list rows with card height', () => {
-    expect(itemCapacity('markets', 4, 2)).toBe(2);
+    expect(itemCapacity('markets', 4, 2)).toBe(3); // shallow rows are spark-less — 3 tickers fit
     expect(itemCapacity('markets', 4, 3)).toBe(3);
     expect(itemCapacity('markets', 4, 4)).toBe(4);
     expect(itemCapacity('markets', 4, 8)).toBe(11);
@@ -40,7 +40,7 @@ describe('capacityLabel', () => {
     worldclock: { cities: Array.from({ length: 8 }, (_, i) => ({ label: `C${i}`, zone: 'UTC' })) },
   };
   it('describes markets as shown-of-total tickers', () => {
-    expect(capacityLabel('markets', 4, 2, cfg)).toBe('shows 2 of 7 tickers');
+    expect(capacityLabel('markets', 4, 2, cfg)).toBe('shows 3 of 7 tickers');
     expect(capacityLabel('markets', 4, 8, cfg)).toBe('shows all 7 tickers');
   });
   it('weather forecast label matches what render actually shows (big = w>=5||h>=5)', () => {

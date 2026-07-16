@@ -280,8 +280,10 @@ html, body {
    delta columns align down the card; the auto track fits the widest delta. */
 .indexes { display: grid; grid-template-columns: 1fr 90px auto; align-items: center; column-gap: 14px; row-gap: 10px; }
 .index { display: contents; }
-.index__info { display: flex; flex-direction: column; }
-.index__name { font-size: 21px; color: var(--ink-dim); }
+.index__info { display: flex; flex-direction: column; min-width: 0; }
+/* One line, ellipsized: long instrument names ("Close Brothers Group plc")
+   were wrapping to four lines and breaking the row rhythm. */
+.index__name { font-size: 21px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .index__price { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .spark { width: 90px; height: 28px; }
 .spark--up { color: var(--good); }

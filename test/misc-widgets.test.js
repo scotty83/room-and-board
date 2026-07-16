@@ -110,6 +110,32 @@ describe('mapYahooChart (worker side)', () => {
   it('throws on malformed payloads', () => {
     expect(() => mapYahooChart({}, 'x')).toThrow();
   });
+  it('takes the daily baseline from the prior session when Yahoo rolls the close (LSE evening)', () => {
+    // After the LSE closes, Yahoo sets chartPreviousClose === regularMarketPrice,
+    // which used to render a 0.00 daily change. With range=2d bars, the baseline
+    // is the previous day's last close and the spark is the last session only.
+    const day = 86400;
+    const payload = { chart: { result: [{
+      meta: { symbol: 'CBG.L', regularMarketPrice: 413.6, chartPreviousClose: 413.6, gmtoffset: 3600, longName: 'Close Brothers Group plc', shortName: 'CLOSE BROTHERS GROUP PLC ORD 25' },
+      timestamp: [100, 200, 300, day + 100, day + 200, day + 300],
+      indicators: { quote: [{ close: [400, 402, 405.2, 407.8, 410.1, 413.6] }] },
+    }] } };
+    const out = mapYahooChart(payload);
+    expect(out.name).toBe('Close Brothers Group plc'); // longName beats the ORD-25 register entry
+    expect(out.change).toBeCloseTo(413.6 - 405.2, 5); // vs prior session's LAST close
+    expect(out.changePct).toBeCloseTo(((413.6 - 405.2) / 405.2) * 100, 5);
+    expect(out.spark).toEqual([407.8, 410.1, 413.6]); // last session only
+  });
+  it('falls back to chartPreviousClose when only one session is present', () => {
+    const payload = { chart: { result: [{
+      meta: { symbol: 'AAPL', regularMarketPrice: 210, chartPreviousClose: 205, gmtoffset: -14400, shortName: 'Apple Inc.' },
+      timestamp: [100, 200, 300],
+      indicators: { quote: [{ close: [206, 208, 210] }] },
+    }] } };
+    const out = mapYahooChart(payload);
+    expect(out.change).toBeCloseTo(5, 5);
+    expect(out.spark).toEqual([206, 208, 210]);
+  });
 });
 
 describe('mapMarkets (page side)', () => {

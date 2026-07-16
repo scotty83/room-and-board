@@ -155,7 +155,11 @@ async function fetchMarkets(symbols) {
   // the failures; only a total wipeout throws (so cached() serves stale/502).
   const settled = await Promise.allSettled(
     symbols.map(async (symbol) => {
-      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1d&interval=15m`;
+      // 2d, not 1d: once a foreign market closes, Yahoo rolls the session into
+      // chartPreviousClose (price === prev → the card showed 0.00 daily change
+      // for LSE tickers all evening). With two days of bars, mapYahooChart
+      // takes the daily baseline from the prior session's last close itself.
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2d&interval=15m`;
       const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA } });
       if (!res.ok) throw new Error(`yahoo ${res.status}`);
       return mapYahooChart(await res.json(), INDEX_NAMES[symbol]);

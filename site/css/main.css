@@ -501,6 +501,7 @@ body.mode-ambient .gear { bottom: 7px; }
 .row__value { margin-left: auto; font-weight: 600; display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
 .row__chev { color: var(--ink-faint); font-size: 22px; }
 .row .btn--ghost { min-width: 0; min-height: 48px; } /* compact in-row action (Remove) */
+.settings__pane .row--nav + .btn--ghost { margin-top: 10px; } /* Display's Remove-name breathes below its row */
 /* Read-only fact sheet (Diagnostics): quiet two-column grid — the label
    gutter is exactly as wide as the longest label, not a fixed 260px. */
 .kv-grid { display: grid; grid-template-columns: max-content 1fr; gap: 14px 32px; font-size: 22px; max-width: 1000px; align-items: baseline; margin: 6px 0 24px; }

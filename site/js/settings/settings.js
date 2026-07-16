@@ -482,8 +482,10 @@ async function renderLirr() {
   pane().innerHTML = `
     <h2 class="pane__title">LIRR — Penn Station departures</h2>
     <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station — the branch shows per train, so multi-branch destinations just work.</p>
-    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-    ${alertsToggleHtml('lirr')}
+    <div class="rows">
+      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
+      ${alertsToggleHtml('lirr')}
+    </div>
     <div class="drill"></div>`;
   bindAlertsToggle(renderLirr);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
@@ -512,8 +514,10 @@ async function renderAmtrak() {
   pane().innerHTML = `
     <h2 class="pane__title">Amtrak — Moynihan / Penn departures</h2>
     <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination — the arrival time there shows per train.</p>
-    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-    ${alertsToggleHtml('amtrak')}
+    <div class="rows">
+      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station'), 'data-pick-dest')}
+      ${alertsToggleHtml('amtrak')}
+    </div>
     <div class="drill"></div>`;
   bindAlertsToggle(renderAmtrak);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
@@ -540,8 +544,10 @@ async function renderMnr() {
   pane().innerHTML = `
     <h2 class="pane__title">Metro-North — Grand Central departures</h2>
     <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station — the line shows per train.</p>
-    ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-    ${alertsToggleHtml('mnr')}
+    <div class="rows">
+      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
+      ${alertsToggleHtml('mnr')}
+    </div>
     <div class="drill"></div>`;
   bindAlertsToggle(renderMnr);
   pane().querySelector('[data-pick-dest]').addEventListener('click', () => {

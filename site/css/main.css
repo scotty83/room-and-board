@@ -759,7 +759,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .edit-block { flex-direction: column; gap: 4px; }
 .edit-tray__chip small { color: var(--ink-dim); font-size: 17px; }
 
-.more-hint { font-size: 18px; color: var(--ink-faint); padding-top: 2px; }
+/* Navigational chrome, not content: small + --ink-dim (--ink-dim stays AA-safe
+   at 15px where --ink-faint would drop to 4.49:1). */
+.more-hint { font-size: 15px; color: var(--ink-dim); padding-top: 2px; }
 
 /* ---------- Formula 1 ---------- */
 .f1-next { margin-bottom: 12px; }
@@ -849,9 +851,15 @@ body.mode-ambient .gear { bottom: 7px; }
    calm-motion rule. */
 .headline { display: flex; flex-direction: column; gap: 3px; }
 .headline__meta { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-.headline__src { font-size: 15px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.headline__age { font-size: 15px; color: var(--ink-faint); flex: none; }
-.headline__title { font-size: 21px; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-width: 0; }
+/* Source + age are secondary metadata: a quiet grey unit, NOT a per-row accent
+   eyebrow. The old blue-700-UPPERCASE-tracked treatment (4 emphasis channels on
+   the least-important element, repeated every row) out-shouted the headline at a
+   glance. Labels are stored title-case ("NYT Top Stories") so dropping uppercase
+   reads naturally; --ink-dim keeps both AA-safe at 15px (--ink-faint was 4.49:1). */
+.headline__src { font-size: 15px; font-weight: 600; color: var(--ink-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.headline__age { font-size: 15px; color: var(--ink-dim); flex: none; }
+/* The headline is the content — weight 600 makes it the salience winner. */
+.headline__title { font-size: 21px; font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-width: 0; }
 .card--news.t-s .headline__title, .card--substack.t-s .headline__title, .card--bsky.t-s .headline__title { -webkit-line-clamp: 1; }
 /* Fill-to-fit's slack spender: the final headline rides leftover space with a
    one-line ellipsized title (renderHeadlines adds this class only when the

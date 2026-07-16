@@ -893,10 +893,17 @@ async function renderChart() {
   const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
   if (navStale(_nav)) return;
   const c = state.cfg.chart;
-  const none = !c.topics.length;
+  const allSlugs = CHART_TOPICS.map(([, slug]) => slug);
+  const allOn = allSlugs.every((slug) => c.topics.includes(slug));
   pane().innerHTML = `
     <h2 class="pane__title">Chart of the Day</h2>
-    <p class="pane__hint">A daily Statista infographic. Pick one or more topics to cycle through${none ? ' — none selected shows the newest chart across everything (any topic).' : '; the card rotates them on each refresh.'}</p>
+    <p class="pane__hint">A daily Statista infographic. Turn on the topics you want and the card cycles through them on each refresh. With none on, it shows the newest chart across every topic.</p>
+    <div class="row row--control">
+      <button class="toggle ${allOn ? 'is-on' : ''}" data-topic-all role="switch" aria-checked="${allOn}">
+        <span class="toggle__knob"></span>
+      </button>
+      <span class="row__label">Select all</span>
+    </div>
     <div class="rows rows--grid">${CHART_TOPICS.map(([label, slug]) => {
       const on = c.topics.includes(slug);
       return `<div class="row">
@@ -911,9 +918,13 @@ async function renderChart() {
         <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
           <span class="toggle__knob"></span>
         </button>
-        <span class="row__label">Hide politics charts</span>
+        <span class="row__label">Hide political charts</span>
       </div>
     </div>`;
+  pane().querySelector('[data-topic-all]').addEventListener('click', () => {
+    state.cfg.chart.topics = allOn ? [] : [...allSlugs];
+    renderChart();
+  });
   pane().querySelectorAll('[data-topic]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.cfg.chart.topics = toggleIn(state.cfg.chart.topics, btn.dataset.topic);

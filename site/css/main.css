@@ -444,6 +444,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .rows--grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px 12px; max-width: 1120px; }
 /* A distinct control group separated from what precedes it by a divider + space. */
 .pane__section { max-width: 860px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--bg-card-2); }
+/* Master control (e.g. Select all) above a grid — bare, not carded, so it reads
+   as a control over the options rather than one of them. */
+.row--control { background: transparent; padding-left: 0; margin-bottom: 2px; }
 
 .wgroups { columns: 2; column-gap: 48px; max-width: 1200px; }
 .wgroup { break-inside: avoid; margin-bottom: 28px; }

@@ -432,12 +432,25 @@ async function renderMarketsNewsSources() {
 
 async function renderChartField() {
   const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
-  $('#chart-topics').innerHTML = CHART_TOPICS.map(
-    ([label, slug]) => `<label><input type="checkbox" data-topic="${escapeHtml(slug)}" ${cfg.chart.topics.includes(slug) ? 'checked' : ''}> ${escapeHtml(label)}</label>`,
-  ).join('');
-  $('#chart-topics').addEventListener('change', (e) => {
+  const allSlugs = CHART_TOPICS.map(([, slug]) => slug);
+  const box = $('#chart-topics');
+  box.innerHTML =
+    `<label><input type="checkbox" id="chart-all-cb"> <b>Select all</b></label>` +
+    CHART_TOPICS.map(
+      ([label, slug]) => `<label><input type="checkbox" data-topic="${escapeHtml(slug)}"> ${escapeHtml(label)}</label>`,
+    ).join('');
+  const syncAll = () => { $('#chart-all-cb').checked = allSlugs.every((s) => cfg.chart.topics.includes(s)); };
+  const syncTopics = () => box.querySelectorAll('[data-topic]').forEach((cb) => { cb.checked = cfg.chart.topics.includes(cb.dataset.topic); });
+  syncTopics();
+  syncAll();
+  box.addEventListener('change', (e) => {
+    if (e.target.id === 'chart-all-cb') {
+      cfg.chart.topics = e.target.checked ? [...allSlugs] : [];
+      syncTopics();
+      return;
+    }
     const slug = e.target.dataset.topic;
-    if (slug) cfg.chart.topics = toggleIn(cfg.chart.topics, slug);
+    if (slug) { cfg.chart.topics = toggleIn(cfg.chart.topics, slug); syncAll(); }
   });
   const pol = $('#chart-politics');
   pol.checked = cfg.chart.excludePolitics;

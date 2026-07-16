@@ -6,7 +6,7 @@
 // Rows reuse the Headlines markup so capacity math and the tap-to-read text
 // viewer work unchanged.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { ageLabel, mergeNews } from './news.js';
@@ -41,7 +41,8 @@ export function renderPostRows(el, vm, widgetId, emptyHint) {
         <div class="headline__title">${escapeHtml(i.text)}</div>
       </div>`,
     )
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hidden);
 }
 
 export async function fetchBskyRows(acct, net) {

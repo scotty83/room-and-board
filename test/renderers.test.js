@@ -187,23 +187,41 @@ describe('widget renderers', () => {
     expect(host.innerHTML).not.toContain('<img src=x>');
   });
 
-  it('news and history show a +N more hint when items overflow the card', () => {
+  it('news and history surface overflow as a title badge, not an in-flow row', () => {
     const mkCard = (id) => {
       const c = document.createElement('article');
       c.className = `card card--${id} t-s t-narrow`;
       c.dataset.w = '3'; c.dataset.h = '2';
-      c.innerHTML = '<div class="card__body"></div>';
+      c.innerHTML = '<h2 class="card__title">T</h2><div class="card__body"></div>';
       document.body.appendChild(c);
       return c;
     };
     const nc = mkCard('news');
     news.render(nc.querySelector('.card__body'), { nowMs: Date.now(), items: Array.from({ length: 20 }, (_, i) => ({ title: `Story ${i}`, t: Date.now() - i * 1000, source: 'X' })) }, CFG);
-    expect(nc.querySelector('.more-hint')).not.toBeNull();
+    expect(nc.querySelector('.card__more')?.textContent).toBe('+18'); // cap 2 at 3x2
+    expect(nc.classList.contains('has-more')).toBe(true);
+    expect(nc.querySelector('.more-hint')).toBeNull();
     nc.remove();
     const hc = mkCard('history');
     history.render(hc.querySelector('.card__body'), { events: Array.from({ length: 20 }, (_, i) => ({ year: 1900 + i, text: `Event ${i}` })) }, CFG);
-    expect(hc.querySelector('.more-hint')).not.toBeNull();
+    expect(hc.querySelector('.card__more')?.textContent).toBe('+18');
+    expect(hc.classList.contains('has-more')).toBe(true);
     hc.remove();
+  });
+  it('setMoreBadge removes the badge and fade class when nothing is hidden', () => {
+    const c = document.createElement('article');
+    c.className = 'card card--news';
+    c.dataset.w = '4'; c.dataset.h = '8';
+    c.innerHTML = '<h2 class="card__title">T</h2><div class="card__body"></div>';
+    document.body.appendChild(c);
+    const body = c.querySelector('.card__body');
+    const items = (n) => ({ nowMs: Date.now(), items: Array.from({ length: n }, (_, i) => ({ title: `S${i}`, t: 0, source: 'X' })) });
+    news.render(body, items(20), CFG); // overflows → badge on
+    expect(c.querySelector('.card__more')).not.toBeNull();
+    news.render(body, items(2), CFG); // all fit → badge off
+    expect(c.querySelector('.card__more')).toBeNull();
+    expect(c.classList.contains('has-more')).toBe(false);
+    c.remove();
   });
 
   it('markets colors gains and losses differently', () => {

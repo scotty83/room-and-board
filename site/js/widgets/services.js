@@ -3,7 +3,7 @@
 // /services/status proxy. Degraded rows are tappable — the existing
 // full-screen text viewer shows the incident detail.
 
-import { escapeHtml, fmtClock, setCardNote } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
@@ -51,19 +51,16 @@ export function render(el, vm, cfg) {
         </div>
         ${!dropNote && s.state !== 'ok' && s.note ? `<div class="svc__note">${escapeHtml(s.note)}</div>` : ''}
       </div>`;
-  // Markup for the first n rows + a "+N more" hint when some are hidden (the
-  // hint costs a row, so it's measured too). dropLastNote drops the final
+  // Markup for the first n rows. The overflow count rides the title badge
+  // (setMoreBadge below), so it costs no row. dropLastNote drops the final
   // row's incident note to spend leftover slack (the note is one line taller).
-  const build = (n, dropLastNote = false) => {
-    const hidden = all.length - n;
-    return all.slice(0, n).map((s, i) => rowHtml(s, i, dropLastNote && i === n - 1)).join('')
-      + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
-  };
+  const build = (n, dropLastNote = false) =>
+    all.slice(0, n).map((s, i) => rowHtml(s, i, dropLastNote && i === n - 1)).join('');
   // Static estimate from the capacity model — the final answer when there's no
-  // rendered box to measure (happy-dom tests). Reserves a hint row on overflow.
+  // rendered box to measure (happy-dom tests).
   const [w, h] = cardSize(el, [3, 4]);
   const cap = itemCapacity('services', w, h) ?? 5;
-  let n = all.length > cap ? Math.max(1, cap - 1) : all.length;
+  let n = Math.min(all.length, cap);
   el.innerHTML = build(n);
   // Fill-to-fit: the static estimate reserves worst-case (two-line degraded)
   // height per row, but most rows are one-line "Operational", so the card
@@ -83,6 +80,7 @@ export function render(el, vm, cfg) {
       if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
     }
   }
+  setMoreBadge(el, all.length - n);
   // Tap a degraded row for the full incident picture (existing text viewer;
   // 20s idle auto-dismiss keeps an abandoned board on the dashboard). Attached
   // once on the settled DOM; data-svc indexes into the full services array.

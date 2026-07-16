@@ -2,7 +2,7 @@
 // the worker's /tfl/status digest. Colour dot + name + status; tap a disrupted
 // line for the full reason.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
@@ -39,7 +39,8 @@ export function render(el, vm, cfg) {
         <span class="tfl__name">${escapeHtml(r.name)}</span>
         <span class="tfl__status">${escapeHtml(r.status)}</span>
       </div>`)
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hidden);
   el.querySelectorAll('.tfl--tap').forEach((row) =>
     row.addEventListener('click', () => {
       const r = ordered[Number(row.dataset.i)];

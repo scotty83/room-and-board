@@ -1,7 +1,7 @@
 // "This Day in History" from Wikimedia's on-this-day feed (browser-direct,
 // CORS-open, keyless). Picks five events spread across the centuries.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'history', title: 'This Day in History', refreshMs: 24 * 60 * 60 * 1000 };
@@ -13,9 +13,8 @@ export function render(el, vm, _cfg) {
   }
   const [w, h] = cardSize(el, [6, 2]);
   const cap = itemCapacity('history', w, h);
-  // Reserve a row for the hint so it can't overflow an exactly-full body.
-  const overflow = vm.events.length > cap;
-  const shown = vm.events.slice(0, overflow ? Math.max(1, cap - 1) : cap);
+  // The overflow count rides the title badge, so it costs no row.
+  const shown = vm.events.slice(0, cap);
   const hidden = vm.events.length - shown.length;
   el.innerHTML = `<div class="history">${shown
     .map(
@@ -24,7 +23,8 @@ export function render(el, vm, _cfg) {
         <span class="history__text">${escapeHtml(e.text)}</span>
       </div>`,
     )
-    .join('')}</div>${hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : ''}`;
+    .join('')}</div>`;
+  setMoreBadge(el, hidden);
 }
 
 export function mapHistory(json, count = 9) {

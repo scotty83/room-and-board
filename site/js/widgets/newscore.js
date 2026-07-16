@@ -1,6 +1,6 @@
 // Shared news engine: RSS parse + merge, and a parameterized headline
 // render/fetch reused by the Headlines and Markets-news widgets.
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -76,20 +76,16 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
         </div>
         <span class="headline__title">${escapeHtml(i.title)}</span>
       </div>`;
-  // Markup for the first n items, with a "+N more" hint when some are hidden
-  // (the hint costs a row, so it's part of what we measure against).
+  // Markup for the first n items. The overflow count rides the title badge
+  // (setMoreBadge below), so it costs no row and isn't part of the measure.
   // clampLast renders the final item with its title clamped to one line.
-  const build = (n, clampLast = false) => {
-    const hidden = vm.items.length - n;
-    return vm.items.slice(0, n).map((it, idx) => itemHtml(it, clampLast && idx === n - 1)).join('')
-      + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
-  };
+  const build = (n, clampLast = false) =>
+    vm.items.slice(0, n).map((it, idx) => itemHtml(it, clampLast && idx === n - 1)).join('');
   // Static estimate from the capacity model. This is the final answer when
-  // there's no rendered box to measure (e.g. happy-dom in tests). It reserves
-  // a row for the hint when there's overflow so it never clips the body.
+  // there's no rendered box to measure (e.g. happy-dom in tests).
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity(widgetId, w, h) ?? 4;
-  let n = vm.items.length > cap ? Math.max(1, cap - 1) : vm.items.length;
+  let n = Math.min(vm.items.length, cap);
   el.innerHTML = build(n);
   // Fill-to-fit: with a real rendered box, grow/shrink to the count that
   // actually fits. The static 75px/row estimate assumes worst-case two-line
@@ -111,6 +107,7 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
       if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
     }
   }
+  setMoreBadge(el, vm.items.length - n);
 }
 
 export async function fetchHeadlines(ids, sourceById, net) {

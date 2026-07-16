@@ -3,7 +3,7 @@
 // Bus Time's distance ("approaching", "2 stops away").
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'bus', title: 'Express Bus', refreshMs: 60 * 1000 };
@@ -76,7 +76,8 @@ export function render(el, vm, _cfg) {
         }</div>
       </div>`,
     )
-    .join('') + (hiddenStops > 0 ? `<div class="more-hint">+${hiddenStops} more stop — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hiddenStops);
 }
 
 export async function fetchData(cfg, net) {

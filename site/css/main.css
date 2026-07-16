@@ -728,6 +728,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .card--history.t-narrow .history__text {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
+/* Shallow: one line per event so a 2nd row fits the 121px body (after the
+   shared rule so it wins the tie when t-s and t-narrow both apply). */
+.card--history.t-s .history__text { -webkit-line-clamp: 1; }
 /* Air & Sky measured variants (nth-of-type counts ALL div siblings of .sky:
    .sky__stats is div #1, sky rows start at #2).
    Shallow (h<=2): compact dials, sunrise row only. */
@@ -847,7 +850,6 @@ body.mode-ambient .gear { bottom: 7px; }
 
 /* Navigational chrome, not content: small + --ink-dim (--ink-dim stays AA-safe
    at 15px where --ink-faint would drop to 4.49:1). */
-.more-hint { font-size: 15px; color: var(--ink-dim); padding-top: 2px; }
 
 /* ---------- Formula 1 ---------- */
 .f1-next { margin-bottom: 12px; }
@@ -922,6 +924,14 @@ body.mode-ambient .gear { bottom: 7px; }
 .card__title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; white-space: nowrap; }
 .card__asof { font-size: 17px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-dim); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; } /* AA */
 .card.is-stale .card__asof { visibility: hidden; } /* the amber stale stamp takes over */
+/* Overflow badge: a quiet "+N" pinned at the truncation point (bottom-right)
+   instead of costing a list row. Safe at every width; stamp is top-anchored. */
+.card__more { position: absolute; right: 26px; bottom: 12px; font-size: 15px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-dim); white-space: nowrap; }
+/* Wordless "continues" cue: fade the body's last 22px when items are hidden. */
+.card.has-more .card__body {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+}
 
 /* ---------- my teams ---------- */
 .team { display: flex; align-items: center; gap: 14px; min-height: 64px; }
@@ -958,7 +968,10 @@ body.mode-ambient .gear { bottom: 7px; }
 .headline__age { font-size: 15px; color: var(--ink-dim); flex: none; }
 /* The headline is the content — weight 600 makes it the salience winner. */
 .headline__title { font-size: 21px; font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-width: 0; }
-.card--news.t-s .headline__title, .card--substack.t-s .headline__title, .card--bsky.t-s .headline__title { -webkit-line-clamp: 1; }
+.card--news.t-s .headline__title, .card--marketsnews.t-s .headline__title, .card--substack.t-s .headline__title, .card--bsky.t-s .headline__title { -webkit-line-clamp: 1; }
+/* Shallow news cards tighten the row gap so a 2nd one-line headline fits the
+   121px body (2 rows + 10px gap runs 3.5px over; 6px clears it). */
+.card--news.t-s .card__body, .card--marketsnews.t-s .card__body, .card--substack.t-s .card__body, .card--bsky.t-s .card__body { gap: 6px; }
 /* Fill-to-fit's slack spender: the final headline rides leftover space with a
    one-line ellipsized title (renderHeadlines adds this class only when the
    full item wouldn't fit). */

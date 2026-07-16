@@ -3,7 +3,7 @@
 // widget hides itself when the payload is unusable).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, fmtClock, setCardNote } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote, setMoreBadge } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
@@ -50,8 +50,9 @@ export function render(el, vm, cfg) {
             <span class="delta ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))} (${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;
         })
-        .join('') + '</div>' + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card to see them</div>` : '')
+        .join('') + '</div>'
     : '<div class="empty">Market data unavailable</div>';
+  setMoreBadge(el, shown.length ? hidden : 0);
 }
 
 export function mapMarkets(payload) {

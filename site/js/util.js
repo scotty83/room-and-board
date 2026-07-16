@@ -38,6 +38,32 @@ export function setCardNote(el, text) {
   note.textContent = text;
 }
 
+// Quiet "+N" overflow badge pinned to the card's bottom-right corner — the
+// point of truncation — plus a has-more class (CSS fades the body's bottom
+// edge as a wordless "continues" cue). Replaces the old in-flow ".more-hint"
+// row: the count no longer costs a list row, and the "enlarge the card"
+// imperative lives only in edit mode (capacityLabel). The corner is safe at
+// every card width (a title badge clips beside long titles on 2-wide cards);
+// .card__stamp is top-anchored so nothing collides. hidden <= 0 removes it.
+export function setMoreBadge(el, hidden) {
+  const card = el.closest?.('.card');
+  // querySelector may be absent on test fakes (capacity stubs) — no-op then.
+  if (!card?.querySelector) return;
+  let badge = card.querySelector('.card__more');
+  if (!hidden || hidden <= 0) {
+    badge?.remove();
+    card.classList.remove('has-more');
+    return;
+  }
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'card__more';
+    card.appendChild(badge);
+  }
+  badge.textContent = `+${hidden}`;
+  card.classList.add('has-more');
+}
+
 // Extract an iCloud shared-album token from a full URL, a #fragment, or a bare
 // token. Case-sensitive (the token is), lenient about surrounding text.
 export function parseAlbumToken(input) {

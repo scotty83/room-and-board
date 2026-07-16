@@ -3,7 +3,7 @@
 // from the Worker, which combines ESPN's team endpoint with a digest of the
 // heavyweight schedule payload (recent result) that boards must never fetch.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -43,8 +43,8 @@ export function render(el, vm, _cfg) {
           </div>
         </div>`,
       )
-      .join('') +
-    (hidden > 0 ? `<div class="more-hint">+${hidden} more team${hidden > 1 ? 's' : ''} — enlarge the card</div>` : '');
+      .join('');
+  setMoreBadge(el, hidden);
 }
 
 export async function fetchData(cfg, net) {

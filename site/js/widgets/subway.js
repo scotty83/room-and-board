@@ -3,7 +3,7 @@
 // for the lines you pick). Data is the Worker's cached digest of the MTA
 // alert feed — the raw feed runs ~800 KB, the digest ~2 KB.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -41,10 +41,10 @@ export function render(el, vm, _cfg) {
   }
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('subway', w, h);
-  // When truncating, alerting lines take priority over Good Service rows,
-  // and the "+N more" hint takes one row of the budget (like newscore).
+  // When truncating, alerting lines take priority over Good Service rows.
+  // The overflow count rides the title badge, so it costs no row.
   const rows = vm.lines.length > cap
-    ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, Math.max(1, cap - 1))
+    ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, cap)
     : vm.lines;
   const hidden = vm.lines.length - rows.length;
   el.innerHTML = rows
@@ -57,7 +57,8 @@ export function render(el, vm, _cfg) {
         ${row.ok ? '' : '<span class="linestatus__icon" aria-hidden="true">⚠</span>'}
       </div>`,
     )
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more line${hidden > 1 ? 's' : ''} — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hidden);
 }
 
 export async function fetchData(cfg, net) {

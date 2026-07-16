@@ -3,7 +3,7 @@
 // live counts and shows bikes (e-bikes called out) + open docks.
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setMoreBadge } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'citibike', title: 'Citi Bike', refreshMs: 60 * 1000 };
@@ -27,7 +27,8 @@ export function render(el, vm, cfg) {
         : `<span class="cb__stat"><b class="cb__n">${live.bikes}</b> bikes${live.ebikes > 0 ? ` (<b class="cb__e">${live.ebikes}⚡</b>)` : ''} · ${live.docks} docks</span>`;
       return `<div class="cb"><span class="cb__name">${escapeHtml(st.name)}</span>${stat}</div>`;
     })
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hidden);
 }
 
 export async function fetchData(cfg, net) {

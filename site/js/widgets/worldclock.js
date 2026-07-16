@@ -2,7 +2,7 @@
 // in order of current local time (earliest -> latest). Presets are the
 // D. E. Shaw offices; any IANA zone can be added. Pure Intl math, no network.
 
-import { escapeHtml, clockTimeOpts } from '../util.js';
+import { escapeHtml, clockTimeOpts, setMoreBadge } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'worldclock', title: 'World Clock', refreshMs: 30 * 1000 };
@@ -91,5 +91,6 @@ export function render(el, vm) {
         <span class="wc-row__day">${day}</span>
       </div>`;
     })
-    .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');
+    .join('');
+  setMoreBadge(el, hidden);
 }

@@ -13,9 +13,18 @@
     "test:worker": "vitest run -c worker/vitest.config.js",
     "deploy:worker": "wrangler deploy --cwd worker",
     "deploy:site": "CF_PAGES_COMMIT_SHA=$(git rev-parse HEAD) node tools/stamp-version.js && wrangler pages deploy site --project-name signage --branch main --commit-dirty=true && git checkout site/version.json",
-    "deploy:macro": "node deploy/make-macro.js"
+    "deploy:macro": "node deploy/make-macro.js",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
-  "keywords": ["signage", "cisco", "roomos", "board-pro", "dashboard", "cloudflare-workers"],
+  "keywords": [
+    "signage",
+    "cisco",
+    "roomos",
+    "board-pro",
+    "dashboard",
+    "cloudflare-workers"
+  ],
   "author": "Sean Scott",
   "license": "MIT",
   "type": "module",
@@ -26,6 +35,6 @@
     "jsxapi": "^6.0.0",
     "qrcode-generator": "^2.0.4",
     "vitest": "^4.1.9",
-    "wrangler": "^4.106.0"
+    "wrangler": "^4.111.0"
   }
 }

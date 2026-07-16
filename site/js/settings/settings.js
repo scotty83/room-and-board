@@ -1444,7 +1444,15 @@ function probeCiscoFonts() {
     };
     const serif = width('serif');
     const mono = width('monospace');
-    const hits = ['CiscoSansTT', 'CiscoSans', 'Cisco Sans'].filter((fam) =>
+    // Base names first, then individual faces — devices often register each
+    // weight as its own family. The inventory tells us which weights we can
+    // map precisely (e.g. via @font-face local()) vs what snaps to Bold.
+    const hits = [
+      'CiscoSansTT', 'CiscoSans', 'Cisco Sans', 'Cisco SansTT',
+      'CiscoSansTT Thin', 'CiscoSansTT ExtraLight', 'CiscoSansTT Light',
+      'CiscoSansTT Medium', 'CiscoSansTT Bold', 'CiscoSansTT Heavy',
+      'CiscoSansTT Oblique',
+    ].filter((fam) =>
       document.fonts?.check?.(`16px "${fam}"`)
       && width(`"${fam}", serif`) !== serif
       && width(`"${fam}", monospace`) !== mono);

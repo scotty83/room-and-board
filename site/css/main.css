@@ -94,7 +94,11 @@ html, body {
 .wc-has-day .wc-row__day { width: 30px; margin-left: 4px; }
 
 /* ---------- weather ---------- */
-.alert { display: flex; gap: 10px; align-items: center; background: var(--warn-tint); color: var(--warn); border-radius: 10px; padding: 8px 14px; font-size: 20px; font-weight: 600; }
+.alert { display: flex; gap: 10px; align-items: center; background: var(--warn-tint); color: var(--warn); border-radius: 10px; padding: 6px 14px; font-size: 20px; font-weight: 600; }
+/* The weather body zeroes the card gap (its sections space themselves), which
+   left the NWS alert banner sitting directly on the big temperature. 10px +
+   the trimmed banner padding is what the h=4 budget affords (audited). */
+.card--weather .alert { margin-bottom: 10px; }
 .icon { width: 28px; height: 28px; }
 .icon--sm { width: 24px; height: 24px; }
 .icon--xl { width: 96px; height: 96px; }
@@ -1053,3 +1057,13 @@ body.theme-momentum .sky__aqi-value { font-weight: 300; }
    rule is for animated elements, and these sit static above the slides). */
 body.theme-momentum .strip,
 body.theme-momentum .slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
+/* The device's CiscoSansTT has no semibold face, so the design's 600 tier
+   snaps UP to full Bold on the board (board-observed: captions render too
+   heavy). Request 500 instead: font matching resolves 500 DOWN to Regular
+   there and to Medium on desktop stacks — never Bold. The 700 tier stays
+   intentionally bold. */
+body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
+  .slide-caption__title, .headline__title, .wx-now__label, .wx-trend__row > span,
+  .stop-group__name, .train__dest, .alert, .strip__temp, .f1-next__hd,
+  .wc-row__day, .pane__label, .row__value, .kv-grid > b,
+  .settings__navitem.is-active, .edit-block__title) { font-weight: 500; }

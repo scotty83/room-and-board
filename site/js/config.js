@@ -116,7 +116,9 @@ export const DEFAULT_CONFIG = Object.freeze({
 });
 
 const MODES = ['scheduled', 'dashboard', 'ambient'];
-const THEMES = ['dark', 'light'];
+// 'dark' is the base palette (shown as "Room & Board" in settings); each other
+// entry has a matching body.theme-X token block in main.css.
+const THEMES = ['dark', 'momentum'];
 const MAX_NAME = 24;
 
 const str = (v, fallback, max = 64) =>
@@ -400,6 +402,7 @@ export async function encodeConfig(cfg) {
   if (wire.schedule && isDefault(wire.schedule, DEFAULT_CONFIG.schedule)) delete wire.schedule;
   if (wire.beacon === DEFAULT_CONFIG.beacon) delete wire.beacon;
   if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
+  if (wire.theme === DEFAULT_CONFIG.theme) delete wire.theme; // default theme → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

@@ -38,6 +38,16 @@ export function setCardNote(el, text) {
   note.textContent = text;
 }
 
+// Theme = a body class driving CSS token overrides ('dark' is the base :root
+// palette — its class carries no rules). Boot applies the saved choice;
+// the Display pane swaps it live for instant preview.
+export function applyTheme(theme) {
+  for (const c of [...document.body.classList]) {
+    if (c.startsWith('theme-')) document.body.classList.remove(c);
+  }
+  document.body.classList.add(`theme-${theme}`);
+}
+
 // Quiet "+N" overflow badge pinned to the card's bottom-right corner — the
 // point of truncation — plus a has-more class (CSS fades the body's bottom
 // edge as a wordless "continues" cue). Replaces the old in-flow ".more-hint"

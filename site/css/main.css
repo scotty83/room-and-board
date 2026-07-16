@@ -15,6 +15,11 @@
   --warn: #d29922;
   --radius: 18px;
   --gap: 20px;
+  /* Semantic surface tints (tokens so themes can retint them). */
+  --warn-tint: rgba(210, 153, 34, 0.15);
+  --good-tint: rgba(63, 185, 80, 0.08);
+  --bad-tint: rgba(248, 81, 73, 0.10);
+  --ink-mid: #c1ccda; /* between --ink and --ink-dim (weather labels) */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,7 +94,7 @@ html, body {
 .wc-has-day .wc-row__day { width: 30px; margin-left: 4px; }
 
 /* ---------- weather ---------- */
-.alert { display: flex; gap: 10px; align-items: center; background: rgba(210, 153, 34, 0.15); color: var(--warn); border-radius: 10px; padding: 8px 14px; font-size: 20px; font-weight: 600; }
+.alert { display: flex; gap: 10px; align-items: center; background: var(--warn-tint); color: var(--warn); border-radius: 10px; padding: 8px 14px; font-size: 20px; font-weight: 600; }
 .icon { width: 28px; height: 28px; }
 .icon--sm { width: 24px; height: 24px; }
 .icon--xl { width: 96px; height: 96px; }
@@ -129,7 +134,7 @@ html, body {
 .wx-now__icon { width: 50px; height: 50px; flex: none; }
 .wx-now__temp { font-size: 78px; font-weight: 700; line-height: 0.9; letter-spacing: -0.03em; }
 .wx-now__meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; min-width: 0; }
-.wx-now__label { font-size: 22px; font-weight: 600; color: #c1ccda; white-space: nowrap; }
+.wx-now__label { font-size: 22px; font-weight: 600; color: var(--ink-mid); white-space: nowrap; }
 .wx-now__feels { font-size: 18px; color: var(--ink-faint); white-space: nowrap; }
 
 .wx-rule { height: 1px; background: rgba(255, 255, 255, 0.07); margin: 16px 0 10px; flex: none; }
@@ -763,7 +768,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* ---------- transit service alerts ---------- */
 .talert {
   display: flex; align-items: center; gap: 8px;
-  background: rgba(210, 153, 34, 0.15); border-radius: 8px; /* = .alert's warn tint (one alpha everywhere) */
+  background: var(--warn-tint); border-radius: 8px; /* = .alert's warn tint (one alpha everywhere) */
   padding: 6px 10px; flex: none;
 }
 .talert__icon { color: var(--warn); font-size: 18px; flex: none; }
@@ -829,12 +834,12 @@ body.mode-ambient .gear { bottom: 7px; }
 .edit-placeholder {
   border: 3px dashed var(--good);
   border-radius: var(--radius);
-  background: rgba(63, 185, 80, 0.08);
+  background: var(--good-tint);
   pointer-events: none;
 }
 .edit-placeholder--invalid {
   border-color: var(--bad);
-  background: rgba(248, 81, 73, 0.10);
+  background: var(--bad-tint);
 }
 /* During a resize gesture the placeholder lifts above the blocks (they're
    grid items, so z-index applies): a shrink target lies inside the block's
@@ -999,3 +1004,36 @@ body.mode-ambient .gear { bottom: 7px; }
 .osk__key--space { min-width: 240px; font-size: 20px; color: var(--ink-dim); }
 .osk__key--primary { background: var(--accent); color: #06131f; font-weight: 700; }
 .osk__key.is-on { background: rgba(88, 166, 255, 0.35); }
+
+/* ==================== Theme: Momentum ====================
+   Cisco-Momentum-inspired: pure-black canvas, solid neutral surfaces with a
+   hairline edge, white-alpha ink ramp, mint/salmon semantics, light-weight
+   numerals. Pure token overrides + a few scoped treatments — card markup and
+   every capacity/size number are untouched. (Palette values follow the public
+   momentum-design tokens; no Cisco fonts or marks ship with this.) */
+body.theme-momentum {
+  --bg: #000;
+  --bg-card: #1a1a1a;
+  --bg-card-2: #262626;
+  --ink: rgba(255, 255, 255, 0.95);
+  --ink-mid: rgba(255, 255, 255, 0.84);
+  --ink-dim: rgba(255, 255, 255, 0.72);
+  --ink-faint: rgba(255, 255, 255, 0.56);
+  --accent: #64b4fa;
+  --good: #3cc29a;
+  --bad: #fc8b98;
+  --warn: #f2990a;
+  --radius: 24px;
+  --warn-tint: rgba(242, 153, 10, 0.15);
+  --good-tint: rgba(60, 194, 154, 0.10);
+  --bad-tint: rgba(252, 139, 152, 0.12);
+}
+/* Cards on pure black need a hairline edge to hold their shape. */
+body.theme-momentum .card { border: 1px solid rgba(255, 255, 255, 0.07); }
+/* Momentum's signature: the big numerals go light (300), not bold. */
+body.theme-momentum .topbar__time,
+body.theme-momentum .wx-now__temp,
+body.theme-momentum .index__price,
+body.theme-momentum .train__min > span,
+body.theme-momentum .wc-row__time,
+body.theme-momentum .sky__aqi-value { font-weight: 300; }

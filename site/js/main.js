@@ -3,7 +3,7 @@
 import { normalizeConfig, decodeConfig } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
-import { fmtClock } from './util.js';
+import { fmtClock, applyTheme } from './util.js';
 import { schedule } from './scheduler.js';
 import { resolveMode, ambientSource } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
@@ -277,6 +277,7 @@ function startSelfHealing() {
 }
 
 function startRuntime() {
+  applyTheme(cfg.theme);
   startClock();
   for (const rect of cfg.layout) {
     const mod = getWidget(rect.id);
@@ -292,7 +293,6 @@ function startRuntime() {
 }
 
 async function boot() {
-  document.body.classList.add('theme-dark');
   $('#gear').innerHTML = icon('settings', 'icon--btn');
   $('#edit').innerHTML = icon('pencil', 'icon--btn');
   initTextViewer($('#grid'));

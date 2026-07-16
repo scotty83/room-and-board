@@ -39,6 +39,14 @@ describe('store', () => {
   });
 });
 
+describe('theme config', () => {
+  it('accepts known themes and falls back to dark on junk', () => {
+    expect(normalizeConfig({ theme: 'momentum' }).theme).toBe('momentum');
+    expect(normalizeConfig({ theme: 'neon' }).theme).toBe('dark');
+    expect(normalizeConfig({}).theme).toBe('dark');
+  });
+});
+
 describe('scheduler', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());

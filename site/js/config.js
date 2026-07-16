@@ -112,6 +112,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   theme: 'dark',
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
+  clock24: false, // 24-hour time for the topbar Clock + World Clock only (departures keep fmtTime's 12h)
 });
 
 const MODES = ['scheduled', 'dashboard', 'ambient'];
@@ -361,6 +362,7 @@ export function normalizeConfig(raw) {
     })(),
     theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
     beacon: raw.beacon !== false, // absent (older configs) → on
+    clock24: raw.clock24 === true, // absent/anything-but-true → 12-hour default
   };
 }
 
@@ -397,6 +399,7 @@ export async function encodeConfig(cfg) {
   if (wire.tfl && isDefault(wire.tfl.lines, DEFAULT_CONFIG.tfl.lines)) delete wire.tfl;
   if (wire.schedule && isDefault(wire.schedule, DEFAULT_CONFIG.schedule)) delete wire.schedule;
   if (wire.beacon === DEFAULT_CONFIG.beacon) delete wire.beacon;
+  if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));

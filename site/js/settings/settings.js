@@ -1063,6 +1063,25 @@ function renderBsky() {
 
 /* ---------- weather / display ---------- */
 
+// Shared 12/24-hour toggle. One board-wide setting (cfg.clock24) surfaced in
+// both the Display and World Clock panes; governs the topbar Clock + World
+// Clock widget only (transit departures keep fmtTime's 12h).
+function clockFormatMarkup() {
+  return `
+    <p class="pane__label">Time format</p>
+    <div class="segmented" role="group" aria-label="Clock time format">
+      <button class="seg ${!state.cfg.clock24 ? 'is-active' : ''}" data-clock24="12">12-hour</button>
+      <button class="seg ${state.cfg.clock24 ? 'is-active' : ''}" data-clock24="24">24-hour</button>
+    </div>`;
+}
+function wireClockFormat(rerender) {
+  pane().querySelectorAll('[data-clock24]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.clock24 = btn.dataset.clock24 === '24';
+      rerender();
+    }));
+}
+
 function renderWorldclock() {
   const cities = () => state.cfg.worldclock.cities;
   const has = (label, zone) => cities().some((c) => c.label === label && c.zone === zone);
@@ -1076,7 +1095,9 @@ function renderWorldclock() {
       `<button class="chip ${has(label, zone) ? 'chip--on' : ''}" data-office="${i}">${label}</button>`).join('')}</div>
     ${zonesApi ? `<p class="pane__hint">Or any time zone:</p>
     <button class="btn" data-add-zone>Add any time zone</button>
-    <div class="drill"></div>` : ''}`;
+    <div class="drill"></div>` : ''}
+    ${clockFormatMarkup()}`;
+  wireClockFormat(renderWorldclock);
   const set = (list) => { state.cfg.worldclock.cities = list.slice(0, 10); renderWorldclock(); };
   pane().querySelectorAll('[data-rm]').forEach((b) =>
     b.addEventListener('click', () => set(cities().filter((_, i) => i !== Number(b.dataset.rm)))));
@@ -1187,6 +1208,7 @@ function renderDisplay() {
       </div>`).join('')}
       ${state.cfg.schedule.length < 4 ? '<button class="btn" data-add-win>Add window</button>' : ''}
     </div>` : ''}
+    ${clockFormatMarkup()}
     <p class="pane__label">Greeting name</p>
     <div class="kv"><span>Shown as</span><b>${escapeHtml(state.cfg.name || 'not set')}</b>
       <button class="btn" data-edit-name>${state.cfg.name ? 'Change' : 'Set name'}</button>
@@ -1202,6 +1224,7 @@ function renderDisplay() {
       renderDisplay();
     }),
   );
+  wireClockFormat(renderDisplay);
   pane().querySelectorAll('[data-t]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const i = Number(btn.dataset.i), key = btn.dataset.t, d = Number(btn.dataset.d);

@@ -466,3 +466,19 @@ describe('usage beacon flag', () => {
     expect(optOut.length).toBeGreaterThan(def.length);
   });
 });
+
+describe('clock 12/24-hour flag', () => {
+  it('defaults off (12h), honors explicit 24h, survives the wire', async () => {
+    expect(normalizeConfig({}).clock24).toBe(false);
+    expect(normalizeConfig({ clock24: true }).clock24).toBe(true);
+    expect(normalizeConfig({ clock24: false }).clock24).toBe(false);
+    expect(normalizeConfig({ clock24: 'yes' }).clock24).toBe(false); // only literal true counts
+    const dec = await decodeConfig(await encodeConfig(normalizeConfig({ clock24: true })));
+    expect(dec.clock24).toBe(true);
+  });
+  it('strips the default (false) from the wire', async () => {
+    const def = await encodeConfig(normalizeConfig({}));
+    const on = await encodeConfig(normalizeConfig({ clock24: true }));
+    expect(on.length).toBeGreaterThan(def.length);
+  });
+});

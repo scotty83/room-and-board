@@ -44,7 +44,7 @@ export function zonesByRegion(zones) {
 const dayKey = (date, timeZone) =>
   new Intl.DateTimeFormat('en-CA', timeZone ? { timeZone, dateStyle: 'short' } : { dateStyle: 'short' }).format(date);
 
-export function worldTimes(date, cities) {
+export function worldTimes(date, cities, clock24 = false) {
   const localDay = dayKey(date);
   return cities
     .map(({ label, zone }) => {
@@ -56,7 +56,9 @@ export function worldTimes(date, cities) {
       const dayDiff = zoneDay === localDay ? 0 : zoneDay > localDay ? 1 : -1;
       return {
         city: label,
-        time: new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(date),
+        time: new Intl.DateTimeFormat('en-US', clock24
+          ? { timeZone: zone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
+          : { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(date),
         dayDiff,
         sortKey: dayDiff * 1440 + get('hour') * 60 + get('minute'),
       };
@@ -66,7 +68,7 @@ export function worldTimes(date, cities) {
 }
 
 export async function fetchData(cfg) {
-  return worldTimes(new Date(), cfg.worldclock.cities);
+  return worldTimes(new Date(), cfg.worldclock.cities, cfg.clock24);
 }
 
 export function render(el, vm) {

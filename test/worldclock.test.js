@@ -37,6 +37,12 @@ describe('worldTimes', () => {
     expect(mar['London'].time).toBe('12:00 PM');   // still GMT
   });
 
+  it('formats 24-hour times (2-digit hour, no AM/PM) when clock24 is set', () => {
+    // Same instant as the first test — SF 07:30 … HK 23:30, sorted ascending.
+    const rows = worldTimes(new Date('2026-01-15T15:30:00Z'), FIVE, true);
+    expect(rows.map((r) => r.time)).toEqual(['07:30', '10:30', '15:30', '21:00', '23:30']);
+  });
+
   it('computes day offsets relative to the runner-local date', () => {
     const instant = new Date('2026-01-15T03:30:00Z');
     const localDay = new Intl.DateTimeFormat('en-CA', { dateStyle: 'short' }).format(instant);

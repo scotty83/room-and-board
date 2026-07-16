@@ -32,10 +32,23 @@ import * as citibike from '../site/js/widgets/citibike.js';
 import * as tfl from '../site/js/widgets/tfl.js';
 import * as f1 from '../site/js/widgets/f1.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
+import * as clock from '../site/js/widgets/clock.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
+
+describe('clock (topbar) time format', () => {
+  const time = (cfg) => { const d = el(); clock.render(d, null, cfg); return d.querySelector('.topbar__time').textContent; };
+  it('renders 24-hour time (2-digit hour, no AM/PM) when clock24 is set', () => {
+    const t = time({ clock24: true });
+    expect(t).toMatch(/^\d{2}:\d{2}$/);
+    expect(t).not.toMatch(/[AP]M/);
+  });
+  it('renders 12-hour time with AM/PM by default', () => {
+    expect(time({ clock24: false })).toMatch(/^\d{1,2}:\d{2}\s?[AP]M$/);
+  });
+});
 
 const CASES = [
   ['weather', weather, ['84', 'Mostly clear', 'Extreme Heat Watch', '9 AM']],

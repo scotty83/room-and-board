@@ -1098,10 +1098,11 @@ body.theme-momentum .seg.is-active { background: rgba(255, 255, 255, 0.95); colo
 body.theme-momentum .chip,
 body.theme-momentum .tflchip { border-radius: 999px; border: 2px solid rgba(255, 255, 255, 0.3); }
 body.theme-momentum .chip--on { background: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95); }
-/* Rail Save/Cancel hug their labels like the reference pills (the rail's
-   flex column otherwise stretches them to full width). Edit-mode's Cancel
-   earns the ring + full ink — it's a peer action beside Done, unlike the
-   quiet inline ghosts ("Remove name") which stay borderless. */
-body.theme-momentum .settings__railfoot { align-items: center; }
-body.theme-momentum .settings__railfoot .btn { min-width: 0; padding: 0 52px; }
+/* Rail Save/Cancel: equal-width pills (the wider label sets the shared grid
+   track, floored by the 216px wordmark) centered in the rail — the reference
+   ratio, not full-width slabs. Edit-mode's Cancel earns the ring + full ink —
+   it's a peer action beside Done, unlike the quiet inline ghosts ("Remove
+   name") which stay borderless. */
+body.theme-momentum .settings__railfoot { display: grid; justify-content: center; }
+body.theme-momentum .settings__railfoot .btn { min-width: 0; padding: 0 32px; }
 body.theme-momentum .editor__actions .btn--ghost { border-color: rgba(255, 255, 255, 0.3); color: var(--ink); }

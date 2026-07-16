@@ -1427,6 +1427,33 @@ function renderCode() {
 
 /* ---------- diagnostics ---------- */
 
+// Do any Cisco Sans families resolve inside this web view? RoomOS draws its
+// own UI in CiscoSansTT; if the firmware exposes it to web content, the
+// Momentum theme can reference the real face by name (we never bundle the
+// font — it's Cisco-proprietary). fonts.check() alone can false-positive on
+// aliased fallbacks, so a canvas width comparison against both generic
+// families is the tie-breaker. Returns 'unknown' where canvas/FontFaceSet
+// are unavailable (tests, ancient engines).
+function probeCiscoFonts() {
+  try {
+    const ctx = document.createElement('canvas').getContext('2d');
+    const sample = 'RoomOS wide sample MW10';
+    const width = (fam) => {
+      ctx.font = `24px ${fam}`;
+      return ctx.measureText(sample).width;
+    };
+    const serif = width('serif');
+    const mono = width('monospace');
+    const hits = ['CiscoSansTT', 'CiscoSans', 'Cisco Sans'].filter((fam) =>
+      document.fonts?.check?.(`16px "${fam}"`)
+      && width(`"${fam}", serif`) !== serif
+      && width(`"${fam}", monospace`) !== mono);
+    return hits.length ? hits.join(', ') : 'not exposed';
+  } catch {
+    return 'unknown';
+  }
+}
+
 function renderDiag() {
   const rows = state.cfg.layout.map(({ id }) => {
     const cache = loadCache(id);
@@ -1441,6 +1468,7 @@ function renderDiag() {
       <span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b>
       ${rows.join('')}
       <span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b>
+      <span>Cisco fonts</span><b>${escapeHtml(probeCiscoFonts())}</b>
     </div>
     <div class="row">
       <button class="toggle ${state.cfg.beacon ? 'is-on' : ''}" data-beacon role="switch" aria-checked="${state.cfg.beacon}">

@@ -5,13 +5,16 @@
 // [] = all lines).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote } from '../util.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-export const meta = { id: 'njt', title: 'NJ Transit — Penn Station', refreshMs: 2 * 60 * 1000 };
+export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
+  // Station context lives in the corner note like PATH/Ferry/Weather — not
+  // baked into the title (card-consistency contract).
+  setCardNote(el, 'Penn Station');
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
   const [w, h] = cardSize(el, [4, 4]);
   const cap = Math.max(1, itemCapacity('njt', w, h) - (vm.alerts?.length ?? 0));

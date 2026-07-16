@@ -24,7 +24,7 @@ export function render(el, vm, cfg) {
       const live = byId.get(st.id);
       const stat = !live || !live.ok
         ? '<span class="cb__stat cb__stat--off">not renting</span>'
-        : `<span class="cb__stat">${live.bikes} bikes${live.ebikes > 0 ? ` (<b class="cb__e">${live.ebikes}⚡</b>)` : ''} · ${live.docks} docks</span>`;
+        : `<span class="cb__stat"><b class="cb__n">${live.bikes}</b> bikes${live.ebikes > 0 ? ` (<b class="cb__e">${live.ebikes}⚡</b>)` : ''} · ${live.docks} docks</span>`;
       return `<div class="cb"><span class="cb__name">${escapeHtml(st.name)}</span>${stat}</div>`;
     })
     .join('') + (hidden > 0 ? `<div class="more-hint">+${hidden} more — enlarge the card</div>` : '');

@@ -855,6 +855,10 @@ body.mode-ambient .gear { bottom: 7px; }
 .cb__stat { font-size: 20px; color: var(--ink-dim); white-space: nowrap; flex: none; }
 .cb__stat--off { color: var(--ink-faint); }
 .cb__e { color: var(--accent); font-weight: 600; }
+/* Search-result buttons (weather cities, Citi Bike stations). The container
+   had no rule at all — spacing was an accident of inline flow, and the new
+   inline-flex .btn removed it, leaving results flush against the keyboard. */
+.picklist { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 18px; max-width: 860px; }
 /* Search results for stations already on the card: visible but inert. */
 .picklist__item--added { opacity: 0.45; pointer-events: none; }
 

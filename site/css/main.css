@@ -45,7 +45,7 @@ html, body {
 .topbar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 24px; }
 .topbar__greeting { font-size: 40px; font-weight: 600; letter-spacing: -0.01em; }
 .topbar__clock { display: flex; align-items: baseline; gap: 18px; }
-.topbar__time { font-size: 54px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.topbar__time { font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; } /* 1.2x the greeting — anchor, not shout */
 .topbar__date { font-size: 26px; color: var(--ink-dim); }
 
 /* ---------- dashboard grid ---------- */

@@ -897,7 +897,7 @@ async function renderChart() {
   pane().innerHTML = `
     <h2 class="pane__title">Chart of the Day</h2>
     <p class="pane__hint">A daily Statista infographic. Pick one or more topics to cycle through${none ? ' — none selected shows the newest chart across everything (any topic).' : '; the card rotates them on each refresh.'}</p>
-    <div class="rows">${CHART_TOPICS.map(([label, slug]) => {
+    <div class="rows rows--grid">${CHART_TOPICS.map(([label, slug]) => {
       const on = c.topics.includes(slug);
       return `<div class="row">
         <button class="toggle ${on ? 'is-on' : ''}" data-topic="${escapeHtml(slug)}" role="switch" aria-checked="${on}">
@@ -906,11 +906,13 @@ async function renderChart() {
         <span class="row__label">${escapeHtml(label)}</span>
       </div>`;
     }).join('')}</div>
-    <div class="row">
-      <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
-        <span class="toggle__knob"></span>
-      </button>
-      <span class="row__label">Hide politics charts</span>
+    <div class="pane__section">
+      <div class="row">
+        <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">Hide politics charts</span>
+      </div>
     </div>`;
   pane().querySelectorAll('[data-topic]').forEach((btn) =>
     btn.addEventListener('click', () => {

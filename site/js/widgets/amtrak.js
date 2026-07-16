@@ -4,7 +4,7 @@
 // stop at the chosen station — matched client-side against each departure's
 // downstream stops, showing the arrival time there; unfiltered rows show the
 // train's terminus.
-import { escapeHtml, fmtTime, setCardNote } from '../util.js';
+import { escapeHtml, fmtTime, fmtClock, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
@@ -26,7 +26,9 @@ export function render(el, vm, cfg) {
       })
       .filter(Boolean);
   }
-  setCardNote(el, dest && vm.destName ? `to ${vm.destName}` : (vm.updatedAt ? `as of ${fmtTime(vm.updatedAt)}` : null));
+  // "as of" is a clock reading (honors cfg.clock24); the arr/departure times
+  // in the rows below stay on fmtTime (schedule times, always 12h).
+  setCardNote(el, dest && vm.destName ? `to ${vm.destName}` : (vm.updatedAt ? `as of ${fmtClock(vm.updatedAt, cfg?.clock24)}` : null));
 
   const alerts = showAlerts ? (vm.alerts ?? []) : [];
   el.classList.toggle('has-alerts', Boolean(alerts.length));

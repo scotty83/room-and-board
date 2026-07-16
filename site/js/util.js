@@ -6,6 +6,19 @@ export function fmtTime(epochSec) {
   return new Date(epochSec * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
+// Options for a wall-clock time-of-day render at the board's 12/24-hour
+// preference (cfg.clock24). Single source so the topbar Clock, World Clock,
+// and every "as of"/freshness stamp format identically.
+export const clockTimeOpts = (clock24) => (clock24
+  ? { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
+  : { hour: 'numeric', minute: '2-digit' });
+
+// A "now"/"as of" reading (freshness stamps, card notes) honoring clock24 —
+// distinct from fmtTime, which formats transit SCHEDULE times (always 12h).
+export function fmtClock(epochSec, clock24 = false) {
+  return new Date(epochSec * 1000).toLocaleTimeString('en-US', clockTimeOpts(clock24));
+}
+
 // Small right-aligned context note in a card's title ("as of 8:16 PM",
 // "stops at Mineola"). Null/empty text removes it. Reuses .card__asof so the
 // amber stale stamp keeps winning the corner (.card.is-stale hides the note).

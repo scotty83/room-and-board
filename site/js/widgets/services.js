@@ -3,7 +3,7 @@
 // /services/status proxy. Degraded rows are tappable — the existing
 // full-screen text viewer shows the incident detail.
 
-import { escapeHtml, fmtTime, setCardNote } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
@@ -35,9 +35,10 @@ const sinceLabel = (iso) => {
     : '';
 };
 
-export function render(el, vm, _cfg) {
-  // Freshness note in the card header (worker check time, not render time).
-  if (vm.updatedAt) setCardNote(el, `as of ${fmtTime(vm.updatedAt)}`);
+export function render(el, vm, cfg) {
+  // Freshness note in the card header (worker check time, not render time) —
+  // a clock reading, so it honors cfg.clock24.
+  if (vm.updatedAt) setCardNote(el, `as of ${fmtClock(vm.updatedAt, cfg?.clock24)}`);
   const all = vm.services ?? [];
   if (!all.length) {
     el.innerHTML = '<div class="empty">Pick services in Settings → Cloud Services</div>';

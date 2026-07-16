@@ -3,7 +3,7 @@
 // widget hides itself when the payload is unusable).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, fmtTime, setCardNote } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
@@ -24,9 +24,10 @@ export function sparkPath(values, w, h) {
 
 const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-export function render(el, vm, _cfg) {
-  // Freshness note in the card header (worker fetch time, not render time).
-  if (vm.updatedAt) setCardNote(el, `as of ${fmtTime(vm.updatedAt)}`);
+export function render(el, vm, cfg) {
+  // Freshness note in the card header (worker fetch time, not render time) —
+  // a clock reading, so it honors cfg.clock24.
+  if (vm.updatedAt) setCardNote(el, `as of ${fmtClock(vm.updatedAt, cfg?.clock24)}`);
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);

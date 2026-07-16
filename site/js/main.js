@@ -3,6 +3,7 @@
 import { normalizeConfig, decodeConfig } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
+import { fmtClock } from './util.js';
 import { schedule } from './scheduler.js';
 import { resolveMode, ambientSource } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
@@ -105,8 +106,9 @@ function markStale(card, cachedAtSec) {
   card.classList.add('is-stale');
   const stamp = stampOf(card);
   if (cachedAtSec) {
-    const t = new Date(cachedAtSec * 1000);
-    stamp.textContent = `as of ${t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    // Freshness stamp is a clock reading, so it follows cfg.clock24 (unlike
+    // the transit schedule times in the card body).
+    stamp.textContent = `as of ${fmtClock(cachedAtSec, cfg?.clock24)}`;
     stamp.hidden = false;
   }
 }

@@ -2,7 +2,7 @@
 // in order of current local time (earliest -> latest). Presets are the
 // D. E. Shaw offices; any IANA zone can be added. Pure Intl math, no network.
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, clockTimeOpts } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'worldclock', title: 'World Clock', refreshMs: 30 * 1000 };
@@ -56,9 +56,7 @@ export function worldTimes(date, cities, clock24 = false) {
       const dayDiff = zoneDay === localDay ? 0 : zoneDay > localDay ? 1 : -1;
       return {
         city: label,
-        time: new Intl.DateTimeFormat('en-US', clock24
-          ? { timeZone: zone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
-          : { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(date),
+        time: new Intl.DateTimeFormat('en-US', { timeZone: zone, ...clockTimeOpts(clock24) }).format(date),
         dayDiff,
         sortKey: dayDiff * 1440 + get('hour') * 60 + get('minute'),
       };

@@ -33,6 +33,7 @@ import * as tfl from '../site/js/widgets/tfl.js';
 import * as f1 from '../site/js/widgets/f1.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
+import { fmtClock } from '../site/js/util.js';
 import { sparkPath } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
@@ -47,6 +48,38 @@ describe('clock (topbar) time format', () => {
   });
   it('renders 12-hour time with AM/PM by default', () => {
     expect(time({ clock24: false })).toMatch(/^\d{1,2}:\d{2}\s?[AP]M$/);
+  });
+});
+
+describe('fmtClock ("as of"/freshness reading, honors clock24)', () => {
+  const at = Math.floor(new Date('2026-01-15T15:45:00').getTime() / 1000); // local instant
+  it('12-hour with AM/PM by default (matches the departures fmtTime style)', () => {
+    expect(fmtClock(at)).toMatch(/^\d{1,2}:\d{2}\s?[AP]M$/);
+  });
+  it('24-hour (2-digit hour, no AM/PM) when clock24 is set', () => {
+    const t = fmtClock(at, true);
+    expect(t).toMatch(/^\d{2}:\d{2}$/);
+    expect(t).not.toMatch(/[AP]M/);
+  });
+});
+
+describe('card "as of" freshness note honors clock24 (via render → fmtClock)', () => {
+  const noteFor = (clock24) => {
+    const c = document.createElement('article');
+    c.className = 'card';
+    c.innerHTML = '<div class="card__title"></div><div class="card__body"></div>';
+    amtrak.render(
+      c.querySelector('.card__body'),
+      { updatedAt: Math.floor(new Date('2026-01-15T15:45:00').getTime() / 1000), departures: [] },
+      { clock24, amtrak: {} },
+    );
+    return c.querySelector('.card__asof')?.textContent ?? '';
+  };
+  it('renders the note 24-hour when clock24 is set', () => {
+    expect(noteFor(true)).toMatch(/^as of \d{2}:\d{2}$/);
+  });
+  it('renders the note 12-hour otherwise', () => {
+    expect(noteFor(false)).toMatch(/^as of \d{1,2}:\d{2}\s?[AP]M$/);
   });
 });
 

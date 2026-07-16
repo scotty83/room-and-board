@@ -8,7 +8,6 @@ import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
-import { mountKeyboard } from './keyboard.js';
 import { locationSearch } from '../geo.js';
 import { stepTime, fmtHM } from '../modes.js';
 import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
@@ -408,12 +407,31 @@ function renderPhotos() {
   };
   // The keyboard reveals on demand: mounted eagerly it pushed its own action
   // row (with ⌫/Check) below the 1080 fold with no hint it existed. Revealing
-  // on tap + scrolling it fully into view keeps every key on screen.
-  let kb = null;
+  // on tap + scrolling it fully into view keeps every key on screen. It's the
+  // shared qwertyKeypad (shiftable variant) — the bespoke keyboard.js path is
+  // retired (settings review Batch 3).
+  let kbValue = '';
+  let kbShift = false;
   const kbHost = src === 'icloud' ? pane().querySelector('.photo-kb') : null;
+  const paintKb = () => {
+    kbHost.innerHTML = `<output class="osk__display" aria-live="polite">${escapeHtml(kbValue) || '·'}</output>`
+      + qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [],
+        '<button class="key osk__key osk__key--wide" data-key="Clear">Clear</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Check">Check</button>',
+        { shift: kbShift });
+    kbHost.querySelectorAll('[data-key]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.key;
+        if (k === 'Check') { validate(kbValue); return; }
+        if (k === 'Shift') kbShift = !kbShift;
+        else if (k === 'Clear') kbValue = '';
+        else if (k === '⌫') kbValue = kbValue.slice(0, -1);
+        else { kbValue += k; kbShift = false; }
+        paintKb();
+      }));
+  };
   const revealKb = () => {
     if (!kbHost) return;
-    kb ??= mountKeyboard(kbHost, { onSubmit: validate });
+    paintKb();
     kbHost.hidden = false;
     kbHost.scrollIntoView({ block: 'end' });
   };
@@ -423,7 +441,7 @@ function renderPhotos() {
   });
   pane().querySelector('[data-paste]').addEventListener('click', async () => {
     const parse = src === 'gdrive' ? parseDriveFolder : parseAlbumToken;
-    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { if (kb) kb.set(id); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
+    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { kbValue = id; if (kbHost && !kbHost.hidden) paintKb(); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
     catch { status.textContent = src === 'gdrive' ? `Paste unavailable on this display — use ${location.host}/setup from your phone.` : 'Paste unavailable on this display — type the link instead.'; }
   });
 }
@@ -751,12 +769,21 @@ const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500'
 // appear (setup codes have no I/L/O/U on purpose). Reuses the photos
 // keyboard's .osk row/key styles so every on-board keyboard reads the same.
 const QWERTY_ROWS = ['1234567890', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
-function qwertyKeypad(alphabet, extraKeys, actionsHtml, { lower = false } = {}) {
+export function qwertyKeypad(alphabet, extraKeys, actionsHtml, { lower = false, shift = null } = {}) {
   const allowed = new Set(alphabet);
-  const rows = QWERTY_ROWS.map((r) => [...r].filter((k) => allowed.has(k)));
+  const rows = QWERTY_ROWS.map((r) => [...r].filter((k) => allowed.has(k)))
+    .filter((r) => r.length); // digit-less alphabets (the name pad) drop the empty digits row
   rows[rows.length - 1].push(...extraKeys.filter((k) => k !== ' ')); // symbols ride the short bottom row
-  const cased = (k) => (lower ? k.toLowerCase() : k);
+  // shift === null keeps the classic fixed-case pad (`lower` picks the case).
+  // A boolean makes the pad SHIFTABLE: letters render/emit in the shift case
+  // and the bottom letter row gains ⇧ (head) and ⌫ (tail) — the name-pad
+  // layout. Callers own the state and re-render on the Shift key.
+  const upper = shift === null ? !lower : shift;
+  const cased = (k) => (upper ? k : k.toLowerCase());
   const keyHtml = (k) => `<button class="key osk__key" data-key="${cased(k)}">${cased(k)}</button>`;
+  const shiftKey = shift === null ? ''
+    : `<button class="key osk__key ${shift ? 'is-on' : ''}" data-key="Shift">⇧</button>`;
+  const backKey = shift === null ? '' : '<button class="key osk__key" data-key="⌫">⌫</button>';
   // The space bar is a wide, labeled key (a bare ' ' renders as a blank
   // key-sized button — Sean hit this in the Citi Bike search) and sits on the
   // bottom actions row, the same spot as the greeting-name pad's space bar.
@@ -764,7 +791,7 @@ function qwertyKeypad(alphabet, extraKeys, actionsHtml, { lower = false } = {}) 
     ? '<button class="key osk__key osk__key--space" data-key=" ">space</button>'
     : '';
   return `<div class="osk">${rows
-    .map((row) => `<div class="osk__row">${row.map(keyHtml).join('')}</div>`)
+    .map((row, i) => `<div class="osk__row">${i === rows.length - 1 ? shiftKey : ''}${row.map(keyHtml).join('')}${i === rows.length - 1 ? backKey : ''}</div>`)
     .join('')}<div class="osk__row">${space}${actionsHtml}</div></div>`;
 }
 
@@ -1277,25 +1304,17 @@ function renderDisplay() {
   function paintPad() {
     const { value, shift } = nameState;
     display.textContent = value || '·';
-    const letter = (k) => `<button class="key osk__key" data-nkey="${k}">${shift ? k : k.toLowerCase()}</button>`;
-    keys.innerHTML = `<div class="osk">
-      <div class="osk__row">${[...'QWERTYUIOP'].map(letter).join('')}</div>
-      <div class="osk__row">${[...'ASDFGHJKL'].map(letter).join('')}</div>
-      <div class="osk__row">
-        <button class="key osk__key ${shift ? 'is-on' : ''}" data-nkey="Shift">⇧</button>
-        ${[...'ZXCVBNM'].map(letter).join('')}
-        <button class="key osk__key" data-nkey="Backspace">⌫</button>
-      </div>
-      <div class="osk__row">
-        <button class="key osk__key" data-nkey="-">-</button>
-        <button class="key osk__key osk__key--space" data-nkey="Space">space</button>
-        <button class="key osk__key osk__key--wide" data-nkey="Done">Done</button>
-      </div>
-    </div>`;
-    keys.querySelectorAll('[data-nkey]').forEach((btn) =>
+    // The shared qwertyKeypad (shiftable variant) renders the keys;
+    // applyNameKey still owns the state — its auto-caps logic expects
+    // UPPERCASE letters and named action keys, so normalize what the pad
+    // emits (cased letters, ' ', '⌫') before handing over.
+    keys.innerHTML = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ', [' ', '-'],
+      '<button class="key osk__key osk__key--wide" data-key="Done">Done</button>', { shift });
+    keys.querySelectorAll('[data-key]').forEach((btn) =>
       btn.addEventListener('click', () => {
-        const k = btn.dataset.nkey;
-        if (k === 'Done') { state.cfg.name = nameState.value.trim(); renderDisplay(); return; }
+        const raw = btn.dataset.key;
+        if (raw === 'Done') { state.cfg.name = nameState.value.trim(); renderDisplay(); return; }
+        const k = raw === '⌫' ? 'Backspace' : raw === ' ' ? 'Space' : raw.length === 1 ? raw.toUpperCase() : raw;
         nameState = applyNameKey(nameState, k);
         paintPad();
       }),

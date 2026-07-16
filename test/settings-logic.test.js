@@ -200,21 +200,28 @@ describe('WIDGET_GROUPS taxonomy', () => {
   });
 });
 
-import { mountKeyboard } from '../site/js/settings/keyboard.js';
-describe('mountKeyboard', () => {
-  it('types, shifts to uppercase, backspaces, and submits the value', () => {
-    const host = document.createElement('div');
-    let submitted = null;
-    const kb = mountKeyboard(host, { onSubmit: (v) => (submitted = v) });
-    host.querySelector('[data-k="b"]').click();
-    host.querySelector('[data-act="shift"]').click();
-    host.querySelector('[data-k="A"]').click(); // uppercase key present after shift
-    host.querySelector('[data-k="1"]').click();
-    expect(kb.value()).toBe('bA1');
-    host.querySelector('[data-act="back"]').click();
-    expect(kb.value()).toBe('bA');
-    host.querySelector('[data-act="submit"]').click();
-    expect(submitted).toBe('bA');
+import { qwertyKeypad } from '../site/js/settings/settings.js';
+describe('qwertyKeypad shiftable variant (replaced keyboard.js)', () => {
+  it('cases keys by shift state and adds ⇧/⌫ to the bottom letter row', () => {
+    const up = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [], '', { shift: true });
+    expect(up).toContain('data-key="Shift"');
+    expect(up).toContain('data-key="⌫"');
+    expect(up).toContain('data-key="A"');
+    expect(up).toContain('is-on'); // shift key lit while active
+    const low = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [], '', { shift: false });
+    expect(low).toContain('data-key="a"');
+    expect(low).not.toContain('is-on');
+    expect(low).toContain('data-key="1"'); // digits unaffected by case
+  });
+  it('drops the empty digits row for digit-less alphabets (the name pad)', () => {
+    const html = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ', [' ', '-'], '', { shift: false });
+    expect(html).not.toContain('<div class="osk__row"></div>');
+    expect(html).toContain('data-key=" "'); // space bar rides the actions row
+  });
+  it('classic fixed-case pads are unchanged (no shift/backspace injected)', () => {
+    const html = qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', ['-'], '<b>x</b>');
+    expect(html).not.toContain('data-key="Shift"');
+    expect(html).not.toContain('data-key="⌫"');
   });
 });
 

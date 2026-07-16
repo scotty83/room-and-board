@@ -1,7 +1,9 @@
 // Formula 1 — next Grand Prix, last-race podium, and driver + constructor
 // standings, from the worker's /f1 digest (Jolpica). Config-less. Team colour
 // dots reuse the app's Subway/TfL bullet idiom; driver country flags are
-// Unicode emoji (zero assets). Balanced/adaptive: standings sit side-by-side
+// flagcdn images (same image-flag treatment as World Cup — emoji flags were
+// the board's one non-image flag dialect, and some Chromium builds render
+// them as bare letter pairs). Balanced/adaptive: standings sit side-by-side
 // when the card is wide, stacked when narrow, measured to fit like the news card.
 
 import { escapeHtml } from '../util.js';
@@ -33,8 +35,9 @@ const NAT_ISO = {
 const flagOf = (nat) => {
   const iso = NAT_ISO[nat];
   if (!iso) return '';
-  const emoji = [...iso].map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65)).join('');
-  return `<span class="f1-flag">${emoji}</span>`;
+  // flagcdn covers every ISO alpha-2 (ESPN's country set misses Monaco, so
+  // Leclerc would lose his flag there). Keyless, CSP-clean (img-src https:).
+  return `<img class="f1-flag" src="https://flagcdn.com/w40/${iso.toLowerCase()}.png" alt="" loading="lazy">`;
 };
 
 const dot = (cid) => `<span class="f1-dot" style="background:${teamColor(cid)}"></span>`;

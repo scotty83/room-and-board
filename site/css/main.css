@@ -853,7 +853,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .f1-pos { width: 24px; text-align: right; color: var(--ink-faint); font-size: 18px; font-variant-numeric: tabular-nums; flex: none; }
 .f1-row--p1 .f1-pos { color: var(--ink); font-weight: 700; } /* amber = warning, not gold */
 .f1-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); }
-.f1-flag { font-size: 20px; flex: none; }
+/* Image flag (flagcdn 4:3) — replaces the emoji glyph, matching World Cup's
+   image-flag treatment. */
+.f1-flag { width: 24px; height: 18px; object-fit: cover; border-radius: 3px; flex: none; align-self: center; }
 .f1-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .f1-team, .f1-pts { color: var(--ink-dim); font-size: 18px; flex: none; font-variant-numeric: tabular-nums; }
 .f1-team { max-width: 42%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

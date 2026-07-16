@@ -104,7 +104,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   ].map(Object.freeze)) }),
   njt: Object.freeze({ lines: Object.freeze([]), alerts: true }), // New York Penn departures; [] = all lines
   amtrak: Object.freeze({ dest: '', alerts: true }), // NYP (Moynihan) board destination filter ('' = all trains)
-  path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
+  path: Object.freeze({ station: '33S', dir: 'ToNJ' }), // ridepath consideredStation code; default NJ-bound (evening commute home)
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes

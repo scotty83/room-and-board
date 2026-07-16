@@ -58,7 +58,10 @@ export function mapNjt(payload, nowSec, showAlerts = true) {
   const alerts = showAlerts
     ? (payload.alerts ?? []).filter((a) => typeof a?.header === 'string').slice(0, 2)
     : [];
-  return { updatedAt: payload.updatedAt ?? null, stale: Boolean(payload.stale), trains, alerts };
+  // No "as of" stamp (updatedAt null): getStationSchedule is NJ Transit's static
+  // daily timetable, not live predictions, so a cache-time stamp would frame it
+  // as fresh intraday data. Outage staleness still shows via .is-stale dimming.
+  return { updatedAt: null, stale: Boolean(payload.stale), trains, alerts };
 }
 
 export async function fetchData(cfg, net) {

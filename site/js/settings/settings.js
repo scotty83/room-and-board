@@ -572,13 +572,13 @@ function renderNjt() {
 function renderPath() {
   pane().innerHTML = `
     <h2 class="pane__title">PATH</h2>
-    <p class="pane__hint">Station</p>
-    <div class="rows">${Object.entries(PATH_STATIONS).map(([code, name]) =>
-      `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
-    ).join('')}</div>
     <p class="pane__hint">Direction</p>
     <div class="rows">${PATH_DIRS.map(([id, label]) =>
       `<button class="row row--tap ${state.cfg.path.dir === id ? 'is-selected' : ''}" data-dir="${id}">${label}</button>`,
+    ).join('')}</div>
+    <p class="pane__hint">Station</p>
+    <div class="rows rows--grid">${Object.entries(PATH_STATIONS).map(([code, name]) =>
+      `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
     ).join('')}</div>`;
   pane().querySelectorAll('[data-station]').forEach((btn) =>
     btn.addEventListener('click', () => {

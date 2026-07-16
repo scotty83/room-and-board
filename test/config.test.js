@@ -210,9 +210,9 @@ describe('pickNewest', () => {
 });
 
 describe('path/ferry/wotd config (v3 additive)', () => {
-  it('defaults path to 33rd St both directions and ferry to East 34th St', () => {
+  it('defaults path to 33rd St NJ-bound and ferry to East 34th St', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.path).toEqual({ station: '33S', dir: 'both' });
+    expect(cfg.path).toEqual({ station: '33S', dir: 'ToNJ' });
     expect(cfg.ferry).toEqual({ landing: '17' });
   });
   it('keeps valid values and falls back on junk', () => {
@@ -220,7 +220,7 @@ describe('path/ferry/wotd config (v3 additive)', () => {
     expect(cfg.path).toEqual({ station: 'HOB', dir: 'ToNY' });
     expect(cfg.ferry.landing).toBe('87');
     const bad = normalizeConfig({ path: { station: 'X;DROP', dir: 'sideways' }, ferry: { landing: 'x' } });
-    expect(bad.path).toEqual({ station: '33S', dir: 'both' });
+    expect(bad.path).toEqual({ station: '33S', dir: 'ToNJ' });
     expect(bad.ferry.landing).toBe('17');
   });
   it('accepts the new ids in layouts', () => {

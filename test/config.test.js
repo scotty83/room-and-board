@@ -234,26 +234,34 @@ describe('path/ferry/wotd config (v3 additive)', () => {
 });
 
 describe('chart config (v3 additive)', () => {
-  it('defaults to politics-hidden, any topic', () => {
+  it('defaults to politics-hidden, no topics (any/global)', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.chart).toEqual({ excludePolitics: true, topic: '' });
+    expect(cfg.chart).toEqual({ excludePolitics: true, topics: [] });
   });
   it('honors an explicit politics opt-out', () => {
     const cfg = normalizeConfig({ chart: { excludePolitics: false } });
     expect(cfg.chart.excludePolitics).toBe(false);
   });
-  it('accepts a curated topic slug and rejects an unknown one', () => {
-    expect(normalizeConfig({ chart: { topic: 'technology' } }).chart.topic).toBe('technology');
-    expect(normalizeConfig({ chart: { topic: 'consumer goods' } }).chart.topic).toBe('consumer goods');
-    expect(normalizeConfig({ chart: { topic: 'not-a-real-topic' } }).chart.topic).toBe('');
-    expect(normalizeConfig({ chart: { topic: 42 } }).chart.topic).toBe('');
+  it('keeps only valid slugs, deduped, and drops unknown/non-string ones', () => {
+    expect(normalizeConfig({ chart: { topics: ['technology', 'sports'] } }).chart.topics).toEqual(['technology', 'sports']);
+    expect(normalizeConfig({ chart: { topics: ['consumer goods'] } }).chart.topics).toEqual(['consumer goods']);
+    expect(normalizeConfig({ chart: { topics: ['technology', 'technology'] } }).chart.topics).toEqual(['technology']);
+    expect(normalizeConfig({ chart: { topics: ['technology', 'not-a-real-topic', 42] } }).chart.topics).toEqual(['technology']);
+    expect(normalizeConfig({ chart: { topics: 'technology' } }).chart.topics).toEqual([]); // not an array → empty
+  });
+  it('migrates an old single-topic config to a one-element topics array', () => {
+    expect(normalizeConfig({ chart: { topic: 'sports' } }).chart.topics).toEqual(['sports']);
+    // an invalid legacy slug migrates to empty (any topic), not a bogus entry
+    expect(normalizeConfig({ chart: { topic: 'not-a-real-topic' } }).chart.topics).toEqual([]);
+    // a present topics array wins over the legacy topic field
+    expect(normalizeConfig({ chart: { topic: 'sports', topics: ['technology'] } }).chart.topics).toEqual(['technology']);
   });
   it('strips a default chart from the wire but keeps a customized one', async () => {
     const plainDec = await decodeConfig(await encodeConfig(normalizeConfig({})));
-    expect(plainDec.chart).toEqual({ excludePolitics: true, topic: '' }); // re-derived on decode
-    const custom = normalizeConfig({ chart: { excludePolitics: false, topic: 'sports' } });
+    expect(plainDec.chart).toEqual({ excludePolitics: true, topics: [] }); // re-derived on decode
+    const custom = normalizeConfig({ chart: { excludePolitics: false, topics: ['sports', 'technology'] } });
     const dec = await decodeConfig(await encodeConfig(custom));
-    expect(dec.chart).toEqual({ excludePolitics: false, topic: 'sports' });
+    expect(dec.chart).toEqual({ excludePolitics: false, topics: ['sports', 'technology'] });
   });
 });
 

@@ -73,9 +73,10 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
   services: Object.freeze({ list: Object.freeze(['webex', 'slack', 'm365']) }), // first-enable default; SERVICE_IDS is the full menu
-  // Chart of the Day: hide-politics on by default (client-side keyword filter),
-  // optional user exclude terms, topic '' = global listing (CHART_TOPICS slugs).
-  chart: Object.freeze({ excludePolitics: true, topic: '' }),
+  // Chart of the Day: hide-politics on by default (client-side keyword filter);
+  // topics = curated CHART_TOPICS slugs the card cycles through on refresh.
+  // [] = any/global listing (the newest chart across everything).
+  chart: Object.freeze({ excludePolitics: true, topics: Object.freeze([]) }),
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -258,8 +259,15 @@ export function normalizeConfig(raw) {
     chart: {
       // Client-side hide-politics filter (on unless explicitly disabled).
       excludePolitics: raw.chart?.excludePolitics !== false,
-      // Topic must be a curated slug or '' (global listing); unknown → ''.
-      topic: CHART_TOPIC_SLUGS.has(raw.chart?.topic) ? raw.chart.topic : '',
+      // Curated slugs the card cycles through; keep only valid ones, deduped,
+      // capped at the full vocabulary. [] = any/global listing. Old single-topic
+      // configs (raw.chart.topic) migrate to a one-element array when no topics
+      // array is present.
+      topics: (() => {
+        const src = Array.isArray(raw.chart?.topics) ? raw.chart.topics
+          : (raw.chart?.topics == null && CHART_TOPIC_SLUGS.has(raw.chart?.topic) ? [raw.chart.topic] : []);
+        return [...new Set(src.filter((s) => CHART_TOPIC_SLUGS.has(s)))].slice(0, CHART_TOPIC_SLUGS.size);
+      })(),
     },
     services: {
       list: (() => {

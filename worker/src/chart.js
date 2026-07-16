@@ -81,7 +81,10 @@ export function mapChart(html) {
     .sort((a, b) => (a.c.date < b.c.date ? 1 : a.c.date > b.c.date ? -1 : a.i - b.i))
     .slice(0, 10)
     .map(({ c }) => c);
-  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, charts };
+  // Keep `chart` (the newest) beside `charts[]` so a client that only reads the
+  // legacy singular field keeps working when this worker deploys ahead of the
+  // new widget (e.g. prod worker updated, prod chart widget not yet).
+  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, chart: charts[0], charts };
 }
 
 // topic '' (default) hits the global listing; a validated slug re-points the

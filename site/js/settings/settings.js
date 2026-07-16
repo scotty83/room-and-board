@@ -1239,17 +1239,18 @@ function renderWeather() {
 }
 
 function renderDisplay() {
-  const opt = (group, value, label) => `
-    <button class="row row--tap ${state.cfg[group] === value ? 'is-selected' : ''}" data-set="${group}:${value}">${label}</button>`;
+  const seg = (value, label) => `
+    <button class="seg ${state.cfg.mode === value ? 'is-active' : ''}" data-set="mode:${value}">${label}</button>`;
   pane().innerHTML = `
     <h2 class="pane__title">Display</h2>
     <p class="pane__label">Mode</p>
-    <div class="rows">
-      ${opt('mode', 'dashboard', 'Always dashboard')}
-      ${opt('mode', 'ambient', 'Always art')}
-      ${opt('mode', 'scheduled', 'Scheduled — dashboard on a timer, art otherwise')}
+    <div class="segmented" role="group" aria-label="Display mode">
+      ${seg('dashboard', 'Always dashboard')}
+      ${seg('ambient', 'Always art')}
+      ${seg('scheduled', 'Scheduled')}
     </div>
-    ${state.cfg.mode === 'scheduled' ? `<div class="sched">${state.cfg.schedule.map((w, i) => `
+    ${state.cfg.mode === 'scheduled' ? `<p class="pane__hint">Dashboard shows during these windows; art shows the rest of the time.</p>
+    <div class="sched">${state.cfg.schedule.map((w, i) => `
       <div class="sched__win">
         <button class="btn sched__step" data-i="${i}" data-t="start" data-d="-1">▼</button>
         <span class="sched__time">${fmtHM(w.start)}</span>

@@ -51,7 +51,9 @@ export function render(el, vm, cfg) {
       <img class="artwork__img" src="${escapeHtml(c.url)}" alt="${escapeHtml(c.title)}" loading="lazy">
     </figure>`;
   el.querySelector('.artwork').addEventListener('click', () =>
-    openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [] }));
+    // No caption: Statista bakes the title/source into the infographic, so the
+    // overlay would just repeat it and cover part of the image.
+    openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [], caption: false }));
 }
 
 // Deterministic rotation slot: which of the selected topics to show right now.

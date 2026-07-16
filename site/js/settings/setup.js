@@ -432,11 +432,13 @@ async function renderMarketsNewsSources() {
 
 async function renderChartField() {
   const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
-  const sel = $('#chart-topic');
-  sel.innerHTML = `<option value="">Any topic</option>${CHART_TOPICS.map(
-    ([label, slug]) => `<option value="${escapeHtml(slug)}" ${cfg.chart.topic === slug ? 'selected' : ''}>${escapeHtml(label)}</option>`,
-  ).join('')}`;
-  sel.addEventListener('change', () => { cfg.chart.topic = sel.value; });
+  $('#chart-topics').innerHTML = CHART_TOPICS.map(
+    ([label, slug]) => `<label><input type="checkbox" data-topic="${escapeHtml(slug)}" ${cfg.chart.topics.includes(slug) ? 'checked' : ''}> ${escapeHtml(label)}</label>`,
+  ).join('');
+  $('#chart-topics').addEventListener('change', (e) => {
+    const slug = e.target.dataset.topic;
+    if (slug) cfg.chart.topics = toggleIn(cfg.chart.topics, slug);
+  });
   const pol = $('#chart-politics');
   pol.checked = cfg.chart.excludePolitics;
   pol.addEventListener('change', () => { cfg.chart.excludePolitics = pol.checked; });

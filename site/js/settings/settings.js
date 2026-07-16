@@ -893,36 +893,33 @@ async function renderChart() {
   const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
   if (navStale(_nav)) return;
   const c = state.cfg.chart;
-  const topicLabel = CHART_TOPICS.find(([, slug]) => slug === c.topic)?.[0] ?? 'Any topic';
+  const none = !c.topics.length;
   pane().innerHTML = `
     <h2 class="pane__title">Chart of the Day</h2>
-    <p class="pane__hint">A daily Statista infographic. Choose a topic, or leave it on Any topic for the newest chart across everything.</p>
-    <div class="kv"><span>Topic</span><b>${escapeHtml(topicLabel)}</b>
-      <button class="btn" data-pick-topic>Change</button>
-      ${c.topic ? '<button class="btn" data-clear-topic>Any topic</button>' : ''}</div>
+    <p class="pane__hint">A daily Statista infographic. Pick one or more topics to cycle through${none ? ' — none selected shows the newest chart across everything (any topic).' : '; the card rotates them on each refresh.'}</p>
+    <div class="rows">${CHART_TOPICS.map(([label, slug]) => {
+      const on = c.topics.includes(slug);
+      return `<div class="row">
+        <button class="toggle ${on ? 'is-on' : ''}" data-topic="${escapeHtml(slug)}" role="switch" aria-checked="${on}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">${escapeHtml(label)}</span>
+      </div>`;
+    }).join('')}</div>
     <div class="row">
       <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
         <span class="toggle__knob"></span>
       </button>
       <span class="row__label">Hide politics charts</span>
-    </div>
-    <div class="drill"></div>`;
+    </div>`;
+  pane().querySelectorAll('[data-topic]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.chart.topics = toggleIn(state.cfg.chart.topics, btn.dataset.topic);
+      renderChart();
+    }),
+  );
   pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
     state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
-    renderChart();
-  });
-  pane().querySelector('[data-pick-topic]').addEventListener('click', () => {
-    drillList(
-      'Topic',
-      [{ html: 'Any topic', value: '' }, ...CHART_TOPICS.map(([label, slug]) => ({ html: escapeHtml(label), value: slug }))],
-      (pick) => {
-        state.cfg.chart.topic = pick.value;
-        renderChart();
-      },
-    );
-  });
-  pane().querySelector('[data-clear-topic]')?.addEventListener('click', () => {
-    state.cfg.chart.topic = '';
     renderChart();
   });
 }

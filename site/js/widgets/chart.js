@@ -54,11 +54,21 @@ export function render(el, vm, cfg) {
     openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [] }));
 }
 
+// Deterministic rotation slot: which of the selected topics to show right now.
+// Keyed off wall-clock so every board lands on the same topic within a slot
+// (fleet-consistent, no per-device drift), and advances once per refresh
+// window. '' (empty/non-array topics) preserves the any/global listing.
+export function currentTopic(topics, now = Date.now(), slotMs = meta.refreshMs) {
+  if (!Array.isArray(topics) || !topics.length) return '';
+  return topics[Math.floor(now / slotMs) % topics.length];
+}
+
 export async function fetchData(cfg, net) {
   // A configured topic re-points the scrape at the per-topic Statista page; the
   // worker validates the slug and caches it under `chart:<topic>` (the global
   // default stays one fleet-wide entry). Client-side filtering picks the card.
-  const topic = cfg?.chart?.topic;
+  // Multiple topics cycle deterministically on each refresh (see currentTopic).
+  const topic = currentTopic(cfg?.chart?.topics);
   const qs = topic ? `?topic=${encodeURIComponent(topic)}` : '';
   return net.fetchJSON(`${WORKER_URL}/chart${qs}`);
 }

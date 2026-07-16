@@ -7,7 +7,7 @@ import { mapMarkets } from '../site/js/widgets/markets.js';
 import { mapBus } from '../site/js/widgets/bus.js';
 import { mapSiriStop } from '../worker/src/bus.js';
 import { mapYahooChart } from '../worker/src/markets.js';
-import { pickChart } from '../site/js/widgets/chart.js';
+import { pickChart, currentTopic } from '../site/js/widgets/chart.js';
 
 const fixture = async (name) =>
   JSON.parse(await readFile(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -245,5 +245,37 @@ describe('pickChart (chart exclude/pick logic)', () => {
   it('returns null for an empty or missing list', () => {
     expect(pickChart([], {})).toBeNull();
     expect(pickChart(undefined, {})).toBeNull();
+  });
+});
+
+describe('currentTopic (deterministic 30-min rotation slot)', () => {
+  const slot = 30 * 60 * 1000;
+  it("returns '' when topics is empty or not an array", () => {
+    expect(currentTopic([], 0, slot)).toBe('');
+    expect(currentTopic(undefined, 0, slot)).toBe('');
+    expect(currentTopic('sports', 0, slot)).toBe('');
+    expect(currentTopic(null, 0, slot)).toBe('');
+  });
+  it('is a constant for a single-element list regardless of the clock', () => {
+    expect(currentTopic(['sports'], 0, slot)).toBe('sports');
+    expect(currentTopic(['sports'], 12345, slot)).toBe('sports');
+    expect(currentTopic(['sports'], slot * 999, slot)).toBe('sports');
+  });
+  it('advances to the next topic as now crosses a slot boundary', () => {
+    const topics = ['technology', 'sports', 'finance'];
+    expect(currentTopic(topics, 0, slot)).toBe('technology');
+    expect(currentTopic(topics, slot - 1, slot)).toBe('technology'); // still slot 0
+    expect(currentTopic(topics, slot, slot)).toBe('sports'); // slot 1
+    expect(currentTopic(topics, 2 * slot, slot)).toBe('finance'); // slot 2
+  });
+  it('wraps modulo the list length', () => {
+    const topics = ['technology', 'sports'];
+    expect(currentTopic(topics, 2 * slot, slot)).toBe('technology'); // slot 2 % 2 = 0
+    expect(currentTopic(topics, 3 * slot, slot)).toBe('sports'); // slot 3 % 2 = 1
+  });
+  it('defaults now/slotMs so the fleet stays consistent within a slot', () => {
+    // Same wall-clock slot ⇒ same topic across boards (no explicit now).
+    const topics = ['technology', 'sports'];
+    expect(currentTopic(topics)).toBe(topics[Math.floor(Date.now() / slot) % topics.length]);
   });
 });

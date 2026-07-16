@@ -84,7 +84,8 @@ html, body {
 .wc-row__hh { display: inline-block; width: 2ch; text-align: right; }
 /* day-offset badge: 0-width by default; the row reserves a real gutter only
    when some city crosses a day boundary (.wc-has-day), so the time never moves */
-.wc-row__day { flex: none; width: 0; overflow: hidden; font-size: 13px; color: var(--warn); font-weight: 600; text-align: left; transform: translateY(-2px); }
+/* Day offset is information, not a warning — quiet dim, and 15px meets the type floor. */
+.wc-row__day { flex: none; width: 0; overflow: hidden; font-size: 15px; color: var(--ink-dim); font-weight: 600; text-align: left; transform: translateY(-2px); }
 .wc-has-day .wc-row__day { width: 30px; margin-left: 4px; }
 
 /* ---------- weather ---------- */
@@ -104,10 +105,10 @@ html, body {
 .card--weather[data-cond="cloudy"],
 .card--weather[data-cond="fog"]      { --wx-accent: #8a97ab; }
 .card--weather[data-cond="rain"],
-.card--weather[data-cond="drizzle"]  { --wx-accent: #58a6ff; }
+.card--weather[data-cond="drizzle"]  { --wx-accent: var(--accent); }
 .card--weather[data-cond="snow"],
 .card--weather[data-cond="sleet"]    { --wx-accent: #7fc8e6; }
-.card--weather[data-cond="thunder"]  { --wx-accent: #d29922; }
+.card--weather[data-cond="thunder"]  { --wx-accent: var(--warn); }
 
 /* per-condition glyph tints (current glyph + each daily glyph) */
 .wx-ico--clear    { color: #e3b341; }
@@ -115,10 +116,10 @@ html, body {
 .wx-ico--cloudy,
 .wx-ico--fog      { color: #8a97ab; }
 .wx-ico--rain,
-.wx-ico--drizzle  { color: #58a6ff; }
+.wx-ico--drizzle  { color: var(--accent); }
 .wx-ico--snow,
 .wx-ico--sleet    { color: #7fc8e6; }
-.wx-ico--thunder  { color: #d29922; }
+.wx-ico--thunder  { color: var(--warn); }
 
 /* the sections own their spacing; override the base body gap */
 .card--weather .card__body { gap: 0; }
@@ -137,7 +138,7 @@ html, body {
 .wx-trend { display: flex; flex-direction: column; gap: 4px; }
 .wx-trend__row { display: flex; }
 .wx-trend__row > span { flex: 1; min-width: 0; text-align: center; font-size: 18px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-.wx-trend__row--hours > span { font-size: 14px; font-weight: 400; color: var(--ink-faint); }
+.wx-trend__row--hours > span { font-size: 14px; font-weight: 400; color: var(--ink-dim); } /* AA: ink-faint fails below 18px */
 .wx-trend__chart { width: 100%; height: 60px; display: block; }
 .wx-trend__line { fill: none; stroke: var(--wx-accent); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .wx-trend__g0 { stop-color: var(--wx-accent); stop-opacity: 0.30; }
@@ -149,7 +150,7 @@ html, body {
 .wx-day__name { font-size: 16px; color: var(--ink-dim); }
 .wx-day__ico { width: 26px; height: 26px; }
 .wx-day__hi { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.wx-day__lo { font-size: 15px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.wx-day__lo { font-size: 15px; color: var(--ink-dim); font-variant-numeric: tabular-nums; } /* AA */
 
 /* --- wider cards (w >= 5): larger hero + tiles, 8-hour trend, 5 tiles --- */
 .card--weather:not(.t-narrow) .wx-now__temp { font-size: 92px; }
@@ -236,6 +237,9 @@ html, body {
 /* Data images (Chart of the Day): never crop — letterbox on the card tone.
    Art/photos keep the aesthetic cover crop; the viewer always shows full. */
 .artwork--contain .artwork__img { object-fit: contain; }
+/* Tone-map the white Statista chart: luminance rank should follow information
+   rank — untreated it's the brightest object on the whole board. */
+.card--chart .artwork__img { filter: brightness(0.88); }
 .artwork__caption { display: flex; flex-direction: column; gap: 2px; }
 .artwork__title { font-size: 22px; font-weight: 600; }
 .artwork__artist { font-size: 20px; color: var(--ink-dim); }
@@ -260,7 +264,7 @@ html, body {
 .sky__stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .sky__stats--single { grid-template-columns: 1fr; }
 .sky__aqi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.sky__aqi-head { font-size: 17px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sky__aqi-head { font-size: 17px; font-weight: 700; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* AA */
 /* Category sits under the number so both get the block's full width */
 .sky__aqi-reading { display: flex; flex-direction: column; min-width: 0; }
 /* The category never wraps under the number — it shrinks then ellipsizes */
@@ -753,7 +757,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* ---------- transit service alerts ---------- */
 .talert {
   display: flex; align-items: center; gap: 8px;
-  background: rgba(210, 153, 34, 0.14); border-radius: 8px;
+  background: rgba(210, 153, 34, 0.15); border-radius: 8px; /* = .alert's warn tint (one alpha everywhere) */
   padding: 6px 10px; flex: none;
 }
 .talert__icon { color: var(--warn); font-size: 18px; flex: none; }
@@ -783,7 +787,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* ---------- PATH ---------- */
 .path-section { display: flex; flex-direction: column; gap: 8px; }
 .path-section + .path-section { margin-top: 8px; }
-.path-section__label { font-size: 17px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.path-section__label { font-size: 17px; font-weight: 700; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; } /* AA */
 .pathdot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
 .pathdot + .pathdot { margin-left: -2px; }
 
@@ -841,7 +845,7 @@ body.mode-ambient .gear { bottom: 7px; }
 .f1-sec__h, .f1-col .f1-sec__h { font-size: 16px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-dim); margin-bottom: 6px; font-weight: 600; }
 .f1-row { display: flex; align-items: center; gap: 7px; font-size: 21px; padding: 3px 0; }
 .f1-pos { width: 24px; text-align: right; color: var(--ink-faint); font-size: 18px; font-variant-numeric: tabular-nums; flex: none; }
-.f1-row--p1 .f1-pos { color: var(--warn); font-weight: 700; }
+.f1-row--p1 .f1-pos { color: var(--ink); font-weight: 700; } /* amber = warning, not gold */
 .f1-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); }
 .f1-flag { font-size: 20px; flex: none; }
 .f1-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -855,7 +859,8 @@ body.mode-ambient .gear { bottom: 7px; }
 .svc__row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .svc__name { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .svc__state { font-size: 18px; font-weight: 600; white-space: nowrap; flex: none; }
-.svc__state--ok { color: var(--good); }
+/* "All fine" rests quiet — green is reserved for deviation (calm-at-rest principle). */
+.svc__state--ok { color: var(--ink-dim); font-weight: 400; }
 .svc__state--minor { color: var(--warn); }
 .svc__state--major { color: var(--bad); }
 .svc__state--unknown { color: var(--ink-faint); }
@@ -897,7 +902,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* nowrap: the widget name never wraps to a second line — the corner note
    (min-width 0) shrinks and ellipsizes first on narrow cards */
 .card__title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; white-space: nowrap; }
-.card__asof { font-size: 17px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-faint); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.card__asof { font-size: 17px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-dim); white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; } /* AA */
 .card.is-stale .card__asof { visibility: hidden; } /* the amber stale stamp takes over */
 
 /* ---------- my teams ---------- */
@@ -912,13 +917,13 @@ body.mode-ambient .gear { bottom: 7px; }
 
 /* ---------- world cup ---------- */
 .wc-section { display: flex; flex-direction: column; gap: 6px; }
-.wc-section__label { font-size: 17px; font-weight: 700; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; }
+.wc-section__label { font-size: 17px; font-weight: 700; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.08em; } /* AA */
 .wc-match { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; min-height: 40px; }
 .wc-match__teams { font-size: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .wc-match__teams b { font-size: 24px; }
 .wc-match__meta { font-size: 19px; color: var(--ink-dim); white-space: nowrap; flex: none; }
 .wc-match--live .wc-match__meta { color: var(--ink); font-weight: 600; }
-.wc-match__note { font-size: 17px; color: var(--ink-faint); margin-top: -4px; }
+.wc-match__note { font-size: 17px; color: var(--ink-dim); margin-top: -4px; } /* AA */
 
 /* ---------- headlines ---------- */
 /* Source + age on a small meta line above the full-width headline; the
@@ -945,7 +950,7 @@ body.mode-ambient .gear { bottom: 7px; }
    (44px circle inscribes ~31px; 4px padding left 36px — wide logos like the
    Mets NY clipped at the sides) */
 .team__logo { width: 44px; height: 44px; object-fit: contain; flex: none; background: rgba(232, 237, 244, 0.08); border-radius: 50%; padding: 7px; }
-.team__last { font-size: 17px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.team__last { font-size: 17px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* AA */
 .wc-flag { width: 26px; height: 26px; object-fit: contain; vertical-align: -5px; margin-right: 5px; border-radius: 3px; }
 
 /* ---------- on-screen keyboard (OSK) ---------- */

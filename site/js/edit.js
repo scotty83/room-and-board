@@ -124,9 +124,10 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       .map(
         (r) => `<div class="edit-block" data-id="${r.id}"
           style="grid-column:${r.x + 1} / span ${r.w}; grid-row:${r.y + 1} / span ${r.h}">
+          <span class="edit-grip" aria-hidden="true"></span>
           <span class="edit-block__title">${TITLES[r.id] ?? r.id}</span>
           <span class="edit-block__size">${sizeLabel(r)}${capOf(r.id, r.w, r.h) ? `<br>${capOf(r.id, r.w, r.h)}` : ''}</span>
-          <button class="edit-remove" data-remove="${r.id}" aria-label="Remove ${TITLES[r.id]}">✕</button>
+          <button class="edit-remove" data-remove="${r.id}" aria-label="Remove ${TITLES[r.id]}"><span class="edit-remove__bar"></span></button>
           <span class="edit-handle" data-resize="${r.id}" aria-label="Resize ${TITLES[r.id]}">${RESIZE_ICON}</span>
         </div>`,
       )

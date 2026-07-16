@@ -552,22 +552,42 @@ body.mode-ambient .gear { bottom: 7px; }
   grid-template-rows: repeat(8, minmax(0, 1fr));
   gap: 10px;
 }
-.editor__cell { border: 1px dashed rgba(147, 160, 180, 0.25); border-radius: 10px; }
+.editor__cell { border: 1px dashed rgba(147, 160, 180, 0.10); border-radius: 10px; }
 .edit-block {
   position: relative;
   background: var(--bg-card);
-  border: 2px solid var(--ink-faint);
+  border: 1px solid rgba(147, 160, 180, 0.14);
   border-radius: var(--radius);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
   display: flex; align-items: center; justify-content: center;
   cursor: grab; touch-action: none; user-select: none;
 }
-.edit-block.is-dragging { opacity: 0.85; z-index: 5; cursor: grabbing; }
-.edit-block.is-invalid { border-color: var(--bad); }
+.edit-block.is-dragging { opacity: 0.85; z-index: 5; cursor: grabbing; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); }
+/* Keep the "won't fit" signal loud even though the resting border is now hairline. */
+.edit-block.is-invalid { border: 2px solid var(--bad); }
 .edit-block__title { font-size: 26px; font-weight: 600; color: var(--ink-dim); pointer-events: none; }
+/* Delete: a neutral grey badge in the TOP-LEFT (iOS home-screen convention) so
+   it reads as "remove this widget" not "close", and stays calm at rest — the
+   minus bar goes red only on press, reserving the destructive colour for the
+   action. ::after pads the 48px visual to a >=56px hit area (board touch floor). */
 .edit-remove {
-  position: absolute; top: 10px; right: 10px;
+  position: absolute; top: 10px; left: 10px;
   width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
-  background: rgba(248, 81, 73, 0.2); color: var(--bad); font-size: 22px;
+  background: var(--ink-dim); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.15s ease-out;
+}
+.edit-remove::after { content: ''; position: absolute; inset: -6px; }
+.edit-remove__bar { width: 16px; height: 3px; border-radius: 2px; background: var(--bg); }
+.edit-remove:active { background: var(--bad); transform: scale(1.08); }
+.edit-remove:active .edit-remove__bar { background: #fff; }
+/* Draggability signifier: a grip glyph centered at the tile top — cursor:grab is
+   invisible to a finger. */
+.edit-grip {
+  position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+  width: 34px; height: 15px; opacity: 0.7; pointer-events: none;
+  background: radial-gradient(circle, var(--ink-faint) 2px, transparent 2.4px);
+  background-size: 11px 7.5px;
 }
 /* Resize chip: a filled square whose visual IS the touch target — testers
    aimed at the old thin corner bracket instead of the (invisible) hit area.
@@ -577,14 +597,14 @@ body.mode-ambient .gear { bottom: 7px; }
   width: 64px; height: 64px; cursor: nwse-resize; touch-action: none;
   display: flex; align-items: center; justify-content: center;
   border: 2px solid var(--accent); border-radius: 12px;
-  background: rgba(88, 166, 255, 0.22); color: var(--accent);
+  background: rgba(88, 166, 255, 0.10); color: var(--accent);
   transition: background 0.15s, transform 0.15s ease-out;
 }
 .edit-handle::after { content: ''; position: absolute; inset: -12px; }
 .edit-handle:active { background: rgba(88, 166, 255, 0.4); transform: scale(1.08); }
 @media (prefers-reduced-motion: reduce) {
-  .edit-handle { transition: background 0.15s; }
-  .edit-handle:active { transform: none; }
+  .edit-handle, .edit-remove { transition: background 0.15s; }
+  .edit-handle:active, .edit-remove:active { transform: none; }
 }
 .editor__bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 24px; }
 .edit-tray { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }

@@ -432,6 +432,26 @@ describe('/markets', () => {
     expect(body.indices[0]).toMatchObject({ symbol: 'AAPL', name: 'Apple Inc.' });
   });
 
+  it('recovers the daily change from daily bars when Yahoo rolls the close (LSE evening)', async () => {
+    await clearCache('markets:CBG.L');
+    // Rolled single-session payload: price === chartPreviousClose → change 0.
+    const rolled = yahoo(413.6, 413.6);
+    rolled.chart.result[0].meta.symbol = 'CBG.L';
+    rolled.chart.result[0].meta.shortName = 'CLOSE BROTHERS GROUP PLC ORD 25';
+    rolled.chart.result[0].indicators.quote[0].close = [407.8, 410.1, 413.6];
+    const daily = { chart: { result: [{ meta: { symbol: 'CBG.L' },
+      indicators: { quote: [{ close: [402.0, 409.4, 413.6] }] } }] } };
+    stubFetch([
+      { match: /chart\/CBG\.L\?range=2d/, body: rolled },
+      { match: /chart\/CBG\.L\?range=5d&interval=1d/, body: daily },
+    ]);
+    const res = await call('/markets?symbols=CBG.L');
+    const body = await res.json();
+    expect(body.indices[0].symbol).toBe('CBG.L');
+    expect(body.indices[0].change).toBeCloseTo(413.6 - 409.4, 5); // vs prior daily close
+    expect(body.indices[0].changePct).toBeCloseTo(((413.6 - 409.4) / 409.4) * 100, 5);
+  });
+
   it('aggregates the three indices', async () => {
     stubFetch([{ match: /query1\.finance\.yahoo\.com/, body: yahoo(100, 90), times: 3 }]);
     const res = await call('/markets');

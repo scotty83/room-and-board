@@ -162,7 +162,30 @@ async function fetchMarkets(symbols) {
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2d&interval=15m`;
       const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA } });
       if (!res.ok) throw new Error(`yahoo ${res.status}`);
-      return mapYahooChart(await res.json(), INDEX_NAMES[symbol]);
+      const out = mapYahooChart(await res.json(), INDEX_NAMES[symbol]);
+      // Yahoo doesn't reliably honor range=2d from Cloudflare egress (it can
+      // return a single session with the close already rolled — change 0.00),
+      // even though the same request from a browser gets two days. When the
+      // change computes to zero, pull the true prior close from a tiny
+      // daily-bars request; a genuinely flat day just recomputes to zero.
+      if (out.change === 0) {
+        try {
+          const r2 = await fetch(
+            `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`,
+            { headers: { 'User-Agent': YAHOO_UA } },
+          );
+          if (r2.ok) {
+            const daily = ((await r2.json())?.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [])
+              .filter(Number.isFinite);
+            const prior = daily.length >= 2 ? daily[daily.length - 2] : null;
+            if (Number.isFinite(prior) && prior !== 0) {
+              out.change = out.price - prior;
+              out.changePct = ((out.price - prior) / prior) * 100;
+            }
+          }
+        } catch { /* keep the zero-change mapping */ }
+      }
+      return out;
     }),
   );
   const indices = settled.filter((s) => s.status === 'fulfilled').map((s) => s.value);

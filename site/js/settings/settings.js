@@ -292,11 +292,13 @@ const intervalLabel = (m) => (m >= 60 ? `${m / 60}h` : `${m}m`);
 function renderArt() {
   pane().innerHTML = `
     <h2 class="pane__title">Art</h2>
-    <p class="pane__hint">How often the artwork changes (slideshow and dashboard card):</p>
+    <p class="pane__label">Rotation</p>
+    <p class="pane__hint">Applies to the slideshow and the dashboard card.</p>
     <div class="segmented" role="group" aria-label="How often the artwork changes">${ART_INTERVALS.map(
       (m) => `<button class="seg ${state.cfg.art.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
-    <p class="pane__hint">Collections to show — none selected means all:</p>
+    <p class="pane__label">Collections</p>
+    <p class="pane__hint">None selected means every collection shows.</p>
     <div class="rows">${ART_CATS.map(([id, label]) => {
       const on = state.cfg.art.cats.includes(id);
       return `<div class="row">
@@ -337,7 +339,7 @@ function renderPhotos() {
       then enter it here.`;
   pane().innerHTML = `
     <h2 class="pane__title">Photos</h2>
-    <p class="pane__hint">Where the photos come from:</p>
+    <p class="pane__label">Source</p>
     <div class="segmented" role="group" aria-label="Photo source">
       <button class="seg ${src === 'icloud' ? 'is-active' : ''}" data-photo-src="icloud">iCloud Shared Album</button>
       <button class="seg ${src === 'gdrive' ? 'is-active' : ''}" data-photo-src="gdrive">Google Drive Folder</button>
@@ -349,15 +351,18 @@ function renderPhotos() {
       <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
       <span class="row__label">Use these photos as the screensaver (replaces art)</span>
     </div>
-    <p class="pane__hint">How often the photo changes (slideshow and dashboard card):</p>
+    <p class="pane__label">Rotation</p>
+    <p class="pane__hint">Applies to the slideshow and the dashboard card.</p>
     <div class="segmented" role="group" aria-label="How often the photo changes">${ART_INTERVALS.map(
       (m) => `<button class="seg ${p.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
     ${src === 'gdrive'
-      ? `<p class="pane__hint">Paste the folder link (folder ids use characters the on-screen keyboard
-           can't type — use Paste here, or enter it on <b>${location.host}/setup</b> from your phone):</p>
+      ? `<p class="pane__label">Folder link</p>
+         <p class="pane__hint">Folder ids use characters the on-screen keyboard can't type — paste the
+           link here, or enter it at <b>${location.host}/setup</b> from your phone.</p>
          <button class="btn" data-paste>Paste link</button>`
-      : `<p class="pane__hint">Paste or type the album link (or just the token after <code>#</code>):</p>
+      : `<p class="pane__label">Album link</p>
+         <p class="pane__hint">Paste the link, or type just the token after the <code>#</code>.</p>
          <div class="btnrow">
            <button class="btn" data-paste>Paste link</button>
            <button class="btn btn--ghost" data-type>Type it instead</button>
@@ -610,11 +615,11 @@ function renderNjt() {
 function renderPath() {
   pane().innerHTML = `
     <h2 class="pane__title">PATH</h2>
-    <p class="pane__hint">Direction</p>
+    <p class="pane__label">Direction</p>
     <div class="rows">${PATH_DIRS.map(([id, label]) =>
       `<button class="row row--tap ${state.cfg.path.dir === id ? 'is-selected' : ''}" data-dir="${id}">${label}</button>`,
     ).join('')}</div>
-    <p class="pane__hint">Station</p>
+    <p class="pane__label">Station</p>
     <div class="rows rows--grid">${Object.entries(PATH_STATIONS).map(([code, name]) =>
       `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
     ).join('')}</div>`;
@@ -895,7 +900,7 @@ async function renderNews() {
     <h2 class="pane__title">Headlines</h2>
     <p class="pane__hint">Pick your sources — newest stories across all of them, merged.</p>
     ${groups.map((g) => `
-      <p class="pane__hint">${g}</p>
+      <p class="pane__label">${g}</p>
       <div class="rows">${NEWS_SOURCES.filter((s) => s[4] === g).map(([id, label]) => {
         const on = state.cfg.news.sources.includes(id);
         return `<div class="row">
@@ -1139,10 +1144,10 @@ function renderWorldclock() {
     <h2 class="pane__title">World Clock</h2>
     <p class="pane__hint">Cities display in order of their current time. Tap an office to add or remove it (up to 10).</p>
     <div class="chips">${cities().map((c, i) => `<button class="chip" data-rm="${i}">${escapeHtml(c.label)} ✕</button>`).join('')}</div>
-    <p class="pane__hint">Offices:</p>
+    <p class="pane__label">Offices</p>
     <div class="chips">${OFFICES.map(([label, zone], i) =>
       `<button class="chip ${has(label, zone) ? 'chip--on' : ''}" data-office="${i}">${label}</button>`).join('')}</div>
-    ${zonesApi ? `<p class="pane__hint">Or any time zone:</p>
+    ${zonesApi ? `<p class="pane__label">Any time zone</p>
     <button class="btn" data-add-zone>Add any time zone</button>
     <div class="drill"></div>` : ''}
     ${clockFormatMarkup()}`;
@@ -1188,13 +1193,14 @@ function renderWeather() {
   const draw = () => {
     pane().innerHTML = `
       <h2 class="pane__title">Weather</h2>
-      <p class="pane__hint">Temperature unit:</p>
+      <p class="pane__label">Temperature unit</p>
       <div class="segmented" role="group" aria-label="Temperature unit">
         <button class="seg ${state.cfg.loc.units !== 'C' ? 'is-active' : ''}" data-units="F">°F</button>
         <button class="seg ${state.cfg.loc.units === 'C' ? 'is-active' : ''}" data-units="C">°C</button>
       </div>
       <div class="row"><span class="row__label row__label--dim">Current</span><span class="row__value">${escapeHtml(state.cfg.loc.label)}</span></div>
-      <p class="pane__hint">Search a city anywhere, or a 5-digit US ZIP:</p>
+      <p class="pane__label">Location</p>
+      <p class="pane__hint">Search a city anywhere, or a 5-digit US ZIP.</p>
       <output class="code__display" aria-live="polite">${escapeHtml(query) || '&nbsp;'}</output>
       <div class="picklist">${results
         .map((r, i) => `<button class="btn picklist__item" data-pick="${i}">${escapeHtml(r.label)}</button>`)
@@ -1344,7 +1350,7 @@ function renderCode() {
       <p class="pane__hint code-export__note"></p>
     </div>
     <hr class="pane__rule">
-    <p class="pane__hint">Or move this board's setup to your phone:</p>
+    <p class="pane__hint">Or move this board's setup to your phone.</p>
     <button class="btn" data-qr>Show QR of current config</button>
     <div class="qr"></div>
     <p class="pane__hint">Setting up a non-touch device? Scan the QR code, click through the options to get a pre-configured <b>signage URL</b>.</p>`;

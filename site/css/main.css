@@ -1012,6 +1012,10 @@ body.mode-ambient .gear { bottom: 7px; }
    every capacity/size number are untouched. (Palette values follow the public
    momentum-design tokens; no Cisco fonts or marks ship with this.) */
 body.theme-momentum {
+  /* RoomOS exposes the device's CiscoSansTT to web content (board-verified
+     via the Diagnostics probe) — reference it by name, never bundle it. Off
+     Cisco hardware this silently falls through to the base stack. */
+  font-family: 'CiscoSansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   --bg: #000;
   --bg-card: #1a1a1a;
   --bg-card-2: #262626;

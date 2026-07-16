@@ -7,6 +7,7 @@ import { mapMarkets } from '../site/js/widgets/markets.js';
 import { mapBus } from '../site/js/widgets/bus.js';
 import { mapSiriStop } from '../worker/src/bus.js';
 import { mapYahooChart } from '../worker/src/markets.js';
+import { pickChart, currentTopic } from '../site/js/widgets/chart.js';
 
 const fixture = async (name) =>
   JSON.parse(await readFile(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -208,5 +209,73 @@ describe('mapBus (legs)', () => {
     const vm = mapBus(payload, 1000, sharedLegs);
     expect(vm.stops[0].route).toBe('QM1');
     expect(vm.stops[1].route).toBe('QM2');
+  });
+});
+
+describe('pickChart (chart exclude/pick logic)', () => {
+  const charts = [
+    { id: '1', title: 'Trump Approval Sinks', desc: 'poll of voters' },
+    { id: '2', title: 'How Global Population Growth Is Slowing', desc: 'annual growth rate' },
+    { id: '3', title: 'AI Chip Sales Surge', desc: 'GPU demand' },
+  ];
+  it('with excludePolitics on (default), skips the politics card for the next clean one', () => {
+    expect(pickChart(charts, { chart: { excludePolitics: true } }).id).toBe('2');
+  });
+  it('treats a missing chart config as politics-on (default)', () => {
+    expect(pickChart(charts, {}).id).toBe('2');
+    expect(pickChart(charts, undefined).id).toBe('2');
+  });
+  it('with excludePolitics off, returns charts[0] unchanged', () => {
+    expect(pickChart(charts, { chart: { excludePolitics: false } }).id).toBe('1');
+  });
+  it('matches politics terms case-insensitively across title AND desc', () => {
+    const cards = [
+      { id: 'x', title: 'Market Report', desc: 'The latest SENATE budget vote' }, // politics term in desc, upper-case
+      { id: 'y', title: 'Coffee Trends', desc: 'consumption is up' },
+    ];
+    expect(pickChart(cards, { chart: { excludePolitics: true } }).id).toBe('y');
+  });
+  it('falls back to charts[0] when every card is excluded (never blanks)', () => {
+    const allPolitics = [
+      { id: 'a', title: 'Election Poll', desc: '' },
+      { id: 'b', title: 'Senate Race', desc: 'ballot' },
+    ];
+    expect(pickChart(allPolitics, { chart: { excludePolitics: true } }).id).toBe('a');
+  });
+  it('returns null for an empty or missing list', () => {
+    expect(pickChart([], {})).toBeNull();
+    expect(pickChart(undefined, {})).toBeNull();
+  });
+});
+
+describe('currentTopic (deterministic 30-min rotation slot)', () => {
+  const slot = 30 * 60 * 1000;
+  it("returns '' when topics is empty or not an array", () => {
+    expect(currentTopic([], 0, slot)).toBe('');
+    expect(currentTopic(undefined, 0, slot)).toBe('');
+    expect(currentTopic('sports', 0, slot)).toBe('');
+    expect(currentTopic(null, 0, slot)).toBe('');
+  });
+  it('is a constant for a single-element list regardless of the clock', () => {
+    expect(currentTopic(['sports'], 0, slot)).toBe('sports');
+    expect(currentTopic(['sports'], 12345, slot)).toBe('sports');
+    expect(currentTopic(['sports'], slot * 999, slot)).toBe('sports');
+  });
+  it('advances to the next topic as now crosses a slot boundary', () => {
+    const topics = ['technology', 'sports', 'finance'];
+    expect(currentTopic(topics, 0, slot)).toBe('technology');
+    expect(currentTopic(topics, slot - 1, slot)).toBe('technology'); // still slot 0
+    expect(currentTopic(topics, slot, slot)).toBe('sports'); // slot 1
+    expect(currentTopic(topics, 2 * slot, slot)).toBe('finance'); // slot 2
+  });
+  it('wraps modulo the list length', () => {
+    const topics = ['technology', 'sports'];
+    expect(currentTopic(topics, 2 * slot, slot)).toBe('technology'); // slot 2 % 2 = 0
+    expect(currentTopic(topics, 3 * slot, slot)).toBe('sports'); // slot 3 % 2 = 1
+  });
+  it('defaults now/slotMs so the fleet stays consistent within a slot', () => {
+    // Same wall-clock slot ⇒ same topic across boards (no explicit now).
+    const topics = ['technology', 'sports'];
+    expect(currentTopic(topics)).toBe(topics[Math.floor(Date.now() / slot) % topics.length]);
   });
 });

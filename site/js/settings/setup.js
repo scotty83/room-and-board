@@ -1,7 +1,7 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
@@ -73,6 +73,7 @@ export const SETUP_SECTIONS = [
   { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
   { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
   { id: 'services-field', group: 'Daily Extras', triggers: ['services'] },
+  { id: 'chart-field', group: 'Daily Extras', triggers: ['chart'] },
 ];
 
 // Which step-2 config sections + category dividers are visible for a set of
@@ -151,6 +152,7 @@ async function boot() {
   await safe(renderPostsAccounts);
   await safe(renderPhotos);
   await safe(renderServicesField);
+  await safe(renderChartField);
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -428,6 +430,33 @@ async function renderMarketsNewsSources() {
   });
 }
 
+async function renderChartField() {
+  const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
+  const allSlugs = CHART_TOPICS.map(([, slug]) => slug);
+  const box = $('#chart-topics');
+  box.innerHTML =
+    `<label><input type="checkbox" id="chart-all-cb"> <b>Select all</b></label>` +
+    CHART_TOPICS.map(
+      ([label, slug]) => `<label><input type="checkbox" data-topic="${escapeHtml(slug)}"> ${escapeHtml(label)}</label>`,
+    ).join('');
+  const syncAll = () => { $('#chart-all-cb').checked = allSlugs.every((s) => cfg.chart.topics.includes(s)); };
+  const syncTopics = () => box.querySelectorAll('[data-topic]').forEach((cb) => { cb.checked = cfg.chart.topics.includes(cb.dataset.topic); });
+  syncTopics();
+  syncAll();
+  box.addEventListener('change', (e) => {
+    if (e.target.id === 'chart-all-cb') {
+      cfg.chart.topics = e.target.checked ? [...allSlugs] : [];
+      syncTopics();
+      return;
+    }
+    const slug = e.target.dataset.topic;
+    if (slug) { cfg.chart.topics = toggleIn(cfg.chart.topics, slug); syncAll(); }
+  });
+  const pol = $('#chart-politics');
+  pol.checked = cfg.chart.excludePolitics;
+  pol.addEventListener('change', () => { cfg.chart.excludePolitics = pol.checked; });
+}
+
 async function renderNewsSources() {
   const { NEWS_SOURCES } = await import('../widgets/news.js');
   $('#news-sources').innerHTML = NEWS_SOURCES.map(
@@ -510,17 +539,16 @@ async function renderBusStops() {
   paintChips();
 }
 
-async function renderNjt() {
-  try {
-    const { stations } = await (await fetch(`${WORKER_URL}/njt/stations`)).json();
-    $('#njt-station').innerHTML = stations
-      .map((s) => `<option value="${s.code}">${s.name}</option>`)
-      .join('');
-  } catch {
-    // keep the default option; the widget still works once the proxy is up
-  }
-  $('#njt-station').value = cfg.njt.station;
-  $('#njt-station').addEventListener('change', (e) => (cfg.njt.station = e.target.value));
+// New York Penn is fixed (mirrors LIRR/Amtrak); the user filters by line. No
+// selection = all lines. Modeled on the Markets News source checkboxes.
+function renderNjt() {
+  $('#njt-lines').innerHTML = NJT_LINES.map(
+    (l) => `<label><input type="checkbox" data-njt="${escapeHtml(l)}" ${cfg.njt.lines.includes(l) ? 'checked' : ''}> ${escapeHtml(l)}</label>`,
+  ).join('');
+  $('#njt-lines').addEventListener('change', (e) => {
+    const line = e.target.dataset.njt;
+    if (line) cfg.njt.lines = toggleIn(cfg.njt.lines, line);
+  });
 }
 
 // Shared follow-list field (substack pubs / bsky handles): chips + one

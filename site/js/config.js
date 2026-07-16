@@ -9,6 +9,7 @@
 
 import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
 import { TFL_TUBE_IDS, TFL_LINE_IDS } from './tfl-lines.js';
+import { CHART_TOPIC_SLUGS } from './widgets/chart-topics.js';
 import { DEFAULT_SCHEDULE } from './modes.js';
 
 export const ART_CATS = [
@@ -36,6 +37,21 @@ export const WIDGET_GROUPS = [
 
 const SERVICE_IDS = ['webex', 'zoom', 'slack', 'ubiquiti', 'cloudflare', 'github', 'm365', 'gworkspace', 'aws', 'claude', 'openai'];
 
+// NJ Transit rail lines served from New York Penn Station. The widget is
+// Penn-fixed (mirrors LIRR/Amtrak) and filters departures by line client-side;
+// [] = all lines. These must match the LINE strings the getStationSchedule feed
+// emits verbatim — VERIFY against the live board before merge to main. Single
+// source of truth shared by the default, validation, and the settings/setup pickers.
+export const NJT_LINES = [
+  'Northeast Corridor Line',
+  'North Jersey Coast Line',
+  'Morris & Essex Line',
+  'Montclair-Boonton Line',
+  'Gladstone Branch',
+  'Raritan Valley Line',
+];
+const NJT_LINE_SET = new Set(NJT_LINES);
+
 export const DEFAULT_CONFIG = Object.freeze({
   v: 3,
   t: 0,
@@ -57,6 +73,10 @@ export const DEFAULT_CONFIG = Object.freeze({
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
   marketsnews: Object.freeze({ sources: Object.freeze(['mw', 'wsj-markets', 'ft-markets', 'cnbc', 'nyt-business', 'yahoo-finance']) }),
   services: Object.freeze({ list: Object.freeze(['webex', 'slack', 'm365']) }), // first-enable default; SERVICE_IDS is the full menu
+  // Chart of the Day: hide-politics on by default (client-side keyword filter);
+  // topics = curated CHART_TOPICS slugs the card cycles through on refresh.
+  // [] = any/global listing (the newest chart across everything).
+  chart: Object.freeze({ excludePolitics: true, topics: Object.freeze([]) }),
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -82,9 +102,9 @@ export const DEFAULT_CONFIG = Object.freeze({
     { id: 'emollick.bsky.social', label: 'Ethan Mollick' },
     { id: 'simonwillison.net', label: 'Simon Willison' },
   ].map(Object.freeze)) }),
-  njt: Object.freeze({ station: 'NY', alerts: true }),
+  njt: Object.freeze({ lines: Object.freeze([]), alerts: true }), // New York Penn departures; [] = all lines
   amtrak: Object.freeze({ dest: '', alerts: true }), // NYP (Moynihan) board destination filter ('' = all trains)
-  path: Object.freeze({ station: '33S', dir: 'both' }), // ridepath consideredStation code
+  path: Object.freeze({ station: '33S', dir: 'ToNJ' }), // ridepath consideredStation code; default NJ-bound (evening commute home)
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes
@@ -236,6 +256,19 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : [...DEFAULT_CONFIG.marketsnews.sources];
       })(),
     },
+    chart: {
+      // Client-side hide-politics filter (on unless explicitly disabled).
+      excludePolitics: raw.chart?.excludePolitics !== false,
+      // Curated slugs the card cycles through; keep only valid ones, deduped,
+      // capped at the full vocabulary. [] = any/global listing. Old single-topic
+      // configs (raw.chart.topic) migrate to a one-element array when no topics
+      // array is present.
+      topics: (() => {
+        const src = Array.isArray(raw.chart?.topics) ? raw.chart.topics
+          : (raw.chart?.topics == null && CHART_TOPIC_SLUGS.has(raw.chart?.topic) ? [raw.chart.topic] : []);
+        return [...new Set(src.filter((s) => CHART_TOPIC_SLUGS.has(s)))].slice(0, CHART_TOPIC_SLUGS.size);
+      })(),
+    },
     services: {
       list: (() => {
         const picked = (Array.isArray(raw.services?.list) ? raw.services.list : [])
@@ -259,7 +292,10 @@ export function normalizeConfig(raw) {
       })(),
     },
     njt: {
-      station: str(raw.njt?.station, DEFAULT_CONFIG.njt.station, 4),
+      // New York Penn is fixed; the user filters by line (intersect against the
+      // known NYP-served set, dedupe). [] = all lines. Old station-based configs
+      // fall through to all lines — no migration needed.
+      lines: [...new Set((Array.isArray(raw.njt?.lines) ? raw.njt.lines : []).filter((l) => NJT_LINE_SET.has(l)))],
       alerts: raw.njt?.alerts !== false,
     },
     amtrak: {
@@ -355,6 +391,7 @@ export async function encodeConfig(cfg) {
   if (wire.substack && isDefault(wire.substack.pubs, DEFAULT_CONFIG.substack.pubs)) delete wire.substack;
   if (wire.bsky && isDefault(wire.bsky.handles, DEFAULT_CONFIG.bsky.handles)) delete wire.bsky;
   if (wire.marketsnews && isDefault(wire.marketsnews.sources, DEFAULT_CONFIG.marketsnews.sources)) delete wire.marketsnews;
+  if (wire.chart && isDefault(wire.chart, DEFAULT_CONFIG.chart)) delete wire.chart; // all-default → re-derives on decode
   if (wire.services && isDefault(wire.services.list, DEFAULT_CONFIG.services.list)) delete wire.services;
   if (wire.citibike && isDefault(wire.citibike.stations, DEFAULT_CONFIG.citibike.stations)) delete wire.citibike;
   if (wire.tfl && isDefault(wire.tfl.lines, DEFAULT_CONFIG.tfl.lines)) delete wire.tfl;

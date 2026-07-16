@@ -27,9 +27,9 @@ export const PATH_STATIONS = {
 };
 
 export const PATH_DIRS = [
-  ['both', 'Both directions'],
-  ['ToNY', 'To New York'],
   ['ToNJ', 'To New Jersey'],
+  ['ToNY', 'To New York'],
+  ['both', 'Both directions'],
 ];
 
 const DIR_LABELS = { ToNY: 'To New York', ToNJ: 'To New Jersey' };

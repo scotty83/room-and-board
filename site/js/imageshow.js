@@ -35,7 +35,7 @@ let userStepped = false; // guards against clobbering a swipe with deferred stat
 // swipe left/right to browse the supplied photo list.  Shows the ambient info
 // strip so the clock stays visible.  Stays up indefinitely (mode changes don't
 // touch it).
-export function openImageViewer(current, cfg, { list = [] } = {}) {
+export function openImageViewer(current, cfg, { list = [], caption = true } = {}) {
   // Reset session state synchronously.
   ++viewerGen;
   userStepped = false;
@@ -66,11 +66,11 @@ export function openImageViewer(current, cfg, { list = [] } = {}) {
   }
   viewer.innerHTML = `
     <img class="art-viewer__img" src="${escapeHtml(current.img)}" alt="${escapeHtml(current.title)}">
-    <div class="slide-caption">
+    ${caption ? `<div class="slide-caption">
       <span class="slide-caption__title">${escapeHtml(current.title)}</span>
       <span class="slide-caption__meta">${captionMeta(current)}</span>
       ${captionDesc(current)}
-    </div>
+    </div>` : ''}
     <div class="strip"></div>`;
   const strip = viewer.querySelector('.strip');
   const refreshStrip = () => {
@@ -98,7 +98,8 @@ function step(viewer, dir) {
     const imgEl = viewer.querySelector('.art-viewer__img');
     imgEl.src = item.img;
     imgEl.alt = item.title;
-    viewer.querySelector('.slide-caption').innerHTML = `
+    const cap = viewer.querySelector('.slide-caption');
+    if (cap) cap.innerHTML = `
       <span class="slide-caption__title">${escapeHtml(item.title)}</span>
       <span class="slide-caption__meta">${captionMeta(item)}</span>
       ${captionDesc(item)}`;

@@ -3,7 +3,7 @@
 // nothing served here is sensitive, and the boards fetch from a static origin.
 
 import { mapYahooChart } from './markets.js';
-import { fetchNjtDepartures, fetchNjtStations } from './njt.js';
+import { fetchNjtDepartures } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
 import { fetchBusStops, parseLegs } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
@@ -202,17 +202,8 @@ export default {
 
     if (path === '/njt/departures' && request.method === 'GET') {
       if (!env.NJT_USER || !env.NJT_PASS) return json({ error: 'njt_not_configured' }, 503);
-      const station = url.searchParams.get('station');
-      if (!station || !/^[A-Za-z0-9]{2,4}$/.test(station)) return json({ error: 'bad_station' }, 400);
-      const st = station.toUpperCase();
-      return cached(url.origin, `njt:${st}`, 60, () => fetchNjtDepartures(env, st));
-    }
-
-    if (path === '/njt/stations' && request.method === 'GET') {
-      if (!env.NJT_USER || !env.NJT_PASS) return json({ error: 'njt_not_configured' }, 503);
-      return cached(url.origin, 'njtstations', 24 * 3600, async () => ({
-        stations: await fetchNjtStations(env),
-      }));
+      // Pinned to New York Penn (the widget filters by line client-side).
+      return cached(url.origin, 'njt:NY', 60, () => fetchNjtDepartures(env));
     }
 
     if (path === '/markets' && request.method === 'GET') {

@@ -136,7 +136,7 @@ describe('encode/decode round trip', () => {
       ],
       subway: { lines: ['4', '5', '6'] },
       lirr: { dest: '171' },
-      njt: { station: 'NY' },
+      njt: { lines: ['Northeast Corridor Line', 'Morris & Essex Line'] },
       mode: 'scheduled',
       theme: 'dark',
     });
@@ -157,7 +157,7 @@ describe('encode/decode round trip', () => {
       subway: { lines: ['4', '5', '6', 'N', 'Q', 'R', 'A', 'C', 'E', 'L'] },
       lirr: { dest: '171' },
       mnr: { dest: '105' },
-      njt: { station: 'NY' },
+      njt: { lines: ['Northeast Corridor Line', 'North Jersey Coast Line', 'Morris & Essex Line', 'Montclair-Boonton Line', 'Gladstone Branch', 'Raritan Valley Line'] },
       bus: { stops: ['550685', '401234'] },
       sports: { teams: [{ lg: 'mlb', id: 'nym' }, { lg: 'nfl', id: 'nyj' }, { lg: 'nba', id: 'nyk' }, { lg: 'nhl', id: 'nyr' }, { lg: 'mls', id: 'nyc' }, { lg: 'epl', id: 'ars' }] },
       markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOG', 'META'] },
@@ -175,10 +175,11 @@ describe('encode/decode round trip', () => {
     const enc = await encodeConfig(cfg);
     // 2048-char URL minus ~100 chars of bridge auth leaves ~1900 for the
     // fragment; the fully-maxed config (10 tickers, 10 clock cities, 7 feeds,
-    // 12 fully-custom follow accounts) measures ~1120, so 1200 still guards
-    // ~1.6x headroom. Default follow lists are stripped from the wire and
-    // re-derived on decode, so untouched boards stay far smaller.
-    expect(enc.length).toBeLessThan(1200);
+    // 12 fully-custom follow accounts, all 6 NJT line-name strings) measures
+    // ~1280, so 1350 still guards ~1.4x headroom. Default follow lists are
+    // stripped from the wire and re-derived on decode, so untouched boards stay
+    // far smaller.
+    expect(enc.length).toBeLessThan(1350);
 
     const plain = await encodeConfig(normalizeConfig({}));
     expect(plain.length).toBeLessThan(700); // starter lists never ship
@@ -209,9 +210,9 @@ describe('pickNewest', () => {
 });
 
 describe('path/ferry/wotd config (v3 additive)', () => {
-  it('defaults path to 33rd St both directions and ferry to East 34th St', () => {
+  it('defaults path to 33rd St NJ-bound and ferry to East 34th St', () => {
     const cfg = normalizeConfig({});
-    expect(cfg.path).toEqual({ station: '33S', dir: 'both' });
+    expect(cfg.path).toEqual({ station: '33S', dir: 'ToNJ' });
     expect(cfg.ferry).toEqual({ landing: '17' });
   });
   it('keeps valid values and falls back on junk', () => {
@@ -219,7 +220,7 @@ describe('path/ferry/wotd config (v3 additive)', () => {
     expect(cfg.path).toEqual({ station: 'HOB', dir: 'ToNY' });
     expect(cfg.ferry.landing).toBe('87');
     const bad = normalizeConfig({ path: { station: 'X;DROP', dir: 'sideways' }, ferry: { landing: 'x' } });
-    expect(bad.path).toEqual({ station: '33S', dir: 'both' });
+    expect(bad.path).toEqual({ station: '33S', dir: 'ToNJ' });
     expect(bad.ferry.landing).toBe('17');
   });
   it('accepts the new ids in layouts', () => {
@@ -229,6 +230,38 @@ describe('path/ferry/wotd config (v3 additive)', () => {
       { id: 'wotd', x: 6, y: 0, w: 2, h: 2 },
     ] });
     expect(cfg.widgets).toEqual(['path', 'ferry', 'wotd']);
+  });
+});
+
+describe('chart config (v3 additive)', () => {
+  it('defaults to politics-hidden, no topics (any/global)', () => {
+    const cfg = normalizeConfig({});
+    expect(cfg.chart).toEqual({ excludePolitics: true, topics: [] });
+  });
+  it('honors an explicit politics opt-out', () => {
+    const cfg = normalizeConfig({ chart: { excludePolitics: false } });
+    expect(cfg.chart.excludePolitics).toBe(false);
+  });
+  it('keeps only valid slugs, deduped, and drops unknown/non-string ones', () => {
+    expect(normalizeConfig({ chart: { topics: ['technology', 'sports'] } }).chart.topics).toEqual(['technology', 'sports']);
+    expect(normalizeConfig({ chart: { topics: ['consumer goods'] } }).chart.topics).toEqual(['consumer goods']);
+    expect(normalizeConfig({ chart: { topics: ['technology', 'technology'] } }).chart.topics).toEqual(['technology']);
+    expect(normalizeConfig({ chart: { topics: ['technology', 'not-a-real-topic', 42] } }).chart.topics).toEqual(['technology']);
+    expect(normalizeConfig({ chart: { topics: 'technology' } }).chart.topics).toEqual([]); // not an array → empty
+  });
+  it('migrates an old single-topic config to a one-element topics array', () => {
+    expect(normalizeConfig({ chart: { topic: 'sports' } }).chart.topics).toEqual(['sports']);
+    // an invalid legacy slug migrates to empty (any topic), not a bogus entry
+    expect(normalizeConfig({ chart: { topic: 'not-a-real-topic' } }).chart.topics).toEqual([]);
+    // a present topics array wins over the legacy topic field
+    expect(normalizeConfig({ chart: { topic: 'sports', topics: ['technology'] } }).chart.topics).toEqual(['technology']);
+  });
+  it('strips a default chart from the wire but keeps a customized one', async () => {
+    const plainDec = await decodeConfig(await encodeConfig(normalizeConfig({})));
+    expect(plainDec.chart).toEqual({ excludePolitics: true, topics: [] }); // re-derived on decode
+    const custom = normalizeConfig({ chart: { excludePolitics: false, topics: ['sports', 'technology'] } });
+    const dec = await decodeConfig(await encodeConfig(custom));
+    expect(dec.chart).toEqual({ excludePolitics: false, topics: ['sports', 'technology'] });
   });
 });
 

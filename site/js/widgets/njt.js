@@ -1,13 +1,15 @@
-// NJ Transit rail departures via the Cloudflare Worker (NJT's terms require
-// their data be served from a non-NJT server; the Worker holds credentials
-// and caches upstream responses).
+// NJ Transit rail departures from New York Penn Station via the Cloudflare
+// Worker (NJT's terms require their data be served from a non-NJT server; the
+// Worker holds credentials and caches upstream responses). Penn-fixed like
+// LIRR/Amtrak — the user filters to specific lines client-side (cfg.njt.lines,
+// [] = all lines).
 
 import { WORKER_URL } from '../env.js';
 import { escapeHtml, fmtTime } from '../util.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-export const meta = { id: 'njt', title: 'NJ Transit', refreshMs: 2 * 60 * 1000 };
+export const meta = { id: 'njt', title: 'NJ Transit — Penn Station', refreshMs: 2 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
@@ -56,12 +58,20 @@ export function mapNjt(payload, nowSec, showAlerts = true) {
   const alerts = showAlerts
     ? (payload.alerts ?? []).filter((a) => typeof a?.header === 'string').slice(0, 2)
     : [];
-  return { updatedAt: payload.updatedAt ?? null, stale: Boolean(payload.stale), trains, alerts };
+  // No "as of" stamp (updatedAt null): getStationSchedule is NJ Transit's static
+  // daily timetable, not live predictions, so a cache-time stamp would frame it
+  // as fresh intraday data. Outage staleness still shows via .is-stale dimming.
+  return { updatedAt: null, stale: Boolean(payload.stale), trains, alerts };
 }
 
 export async function fetchData(cfg, net) {
-  const payload = await net.fetchJSON(
-    `${WORKER_URL}/njt/departures?station=${encodeURIComponent(cfg.njt.station)}`,
-  );
-  return mapNjt(payload, Math.floor(Date.now() / 1000), cfg.njt.alerts);
+  const payload = await net.fetchJSON(`${WORKER_URL}/njt/departures`);
+  const vm = mapNjt(payload, Math.floor(Date.now() / 1000), cfg.njt.alerts);
+  // Client-side line filter (mirrors Amtrak's dest filter): [] = all lines.
+  const lines = cfg.njt.lines ?? [];
+  if (lines.length) {
+    const want = new Set(lines.map((l) => l.toLowerCase().trim()));
+    vm.trains = vm.trains.filter((t) => want.has(t.line.toLowerCase().trim()));
+  }
+  return vm;
 }

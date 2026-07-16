@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -127,6 +127,7 @@ export const NAV_MODEL = [
   { type: 'group', label: 'News & Social', items: [['news', 'Headlines'], ['substack', 'Substack'], ['bsky', 'Bluesky']] },
   { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'item', id: 'services', label: 'Cloud Services' },
+  { type: 'item', id: 'chart', label: 'Chart of the Day' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },
 ];
@@ -189,7 +190,7 @@ function pane() {
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
-  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart,
   art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
@@ -544,59 +545,40 @@ async function renderMnr() {
   });
 }
 
-// Station list is fetched once per settings session and cached here (like the
-// bundled mnrStations/lirrStations above). Re-rendering after a pick reuses it,
-// so choosing a station no longer re-fetches /njt/stations — that repeated fetch
-// was both the visible flicker and, on a cold token cache, a getToken burst.
-let njtStations = null;
-async function renderNjt() {
-  const _nav = navToken;
-  if (!njtStations) {
-    pane().innerHTML = `<h2 class="pane__title">NJ Transit</h2><p class="pane__hint">Loading stations…</p>`;
-    try {
-      njtStations = (await fetchJSON(`${WORKER_URL}/njt/stations`)).stations;
-    } catch {
-      njtStations = null;
-    }
-    if (navStale(_nav)) return;
-  }
-  if (!njtStations?.length) {
-    pane().innerHTML = `
-      <h2 class="pane__title">NJ Transit</h2>
-      <p class="pane__empty">Station list unavailable — is the NJ Transit proxy configured?</p>`;
-    return;
-  }
-  const byCode = Object.fromEntries(njtStations.map((s) => [s.code, s]));
+// The board is pinned to New York Penn Station (mirrors LIRR/Amtrak); the user
+// filters departures by line. Empty selection = all lines. Modeled on the
+// subway/TfL line multi-selects — no station fetch, so no flicker or getToken burst.
+function renderNjt() {
+  const chosen = state.cfg.njt.lines;
+  const lineChips = NJT_LINES.map((l) => {
+    const on = chosen.includes(l);
+    return `<button class="chip ${on ? 'chip--on' : ''}" data-line="${escapeHtml(l)}"
+      role="switch" aria-checked="${on}">${escapeHtml(l)}</button>`;
+  }).join('');
   pane().innerHTML = `
-    <h2 class="pane__title">NJ Transit</h2>
-    <p class="pane__hint">Shows departures from your station.</p>
-    <div class="kv"><span>Station</span><b>${escapeHtml(byCode[state.cfg.njt.station]?.name ?? state.cfg.njt.station)}</b>
-      <button class="btn" data-pick-station>Change</button></div>
-    ${alertsToggleHtml('njt')}
-    <div class="drill"></div>`;
+    <h2 class="pane__title">NJ Transit — Penn Station departures</h2>
+    <p class="pane__hint">Departures from New York Penn Station. Pick the lines to show — leave all off to show every line.</p>
+    <div class="chips">${lineChips}</div>
+    ${alertsToggleHtml('njt')}`;
   bindAlertsToggle(renderNjt);
-  pane().querySelector('[data-pick-station]').addEventListener('click', () => {
-    drillList(
-      'Choose a station',
-      njtStations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      (pick) => {
-        state.cfg.njt.station = pick.value.code;
-        renderNjt();
-      },
-    );
-  });
+  pane().querySelectorAll('[data-line]').forEach((chip) =>
+    chip.addEventListener('click', () => {
+      state.cfg.njt.lines = toggleIn(state.cfg.njt.lines, chip.dataset.line);
+      renderNjt();
+    }),
+  );
 }
 
 function renderPath() {
   pane().innerHTML = `
     <h2 class="pane__title">PATH</h2>
-    <p class="pane__hint">Station</p>
-    <div class="rows">${Object.entries(PATH_STATIONS).map(([code, name]) =>
-      `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
-    ).join('')}</div>
     <p class="pane__hint">Direction</p>
     <div class="rows">${PATH_DIRS.map(([id, label]) =>
       `<button class="row row--tap ${state.cfg.path.dir === id ? 'is-selected' : ''}" data-dir="${id}">${label}</button>`,
+    ).join('')}</div>
+    <p class="pane__hint">Station</p>
+    <div class="rows rows--grid">${Object.entries(PATH_STATIONS).map(([code, name]) =>
+      `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
     ).join('')}</div>`;
   pane().querySelectorAll('[data-station]').forEach((btn) =>
     btn.addEventListener('click', () => {
@@ -904,6 +886,55 @@ async function renderMarketsNews() {
       renderMarketsNews();
     }),
   );
+}
+
+async function renderChart() {
+  const _nav = navToken;
+  const { CHART_TOPICS } = await import('../widgets/chart-topics.js');
+  if (navStale(_nav)) return;
+  const c = state.cfg.chart;
+  const allSlugs = CHART_TOPICS.map(([, slug]) => slug);
+  const allOn = allSlugs.every((slug) => c.topics.includes(slug));
+  pane().innerHTML = `
+    <h2 class="pane__title">Chart of the Day</h2>
+    <p class="pane__hint">A daily Statista infographic. Turn on the topics you want and the card cycles through them on each refresh. With none on, it shows the newest chart across every topic.</p>
+    <div class="row row--control">
+      <button class="toggle ${allOn ? 'is-on' : ''}" data-topic-all role="switch" aria-checked="${allOn}">
+        <span class="toggle__knob"></span>
+      </button>
+      <span class="row__label">Select all</span>
+    </div>
+    <div class="rows rows--grid">${CHART_TOPICS.map(([label, slug]) => {
+      const on = c.topics.includes(slug);
+      return `<div class="row">
+        <button class="toggle ${on ? 'is-on' : ''}" data-topic="${escapeHtml(slug)}" role="switch" aria-checked="${on}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">${escapeHtml(label)}</span>
+      </div>`;
+    }).join('')}</div>
+    <div class="pane__section">
+      <div class="row">
+        <button class="toggle ${c.excludePolitics ? 'is-on' : ''}" data-chart-politics role="switch" aria-checked="${c.excludePolitics}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">Hide political charts</span>
+      </div>
+    </div>`;
+  pane().querySelector('[data-topic-all]').addEventListener('click', () => {
+    state.cfg.chart.topics = allOn ? [] : [...allSlugs];
+    renderChart();
+  });
+  pane().querySelectorAll('[data-topic]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.chart.topics = toggleIn(state.cfg.chart.topics, btn.dataset.topic);
+      renderChart();
+    }),
+  );
+  pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
+    state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
+    renderChart();
+  });
 }
 
 async function renderServices() {

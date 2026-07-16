@@ -376,24 +376,24 @@ body.mode-ambient .gear { bottom: 7px; }
   background: var(--bg);
 }
 .settings__rail {
-  background: var(--bg-card); padding: 28px 24px calc(28px + var(--safe-bottom));
-  display: flex; flex-direction: column; gap: 18px;
+  background: var(--bg-card); padding: 20px 24px calc(28px + var(--safe-bottom));
+  display: flex; flex-direction: column; gap: 12px;
   min-height: 0; /* children may scroll; the footer must never leave view */
 }
-.settings__brand { font-size: 30px; font-weight: 700; flex: none; }
+.settings__brand { font-size: 28px; font-weight: 700; flex: none; margin: 0; }
 .settings__nav {
   display: flex; flex-direction: column; gap: 4px;
   flex: 1; min-height: 0; overflow-y: auto; /* nav scrolls, never the footer */
 }
 .settings__navitem {
-  text-align: left; font-size: 22px; padding: 11px 16px; min-height: 48px;
+  text-align: left; font-size: 22px; padding: 9px 16px; min-height: 44px;
   border: none; border-radius: 10px; background: none; color: var(--ink-dim); cursor: pointer;
   flex: none;
 }
 .settings__navitem.is-active { background: var(--bg-card-2); color: var(--ink); font-weight: 600; }
 .settings__navgroup {
   display: flex; align-items: center; gap: 10px;
-  text-align: left; font-size: 22px; padding: 11px 16px; min-height: 48px;
+  text-align: left; font-size: 22px; padding: 9px 16px; min-height: 44px;
   border: none; border-radius: 10px; background: none; color: var(--ink-dim); cursor: pointer; flex: none;
 }
 .settings__chev {
@@ -415,11 +415,11 @@ body.mode-ambient .gear { bottom: 7px; }
 @media (prefers-reduced-motion: reduce) {
   .settings__chev, .settings__navkids { transition: none; }
 }
-.settings__railfoot { display: flex; flex-direction: column; gap: 10px; flex: none; }
+.settings__railfoot { display: flex; flex-direction: column; gap: 8px; flex: none; }
 /* Brand wordmark beneath the footer buttons, set apart by space alone
    (calm-utility — no divider needed). Decorative; the dialog is already
    labelled "Settings". */
-.settings__lockup { align-self: center; width: 216px; max-width: 100%; height: auto; margin-top: 18px; }
+.settings__lockup { align-self: center; width: 180px; max-width: 100%; height: auto; margin-top: 8px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
@@ -439,6 +439,14 @@ body.mode-ambient .gear { bottom: 7px; }
 .row__actions { display: flex; gap: 10px; }
 .row--tap { border: none; color: var(--ink); font-size: 23px; text-align: left; cursor: pointer; }
 .row--tap.is-selected { outline: 2px solid var(--accent); }
+/* Dense multi-column variant for long toggle lists (e.g. the 19 Chart topics)
+   so they fit the pane without scrolling; flows into as many columns as fit. */
+.rows--grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 8px 12px; max-width: 1120px; }
+/* A distinct control group separated from what precedes it by a divider + space. */
+.pane__section { max-width: 860px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--bg-card-2); }
+/* Master control (e.g. Select all) above a grid — bare, not carded, so it reads
+   as a control over the options rather than one of them. */
+.row--control { background: transparent; padding-left: 0; margin-bottom: 2px; }
 
 .wgroups { columns: 2; column-gap: 48px; max-width: 1200px; }
 .wgroup { break-inside: avoid; margin-bottom: 28px; }

@@ -62,8 +62,9 @@
       </section>
 
       <section class="field" id="njt-field">
-        <h2>NJ Transit rail station</h2>
-        <select id="njt-station"><option value="NY">New York Penn Station</option></select>
+        <h2>NJ Transit <small>(Penn Station departures)</small></h2>
+        <label>Only these lines <small>(none = all lines)</small></label>
+        <div id="njt-lines" class="checks"></div>
         <label class="alertcheck"><input type="checkbox" id="njt-alerts"> Show service alerts</label>
       </section>
 
@@ -76,10 +77,10 @@
 
       <section class="field" id="path-field">
         <h2>PATH</h2>
-        <label for="path-station">Station</label>
-        <select id="path-station"></select>
         <label for="path-dir">Direction</label>
         <select id="path-dir"></select>
+        <label for="path-station">Station</label>
+        <select id="path-station"></select>
       </section>
 
       <section class="field" id="ferry-field">
@@ -253,6 +254,14 @@
         <h2>Cloud Services</h2>
         <p class="hint">Pick the cloud services to watch on the board.</p>
         <div id="services-list" class="checks"></div>
+      </section>
+
+      <section class="field" id="chart-field">
+        <h2>Chart of the Day</h2>
+        <label>Topics</label>
+        <div id="chart-topics" class="checks"></div>
+        <p class="hint">Pick any number to cycle through. None selected shows the newest chart across everything.</p>
+        <label class="alertcheck"><input type="checkbox" id="chart-politics"> Hide political charts</label>
       </section>
 
       <footer class="setup__foot">

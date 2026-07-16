@@ -238,13 +238,19 @@ export const DEMO_VMS = {
       { pos: 5, cid: 'alpine', name: 'Alpine', pts: 60 },
       { pos: 6, cid: 'rb', name: 'RB F1 Team', pts: 59 },
     ] },
-  chart: { updatedAt: 1783000000, chart: {
+  chart: { updatedAt: 1783000000, charts: [{
     id: '28744',
     title: 'How Global Population Growth Is Slowing',
     desc: 'This chart shows the annual growth rate of the world population from 1950 to 2100 (projected).',
     date: '2026-07-10',
     url: 'https://cdn.statcdn.com/Infographic/images/normal/28744.jpeg',
-    link: 'https://www.statista.com/chart/28744/world-population-growth-timeline-and-forecast/' } },
+    link: 'https://www.statista.com/chart/28744/world-population-growth-timeline-and-forecast/' }, {
+    id: '28730',
+    title: 'How Voters Rate the Economy',
+    desc: 'A recent election-season poll of registered voters on the state of the economy.',
+    date: '2026-07-09',
+    url: 'https://cdn.statcdn.com/Infographic/images/normal/28730.jpeg',
+    link: 'https://www.statista.com/chart/28730/how-voters-rate-the-economy/' }] },
   apod: { updatedAt: 1783000000, photo: {
     url: 'https://apod.nasa.gov/apod/image/2607/M24_1088.jpg',
     title: 'Messier 24: Sagittarius Star Cloud',

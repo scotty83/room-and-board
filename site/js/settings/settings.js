@@ -1246,10 +1246,10 @@ function renderDisplay() {
     <p class="pane__label">Mode</p>
     <div class="segmented" role="group" aria-label="Display mode">
       ${seg('dashboard', 'Always dashboard')}
-      ${seg('ambient', 'Always art')}
+      ${seg('ambient', 'Always screensaver')}
       ${seg('scheduled', 'Scheduled')}
     </div>
-    ${state.cfg.mode === 'scheduled' ? `<p class="pane__hint">Dashboard shows during these windows; art shows the rest of the time.</p>
+    ${state.cfg.mode === 'scheduled' ? `<p class="pane__hint">Dashboard shows during these windows; the screensaver shows the rest of the time.</p>
     <div class="sched">${state.cfg.schedule.map((w, i) => `
       <div class="sched__win">
         <button class="btn sched__step" data-i="${i}" data-t="start" data-d="-1">▼</button>

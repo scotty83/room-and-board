@@ -23,9 +23,38 @@ const decode = (s) =>
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>');
 
-// Parse every infographic card on the page; return the newest by publish date
-// (first in document order wins a tie). Throws when nothing parses so the
-// route's cached() falls back to the stale copy instead of caching junk.
+// Curated per-topic slugs the /chart route accepts (label + slug). Each was
+// verified to load the SSO chain and return live infographic cards; some slugs
+// carry spaces (URL-encoded on fetch). Open vocabulary — there is no master
+// list, so this is a hand-picked allowlist. Keep it alphabetical by label.
+export const CHART_TOPICS = [
+  ['Artificial Intelligence', 'artificial intelligence'],
+  ['Business', 'business'],
+  ['Consumer Goods', 'consumer goods'],
+  ['E-Commerce', 'e-commerce'],
+  ['Economy', 'economy'],
+  ['Energy', 'energy'],
+  ['Entertainment', 'entertainment'],
+  ['Environment', 'environment'],
+  ['Finance', 'finance'],
+  ['Health', 'health'],
+  ['Internet', 'internet'],
+  ['Media', 'media'],
+  ['Retail', 'retail'],
+  ['Science', 'science'],
+  ['Society', 'society'],
+  ['Sports', 'sports'],
+  ['Technology', 'technology'],
+  ['Transportation', 'transportation'],
+  ['Travel', 'travel'],
+];
+const TOPIC_SLUGS = new Set(CHART_TOPICS.map(([, slug]) => slug));
+
+// Parse every infographic card on the page; return them newest-first (document
+// order breaks a date tie) capped to the freshest ~10 so a client-side filter
+// (e.g. hide-politics) always has a fallback and never blanks the card. Throws
+// when nothing parses so the route's cached() falls back to the stale copy
+// instead of caching junk.
 export function mapChart(html) {
   const cards = [];
   const re = /href="\/chart\/(\d+)\/([a-z0-9-]+)\/"[^>]*[\s\S]{0,200}?data-infographic-panel-card([\s\S]*?)<\/a>/g;
@@ -45,16 +74,35 @@ export function mapChart(html) {
     });
   }
   if (!cards.length) throw new Error('statista: no infographic cards parsed');
-  const chart = cards.reduce((best, c) => (c.date > best.date ? c : best), cards[0]);
-  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, chart };
+  // Stable newest-first: sort by date desc, keeping the original document order
+  // for same-date cards (Array.prototype.sort is stable in V8/workerd).
+  const charts = cards
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => (a.c.date < b.c.date ? 1 : a.c.date > b.c.date ? -1 : a.i - b.i))
+    .slice(0, 10)
+    .map(({ c }) => c);
+  // Keep `chart` (the newest) beside `charts[]` so a client that only reads the
+  // legacy singular field keeps working when this worker deploys ahead of the
+  // new widget (e.g. prod worker updated, prod chart widget not yet).
+  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, chart: charts[0], charts };
 }
 
-export async function fetchChart() {
+// topic '' (default) hits the global listing; a validated slug re-points the
+// scrape at the per-topic page. The route validates against CHART_TOPICS before
+// calling here, but re-check so a bad slug can never smuggle path segments.
+function topicUrl(topic) {
+  if (!topic) return PAGE;
+  if (!TOPIC_SLUGS.has(topic)) throw new Error(`statista: unknown topic "${topic}"`);
+  return `${PAGE}${encodeURIComponent(topic)}/`;
+}
+
+export async function fetchChart(topic = '') {
   // The page bounces through /sso/iplogin and back, setting cookies at EVERY
   // hop (STATSESSID, __sso_iplogin, …). fetch's follow mode drops cookies
   // between hops, so walk the chain manually with a tiny cookie jar.
+  const start = topicUrl(topic);
   const jar = new Map();
-  let url = PAGE;
+  let url = start;
   for (let hop = 0; hop < 6; hop += 1) {
     const headers = { 'User-Agent': UA, Accept: 'text/html' };
     if (jar.size) headers.Cookie = [...jar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
@@ -65,7 +113,7 @@ export async function fetchChart() {
       if (eq > 0) jar.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim());
     }
     if (res.status >= 300 && res.status < 400) {
-      url = new URL(res.headers.get('Location') ?? PAGE, url).href;
+      url = new URL(res.headers.get('Location') ?? start, url).href;
       continue;
     }
     if (!res.ok) throw new Error(`statista ${res.status}`);

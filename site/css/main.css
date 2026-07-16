@@ -606,19 +606,44 @@ body.mode-ambient .gear { bottom: 7px; }
   .edit-handle, .edit-remove { transition: background 0.15s; }
   .edit-handle:active, .edit-remove:active { transform: none; }
 }
-.editor__bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 24px; }
-.edit-tray { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.edit-tray__label { font-size: 22px; color: var(--ink-dim); }
-/* Compact metrics: min-height 56px stays (the board's touch floor); the width
-   savings come from tighter padding and no per-chip "(no room)" suffix. */
+/* Top-align so the tray can grow/collapse rows without re-centering the actions;
+   the tray takes the width, Done/Cancel stay compact on the right. */
+.editor__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-top: 20px; }
+.edit-tray { flex: 1; min-width: 0; }
+/* "Add a widget" region heading — replaces the old orphaned inline "Add:" token. */
+.edit-tray__head { font-size: 15px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
+.edit-tray__chips { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+/* Add chips are OUTLINE controls (transparent, NOT the tiles' --bg-card fill) so
+   the palette reads as controls on the canvas, not a second field of mini-tiles.
+   min-height 56px holds the board's touch floor. */
 .edit-tray__chip {
-  font-size: 20px; padding: 10px 16px; min-height: 56px;
-  border: none; border-radius: 28px; cursor: pointer;
-  background: var(--bg-card); color: var(--ink);
+  font-size: 20px; padding: 12px 18px; min-height: 56px;
+  border: 1px solid rgba(147, 160, 180, 0.16); border-radius: 12px; cursor: pointer;
+  background: transparent; color: var(--ink);
 }
-.edit-tray__chip:disabled { opacity: 0.4; cursor: default; }
-.edit-tray__legend { flex-basis: 100%; font-size: 17px; color: var(--ink-dim); opacity: 0.8; }
-.editor__actions { display: flex; gap: 14px; }
+.edit-tray__chip:active { border-color: var(--accent); }
+/* Blocked: dim the border + text but KEEP the shape (opacity:0.4 collapsed the
+   chip to ~1.3:1 against the bg, so it vanished). */
+.edit-tray__chip:disabled { color: var(--ink-faint); border-color: rgba(147, 160, 180, 0.08); cursor: default; }
+.edit-tray__chip small { color: var(--ink-faint); font-size: 16px; margin-left: 6px; }
+/* Commute is the biggest category — a collapsed expander so it doesn't wall the tray. */
+.edit-tray__toggle {
+  font-size: 20px; min-height: 56px; padding: 0 18px;
+  border: 1px solid rgba(88, 166, 255, 0.4); border-radius: 12px; cursor: pointer;
+  background: transparent; color: var(--ink);
+  display: inline-flex; align-items: center; gap: 9px;
+}
+.edit-tray__caret { color: var(--accent); font-size: 16px; }
+.edit-tray__count { color: var(--ink-faint); font-size: 17px; }
+/* Revealed Commute chips sit in a faint accent inset so they read as "inside Commute". */
+.edit-tray__group {
+  display: inline-flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 8px;
+  border-radius: 14px; background: rgba(88, 166, 255, 0.05); border: 1px dashed rgba(88, 166, 255, 0.25);
+}
+.edit-tray__group[hidden] { display: none; }
+.edit-tray__legend { width: 100%; font-size: 16px; color: var(--ink-faint); margin: 12px 0 0; }
+.editor__actions { display: flex; gap: 12px; flex: none; }
+.editor__actions .btn--ghost { background: transparent; border-color: transparent; color: var(--ink-dim); }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
 }
@@ -777,7 +802,6 @@ body.mode-ambient .gear { bottom: 7px; }
   pointer-events: none;
 }
 .edit-block { flex-direction: column; gap: 4px; }
-.edit-tray__chip small { color: var(--ink-dim); font-size: 17px; }
 
 /* Navigational chrome, not content: small + --ink-dim (--ink-dim stays AA-safe
    at 15px where --ink-faint would drop to 4.49:1). */

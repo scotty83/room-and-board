@@ -7,11 +7,17 @@
 
 import { GRID, MIN_SIZE, firstFit, placeWithPush } from './layout.js';
 import { capacityLabel } from './capacity.js';
-import { WIDGET_IDS } from './config.js';
+import { WIDGET_GROUPS } from './config.js';
 
 // Diagonal two-headed arrow (↖↘ — the axis a corner-resize actually moves
 // along). Lives inside the filled resize chip; stroke follows the chip color.
 const RESIZE_ICON = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9 4 4m0 0v5m0-5h5M15 15l5 5m0 0v-5m0 5h-5"/></svg>`;
+
+// Add-tray category order: the same groups as Settings/setup, but Commute (the
+// biggest, ~10 widgets) rendered LAST behind an expander so revealing it pushes
+// nothing above it. Non-Commute groups flow inline; chips sort alpha within group.
+const TRAY_INLINE_GROUPS = WIDGET_GROUPS.filter((g) => g.label !== 'Commute');
+const TRAY_COMMUTE = WIDGET_GROUPS.find((g) => g.label === 'Commute');
 
 const TITLES = {
   apod: 'NASA Daily Photo',
@@ -48,6 +54,7 @@ const TITLES = {
 export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   root ??= document.querySelector('#edit-root');
   let layout = cfg.layout.map((r) => ({ ...r }));
+  let commuteOpen = false; // Commute expander state; persists across re-renders
 
   root.innerHTML = `
     <div class="editor">
@@ -59,7 +66,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
         <div class="edit-tray"></div>
         <div class="editor__actions">
           <button class="btn btn--primary" data-done>Done</button>
-          <button class="btn" data-cancel>Cancel</button>
+          <button class="btn btn--ghost" data-cancel>Cancel</button>
         </div>
       </div>
     </div>`;
@@ -136,18 +143,28 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     // carrying a "(no room)" suffix — with 20+ widgets the repeated text
     // wrapped the tray to 5 rows and squeezed the grid preview above it.
     let anyBlocked = false;
+    const chip = (id) => {
+      const fits = firstFit(layout, id, MIN_SIZE[id]) !== null;
+      if (!fits) anyBlocked = true;
+      const [mw, mh] = MIN_SIZE[id];
+      // Enabled chips are just the title; the min-size hint shows only on blocked
+      // ones (where "needs MxM, no room" is the relevant fact).
+      return `<button class="edit-tray__chip" data-add="${id}"${fits ? '' : ' disabled title="No room at its minimum size"'}>${TITLES[id]}${fits ? '' : ` <small>${mw}×${mh}</small>`}</button>`;
+    };
+    const chipsFor = (g) => g.ids.filter((id) => !rectOf(id))
+      .sort((a, b) => TITLES[a].localeCompare(TITLES[b]))
+      .map(chip).join('');
+    const inlineChips = TRAY_INLINE_GROUPS.map(chipsFor).join('');
+    const commuteN = TRAY_COMMUTE.ids.filter((id) => !rectOf(id)).length;
+    const commuteChips = chipsFor(TRAY_COMMUTE);
     tray.innerHTML =
-      '<span class="edit-tray__label">Add:</span>' +
-      WIDGET_IDS.filter((id) => !rectOf(id))
-        .map((id) => {
-          const fits = firstFit(layout, id, MIN_SIZE[id]) !== null;
-          anyBlocked ||= !fits;
-          const [mw, mh] = MIN_SIZE[id];
-          return `<button class="edit-tray__chip" data-add="${id}" ${fits ? '' : 'disabled title="No room at its minimum size"'}>
-            + ${TITLES[id]} <small>${mw}×${mh}</small></button>`;
-        })
-        .join('') +
-      (anyBlocked ? '<span class="edit-tray__legend">faded = no room at its minimum size</span>' : '');
+      '<p class="edit-tray__head">Add a widget</p>' +
+      '<div class="edit-tray__chips">' + inlineChips +
+        (commuteN
+          ? `<button class="edit-tray__toggle" data-commute-toggle aria-expanded="${commuteOpen}"><span class="edit-tray__caret">${commuteOpen ? '▾' : '▸'}</span> Commute <span class="edit-tray__count">· ${commuteN}</span></button><span class="edit-tray__group" data-commute-group${commuteOpen ? '' : ' hidden'}>${commuteChips}</span>`
+          : '') +
+      '</div>' +
+      (anyBlocked ? '<p class="edit-tray__legend">faded = no room at its minimum size</p>' : '');
 
     blocksHost.querySelectorAll('[data-remove]').forEach((btn) =>
       btn.addEventListener('click', (e) => {
@@ -158,6 +175,14 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     tray.querySelectorAll('[data-add]').forEach((btn) =>
       btn.addEventListener('click', () => add(btn.dataset.add)),
     );
+    tray.querySelector('[data-commute-toggle]')?.addEventListener('click', (e) => {
+      commuteOpen = !commuteOpen;
+      const grp = tray.querySelector('[data-commute-group]');
+      if (grp) grp.hidden = !commuteOpen;
+      const tog = e.currentTarget;
+      tog.setAttribute('aria-expanded', String(commuteOpen));
+      tog.querySelector('.edit-tray__caret').textContent = commuteOpen ? '▾' : '▸';
+    });
     blocksHost.querySelectorAll('.edit-block').forEach(bindDrag);
     blocksHost.querySelectorAll('[data-resize]').forEach(bindResize);
   }

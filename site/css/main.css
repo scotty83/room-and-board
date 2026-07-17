@@ -446,7 +446,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .settings__lockup { align-self: center; width: 180px; max-width: 100%; height: auto; margin-top: 8px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
 /* RoomOS-style scroll indicator on the settings scrollables: a slim rounded
-   white-alpha thumb, no track — matches the native Settings dialog. */
+   SOLID WHITE thumb, no track — and like the native dialog it only shows
+   while its own surface is scrolling (settings.js toggles .is-scrolling;
+   classic styled scrollbars would otherwise sit visible permanently). */
 .settings__nav::-webkit-scrollbar,
 .settings__pane::-webkit-scrollbar,
 .drill__list::-webkit-scrollbar { width: 6px; }
@@ -455,7 +457,10 @@ body.mode-ambient .gear { bottom: 7px; }
 .drill__list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
 .settings__nav::-webkit-scrollbar-thumb,
 .settings__pane::-webkit-scrollbar-thumb,
-.drill__list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.45); border-radius: 999px; }
+.drill__list::-webkit-scrollbar-thumb { background: transparent; border-radius: 999px; }
+.settings__nav.is-scrolling::-webkit-scrollbar-thumb,
+.settings__pane.is-scrolling::-webkit-scrollbar-thumb,
+.drill__list.is-scrolling::-webkit-scrollbar-thumb { background: #fff; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
 /* Sub-section label inside a pane (e.g. Display's Mode / Greeting name):

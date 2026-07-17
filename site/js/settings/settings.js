@@ -82,6 +82,20 @@ export async function openSettings(cfg, { focus } = {}) {
     </div>`;
   state.root.querySelector('.settings__close').addEventListener('click', closeSettings);
   state.root.querySelector('.settings__save').addEventListener('click', saveAndClose);
+  // RoomOS-style scroll indicator: a surface's thumb shows only WHILE that
+  // surface scrolls (CSS keeps it transparent otherwise). Scroll doesn't
+  // bubble, so listen in capture; wire the root once across open/close.
+  if (!state.root.dataset.scrollwired) {
+    state.root.dataset.scrollwired = '1';
+    const timers = new WeakMap();
+    state.root.addEventListener('scroll', (e) => {
+      const el = e.target;
+      if (!(el instanceof Element)) return;
+      el.classList.add('is-scrolling');
+      clearTimeout(timers.get(el));
+      timers.set(el, setTimeout(() => el.classList.remove('is-scrolling'), 900));
+    }, true);
+  }
   renderNav();
   renderSection();
 }

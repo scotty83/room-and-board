@@ -30,7 +30,7 @@ export const MIN_SIZE = {
   art: [2, 2],
   photos: [2, 2],
   apod: [3, 3],
-  chart: [3, 4], // square infographic needs the extra height to stay legible
+  chart: [2, 4], // contain-fit infographic; 2-wide is a slim teaser (in-image text reads best at 3+)
   citibike: [3, 2],
   tfl: [3, 2],
   aqi: [2, 2],

@@ -82,22 +82,6 @@ export async function openSettings(cfg, { focus } = {}) {
     </div>`;
   state.root.querySelector('.settings__close').addEventListener('click', closeSettings);
   state.root.querySelector('.settings__save').addEventListener('click', saveAndClose);
-  // RoomOS-style scroll indicator: a surface's thumb shows only WHILE that
-  // surface scrolls (CSS keeps it transparent otherwise). Scroll doesn't
-  // bubble, so listen in capture; wire the root once across open/close.
-  // (Drives the drill lists' styled native bar; nav + pane use the custom
-  // overlay below, whose helper manages its own visibility.)
-  if (!state.root.dataset.scrollwired) {
-    state.root.dataset.scrollwired = '1';
-    const timers = new WeakMap();
-    state.root.addEventListener('scroll', (e) => {
-      const el = e.target;
-      if (!(el instanceof Element)) return;
-      el.classList.add('is-scrolling');
-      clearTimeout(timers.get(el));
-      timers.set(el, setTimeout(() => el.classList.remove('is-scrolling'), 900));
-    }, true);
-  }
   attachScrollIndicator(state.root.querySelector('.settings__nav'), state.root.querySelector('.settings__rail'), 8);
   attachScrollIndicator(state.root.querySelector('.settings__pane'), state.root.querySelector('.settings'), 14);
   renderNav();
@@ -108,14 +92,14 @@ export async function openSettings(cfg, { focus } = {}) {
 // inset from the content (right offset in the host), shorter than a native
 // thumb (0.6× proportional, floored), and iOS-style rubber-band squish when
 // a wheel or drag pushes past an end (the thumb compresses against that end
-// and springs back via the CSS height/top transition). Shows only while its
-// surface scrolls; hidden entirely when nothing overflows.
+// and springs back via the CSS height/top transition). Visible WHENEVER the
+// surface is scrollable (a MutationObserver catches content growth like
+// expanding a nav group); hidden only when nothing overflows.
 function attachScrollIndicator(scrollEl, host, right) {
   const bar = document.createElement('div');
   bar.className = 'scrollind';
   bar.style.right = `${right}px`;
   host.appendChild(bar);
-  let hideTimer = null;
   let squish = 0;
   let squishTimer = null;
   let touchY = null;
@@ -135,9 +119,13 @@ function attachScrollIndicator(scrollEl, host, right) {
     bar.style.top = `${top}px`;
     bar.style.height = `${len}px`;
     bar.classList.add('is-on');
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => bar.classList.remove('is-on'), 900);
   };
+  // Content growth happens two ways: re-renders (childList) and group
+  // expands that only toggle classes on existing nodes + animate grid rows
+  // (attributes; transitionend re-measures once the height settles).
+  new MutationObserver(update).observe(scrollEl, { childList: true, subtree: true, attributes: true });
+  scrollEl.addEventListener('transitionend', update, { passive: true });
+  update();
   const addSquish = (amount) => {
     squish = Math.min(48, squish + amount);
     update();

@@ -451,9 +451,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
 /* RoomOS-style scroll indicator. Nav + pane use a custom overlay thumb
    (settings.js attachScrollIndicator) — full control of offset, shortened
-   length, and the rubber-band squish at the ends; native bars are hidden
-   there. Drill lists keep a styled native bar (solid white while its own
-   surface scrolls, via the .is-scrolling capture listener). */
+   length, and the rubber-band squish at the ends; visible whenever the
+   surface is scrollable. Native bars are hidden there. Drill lists keep a
+   styled native bar, also persistent while their content overflows. */
 .settings__nav::-webkit-scrollbar,
 .settings__pane::-webkit-scrollbar { display: none; }
 .scrollind {
@@ -464,8 +464,7 @@ body.mode-ambient .gear { bottom: 7px; }
 .scrollind.is-on { opacity: 1; }
 .drill__list::-webkit-scrollbar { width: 6px; }
 .drill__list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
-.drill__list::-webkit-scrollbar-thumb { background: transparent; border-radius: 999px; }
-.drill__list.is-scrolling::-webkit-scrollbar-thumb { background: #fff; }
+.drill__list::-webkit-scrollbar-thumb { background: #fff; border-radius: 999px; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
 /* Sub-section label inside a pane (e.g. Display's Mode / Greeting name):

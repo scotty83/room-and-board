@@ -110,7 +110,9 @@ function attachScrollIndicator(scrollEl, host, right) {
     const sRect = scrollEl.getBoundingClientRect();
     const hRect = host.getBoundingClientRect();
     const track = ch - INSET * 2;
-    let len = Math.max(36, Math.min((ch / sh) * track * 0.6, track * 0.45));
+    // Fixed RoomOS-style length — every surface's indicator matches (the
+    // proportional length made the pane's run longer than the nav's).
+    let len = Math.max(36, Math.min(240, track * 0.6));
     len = Math.max(24, len - Math.min(squish, len * 0.6));
     const progress = scrollEl.scrollTop / (sh - ch);
     // progress 0 pins the squished thumb to the top, 1 to the bottom — the

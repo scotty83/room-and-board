@@ -1128,3 +1128,26 @@ body.theme-momentum .edit-tray__chip:disabled { border-color: rgba(255, 255, 255
 /* Group inset: NOT a full pill — with two rows of chips the 999px end-caps
    crowd the corner chips. 28px (half a chip) echoes the chip curve instead. */
 body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.05); border-radius: 28px; padding: 10px 14px; }
+
+/* ---------- Diagnostics display test ---------- */
+/* Full-screen alignment pattern for board captures. Static gradients only
+   (gen1-safe). Tap anywhere to dismiss. z 60 tops the editor's 50. */
+.displaytest {
+  position: fixed; inset: 0; z-index: 60; background: #000; cursor: pointer;
+  background-image:
+    repeating-linear-gradient(to right, rgba(0, 255, 102, 0.8) 0 1px, transparent 1px 100px),
+    repeating-linear-gradient(to bottom, rgba(0, 255, 102, 0.8) 0 1px, transparent 1px 100px);
+  border: 2px solid #00ff66;
+  font-family: ui-monospace, Menlo, monospace;
+}
+.displaytest__info { position: absolute; top: 12px; left: 116px; color: #00ff66; font-size: 20px; }
+.displaytest__lx { position: absolute; top: 2px; margin-left: 3px; color: #00ff66; font-size: 12px; }
+.displaytest__ly { position: absolute; left: 4px; margin-top: 2px; color: #00ff66; font-size: 12px; }
+.displaytest__safe { position: absolute; left: 0; right: 0; bottom: 84px; border-top: 1px dashed #ffd83d; }
+.displaytest__safe span { position: absolute; right: 10px; bottom: 4px; color: #ffd83d; font-size: 14px; }
+.displaytest__unsafe {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 40px;
+  background: repeating-linear-gradient(45deg, rgba(255, 70, 70, 0.35) 0 12px, transparent 12px 24px);
+  border-top: 2px solid #ff5050;
+}
+.displaytest__unsafe span { position: absolute; right: 10px; top: 6px; color: #ff6b6b; font-size: 14px; }

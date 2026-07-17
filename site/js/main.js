@@ -210,6 +210,9 @@ function startClock() {
 }
 
 function showWelcome() {
+  // New boards default to Momentum, so the welcome screen wears it too. If a
+  // setup code brings an older config, startRuntime re-applies its theme.
+  applyTheme('momentum');
   const welcome = $('#welcome');
   welcome.hidden = false;
   $('#grid').hidden = true;

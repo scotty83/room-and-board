@@ -1462,6 +1462,25 @@ function probeCiscoFonts() {
   }
 }
 
+// Full-screen alignment pattern for capturing how the panel actually draws
+// the page: 100px green grid on black with coordinate labels, the viewport
+// edge, the --safe-bottom line, and the ~40 logical px the RoomOS "tap here
+// to start" bar overlays. Static gradients only (gen1-safe). Tap to dismiss.
+function showDisplayTest() {
+  const o = document.createElement('div');
+  o.className = 'displaytest';
+  const labels = [];
+  for (let x = 100; x < window.innerWidth; x += 100) labels.push(`<span class="displaytest__lx" style="left:${x}px">${x}</span>`);
+  for (let y = 100; y < window.innerHeight; y += 100) labels.push(`<span class="displaytest__ly" style="top:${y}px">${y}</span>`);
+  o.innerHTML = `
+    <div class="displaytest__info">viewport ${window.innerWidth}×${window.innerHeight} css px · dpr ${window.devicePixelRatio} · screen ${screen.width}×${screen.height} · tap to close</div>
+    ${labels.join('')}
+    <div class="displaytest__safe"><span>--safe-bottom (84px)</span></div>
+    <div class="displaytest__unsafe"><span>RoomOS bar overlay (~40px)</span></div>`;
+  o.addEventListener('click', () => o.remove());
+  document.body.appendChild(o);
+}
+
 function renderDiag() {
   const rows = state.cfg.layout.map(({ id }) => {
     const cache = loadCache(id);
@@ -1486,7 +1505,10 @@ function renderDiag() {
     </div>
     <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone — nothing personal. Helps the operator count active boards.</p>
     <p class="pane__label">Display</p>
-    <div class="btnrow"><button class="btn btn--primary" data-reload>Reload display now</button></div>
+    <div class="btnrow">
+      <button class="btn btn--primary" data-reload>Reload display now</button>
+      <button class="btn" data-displaytest>Display test</button>
+    </div>
     <p class="pane__label">Storage</p>
     <div class="btnrow">
       <button class="btn" data-clear>Clear web storage (test vault recovery)</button>
@@ -1498,6 +1520,7 @@ function renderDiag() {
     renderDiag();
   });
   pane().querySelector('[data-reload]').addEventListener('click', () => location.reload());
+  pane().querySelector('[data-displaytest]').addEventListener('click', showDisplayTest);
   const confirmThen = (btn, action) => {
     btn.addEventListener('click', async () => {
       if (btn.dataset.armed) {

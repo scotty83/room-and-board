@@ -289,11 +289,15 @@ html, body {
 
 /* One shared grid for all rows (rows are display:contents) so the spark and
    delta columns align down the card; the auto track fits the widest delta. */
-/* 1fr | auto | auto = info · sparkline · delta. Info flexes (its space-between
-   at 2-tall pushes the price to a shared right edge so decimals line up); the
-   spark is a fixed readable width (not a tiny floater, not a funny full stretch);
-   delta trails. */
-.indexes { display: grid; grid-template-columns: 1fr auto auto; align-items: center; column-gap: 16px; row-gap: 10px; }
+/* 1fr | auto | auto | auto = info · sparkline · change · pct. Info flexes (its
+   space-between at 2-tall pushes the price to a shared right edge so decimals
+   line up); the spark is a fixed readable width; the CHANGE number right-aligns
+   in its own shared track so its decimals align across rows too (tabular-nums),
+   with the pct left-aligned beside it. */
+.indexes { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; column-gap: 16px; row-gap: 10px; }
+.delta__chg { justify-self: end; }
+/* pct hugs its change number: pull back most of the uniform column gap. */
+.delta__pct { justify-self: start; margin-left: -8px; }
 .index { display: contents; }
 .index__info { display: flex; flex-direction: column; min-width: 0; }
 /* One line, ellipsized: long instrument names ("Close Brothers Group plc")
@@ -794,7 +798,7 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    (3×3 overlap). Give info its own content width instead — the spark fills
    what's left (min 40) and the delta tightens; the name caps + ellipsizes so a
    long instrument name can't blow the column out. */
-.card--markets.t-narrow:not(.t-s) .indexes { grid-template-columns: auto 1fr auto; column-gap: 12px; }
+.card--markets.t-narrow:not(.t-s) .indexes { grid-template-columns: auto 1fr auto auto; column-gap: 12px; }
 .card--markets.t-narrow:not(.t-s) .spark { width: 100%; min-width: 40px; }
 .card--markets.t-narrow:not(.t-s) .delta { font-size: 18px; }
 .card--markets.t-narrow:not(.t-s) .index__name { max-width: 150px; }

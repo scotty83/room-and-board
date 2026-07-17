@@ -75,7 +75,8 @@ export function render(el, vm, cfg) {
               <span class="index__price">${fmt.format(ix.price)}</span>
             </div>
             ${sparkSvg({ ...ix, twoDay }, up)}
-            <span class="delta ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))} (${Math.abs(ix.changePct).toFixed(2)}%)</span>
+            <span class="delta delta__chg ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))}</span>
+            <span class="delta delta__pct ${up ? 'delta--up' : 'delta--down'}">(${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;
         })
         .join('') + '</div>'

@@ -577,7 +577,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .seg + .seg { border-left: 2px solid rgba(147, 160, 180, 0.4); }
 .seg.is-active { background: var(--accent); color: #06131f; font-weight: 700; }
 .qr { margin-top: 20px; }
-.qr svg { background: #fff; border-radius: 12px; }
+/* White padding grows the quiet zone so the corner radius rounds into it,
+   never into code modules (the board's rendering clipped a corner cell). */
+.qr svg { background: #fff; border-radius: 12px; padding: 10px; }
 
 /* ---------- line chips (subway settings) ---------- */
 .linechips { display: flex; flex-wrap: wrap; gap: 12px; max-width: 720px; margin-bottom: 16px; }
@@ -1074,7 +1076,8 @@ body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
   .slide-caption__title, .headline__title, .wx-now__label, .wx-trend__row > span,
   .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
-  .settings__navitem.is-active, .edit-block__title) { font-weight: 500; }
+  .settings__navitem.is-active, .edit-block__title,
+  .welcome__inner h1) { font-weight: 500; } /* Cisco Bold blends the ff in "office" */
 /* Buttons take Webex Frame's native pill language: white fill for the
    primary action, transparent with a white-alpha ring otherwise, regular
    weight. Sizes stay ours (64px touch floor for arm's-length boards). */

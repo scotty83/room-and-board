@@ -203,6 +203,11 @@ function notice(msg) {
   clearTimeout(noticeTimer);
   noticeTimer = setTimeout(() => { t.hidden = true; }, 6000);
 }
+function dismissNotice() {
+  const t = document.getElementById('setup-toast');
+  if (t) t.hidden = true;
+  clearTimeout(noticeTimer);
+}
 
 function renderWidgets() {
   const placed = () => new Set(cfg.layout.map((r) => r.id));
@@ -210,6 +215,9 @@ function renderWidgets() {
   $('#widgets').addEventListener('change', (e) => {
     const id = e.target.dataset.w;
     if (!id) return;
+    // Acting on the picker makes any standing notice moot (a failed check
+    // below re-raises it fresh).
+    dismissNotice();
     if (!e.target.checked) {
       cfg.layout = cfg.layout.filter((r) => r.id !== id);
     } else {

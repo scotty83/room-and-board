@@ -445,6 +445,17 @@ body.mode-ambient .gear { bottom: 7px; }
    labelled "Settings". */
 .settings__lockup { align-self: center; width: 180px; max-width: 100%; height: auto; margin-top: 8px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
+/* RoomOS-style scroll indicator on the settings scrollables: a slim rounded
+   white-alpha thumb, no track — matches the native Settings dialog. */
+.settings__nav::-webkit-scrollbar,
+.settings__pane::-webkit-scrollbar,
+.drill__list::-webkit-scrollbar { width: 6px; }
+.settings__nav::-webkit-scrollbar-track,
+.settings__pane::-webkit-scrollbar-track,
+.drill__list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
+.settings__nav::-webkit-scrollbar-thumb,
+.settings__pane::-webkit-scrollbar-thumb,
+.drill__list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.45); border-radius: 999px; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }
 /* Sub-section label inside a pane (e.g. Display's Mode / Greeting name):

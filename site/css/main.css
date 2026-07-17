@@ -503,17 +503,17 @@ body.mode-ambient .gear { bottom: 7px; }
 
 /* 56px tall: the board's touch floor (was 76x44 — under the floor). */
 .toggle {
-  width: 96px; height: 56px; border-radius: 28px; border: none; cursor: pointer;
+  width: 72px; height: 40px; border-radius: 20px; border: none; cursor: pointer;
   background: var(--bg-card-2); position: relative; flex: none;
   transition: background 0.2s;
 }
 .toggle__knob {
-  position: absolute; top: 4px; left: 4px; width: 48px; height: 48px;
+  position: absolute; top: 4px; left: 4px; width: 32px; height: 32px;
   border-radius: 50%; background: var(--ink-faint);
   transition: transform 0.2s ease-out, background 0.2s;
 }
 .toggle.is-on { background: rgba(88, 166, 255, 0.35); }
-.toggle.is-on .toggle__knob { transform: translateX(40px); background: var(--accent); }
+.toggle.is-on .toggle__knob { transform: translateX(32px); background: var(--accent); }
 /* RoomOS toggle: grey off-track with a white knob, solid-blue on-track with
    a dark knob — the knob's ink flips to black on the bright fill, same as
    the pill buttons. (Base theme keeps its blue-on-translucent-blue style.) */
@@ -521,12 +521,6 @@ body.theme-momentum .toggle { background: rgba(255, 255, 255, 0.3); }
 body.theme-momentum .toggle__knob { background: #fff; }
 body.theme-momentum .toggle.is-on { background: var(--accent); }
 body.theme-momentum .toggle.is-on .toggle__knob { background: rgba(0, 0, 0, 0.9); }
-/* Widgets pane stacks ~30 toggles — the full 96x56 feels heavy there, so
-   shrink to 72x40 (same 4px knob padding). Other panes keep the big touch
-   target for their one-off switches. */
-.wgroup .toggle { width: 72px; height: 40px; border-radius: 20px; }
-.wgroup .toggle__knob { width: 32px; height: 32px; }
-.wgroup .toggle.is-on .toggle__knob { transform: translateX(32px); }
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;

@@ -521,6 +521,12 @@ body.theme-momentum .toggle { background: rgba(255, 255, 255, 0.3); }
 body.theme-momentum .toggle__knob { background: #fff; }
 body.theme-momentum .toggle.is-on { background: var(--accent); }
 body.theme-momentum .toggle.is-on .toggle__knob { background: rgba(0, 0, 0, 0.9); }
+/* Widgets pane stacks ~30 toggles — the full 96x56 feels heavy there, so
+   shrink to 72x40 (same 4px knob padding). Other panes keep the big touch
+   target for their one-off switches. */
+.wgroup .toggle { width: 72px; height: 40px; border-radius: 20px; }
+.wgroup .toggle__knob { width: 32px; height: 32px; }
+.wgroup .toggle.is-on .toggle__knob { transform: translateX(32px); }
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;

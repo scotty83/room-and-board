@@ -1106,3 +1106,11 @@ body.theme-momentum .chip--on { background: rgba(255, 255, 255, 0.95); border-co
 body.theme-momentum .settings__railfoot { display: grid; justify-content: center; }
 body.theme-momentum .settings__railfoot .btn { min-width: 0; padding: 0 32px; }
 body.theme-momentum .editor__actions .btn--ghost { border-color: rgba(255, 255, 255, 0.3); color: var(--ink); }
+/* The resize placeholder overlays the tile (z-index 4 during the gesture) —
+   its fill must stay translucent so the underlying card shows through.
+   Momentum's solid wells (right for banners) blanked it out. */
+body.theme-momentum .edit-placeholder { background: rgba(60, 194, 154, 0.12); }
+body.theme-momentum .edit-placeholder--invalid { background: rgba(252, 139, 152, 0.14); }
+/* Edit tiles join the card treatment: white-alpha edge instead of the base
+   blue-grey hairline (invisible-ish on pure black). */
+body.theme-momentum .edit-block { border-color: rgba(255, 255, 255, 0.14); }

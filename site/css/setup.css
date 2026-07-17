@@ -1,11 +1,15 @@
-/* Companion setup page — phones and laptops, normal responsive rules. */
+/* Companion setup page — phones and laptops, normal responsive rules.
+   Momentum-themed to match what a new board looks like (new boards default
+   to the Momentum theme): pure-black canvas, #121212 surfaces, white-alpha
+   tiles/hairlines, pill controls with the white-alpha ring. */
 :root {
-  --bg: #0d1117;
-  --bg-card: #161c26;
-  --bg-card-2: #1b2230;
-  --ink: #e8edf4;
-  --ink-dim: #93a0b4;
-  --accent: #58a6ff;
+  --bg: #000;
+  --bg-card: #121212;
+  --bg-card-2: rgba(255, 255, 255, 0.11);
+  --ink: rgba(255, 255, 255, 0.95);
+  --ink-dim: rgba(255, 255, 255, 0.72);
+  --accent: #64b4fa;
+  --ring: rgba(255, 255, 255, 0.3);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -19,7 +23,7 @@ body {
 .step__label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); margin: 0; }
 .step__head { display: flex; align-items: center; gap: 14px; }
 .step__nav { display: flex; justify-content: flex-end; }
-#to-step-1 { background: none; border: 1px solid var(--bg-card-2); }
+#to-step-1 { background: none; }
 .setup__head h1 { font-size: 1.7rem; margin-bottom: 8px; }
 .setup__head p, .hint { color: var(--ink-dim); font-size: 1rem; }
 h2 { font-size: 1.15rem; margin-bottom: 10px; }
@@ -28,12 +32,12 @@ label { display: block; margin: 10px 0 6px; font-weight: 600; }
 
 input, select, button {
   font: inherit; color: var(--ink);
-  background: var(--bg-card); border: 1px solid var(--bg-card-2);
-  border-radius: 10px; padding: 12px 14px; width: 100%;
+  background: var(--bg-card); border: 2px solid var(--ring);
+  border-radius: 12px; padding: 12px 14px; width: 100%;
   min-height: 48px;
 }
-button { cursor: pointer; width: auto; }
-button.primary { background: var(--accent); color: #06131f; font-weight: 700; border: none; padding: 14px 28px; }
+button { cursor: pointer; width: auto; background: none; border-radius: 999px; }
+button.primary { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.95); font-weight: 400; padding: 14px 28px; }
 /* Separate the non-touch action from the setup-code block above it (the footer
    has no gap, so this button otherwise butts against the revealed code-out). */
 #get-signage-url { margin-top: 24px; }
@@ -41,7 +45,7 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
 .checks label {
   display: flex; align-items: center; gap: 10px; margin: 0;
-  background: var(--bg-card); border-radius: 10px; padding: 12px 14px; font-weight: 400;
+  background: var(--bg-card-2); border-radius: 12px; padding: 12px 14px; font-weight: 400;
 }
 .checks input { width: 22px; height: 22px; min-height: 0; accent-color: var(--accent); }
 
@@ -59,15 +63,15 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 .pickrow, .ziprow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .pickrow select { flex: 1 1 140px; }
 .ziprow input { flex: 1; }
-.segmented { display: inline-flex; border: 1px solid var(--bg-card-2); border-radius: 10px; overflow: hidden; margin-top: 8px; }
-.seg { min-height: 48px; padding: 0 20px; border: none; background: var(--bg-card); color: var(--ink-dim); cursor: pointer; width: auto; }
-.seg.is-active { background: var(--accent); color: #06131f; font-weight: 700; }
+.segmented { display: inline-flex; border: 2px solid var(--ring); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+.seg { min-height: 48px; padding: 0 20px; border: none; border-radius: 0; background: none; color: var(--ink-dim); cursor: pointer; width: auto; }
+.seg.is-active { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.95); font-weight: 500; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
 /* Station search results already on the card: visible but inert. */
 .picklist__item--added { opacity: 0.45; pointer-events: none; }
 .chips button {
-  background: var(--bg-card-2); border: none; border-radius: 20px; font-size: 0.95rem;
+  background: var(--bg-card-2); border: none; border-radius: 999px; font-size: 0.95rem;
 }
 
 /* TfL line picker — /setup loads only setup.css, so these mirror main.css's
@@ -85,7 +89,7 @@ button.primary { background: var(--accent); color: #06131f; font-weight: 700; bo
 .sched-row { display: flex; align-items: center; gap: 10px; }
 .sched-row input[type="time"] { width: auto; }
 
-.code-out { margin-top: 18px; background: var(--bg-card); border-radius: 14px; padding: 20px; }
+.code-out { margin-top: 18px; background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px; padding: 20px; }
 .code-out output { font-size: 2.6rem; letter-spacing: 0.3em; font-weight: 700; display: block; margin-bottom: 8px; }
 .code-out p { color: var(--ink-dim); }
 .alertcheck { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-weight: 400; }

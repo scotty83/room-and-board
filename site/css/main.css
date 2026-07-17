@@ -1081,23 +1081,33 @@ body.theme-momentum .wc-row__time,
 body.theme-momentum .sky__aqi-value,
 body.theme-momentum .strip__time,
 body.theme-momentum .strip__temp,
-body.theme-momentum .strip__transit b { font-weight: 300; }
+body.theme-momentum .strip__transit b {
+  /* Deterministic Light: the device exposes 'CiscoSansTT Light' as its own
+     family (Diagnostics inventory) — don't rely on the base family
+     resolving a 300 request. Absent families fall through harmlessly. */
+  font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+}
 /* Ambient text over photos gets the native depth treatment (Cisco's Webex
    Frame ships this exact shadow on the same gen-1 hardware; the no-shadow
    rule is for animated elements, and these sit static above the slides). */
 body.theme-momentum .strip,
 body.theme-momentum .slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
-/* The device's CiscoSansTT has no semibold face, so the design's 600 tier
-   snaps UP to full Bold on the board (board-observed: captions render too
-   heavy). Request 500 instead: font matching resolves 500 DOWN to Regular
-   there and to Medium on desktop stacks — never Bold. The 700 tier stays
-   intentionally bold. */
+/* The semibold tier (600 in the base design) snapped UP to full Bold on the
+   board — too heavy (and Cisco Bold blends the ff in "office"). The device
+   exposes 'CiscoSansTT Medium' as its OWN family (Diagnostics inventory,
+   board-verified), so lead the stack with it for a TRUE middle weight; off
+   Cisco hardware the family is absent and weight 500 picks the system
+   Medium. The 700 tier stays intentionally bold. */
 body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
   .slide-caption__title, .headline__title, .wx-now__label, .wx-trend__row > span,
   .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
   .settings__navitem.is-active, .edit-block__title,
-  .welcome__inner h1) { font-weight: 500; } /* Cisco Bold blends the ff in "office" */
+  .welcome__inner h1) {
+  font-family: 'CiscoSansTT Medium', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+}
 /* Buttons take Webex Frame's native pill language: white fill for the
    primary action, transparent with a white-alpha ring otherwise, regular
    weight. Sizes stay ours (64px touch floor for arm's-length boards). */

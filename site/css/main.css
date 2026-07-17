@@ -773,11 +773,12 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .card--markets.t-s .index__name { font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card--markets.t-s .delta { font-size: 16px; }
 .card--markets.t-s .spark { height: 20px; }
-/* Markets when narrow (≤4 cols): tighten the row so the delta never clips.
-   The sparkline must shrink WITH its column — at 90px it bleeds into the
-   delta triangle (viewBox scales, preserveAspectRatio=none). */
-.card--markets.t-narrow .indexes { column-gap: 10px; grid-template-columns: 1fr 72px auto; }
-.card--markets.t-narrow .spark { width: 72px; }
+/* Markets when narrow (≤4 cols): a 72px sparkline reads as a tiny out-of-place
+   squiggle floating between the price and the delta, so drop it here — the row
+   becomes a clean name/price (left) · delta (right). The spark returns at 5+
+   cols where it has room. */
+.card--markets.t-narrow .indexes { column-gap: 16px; grid-template-columns: 1fr auto; }
+.card--markets.t-narrow .spark { display: none; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

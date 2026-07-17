@@ -58,12 +58,21 @@ export const DEFAULT_LAYOUT = Object.freeze([
   { id: 'history', x: 3, y: 6, w: 3, h: 2 },
 ].map(Object.freeze));
 
+// Per-widget MAXIMUM footprint [w, h]; absent = the grid bounds. markets caps
+// at 4 columns: wider just stretches empty space between the price, sparkline
+// and delta — it stays a compact ticker block (the 2-day spark shows at 4).
+export const MAX_SIZE = {
+  markets: [4, GRID.rows],
+};
+const maxOf = (id) => MAX_SIZE[id] ?? [GRID.cols, GRID.rows];
+
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);
 
 export function clampRect(rect) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  let w = Math.min(Math.max(int(rect.w, mw), mw), GRID.cols);
-  let h = Math.min(Math.max(int(rect.h, mh), mh), GRID.rows);
+  const [Mw, Mh] = maxOf(rect.id);
+  let w = Math.min(Math.max(int(rect.w, mw), mw), Mw, GRID.cols);
+  let h = Math.min(Math.max(int(rect.h, mh), mh), Mh, GRID.rows);
   let x = Math.min(Math.max(int(rect.x), 0), GRID.cols - w);
   let y = Math.min(Math.max(int(rect.y), 0), GRID.rows - h);
   return { id: rect.id, x, y, w, h };
@@ -75,7 +84,8 @@ export function rectsOverlap(a, b) {
 
 export function canPlace(layout, rect) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  if (rect.w < mw || rect.h < mh) return false;
+  const [Mw, Mh] = maxOf(rect.id);
+  if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return false;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return false;
   }
@@ -116,7 +126,8 @@ export function normalizeLayout(raw) {
 // or null when the arrangement is unsolvable. Never mutates the input.
 export function placeWithPush(layout, rect, dir = { dx: 0, dy: 0 }) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  if (rect.w < mw || rect.h < mh) return null;
+  const [Mw, Mh] = maxOf(rect.id);
+  if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return null;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return null;
   }

@@ -5,7 +5,7 @@
 // (green = will commit, red = unsolvable) and neighbor blocks preview their
 // pushed positions live. The drag ghost moves via transform only.
 
-import { GRID, MIN_SIZE, firstFit, placeWithPush } from './layout.js';
+import { GRID, MIN_SIZE, MAX_SIZE, firstFit, placeWithPush } from './layout.js';
 import { capacityLabel } from './capacity.js';
 import { WIDGET_GROUPS } from './config.js';
 
@@ -85,7 +85,8 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   const capOf = (id, w, h) => capacityLabel(id, w, h, cfg) ?? '';
   const sizeLabel = (r) => {
     const [mw, mh] = MIN_SIZE[r.id] ?? [1, 1];
-    return `${r.w}×${r.h} · min ${mw}×${mh}`;
+    const [Mw] = MAX_SIZE[r.id] ?? [];
+    return `${r.w}×${r.h} · min ${mw}×${mh}${Mw && Mw < GRID.cols ? ` · max ${Mw} wide` : ''}`;
   };
 
   /* ----- grid operations ----- */

@@ -59,9 +59,9 @@ export function render(el, vm, cfg) {
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);
   const hidden = vm.indices.length - shown.length;
-  // Wide cards (5+ cols) have room for the two-session sparkline; narrower
-  // ones keep the compact last-session shape.
-  const twoDay = w >= 5;
+  // At full width (4 cols — markets caps there, see MAX_SIZE) show the
+  // two-session sparkline; the 3-wide min keeps the compact last-session shape.
+  const twoDay = w >= 4;
   // Rows render display:contents inside one .indexes grid so every row shares
   // the same column tracks — otherwise the auto-sized delta column would shift
   // each row's sparkline independently (594.83 vs 0.01 wide deltas).

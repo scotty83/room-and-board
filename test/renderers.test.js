@@ -484,10 +484,10 @@ describe('markets 2-day sparkline', () => {
       markets.render(card.querySelector('.card__body'), DEMO_VMS.markets, CFG);
       return card;
     };
-    const wide = mk(6); // >=5 cols, fixture carries spark2/split
+    const wide = mk(4); // markets' max width — fixture carries spark2/split
     expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
     wide.remove();
-    const narrow = mk(4); // <5 cols → compact 1-day spark, no divider
+    const narrow = mk(3); // the 3-wide min → compact 1-day spark, no divider
     expect(narrow.querySelector('.spark__div')).toBeNull();
     narrow.remove();
   });

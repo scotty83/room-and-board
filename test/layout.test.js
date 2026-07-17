@@ -41,6 +41,11 @@ describe('clampRect', () => {
   it('shrinks rects larger than the grid', () => {
     expect(clampRect({ id: 'art', x: 0, y: 0, w: 99, h: 99 })).toEqual({ id: 'art', x: 0, y: 0, w: 12, h: 8 });
   });
+  it('caps widgets with a MAX_SIZE (markets: 4 wide) — saved wider layouts shrink on load', () => {
+    expect(clampRect({ id: 'markets', x: 0, y: 0, w: 6, h: 3 })).toEqual({ id: 'markets', x: 0, y: 0, w: 4, h: 3 });
+    expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 5, h: 3 })).toBe(false); // resize past max = invalid
+    expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 4, h: 3 })).toBe(true);
+  });
 });
 
 describe('rectsOverlap / canPlace', () => {

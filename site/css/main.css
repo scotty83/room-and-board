@@ -396,7 +396,7 @@ body.mode-ambient .gear { bottom: 7px; }
 /* ---------- settings overlay ---------- */
 .settings {
   position: absolute; inset: 0; z-index: 40;
-  display: grid; grid-template-columns: 380px 1fr;
+  display: grid; grid-template-columns: 270px 1fr; /* rail hugs its longest label; panes get the width */
   background: var(--bg);
 }
 .settings__rail {

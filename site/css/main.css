@@ -1120,4 +1120,6 @@ body.theme-momentum .edit-tray__chip,
 body.theme-momentum .edit-tray__toggle { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px; }
 body.theme-momentum .edit-tray__chip:active { border-color: var(--accent); }
 body.theme-momentum .edit-tray__chip:disabled { border-color: rgba(255, 255, 255, 0.12); }
-body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.05); border-radius: 999px; }
+/* Group inset: NOT a full pill — with two rows of chips the 999px end-caps
+   crowd the corner chips. 28px (half a chip) echoes the chip curve instead. */
+body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.05); border-radius: 28px; padding: 10px 14px; }

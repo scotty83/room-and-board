@@ -34,4 +34,7 @@ describe('quick-start preset', () => {
     expect(cfg.services.list).toEqual(['webex', 'zoom', 'slack', 'm365']);
     expect(cfg.name).toBe('');
   });
+  it('starts new boards on Momentum (explicit, surviving normalize)', () => {
+    expect(cfg.theme).toBe('momentum');
+  });
 });

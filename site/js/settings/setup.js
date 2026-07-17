@@ -89,6 +89,10 @@ export function stepTwoVisibility(placed) {
 }
 
 let cfg = structuredClone(DEFAULT_CONFIG);
+// New boards start on Momentum. Seeded on the fresh clone only — a scanned
+// board QR replaces cfg wholesale below, keeping that board's saved theme
+// (and pre-theme configs stay on Room & Board, the DEFAULT_CONFIG default).
+cfg.theme = 'momentum';
 
 async function boot() {
   // Pre-fill from a scanned board QR (#cfg=...).

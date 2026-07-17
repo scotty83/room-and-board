@@ -14,11 +14,11 @@ day, Statista's chart of the day, and more). Hosted entirely on the
 public internet, personalized per device **without authentication**, with
 preferences that survive reboots, RoomOS upgrades.
 
-![A Room & Board dashboard: weather, public-domain art, world clock, markets, quote of the day, World Cup, and headlines](docs/screenshots/dashboard-classic.png)
+![A Room & Board dashboard in the Momentum theme: weather, public-domain art, world clock, subway status, markets, quote of the day, and cloud-service status](docs/screenshots/dashboard-classic.png)
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/dashboard-data-dense.png" alt="A denser layout: NASA daily photo, Formula 1, Air & Sky, subway status with a live alert, cloud-service status, and Statista's chart of the day"></td>
+    <td width="50%"><img src="docs/screenshots/dashboard-data-dense.png" alt="A denser layout: weather with a rip-current alert, My Teams, World Cup 2026, Air & Sky, headlines, word of the day, this day in history, and Statista's chart of the day"></td>
     <td width="50%"><img src="docs/screenshots/edit-mode.png" alt="On-board edit mode: drag, resize, add and remove cards directly on the touchscreen"></td>
   </tr>
 </table>

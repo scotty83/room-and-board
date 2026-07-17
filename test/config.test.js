@@ -16,7 +16,7 @@ describe('normalizeConfig', () => {
     expect(cfg.layout).toEqual(DEFAULT_CONFIG.layout);
     expect(cfg.widgets).toEqual(cfg.layout.map((r) => r.id)); // derived
     expect(cfg.mode).toBe('dashboard');
-    expect(cfg.theme).toBe('dark');
+    expect(cfg.theme).toBe('momentum');
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001', units: 'F' });
     expect(cfg.lirr).toEqual({ dest: '', alerts: true });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
@@ -116,7 +116,7 @@ describe('normalizeConfig', () => {
     const cfg = normalizeConfig({ name: 'x'.repeat(99), mode: 'weird', theme: 'neon' });
     expect(cfg.name.length).toBeLessThanOrEqual(24);
     expect(cfg.mode).toBe('dashboard');
-    expect(cfg.theme).toBe('dark');
+    expect(cfg.theme).toBe('momentum');
   });
 });
 
@@ -138,7 +138,7 @@ describe('encode/decode round trip', () => {
       lirr: { dest: '171' },
       njt: { lines: ['Northeast Corridor Line', 'Morris & Essex Line'] },
       mode: 'scheduled',
-      theme: 'dark',
+      theme: 'momentum',
     });
     const enc = await encodeConfig(cfg);
     expect(typeof enc).toBe('string');

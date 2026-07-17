@@ -110,15 +110,17 @@ export const DEFAULT_CONFIG = Object.freeze({
   photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
-  theme: 'dark',
+  theme: 'momentum',
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
   clock24: false, // 24-hour time for the topbar Clock + World Clock only (departures keep fmtTime's 12h)
 });
 
 const MODES = ['scheduled', 'dashboard', 'ambient'];
-// 'dark' is the base palette (shown as "Room & Board" in settings); each other
-// entry has a matching body.theme-X token block in main.css.
-const THEMES = ['dark', 'momentum'];
+// Momentum is the only user-facing theme. The 'dark' / Room & Board base is
+// still the :root palette that Momentum overrides — kept in code but no longer
+// selectable; any saved 'dark' now normalizes to Momentum (auto-migration).
+// Re-expose by re-adding 'dark' here + the Display picker (see settings.js).
+const THEMES = ['momentum'];
 const MAX_NAME = 24;
 
 const str = (v, fallback, max = 64) =>

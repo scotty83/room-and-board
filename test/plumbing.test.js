@@ -40,10 +40,12 @@ describe('store', () => {
 });
 
 describe('theme config', () => {
-  it('accepts known themes and falls back to dark on junk', () => {
+  it('momentum is the only theme; everything else normalizes to it', () => {
     expect(normalizeConfig({ theme: 'momentum' }).theme).toBe('momentum');
-    expect(normalizeConfig({ theme: 'neon' }).theme).toBe('dark');
-    expect(normalizeConfig({}).theme).toBe('dark');
+    expect(normalizeConfig({}).theme).toBe('momentum');
+    expect(normalizeConfig({ theme: 'neon' }).theme).toBe('momentum');
+    // Room & Board is hidden: a board saved on 'dark' auto-migrates to Momentum.
+    expect(normalizeConfig({ theme: 'dark' }).theme).toBe('momentum');
   });
 });
 

@@ -7,7 +7,7 @@ import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, parseAlbumToken, parseDriveFolder, applyTheme } from '../util.js';
+import { escapeHtml, parseAlbumToken, parseDriveFolder } from '../util.js';
 import { locationSearch } from '../geo.js';
 import { stepTime, fmtHM } from '../modes.js';
 import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
@@ -59,7 +59,6 @@ export async function openSettings(cfg, { focus } = {}) {
   if (state) closeSettings();
   state = {
     cfg: structuredClone(cfg),
-    savedTheme: cfg.theme, // restored on Cancel (theme previews live)
     root: document.querySelector('#settings-root'),
     // Land on the nav's first entry (Display) unless asked to focus elsewhere.
     section: focus === 'code' ? 'code' : NAV_MODEL[0].id,
@@ -154,7 +153,6 @@ function attachScrollIndicator(scrollEl, host, right) {
 
 export function closeSettings() {
   if (!state) return;
-  applyTheme(state.savedTheme ?? 'dark'); // drop an un-saved live theme preview
   state.root.innerHTML = '';
   state = null;
 }
@@ -162,7 +160,6 @@ export function closeSettings() {
 async function saveAndClose() {
   state.cfg.t = Math.floor(Date.now() / 1000);
   const cfg = normalizeConfig(state.cfg);
-  state.savedTheme = cfg.theme; // the preview is now the saved choice
   await saveConfig(cfg);
   try {
     if (window.__signage?.bridge) {
@@ -1334,11 +1331,6 @@ function renderDisplay() {
       ${state.cfg.schedule.length < 4 ? '<button class="btn" data-add-win>Add window</button>' : ''}
     </div>` : ''}
     ${clockFormatMarkup()}
-    <p class="pane__label">Theme</p>
-    <div class="segmented" role="group" aria-label="Theme">
-      <button class="seg ${state.cfg.theme !== 'momentum' ? 'is-active' : ''}" data-set="theme:dark">Room &amp; Board</button>
-      <button class="seg ${state.cfg.theme === 'momentum' ? 'is-active' : ''}" data-set="theme:momentum">Momentum</button>
-    </div>
     <p class="pane__label">Greeting name</p>
     ${navRow('Shown as', escapeHtml(state.cfg.name || 'not set'), 'data-edit-name')}
     ${state.cfg.name ? '<button class="btn btn--ghost" data-clear-name>Remove name</button>' : ''}
@@ -1350,7 +1342,6 @@ function renderDisplay() {
     btn.addEventListener('click', () => {
       const [group, value] = btn.dataset.set.split(':');
       state.cfg[group] = value;
-      if (group === 'theme') applyTheme(value); // live preview behind the panel
       renderDisplay();
     }),
   );

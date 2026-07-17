@@ -17,8 +17,4 @@ export const QUICKSTART_CONFIG = {
   ],
   news: { sources: ['nyt-home', 'npr', 'bbc'] },
   services: { list: ['webex', 'zoom', 'slack', 'm365'] },
-  // New boards start on Momentum (native RoomOS look; real Cisco Sans on
-  // Cisco glass). Explicit — NOT the DEFAULT_CONFIG default — so existing
-  // configs without a theme field stay on Room & Board.
-  theme: 'momentum',
 };

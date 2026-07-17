@@ -289,17 +289,18 @@ html, body {
 
 /* One shared grid for all rows (rows are display:contents) so the spark and
    delta columns align down the card; the auto track fits the widest delta. */
-/* auto | 1fr | auto = info (content) · sparkline (fills the middle) · delta.
-   The spark stretching to fill beats a fixed narrow width floating in leftover
-   space (which read as a tiny out-of-place squiggle at 3-4 cols). */
-.indexes { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 14px; row-gap: 10px; }
+/* 1fr | auto | auto = info · sparkline · delta. Info flexes (its space-between
+   at 2-tall pushes the price to a shared right edge so decimals line up); the
+   spark is a fixed readable width (not a tiny floater, not a funny full stretch);
+   delta trails. */
+.indexes { display: grid; grid-template-columns: 1fr auto auto; align-items: center; column-gap: 16px; row-gap: 10px; }
 .index { display: contents; }
 .index__info { display: flex; flex-direction: column; min-width: 0; }
 /* One line, ellipsized: long instrument names ("Close Brothers Group plc")
    were wrapping to four lines and breaking the row rhythm. */
 .index__name { font-size: 21px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .index__price { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.spark { width: 100%; min-width: 0; height: 28px; }
+.spark { width: 160px; height: 28px; }
 .spark--up { color: var(--good); }
 .spark--down { color: var(--bad); }
 .delta { font-size: 21px; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -771,14 +772,20 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 }
 /* Markets in a shallow card: single-line rows (name beside price) — stacked
    rows plus the +N hint clip a 2-tall body (measured: 141px into 121px) */
-.card--markets.t-s .index__info { flex-direction: row; align-items: baseline; gap: 8px; min-width: 0; }
+/* space-between pushes the price to the info column's right edge; since 1fr
+   makes that edge identical across rows, the tabular-nums prices line up on
+   the decimal. */
+.card--markets.t-s .index__info { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
 .card--markets.t-s .index__price { font-size: 22px; }
 .card--markets.t-s .index__name { font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card--markets.t-s .delta { font-size: 16px; }
 .card--markets.t-s .spark { height: 20px; }
-/* The sparkline shows at every size (it fills the 1fr middle column, so it's
-   as large as the row allows — bigger on wide/tall cards, snug on the tightest
-   single-line rows, but always present). */
+/* Sparkline shows at every size; narrower where the row is tight so the price
+   and delta keep their room. The 3-wide 2-tall min is the tightest — the name
+   ellipsizes there so the price stays decimal-aligned. */
+.card--markets.t-narrow .spark { width: 104px; }
+.card--markets.t-s.t-narrow .spark { width: 72px; }
+.card--markets.t-s[data-w="3"] .spark { width: 56px; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

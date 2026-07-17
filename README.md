@@ -18,7 +18,7 @@ preferences that survive reboots, RoomOS upgrades.
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/dashboard-data-dense.png" alt="A denser layout: weather with a rip-current alert, My Teams, World Cup 2026, Air & Sky, headlines, word of the day, this day in history, and Statista's chart of the day"></td>
+    <td width="50%"><img src="docs/screenshots/dashboard-data-dense.png" alt="A denser layout: weather with a flood-watch alert, My Teams, World Cup 2026, Air & Sky, headlines, word of the day, this day in history, and Statista's chart of the day"></td>
     <td width="50%"><img src="docs/screenshots/edit-mode.png" alt="On-board edit mode: drag, resize, add and remove cards directly on the touchscreen"></td>
   </tr>
 </table>

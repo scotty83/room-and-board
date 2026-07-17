@@ -311,7 +311,7 @@ async function boot() {
   if (DEMO) {
     cfg = normalizeConfig({
       v: 3,
-      name: 'Sean',
+      name: 'User',
       mode: 'dashboard',
       layout: [
         { id: 'weather', x: 0, y: 0, w: 4, h: 4 },

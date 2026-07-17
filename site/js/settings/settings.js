@@ -685,8 +685,8 @@ function renderPath() {
   pane().innerHTML = `
     <h2 class="pane__title">PATH</h2>
     <p class="pane__label">Direction</p>
-    <div class="rows">${PATH_DIRS.map(([id, label]) =>
-      `<button class="row row--tap ${state.cfg.path.dir === id ? 'is-selected' : ''}" data-dir="${id}">${label}</button>`,
+    <div class="segmented" role="group" aria-label="Direction">${PATH_DIRS.map(([id, label]) =>
+      `<button class="seg ${state.cfg.path.dir === id ? 'is-active' : ''}" data-dir="${id}">${label}</button>`,
     ).join('')}</div>
     <p class="pane__label">Station</p>
     <div class="rows rows--grid">${Object.entries(PATH_STATIONS).map(([code, name]) =>

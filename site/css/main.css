@@ -1152,6 +1152,9 @@ body.theme-momentum .edit-placeholder--invalid { background: rgba(252, 139, 152,
 /* Edit tiles join the card treatment: white-alpha edge instead of the base
    blue-grey hairline (invisible-ish on pure black). */
 body.theme-momentum .edit-block { border-color: rgba(255, 255, 255, 0.14); }
+/* Empty grid cells: the base blue-grey dashed hairline is near-invisible on
+   pure black, so the drop targets vanish. Brighter white-alpha dashes. */
+body.theme-momentum .editor__cell { border-color: rgba(255, 255, 255, 0.18); }
 /* The widget tray joins the pill language — the base blue-grey hairlines are
    hard to see on pure black. Disabled chips dim the ring but keep the shape. */
 body.theme-momentum .edit-tray__chip,

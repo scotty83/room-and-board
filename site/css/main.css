@@ -798,6 +798,9 @@ body.mode-ambient .gear { bottom: 7px; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .linestatus__icon { color: var(--warn); font-size: 18px; margin-left: auto; flex: none; }
+/* 2-wide: the ⚠ is redundant (alert rows are already amber) — its ~36px goes
+   back to the clamped alert text, which is what makes 2×2 viable at all. */
+.card--subway[data-w="2"] .linestatus__icon { display: none; }
 
 /* ---------- bus ---------- */
 .buspill {

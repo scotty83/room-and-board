@@ -14,7 +14,7 @@ export const GRID = { cols: 12, rows: 8 };
 // any of these further.
 export const MIN_SIZE = {
   weather: [3, 4],
-  subway: [3, 2],
+  subway: [2, 2], // rows are bullet+text; at 2-wide the ⚠ hides (amber already signals) so alert clamps stay readable
   lirr: [3, 2],
   mnr: [3, 2],
   bus: [3, 3],

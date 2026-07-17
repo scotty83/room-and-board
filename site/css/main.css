@@ -789,6 +789,15 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .card--markets.t-narrow .spark { width: 104px; }
 .card--markets.t-s.t-narrow .spark { width: 72px; }
 .card--markets.t-s[data-w="3"] .spark { width: 56px; }
+/* Stacked narrow cards (name over price, ≤4 cols, ≥3 tall): a fixed spark
+   crushed the 1fr info column, so the wide price overflowed onto the sparkline
+   (3×3 overlap). Give info its own content width instead — the spark fills
+   what's left (min 40) and the delta tightens; the name caps + ellipsizes so a
+   long instrument name can't blow the column out. */
+.card--markets.t-narrow:not(.t-s) .indexes { grid-template-columns: auto 1fr auto; column-gap: 12px; }
+.card--markets.t-narrow:not(.t-s) .spark { width: 100%; min-width: 40px; }
+.card--markets.t-narrow:not(.t-s) .delta { font-size: 18px; }
+.card--markets.t-narrow:not(.t-s) .index__name { max-width: 150px; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

@@ -514,6 +514,13 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .toggle.is-on { background: rgba(88, 166, 255, 0.35); }
 .toggle.is-on .toggle__knob { transform: translateX(40px); background: var(--accent); }
+/* RoomOS toggle: grey off-track with a white knob, solid-blue on-track with
+   a dark knob — the knob's ink flips to black on the bright fill, same as
+   the pill buttons. (Base theme keeps its blue-on-translucent-blue style.) */
+body.theme-momentum .toggle { background: rgba(255, 255, 255, 0.3); }
+body.theme-momentum .toggle__knob { background: #fff; }
+body.theme-momentum .toggle.is-on { background: var(--accent); }
+body.theme-momentum .toggle.is-on .toggle__knob { background: rgba(0, 0, 0, 0.9); }
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;

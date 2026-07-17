@@ -521,6 +521,16 @@ body.theme-momentum .toggle { background: rgba(255, 255, 255, 0.3); }
 body.theme-momentum .toggle__knob { background: #fff; }
 body.theme-momentum .toggle.is-on { background: var(--accent); }
 body.theme-momentum .toggle.is-on .toggle__knob { background: rgba(0, 0, 0, 0.9); }
+/* Pill tap-rows (PATH stations): the button-group pill language instead of
+   the accent-outline tile selection — transparent + white-30% ring, selected
+   = white fill / black text (like Save/Cancel). Momentum-scoped. */
+body.theme-momentum .rows--pill .row--tap {
+  background: none; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
+}
+body.theme-momentum .rows--pill .row--tap.is-selected {
+  outline: none; background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95);
+}
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;

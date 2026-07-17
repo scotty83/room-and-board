@@ -689,7 +689,7 @@ function renderPath() {
       `<button class="seg ${state.cfg.path.dir === id ? 'is-active' : ''}" data-dir="${id}">${label}</button>`,
     ).join('')}</div>
     <p class="pane__label">Station</p>
-    <div class="rows rows--grid">${Object.entries(PATH_STATIONS).map(([code, name]) =>
+    <div class="rows rows--grid rows--pill">${Object.entries(PATH_STATIONS).map(([code, name]) =>
       `<button class="row row--tap ${state.cfg.path.station === code ? 'is-selected' : ''}" data-station="${code}">${name}</button>`,
     ).join('')}</div>`;
   pane().querySelectorAll('[data-station]').forEach((btn) =>

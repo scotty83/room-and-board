@@ -119,7 +119,9 @@ button.primary { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.9
    the theme). Bottom-pinned toast; tap or wait to dismiss. */
 .toast {
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
-  max-width: min(92vw, 560px); padding: 14px 22px;
+  /* Explicit width: a fixed element at left:50% shrink-fits into HALF the
+     viewport, which collapsed the toast into a skinny tower on phones. */
+  width: max-content; max-width: min(92vw, 560px); padding: 14px 22px;
   background: var(--bg-card); border: 2px solid var(--ring); border-radius: 16px;
   color: var(--ink); font-size: 1rem; line-height: 1.4; text-align: center;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6); cursor: pointer; z-index: 10;

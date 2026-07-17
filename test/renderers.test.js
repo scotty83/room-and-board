@@ -486,9 +486,11 @@ describe('markets 2-day sparkline', () => {
     };
     const wide = mk(4); // markets' max width — fixture carries spark2/split
     expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
+    expect(wide.querySelectorAll('.spark__prev').length).toBe(3); // dimmed yesterday segment
     wide.remove();
     const narrow = mk(3); // the 3-wide min → compact 1-day spark, no divider
     expect(narrow.querySelector('.spark__div')).toBeNull();
+    expect(narrow.querySelector('.spark__prev')).toBeNull();
     narrow.remove();
   });
 });

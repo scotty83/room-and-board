@@ -8,18 +8,23 @@ import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
 
-// Normalizes a series into an SVG path spanning w×h (padding baked in).
-export function sparkPath(values, w, h) {
-  if (!Array.isArray(values) || values.length < 2) return '';
+// Normalizes a series into [x, y] points spanning w×h (padding baked in).
+function sparkPts(values, w, h) {
+  if (!Array.isArray(values) || values.length < 2) return [];
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = max - min || 1;
   const pad = 2;
-  const pts = values.map((v, i) => [
+  return values.map((v, i) => [
     pad + (i * (w - 2 * pad)) / (values.length - 1),
     pad + (1 - (v - min) / span) * (h - 2 * pad),
   ]);
-  return pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join('');
+}
+const toPath = (pts) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join('');
+
+// Normalizes a series into an SVG path spanning w×h.
+export function sparkPath(values, w, h) {
+  return toPath(sparkPts(values, w, h));
 }
 
 // X (in a w-wide viewBox) of the yesterday|today divider: the midpoint of the
@@ -30,9 +35,10 @@ export function sparkDividerX(len, split, w = 90, pad = 2) {
   return pad + (split - 0.5) * step;
 }
 
-// Sparkline SVG. Wide cards (twoDay) draw both sessions with a dashed rule at
-// the day boundary when the payload carries two sessions (ix.split > 0);
-// otherwise the compact last-session shape.
+// Sparkline SVG. Wide cards (twoDay) draw both sessions when the payload
+// carries them (ix.split > 0): yesterday's segment DIMMED, today vivid — the
+// boundary reads as faded-history|live-today — plus a soft rule at the day
+// gap. Otherwise the compact last-session shape.
 function sparkSvg(ix, up) {
   const two =
     ix.twoDay &&
@@ -41,11 +47,20 @@ function sparkSvg(ix, up) {
     ix.split > 0 &&
     ix.split < ix.spark2.length;
   const series = two ? ix.spark2 : ix.spark;
-  const divider = two
-    ? `<line class="spark__div" x1="${sparkDividerX(series.length, ix.split).toFixed(1)}" y1="0" x2="${sparkDividerX(series.length, ix.split).toFixed(1)}" y2="28" vector-effect="non-scaling-stroke"/>`
-    : '';
+  let paths;
+  if (two) {
+    const pts = sparkPts(series, 90, 28);
+    const dx = sparkDividerX(series.length, ix.split).toFixed(1);
+    // Both segments include the split point, so the line stays continuous;
+    // the overnight jump (split-1 → split) belongs to the dimmed history.
+    paths = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split + 1))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <path d="${toPath(pts.slice(ix.split))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <line class="spark__div" x1="${dx}" y1="0" x2="${dx}" y2="28" vector-effect="non-scaling-stroke"/>`;
+  } else {
+    paths = `<path d="${sparkPath(series, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
+  }
   return `<svg class="spark ${up ? 'spark--up' : 'spark--down'}" viewBox="0 0 90 28" preserveAspectRatio="none">
-              <path d="${sparkPath(series, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>${divider}
+              ${paths}
             </svg>`;
 }
 

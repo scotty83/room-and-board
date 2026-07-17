@@ -400,7 +400,10 @@ body.mode-ambient .gear { bottom: 7px; }
   background: var(--bg);
 }
 .settings__rail {
-  background: var(--bg-card); padding: 20px 24px calc(28px + var(--safe-bottom));
+  /* Footer rides just above the RoomOS bar: its overlay covers the bottom
+     ~40 logical px, +12px breathing room (was the full 28+84 safe-bottom
+     cushion, which left the footer floating mid-rail). */
+  background: var(--bg-card); padding: 20px 24px 52px;
   display: flex; flex-direction: column; gap: 12px;
   min-height: 0; /* children may scroll; the footer must never leave view */
   position: relative; /* hosts the nav's .scrollind overlay */

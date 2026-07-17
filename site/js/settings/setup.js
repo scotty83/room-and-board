@@ -185,6 +185,25 @@ function applyStepTwo() {
   });
 }
 
+// In-app notice replacing browser alert(): the native "…says" chrome broke
+// the page's look, and its copy suggested actions (shrink) that aren't
+// possible here. Tap or wait to dismiss.
+let noticeTimer = null;
+function notice(msg) {
+  let t = document.getElementById('setup-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'setup-toast';
+    t.className = 'toast';
+    t.addEventListener('click', () => { t.hidden = true; });
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => { t.hidden = true; }, 6000);
+}
+
 function renderWidgets() {
   const placed = () => new Set(cfg.layout.map((r) => r.id));
   $('#widgets').innerHTML = widgetChecksHtml(WIDGET_LABELS, placed());
@@ -198,7 +217,9 @@ function renderWidgets() {
       if (rect) cfg.layout = [...cfg.layout, rect];
       else {
         e.target.checked = false;
-        alert('No room on the grid for that widget — remove or shrink another one on the board first.');
+        // From here the only way to make space is deselecting (the board's
+        // edit mode is where shrinking happens) — say exactly that.
+        notice('No room left on the board for that widget — uncheck another widget to make space.');
       }
     }
   });

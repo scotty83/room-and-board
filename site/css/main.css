@@ -403,6 +403,7 @@ body.mode-ambient .gear { bottom: 7px; }
   background: var(--bg-card); padding: 20px 24px calc(28px + var(--safe-bottom));
   display: flex; flex-direction: column; gap: 12px;
   min-height: 0; /* children may scroll; the footer must never leave view */
+  position: relative; /* hosts the nav's .scrollind overlay */
 }
 .settings__brand { font-size: 28px; font-weight: 700; flex: none; margin: 0; }
 .settings__nav {
@@ -445,21 +446,22 @@ body.mode-ambient .gear { bottom: 7px; }
    labelled "Settings". */
 .settings__lockup { align-self: center; width: 180px; max-width: 100%; height: auto; margin-top: 8px; }
 .settings__pane { padding: 44px 56px calc(44px + var(--safe-bottom)); overflow-y: auto; }
-/* RoomOS-style scroll indicator on the settings scrollables: a slim rounded
-   SOLID WHITE thumb, no track — and like the native dialog it only shows
-   while its own surface is scrolling (settings.js toggles .is-scrolling;
-   classic styled scrollbars would otherwise sit visible permanently). */
+/* RoomOS-style scroll indicator. Nav + pane use a custom overlay thumb
+   (settings.js attachScrollIndicator) — full control of offset, shortened
+   length, and the rubber-band squish at the ends; native bars are hidden
+   there. Drill lists keep a styled native bar (solid white while its own
+   surface scrolls, via the .is-scrolling capture listener). */
 .settings__nav::-webkit-scrollbar,
-.settings__pane::-webkit-scrollbar,
+.settings__pane::-webkit-scrollbar { display: none; }
+.scrollind {
+  position: absolute; width: 6px; border-radius: 999px; background: #fff;
+  opacity: 0; pointer-events: none; z-index: 5;
+  transition: opacity 0.25s ease-out, height 0.14s ease-out, top 0.14s ease-out;
+}
+.scrollind.is-on { opacity: 1; }
 .drill__list::-webkit-scrollbar { width: 6px; }
-.settings__nav::-webkit-scrollbar-track,
-.settings__pane::-webkit-scrollbar-track,
 .drill__list::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
-.settings__nav::-webkit-scrollbar-thumb,
-.settings__pane::-webkit-scrollbar-thumb,
 .drill__list::-webkit-scrollbar-thumb { background: transparent; border-radius: 999px; }
-.settings__nav.is-scrolling::-webkit-scrollbar-thumb,
-.settings__pane.is-scrolling::-webkit-scrollbar-thumb,
 .drill__list.is-scrolling::-webkit-scrollbar-thumb { background: #fff; }
 .pane__title { font-size: 34px; font-weight: 700; margin-bottom: 10px; }
 .pane__hint { font-size: 21px; color: var(--ink-dim); margin: 14px 0; }

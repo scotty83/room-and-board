@@ -85,6 +85,8 @@ export async function openSettings(cfg, { focus } = {}) {
   // RoomOS-style scroll indicator: a surface's thumb shows only WHILE that
   // surface scrolls (CSS keeps it transparent otherwise). Scroll doesn't
   // bubble, so listen in capture; wire the root once across open/close.
+  // (Drives the drill lists' styled native bar; nav + pane use the custom
+  // overlay below, whose helper manages its own visibility.)
   if (!state.root.dataset.scrollwired) {
     state.root.dataset.scrollwired = '1';
     const timers = new WeakMap();
@@ -96,8 +98,68 @@ export async function openSettings(cfg, { focus } = {}) {
       timers.set(el, setTimeout(() => el.classList.remove('is-scrolling'), 900));
     }, true);
   }
+  attachScrollIndicator(state.root.querySelector('.settings__nav'), state.root.querySelector('.settings__rail'), 8);
+  attachScrollIndicator(state.root.querySelector('.settings__pane'), state.root.querySelector('.settings'), 14);
   renderNav();
   renderSection();
+}
+
+// Custom RoomOS-style scroll indicator: an overlay thumb we fully control —
+// inset from the content (right offset in the host), shorter than a native
+// thumb (0.6× proportional, floored), and iOS-style rubber-band squish when
+// a wheel or drag pushes past an end (the thumb compresses against that end
+// and springs back via the CSS height/top transition). Shows only while its
+// surface scrolls; hidden entirely when nothing overflows.
+function attachScrollIndicator(scrollEl, host, right) {
+  const bar = document.createElement('div');
+  bar.className = 'scrollind';
+  bar.style.right = `${right}px`;
+  host.appendChild(bar);
+  let hideTimer = null;
+  let squish = 0;
+  let squishTimer = null;
+  let touchY = null;
+  const INSET = 14;
+  const update = () => {
+    const sh = scrollEl.scrollHeight, ch = scrollEl.clientHeight;
+    if (sh <= ch + 1) { bar.classList.remove('is-on'); return; }
+    const sRect = scrollEl.getBoundingClientRect();
+    const hRect = host.getBoundingClientRect();
+    const track = ch - INSET * 2;
+    let len = Math.max(36, Math.min((ch / sh) * track * 0.6, track * 0.45));
+    len = Math.max(24, len - Math.min(squish, len * 0.6));
+    const progress = scrollEl.scrollTop / (sh - ch);
+    // progress 0 pins the squished thumb to the top, 1 to the bottom — the
+    // compression anchors at whichever end is being pushed past.
+    const top = sRect.top - hRect.top + INSET + Math.min(1, Math.max(0, progress)) * (track - len);
+    bar.style.top = `${top}px`;
+    bar.style.height = `${len}px`;
+    bar.classList.add('is-on');
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => bar.classList.remove('is-on'), 900);
+  };
+  const addSquish = (amount) => {
+    squish = Math.min(48, squish + amount);
+    update();
+    clearTimeout(squishTimer);
+    squishTimer = setTimeout(() => { squish = 0; update(); }, 180);
+  };
+  scrollEl.addEventListener('scroll', () => { squish = 0; update(); }, { passive: true });
+  scrollEl.addEventListener('wheel', (e) => {
+    const atTop = scrollEl.scrollTop <= 0;
+    const atBottom = scrollEl.scrollTop >= scrollEl.scrollHeight - scrollEl.clientHeight - 1;
+    if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) addSquish(Math.abs(e.deltaY) * 0.3);
+  }, { passive: true });
+  scrollEl.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+  scrollEl.addEventListener('touchmove', (e) => {
+    if (touchY === null) return;
+    const dy = e.touches[0].clientY - touchY;
+    touchY = e.touches[0].clientY;
+    const atTop = scrollEl.scrollTop <= 0;
+    const atBottom = scrollEl.scrollTop >= scrollEl.scrollHeight - scrollEl.clientHeight - 1;
+    if ((atTop && dy > 0) || (atBottom && dy < 0)) addSquish(Math.abs(dy) * 0.35);
+  }, { passive: true });
+  scrollEl.addEventListener('touchend', () => { touchY = null; squish = 0; update(); }, { passive: true });
 }
 
 export function closeSettings() {

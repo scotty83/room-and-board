@@ -61,8 +61,12 @@ export const DEFAULT_LAYOUT = Object.freeze([
 // Per-widget MAXIMUM footprint [w, h]; absent = the grid bounds. markets caps
 // at 4 columns: wider just stretches empty space between the price, sparkline
 // and delta — it stays a compact ticker block (the 2-day spark shows at 4).
+// subway + services are single-fact status rows — beyond 3 columns the text
+// just floats in space.
 export const MAX_SIZE = {
   markets: [4, GRID.rows],
+  subway: [3, GRID.rows],
+  services: [3, GRID.rows],
 };
 const maxOf = (id) => MAX_SIZE[id] ?? [GRID.cols, GRID.rows];
 

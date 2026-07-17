@@ -41,10 +41,15 @@ describe('clampRect', () => {
   it('shrinks rects larger than the grid', () => {
     expect(clampRect({ id: 'art', x: 0, y: 0, w: 99, h: 99 })).toEqual({ id: 'art', x: 0, y: 0, w: 12, h: 8 });
   });
-  it('caps widgets with a MAX_SIZE (markets: 4 wide) — saved wider layouts shrink on load', () => {
+  it('caps widgets with a MAX_SIZE — saved wider layouts shrink on load', () => {
     expect(clampRect({ id: 'markets', x: 0, y: 0, w: 6, h: 3 })).toEqual({ id: 'markets', x: 0, y: 0, w: 4, h: 3 });
     expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 5, h: 3 })).toBe(false); // resize past max = invalid
     expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 4, h: 3 })).toBe(true);
+    // status-row widgets cap at 3 wide
+    expect(clampRect({ id: 'subway', x: 0, y: 0, w: 6, h: 4 })).toEqual({ id: 'subway', x: 0, y: 0, w: 3, h: 4 });
+    expect(clampRect({ id: 'services', x: 0, y: 0, w: 5, h: 3 })).toEqual({ id: 'services', x: 0, y: 0, w: 3, h: 3 });
+    expect(canPlace([], { id: 'subway', x: 0, y: 0, w: 4, h: 4 })).toBe(false);
+    expect(canPlace([], { id: 'services', x: 0, y: 0, w: 3, h: 3 })).toBe(true);
   });
 });
 

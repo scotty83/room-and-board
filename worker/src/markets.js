@@ -22,7 +22,16 @@ export function mapYahooChart(json, name) {
   const lastDay = rows.length ? dayOf(rows[rows.length - 1][0]) : null;
   const today = rows.filter(([t]) => dayOf(t) === lastDay).map(([, c]) => c);
   const prevRows = rows.filter(([t]) => dayOf(t) !== lastDay);
+  const prevCloses = prevRows.map(([, c]) => c);
   const prev = prevRows.length ? prevRows[prevRows.length - 1][1] : meta.chartPreviousClose;
+  // spark = last session (the compact 1-day shape small cards render).
+  const spark = today.length ? today : rows.map(([, c]) => c);
+  // spark2 = both sessions end-to-end, with `split` marking the first bar of
+  // today — wide cards draw this with a divider at the day boundary. Only
+  // populated when the payload actually carries a prior session AND today;
+  // otherwise it mirrors spark with split 0 (no divider), so the client
+  // degrades to the 1-day view.
+  const twoDay = prevCloses.length > 0 && today.length > 0;
   return {
     symbol: meta.symbol,
     // longName is the humane one ("Close Brothers Group plc"); shortName for
@@ -32,7 +41,8 @@ export function mapYahooChart(json, name) {
     price,
     change: price - prev,
     changePct: ((price - prev) / prev) * 100,
-    // The sparkline stays a one-day shape: last session's bars only.
-    spark: today.length ? today : rows.map(([, c]) => c),
+    spark,
+    spark2: twoDay ? [...prevCloses, ...today] : spark,
+    split: twoDay ? prevCloses.length : 0,
   };
 }

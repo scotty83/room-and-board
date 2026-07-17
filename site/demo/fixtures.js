@@ -193,9 +193,9 @@ export const DEMO_VMS = {
     updatedAt: 1783000500,
     stale: false,
     indices: [
-      { symbol: '^DJI', name: 'Dow Jones', price: 52147.83, change: 231.44, changePct: 0.45, spark: [51900, 51950, 52020, 51980, 52080, 52147] },
-      { symbol: '^IXIC', name: 'Nasdaq', price: 24893.11, change: -87.62, changePct: -0.35, spark: [24980, 24950, 24870, 24910, 24860, 24893] },
-      { symbol: '^GSPC', name: 'S&P 500', price: 7483.23, change: -16.13, changePct: -0.22, spark: [7499, 7490, 7470, 7458, 7481, 7483] },
+      { symbol: '^DJI', name: 'Dow Jones', price: 52147.83, change: 231.44, changePct: 0.45, spark: [51900, 51950, 52020, 51980, 52080, 52147], spark2: [51700, 51820, 51760, 51900, 51900, 51950, 52020, 51980, 52080, 52147], split: 5 },
+      { symbol: '^IXIC', name: 'Nasdaq', price: 24893.11, change: -87.62, changePct: -0.35, spark: [24980, 24950, 24870, 24910, 24860, 24893], spark2: [25100, 25040, 25010, 24980, 24980, 24950, 24870, 24910, 24860, 24893], split: 5 },
+      { symbol: '^GSPC', name: 'S&P 500', price: 7483.23, change: -16.13, changePct: -0.22, spark: [7499, 7490, 7470, 7458, 7481, 7483], spark2: [7520, 7505, 7512, 7499, 7499, 7490, 7470, 7458, 7481, 7483], split: 5 },
     ],
   },
   photos: { updatedAt: 1783000000, stale: false, photos: [

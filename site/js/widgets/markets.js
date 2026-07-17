@@ -22,6 +22,33 @@ export function sparkPath(values, w, h) {
   return pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join('');
 }
 
+// X (in a w-wide viewBox) of the yesterday|today divider: the midpoint of the
+// gap between the last prior-session point (split-1) and the first today point
+// (split), matching sparkPath's index→x mapping.
+export function sparkDividerX(len, split, w = 90, pad = 2) {
+  const step = (w - 2 * pad) / (len - 1);
+  return pad + (split - 0.5) * step;
+}
+
+// Sparkline SVG. Wide cards (twoDay) draw both sessions with a dashed rule at
+// the day boundary when the payload carries two sessions (ix.split > 0);
+// otherwise the compact last-session shape.
+function sparkSvg(ix, up) {
+  const two =
+    ix.twoDay &&
+    Array.isArray(ix.spark2) &&
+    ix.spark2.length > 2 &&
+    ix.split > 0 &&
+    ix.split < ix.spark2.length;
+  const series = two ? ix.spark2 : ix.spark;
+  const divider = two
+    ? `<line class="spark__div" x1="${sparkDividerX(series.length, ix.split).toFixed(1)}" y1="0" x2="${sparkDividerX(series.length, ix.split).toFixed(1)}" y2="28" vector-effect="non-scaling-stroke"/>`
+    : '';
+  return `<svg class="spark ${up ? 'spark--up' : 'spark--down'}" viewBox="0 0 90 28" preserveAspectRatio="none">
+              <path d="${sparkPath(series, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>${divider}
+            </svg>`;
+}
+
 const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export function render(el, vm, cfg) {
@@ -32,6 +59,9 @@ export function render(el, vm, cfg) {
   const cap = itemCapacity('markets', w, h);
   const shown = vm.indices.slice(0, cap);
   const hidden = vm.indices.length - shown.length;
+  // Wide cards (5+ cols) have room for the two-session sparkline; narrower
+  // ones keep the compact last-session shape.
+  const twoDay = w >= 5;
   // Rows render display:contents inside one .indexes grid so every row shares
   // the same column tracks — otherwise the auto-sized delta column would shift
   // each row's sparkline independently (594.83 vs 0.01 wide deltas).
@@ -44,9 +74,7 @@ export function render(el, vm, cfg) {
               <span class="index__name">${escapeHtml(ix.name)}</span>
               <span class="index__price">${fmt.format(ix.price)}</span>
             </div>
-            <svg class="spark ${up ? 'spark--up' : 'spark--down'}" viewBox="0 0 90 28" preserveAspectRatio="none">
-              <path d="${sparkPath(ix.spark, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>
-            </svg>
+            ${sparkSvg({ ...ix, twoDay }, up)}
             <span class="delta ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))} (${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;
         })

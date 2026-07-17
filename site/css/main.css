@@ -303,6 +303,9 @@ html, body {
 .spark { width: 160px; height: 28px; }
 .spark--up { color: var(--good); }
 .spark--down { color: var(--bad); }
+/* yesterday|today boundary on the wide 2-day sparkline — a faint dashed rule,
+   its own muted stroke (not the line's up/down color). */
+.spark__div { stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; }
 .delta { font-size: 21px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .delta--up { color: var(--good); }
 .delta--down { color: var(--bad); }

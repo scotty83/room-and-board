@@ -125,6 +125,9 @@ describe('mapYahooChart (worker side)', () => {
     expect(out.change).toBeCloseTo(413.6 - 405.2, 5); // vs prior session's LAST close
     expect(out.changePct).toBeCloseTo(((413.6 - 405.2) / 405.2) * 100, 5);
     expect(out.spark).toEqual([407.8, 410.1, 413.6]); // last session only
+    // spark2 stitches both sessions with split marking the first bar of today.
+    expect(out.spark2).toEqual([400, 402, 405.2, 407.8, 410.1, 413.6]);
+    expect(out.split).toBe(3);
   });
   it('falls back to chartPreviousClose when only one session is present', () => {
     const payload = { chart: { result: [{
@@ -135,6 +138,9 @@ describe('mapYahooChart (worker side)', () => {
     const out = mapYahooChart(payload);
     expect(out.change).toBeCloseTo(5, 5);
     expect(out.spark).toEqual([206, 208, 210]);
+    // No prior session → spark2 mirrors spark, split 0 (client draws no divider).
+    expect(out.spark2).toEqual([206, 208, 210]);
+    expect(out.split).toBe(0);
   });
 });
 

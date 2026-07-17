@@ -34,7 +34,7 @@ import * as f1 from '../site/js/widgets/f1.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
@@ -465,6 +465,31 @@ describe('sparkPath', () => {
     expect(d).toContain('98.0'); // spans to width minus padding
     expect(sparkPath([], 100, 30)).toBe('');
     expect(sparkPath([7], 100, 30)).toBe('');
+  });
+});
+
+describe('markets 2-day sparkline', () => {
+  it('sparkDividerX is the midpoint of the split gap in sparkPath coords', () => {
+    // 10-point series split at 5: step = (90-4)/9; divider at index 4.5.
+    const step = 86 / 9;
+    expect(sparkDividerX(10, 5)).toBeCloseTo(2 + 4.5 * step, 5);
+  });
+  it('draws the divider only on wide cards that carry two sessions', () => {
+    const mk = (w) => {
+      const card = document.createElement('article');
+      card.className = 'card card--markets';
+      card.dataset.w = String(w); card.dataset.h = '3';
+      card.innerHTML = '<h2 class="card__title">Markets</h2><div class="card__body"></div>';
+      document.body.appendChild(card);
+      markets.render(card.querySelector('.card__body'), DEMO_VMS.markets, CFG);
+      return card;
+    };
+    const wide = mk(6); // >=5 cols, fixture carries spark2/split
+    expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
+    wide.remove();
+    const narrow = mk(4); // <5 cols → compact 1-day spark, no divider
+    expect(narrow.querySelector('.spark__div')).toBeNull();
+    narrow.remove();
   });
 });
 

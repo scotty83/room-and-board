@@ -692,7 +692,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 }
 /* Top-align so the tray can grow/collapse rows without re-centering the actions;
    the tray takes the width, Done/Cancel stay compact on the right. */
-.editor__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-top: 20px; }
+/* Actions are pinned to the editor's lower-right corner (below), so the bar
+   is just the tray now; reserve the corner so chips don't run under them. */
+.editor__bar { display: flex; align-items: flex-start; gap: 24px; padding-top: 20px; padding-right: 340px; }
 .edit-tray { flex: 1; min-width: 0; }
 /* "Add a widget" region heading — replaces the old orphaned inline "Add:" token. */
 .edit-tray__head { font-size: 15px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 12px; }
@@ -726,7 +728,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 }
 .edit-tray__group[hidden] { display: none; }
 .edit-tray__legend { width: 100%; font-size: 16px; color: var(--ink-faint); margin: 12px 0 0; }
-.editor__actions { display: flex; gap: 12px; flex: none; }
+/* Pinned to the editor's lower-right corner; 52px clears the RoomOS bar,
+   matching the settings footer. (The .editor is the positioning context.) */
+.editor__actions { position: absolute; right: 40px; bottom: 52px; display: flex; gap: 12px; flex: none; }
 @media (prefers-reduced-motion: reduce) {
   .slide { transition: none; }
 }

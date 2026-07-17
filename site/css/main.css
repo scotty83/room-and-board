@@ -617,7 +617,9 @@ body.mode-ambient .gear { bottom: 7px; }
   grid-template-rows: repeat(8, minmax(0, 1fr));
   gap: 10px;
 }
-.editor__cell { border: 1px dashed rgba(147, 160, 180, 0.10); border-radius: 10px; }
+/* Radius matches the card's (--radius): a cell is a card's footprint, so a
+   tighter corner made the placed card overhang the drop-target outline. */
+.editor__cell { border: 1px dashed rgba(147, 160, 180, 0.10); border-radius: var(--radius); }
 .edit-block {
   position: relative;
   background: var(--bg-card);

@@ -438,9 +438,9 @@ function renderPhotoPane(src) {
     : '';
   pane().innerHTML = `
     <h2 class="pane__title">${gd ? 'GDrive Photos' : 'iCloud Photos'}</h2>
-    <p class="pane__hint">Shows a ${gd ? '<b>Google Drive folder</b> of photos' : 'iCloud <b>Shared Album</b>'} — the
-      ${gd ? 'folder' : 'album'} must be shared with a public link. It's unlikely anyone would randomly discover it,
-      but <b>anyone with the link could view these photos</b> — if you're not comfortable with that, don't add
+    <p class="pane__hint">Shows a ${gd ? '<b>Google Drive folder</b> of photos' : 'iCloud <b>Shared Album</b>'}.
+      The ${gd ? 'folder' : 'album'} must be shared with a public link. It's unlikely anyone would randomly discover
+      it, but <b>anyone with the link could view these photos</b>; if you're not comfortable with that, don't add
       personal photos. If the board is in a publicly visible space, it's your responsibility to make sure the
       photos are appropriate.</p>
     ${configured}
@@ -516,7 +516,7 @@ function wirePhotoCodeEntry(src, status) {
           try {
             const { cfg: encoded } = await fetchJSON(`${WORKER_URL}/code/${code}`);
             const decoded = await decodeCode(encoded);
-            if (decoded.scope !== 'photos') { status.textContent = 'That code holds a full board setup — enter it under Settings → Setup code instead.'; code = ''; paint(); return; }
+            if (decoded.scope !== 'photos') { status.textContent = 'That code holds a full board setup; enter it under Settings → Setup code instead.'; code = ''; paint(); return; }
             const changed = applyPhotosPatch(decoded.patch);
             if (!changed.length) { status.textContent = "That code didn't carry a usable photo link."; code = ''; paint(); return; }
             renderPhotoPane(src);

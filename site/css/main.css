@@ -140,6 +140,10 @@ html, body {
 .wx-now__meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; min-width: 0; }
 .wx-now__label { font-size: 22px; font-weight: 600; color: var(--ink-mid); white-space: nowrap; }
 .wx-now__feels { font-size: 18px; color: var(--ink-faint); white-space: nowrap; }
+/* Narrow cards (3-wide default): long conditions spilled past the card edge —
+   nowrap text overflows the shrunk meta column (worse on-device, where the
+   Cisco Medium face runs wider than desktop fonts). Wrap to balanced lines. */
+.card--weather.t-narrow .wx-now__label { white-space: normal; text-wrap: balance; }
 
 .wx-rule { height: 1px; background: rgba(255, 255, 255, 0.07); margin: 16px 0 10px; flex: none; }
 

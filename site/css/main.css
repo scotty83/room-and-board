@@ -625,6 +625,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .seg { min-height: 64px; padding: 0 26px; font-size: 23px; border: none; background: none; color: var(--ink-dim); cursor: pointer; }
 .seg + .seg { border-left: 1px solid rgba(147, 160, 180, 0.4); } /* dividers sit lighter than the 2px ring */
 .seg.is-active { background: var(--accent); color: #06131f; font-weight: 700; }
+/* Rows directly after a segmented control breathe (Weather's Current row sat
+   flush against the °F/°C picker — other panes have a label between). */
+.segmented + .row, .segmented + .rows { margin-top: 14px; }
 .qr { margin-top: 20px; }
 /* White padding grows the quiet zone so the corner radius rounds into it,
    never into code modules (the board's rendering clipped a corner cell). */

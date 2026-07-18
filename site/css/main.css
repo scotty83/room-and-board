@@ -1274,3 +1274,7 @@ body.theme-momentum .wx-day__hi {
   font-family: 'CiscoSansTT Medium', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   font-weight: 500;
 }
+/* The shared tile alpha (--bg-card-2, .11) is tuned for interactive tiles;
+   on the passive forecast chips it reads as the brightest surface on the
+   board. Dim just the chips — buttons/keys/nav keep the .11 idiom. */
+body.theme-momentum .wx-day { background: rgba(255, 255, 255, 0.07); }

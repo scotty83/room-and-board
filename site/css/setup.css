@@ -95,6 +95,8 @@ button.primary { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.9
    dimmed disabled state so "nothing validated yet" is visible, not a dead tap. */
 #ps-getcode { margin-top: 12px; padding: 16px 36px; }
 button:disabled { opacity: 0.45; cursor: default; }
+/* Inline "More" glyph (circled ellipsis) matching the Photos app's button. */
+.ic-more { width: 1.15em; height: 1.15em; vertical-align: -0.22em; color: var(--ink); }
 
 /* Scheduled-mode window rows (native time inputs). */
 #schedule-editor { margin-top: 10px; }

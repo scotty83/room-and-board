@@ -37,16 +37,19 @@
 import xapi from 'xapi';
 
 /*
- * Setup: paste your board's signage URL below (from the /setup page ->
- * "Get signage URL"; it carries the display's configuration in the #cfg
- * fragment). Then paste this file into the Macro Editor (Settings >
- * Macros), Save, and enable. init() applies every device setting signage
- * needs, so nothing else has to be configured by hand.
+ * Setup: paste this file into the Macro Editor (Settings > Macros), Save,
+ * and enable — init() applies every device setting signage needs, so
+ * nothing else has to be configured by hand.
+ *
+ * The default URL opens Room & Board's welcome screen (Quick Start + a QR
+ * to the /setup page). To load a saved configuration instead, replace it
+ * with your board's URL from /setup -> "Get signage URL" (it carries the
+ * display's configuration in the #cfg fragment).
  *
  * NOTE: do not install SignageManager on a board this macro manages — the
  * two both own Standby Signage Url and will fight over it.
  */
-const SIGNAGE_URL = 'https://roomboard.app/#cfg=PASTE_YOUR_CONFIG_URL';
+const SIGNAGE_URL = 'https://roomboard.app';
 
 const PANEL_ID = 'dashboard';
 
@@ -95,8 +98,8 @@ async function ensureConfig(node, label, value) {
   * settings the networked provisioning path uses, minus the vault/bridge
   * pieces this standalone macro deliberately omits. Macros Mode/AutoStart
   * are included so a hand-uploaded copy of this macro survives reboots.
-  * The URL is skipped (with a warning) while the placeholder is still in
-  * place, so a half-configured install never points the board at a dead URL.
+  * The default URL opens the Room & Board welcome screen, so an untouched
+  * install still lands somewhere useful.
   * @roomosxapi [xConfiguration Standby Signage Url](https://roomos.cisco.com/xapi/Config.Standby.Signage.Url/)
   * @roomosxapi [xConfiguration Standby Signage Mode](https://roomos.cisco.com/xapi/Config.Standby.Signage.Mode/)
   * @roomosxapi [xConfiguration Standby Signage InteractionMode](https://roomos.cisco.com/xapi/Config.Standby.Signage.InteractionMode/)
@@ -112,10 +115,6 @@ async function configureSignage() {
   // Signage displays in half-wake; Interactive = the touchscreen drives it.
   await ensureConfig(xapi.Config.Standby.Signage.Mode, 'Standby Signage Mode', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.InteractionMode, 'Standby Signage InteractionMode', 'Interactive');
-  if (SIGNAGE_URL.includes('PASTE_YOUR')) {
-    console.warn('[Dashboard] SIGNAGE_URL is still the placeholder — signage settings applied, URL left unchanged. Paste your board’s URL into SIGNAGE_URL and Save.');
-    return;
-  }
   await ensureConfig(xapi.Config.Standby.Signage.Url, 'Standby Signage Url', SIGNAGE_URL);
 }
 

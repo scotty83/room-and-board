@@ -539,18 +539,20 @@ function renderSubway() {
 
 /* ---------- drill-down list (shared by LIRR / NJT pickers) ---------- */
 
-function drillList(title, items, onPick) {
+function drillList(title, items, onPick, { back = true } = {}) {
   const drill = pane().querySelector('.drill');
   if (!drill) return; // navigated away mid-flight — the pane no longer has a .drill
+  // back:false for panes where the drill IS the pane's permanent picker
+  // (Ferry): backing out of those blanked the list with no way to reopen it.
   drill.innerHTML = `
     <div class="drill__head">
-      <button class="iconbtn" data-back aria-label="Back">←</button>
+      ${back ? '<button class="iconbtn" data-back aria-label="Back">←</button>' : ''}
       <h3>${escapeHtml(title)}</h3>
     </div>
     <div class="drill__list">${items
       .map((it, i) => `<button class="drill__item" data-i="${i}">${it.html}</button>`)
       .join('')}</div>`;
-  drill.querySelector('[data-back]').addEventListener('click', () => {
+  drill.querySelector('[data-back]')?.addEventListener('click', () => {
     const prev = state.stack.pop();
     if (prev) prev();
     else drill.innerHTML = '';
@@ -722,6 +724,7 @@ async function renderFerry() {
         state.cfg.ferry.landing = pick.value.id;
         renderFerry();
       },
+      { back: false }, // the drill IS this pane's picker — nothing to go back to
     );
   } catch {
     const d = pane().querySelector('.drill');

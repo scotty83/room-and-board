@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room &amp; Board — Add photos</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/room-and-board-favicon-32.png">
+<link rel="apple-touch-icon" href="assets/room-and-board-icon-180.png">
+<link rel="stylesheet" href="css/setup.css">
+</head>
+<body>
+  <main class="setup">
+    <header class="setup__head">
+      <h1>Add photos to your board</h1>
+      <p>Set up a shared album or folder (either one, or both), check the link here, and get a short code to type on your board. The code changes only your photos. The rest of the board's setup stays as it is.</p>
+    </header>
+
+    <section class="field" id="ps-icloud">
+      <h2>iCloud Shared Album</h2>
+      <ol class="steps">
+        <li>Open the <b>Photos</b> app on your iPhone or iPad</li>
+        <li>Tap <b>Collections</b>, then <b>Shared Albums</b></li>
+        <li>Tap <b>+</b> to create an album, name it (e.g. Office Board Photos), and add at least one photo</li>
+        <li>Open the album, tap the <b>⋯</b> button, then the people icon</li>
+        <li>Turn on the <b>Public Website</b> slider</li>
+        <li>Tap <b>Copy Link</b> and paste it below</li>
+      </ol>
+      <div class="ziprow">
+        <input id="ps-icloud-link" type="text" maxlength="300" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="paste the album link">
+        <button id="ps-icloud-check" class="primary" type="button">Check</button>
+      </div>
+      <p id="ps-icloud-status" class="hint" aria-live="polite"></p>
+    </section>
+
+    <section class="field" id="ps-gdrive">
+      <h2>Google Drive Folder</h2>
+      <ol class="steps">
+        <li>In <b>Google Drive</b>, choose <b>+ New</b>, then <b>New folder</b>, and name it (e.g. Office Board Photos)</li>
+        <li>Upload your photos. Add more anytime and the board picks them up automatically</li>
+        <li>Tap the folder name, then <b>Share</b></li>
+        <li>Under <b>General access</b>, switch to <b>Anyone with the link</b></li>
+        <li>Tap <b>Copy link</b> (it looks like <code>drive.google.com/drive/folders/…</code>) and paste it below</li>
+      </ol>
+      <div class="ziprow">
+        <input id="ps-gdrive-link" type="text" maxlength="300" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="paste the Drive folder link">
+        <button id="ps-gdrive-check" class="primary" type="button">Check</button>
+      </div>
+      <p id="ps-gdrive-status" class="hint" aria-live="polite"></p>
+    </section>
+
+    <section class="field">
+      <p class="hint"><b>These are public links. Anyone who has them can view the photos, so add only photos appropriate for a shared office display.</b></p>
+      <button id="ps-getcode" class="primary" type="button" disabled>Get board code</button>
+      <div class="code-out" id="ps-code" hidden>
+        <p class="code-out__label">Your board code</p>
+        <output id="ps-code-out" aria-live="polite"></output>
+        <p id="ps-code-note"></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="js/photo-setup.js"></script>
+</body>
+</html>

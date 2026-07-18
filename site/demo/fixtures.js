@@ -201,6 +201,9 @@ export const DEMO_VMS = {
   photos: { updatedAt: 1783000000, stale: false, photos: [
     { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Beach', date: '2026-02-24' },
   ] },
+  gdrivephotos: { updatedAt: 1783000000, stale: false, photos: [
+    { img: 'https://images.metmuseum.org/CRDImages/ep/web-large/DP145911.jpg', ar: 1.33, title: 'Harbor', date: '2026-02-25' },
+  ] },
   marketsnews: { items: [{ title: 'Fed holds rates', source: 'CNBC', t: 1783000000000 }], nowMs: 1783000100000 },
   tfl: { updatedAt: 1783000000, lines: [
     { id: 'central', name: 'Central', mode: 'Tube', ok: true, status: 'Good Service', reason: '' },

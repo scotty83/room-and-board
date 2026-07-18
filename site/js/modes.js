@@ -22,12 +22,15 @@ export function fmtHM(min) {
   return `${h12}:${String(m).padStart(2, '0')} ${ap}`;
 }
 
-// Which source drives ambient/screensaver: photos when explicitly chosen and
-// configured, else art when either art or photos widget is enabled, else nothing.
+// Which source drives ambient/screensaver: a photo widget when it's placed,
+// configured, and chosen as the screensaver (at most one can be — normalizeConfig
+// enforces exclusivity); else art when any art/photo widget is enabled; else
+// nothing. iCloud is checked before Drive to match that tie-break.
 export function ambientSource(cfg) {
   const has = new Set(cfg.widgets ?? []);
   if (has.has('photos') && cfg.photos?.screensaver && cfg.photos?.album) return 'photos';
-  if (has.has('art') || has.has('photos')) return 'art';
+  if (has.has('gdrivephotos') && cfg.gdrivephotos?.screensaver && cfg.gdrivephotos?.album) return 'gdrivephotos';
+  if (has.has('art') || has.has('photos') || has.has('gdrivephotos')) return 'art';
   return null;
 }
 

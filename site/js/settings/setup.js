@@ -28,7 +28,8 @@ export const WIDGET_LABELS = {
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art slideshow',
-  photos: 'Photos',
+  photos: 'iCloud Photos',
+  gdrivephotos: 'GDrive Photos',
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
   chart: 'Chart of the Day',
@@ -71,6 +72,7 @@ export const SETUP_SECTIONS = [
   { id: 'bsky-field', group: 'News & Social', triggers: ['bsky'] },
   { id: 'art-field', group: 'Ambient', triggers: ['art'] },
   { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
+  { id: 'gdrivephotos-field', group: 'Ambient', triggers: ['gdrivephotos'] },
   { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
   { id: 'services-field', group: 'Daily Extras', triggers: ['services'] },
   { id: 'chart-field', group: 'Daily Extras', triggers: ['chart'] },
@@ -151,22 +153,9 @@ async function boot() {
   await safe(renderNewsSources);
   await safe(renderPostsAccounts);
   await safe(renderPhotos);
+  await safe(renderGdrivePhotos);
   await safe(renderServicesField);
   await safe(renderChartField);
-
-  // Deep link from the board's Photos pane QR (#go=photos): the user is
-  // mid-task on their phone, so skip the wizard and land on Photos with its
-  // walkthrough open. The section un-hides explicitly because applyStepTwo
-  // only shows sections whose widget is already placed.
-  if (hash.get('go') === 'photos') {
-    applyStepTwo();
-    $('#step-1').hidden = true;
-    $('#step-2').hidden = false;
-    const field = document.getElementById('photos-field');
-    field.hidden = false;
-    field.querySelector('details:not([hidden])')?.setAttribute('open', '');
-    field.scrollIntoView();
-  }
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -644,48 +633,46 @@ function renderPostsAccounts() {
   });
 }
 
-function renderPhotos() {
-  $('#photos-ss').checked = cfg.photos.screensaver;
-  $('#photos-every').value = String(cfg.photos.every);
-  $('#photos-every').addEventListener('change', (e) => (cfg.photos.every = Number(e.target.value)));
-  $('#photos-ss').addEventListener('change', (e) => (cfg.photos.screensaver = e.target.checked));
-  const srcOf = () => ($('#photos-source').value === 'gdrive' ? 'gdrive' : 'icloud');
-  const placeholders = { icloud: 'paste the album link', gdrive: 'paste the Drive folder link' };
-  // Only the selected source's walkthrough shows; the open/closed state is
-  // the user's (a source flip re-folds both, which reads as a fresh start).
-  const syncHowto = () => {
-    $('#photos-howto-icloud').hidden = srcOf() !== 'icloud';
-    $('#photos-howto-gdrive').hidden = srcOf() !== 'gdrive';
-  };
-  $('#photos-source').value = cfg.photos.source === 'gdrive' ? 'gdrive' : 'icloud';
-  syncHowto();
-  $('#photos-album').placeholder = placeholders[srcOf()];
-  $('#photos-album').value = cfg.photos.album;
-  $('#photos-source').addEventListener('change', () => {
-    cfg.photos = { ...cfg.photos, source: srcOf(), album: '' };
-    syncHowto();
-    $('#photos-album').value = '';
-    $('#photos-album').placeholder = placeholders[srcOf()];
-    $('#photos-status').textContent = '';
+const renderPhotos = () => renderPhotoField('icloud');
+const renderGdrivePhotos = () => renderPhotoField('gdrive');
+
+// One setup-form photo field, keyed by source. iCloud → cfg.photos, Drive →
+// cfg.gdrivephotos; the two widgets are independent, so /setup can configure
+// either or both. Screensaver is exclusive: turning one on clears the other's.
+function renderPhotoField(src) {
+  const gd = src === 'gdrive';
+  const key = gd ? 'gdrivephotos' : 'photos';
+  const otherKey = gd ? 'photos' : 'gdrivephotos';
+  const pre = gd ? 'gdrivephotos' : 'photos';
+  $(`#${pre}-ss`).checked = cfg[key].screensaver;
+  $(`#${pre}-every`).value = String(cfg[key].every);
+  $(`#${pre}-album`).value = cfg[key].album;
+  $(`#${pre}-every`).addEventListener('change', (e) => (cfg[key].every = Number(e.target.value)));
+  $(`#${pre}-ss`).addEventListener('change', (e) => {
+    cfg[key].screensaver = e.target.checked;
+    if (e.target.checked && cfg[otherKey].screensaver) {
+      cfg[otherKey].screensaver = false; // screensaver is exclusive across the photo widgets
+      const other = $(`#${otherKey}-ss`);
+      if (other) other.checked = false;
+    }
   });
-  $('#photos-add').addEventListener('click', async () => {
-    const src = srcOf();
-    const id = src === 'gdrive' ? parseDriveFolder($('#photos-album').value) : parseAlbumToken($('#photos-album').value);
-    const status = $('#photos-status');
-    if (!id) { status.textContent = `That doesn't look like a ${src === 'gdrive' ? 'Drive folder' : 'album'} link.`; return; }
+  $(`#${pre}-add`).addEventListener('click', async () => {
+    const id = gd ? parseDriveFolder($(`#${pre}-album`).value) : parseAlbumToken($(`#${pre}-album`).value);
+    const status = $(`#${pre}-status`);
+    if (!id) { status.textContent = `That doesn't look like a ${gd ? 'Drive folder' : 'album'} link.`; return; }
     status.textContent = 'Checking…';
     try {
-      const endpoint = src === 'gdrive'
+      const endpoint = gd
         ? `${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(id)}`
         : `${WORKER_URL}/icloud/album?token=${encodeURIComponent(id)}`;
       const res = await fetch(endpoint);
       if (res.status === 503) { status.textContent = 'The server needs a Google Drive key (GDRIVE_KEY).'; return; }
       const digest = await res.json();
       if (!digest.photos?.length) throw new Error('empty');
-      cfg.photos = { ...cfg.photos, source: src, album: id };
+      cfg[key].album = id;
       status.textContent = `Found ${digest.photos.length} photos.`;
     } catch {
-      status.textContent = src === 'gdrive'
+      status.textContent = gd
         ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
         : "Couldn't open that album — check Public Website is on and the link is exact.";
     }

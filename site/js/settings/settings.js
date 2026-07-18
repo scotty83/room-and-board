@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
+import { normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -26,7 +26,8 @@ export const WIDGET_LABELS = {
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art slideshow',
-  photos: 'Photos',
+  photos: 'iCloud Photos',
+  gdrivephotos: 'GDrive Photos',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
@@ -184,7 +185,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'widgets', label: 'Widgets' },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'item', id: 'worldclock', label: 'World Clock' },
-  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'Photos']] },
+  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'iCloud Photos'], ['gdrivephotos', 'GDrive Photos']] },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'], ['amtrak', 'Amtrak'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'], ['tfl', 'TfL Status'] ] },
@@ -256,7 +257,7 @@ const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart,
-  art: renderArt, photos: renderPhotos, weather: renderWeather, display: renderDisplay,
+  art: renderArt, photos: renderPhotos, gdrivephotos: renderGdrivePhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
 export const SECTION_IDS = Object.keys(SECTION_RENDERERS);
@@ -388,44 +389,60 @@ function renderArt() {
   );
 }
 
-/* ---------- photos ---------- */
+/* ---------- photos (two widgets: iCloud + Google Drive) ---------- */
 
-function renderPhotos() {
-  const p = state.cfg.photos;
-  const src = p.source === 'gdrive' ? 'gdrive' : 'icloud';
+// iCloud and GDrive Photos are separate widgets with their own settings pane;
+// this one renderer serves both, keyed by source. The dashboard card title is
+// "Photos" for both (clean); the descriptive names live in the rail + picker.
+// Function declarations (not const arrows) so SECTION_RENDERERS can forward-
+// reference them above.
+function renderPhotos() { return renderPhotoPane('icloud'); }
+function renderGdrivePhotos() { return renderPhotoPane('gdrive'); }
+
+// Merge a redeemed photos code into the two photo blocks. Sparse: it touches
+// only the slots the code carried, so an iCloud-only code leaves any existing
+// Drive album alone. Returns the human list of what changed.
+function applyPhotosPatch(patch) {
+  const changed = [];
+  if (patch.icloud) { state.cfg.photos.album = patch.icloud; changed.push('iCloud'); }
+  if (patch.gdrive) { state.cfg.gdrivephotos.album = patch.gdrive; changed.push('Google Drive'); }
+  return changed;
+}
+
+function renderPhotoPane(src) {
+  const gd = src === 'gdrive';
+  const cfgKey = gd ? 'gdrivephotos' : 'photos';
+  const otherKey = gd ? 'photos' : 'gdrivephotos';
+  const p = state.cfg[cfgKey];
+  const rerender = () => renderPhotoPane(src);
   const set = p.album
-    ? `<div class="row"><span class="row__label row__label--dim">Album</span><span class="row__value">Configured</span>
+    ? `<div class="row"><span class="row__label row__label--dim">${gd ? 'Folder' : 'Album'}</span><span class="row__value">Configured</span>
         <button class="btn btn--ghost" data-clear-album>Remove</button></div>`
     : '';
-  const guide = src === 'gdrive'
-    ? `Show a <b>Google Drive folder</b> shared to anyone. In Drive: right-click the folder →
-      <b>Share</b> → set access to <b>Anyone with the link</b> → <b>Copy link</b>, then paste it here.`
+  const guide = gd
+    ? `Show a <b>Google Drive folder</b> shared to anyone. In Drive: right-click the folder,
+      choose <b>Share</b>, set access to <b>Anyone with the link</b>, then <b>Copy link</b> and paste it here.`
     : `Show an iCloud <b>Shared Album</b> with its <b>Public Website</b> turned on.
-      In the Photos app: open the album → its settings → enable <b>Public Website</b> → <b>Copy Link</b>,
-      then enter it here.`;
+      In the Photos app: open the album, open its settings, enable <b>Public Website</b>, then <b>Copy Link</b>
+      and enter it here.`;
   pane().innerHTML = `
-    <h2 class="pane__title">Photos</h2>
-    <p class="pane__label">Source</p>
-    <div class="segmented" role="group" aria-label="Photo source">
-      <button class="seg ${src === 'icloud' ? 'is-active' : ''}" data-photo-src="icloud">iCloud Shared Album</button>
-      <button class="seg ${src === 'gdrive' ? 'is-active' : ''}" data-photo-src="gdrive">Google Drive Folder</button>
-    </div>
+    <h2 class="pane__title">${gd ? 'GDrive Photos' : 'iCloud Photos'}</h2>
     <p class="pane__hint">${guide} <b>This is a public link — anyone who has it can view the photos, so add
       only photos appropriate for a shared office display.</b></p>
     ${set}
     <div class="row">
       <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
-      <span class="row__label">Use these photos as the screensaver (replaces art)</span>
+      <span class="row__label">Use these photos as the screensaver (replaces Art)</span>
     </div>
     <p class="pane__label">Rotation</p>
     <p class="pane__hint">Applies to the slideshow and the dashboard card.</p>
     <div class="segmented" role="group" aria-label="How often the photo changes">${ART_INTERVALS.map(
       (m) => `<button class="seg ${p.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
-    ${src === 'gdrive'
+    ${gd
       ? `<p class="pane__label">Folder link</p>
-         <p class="pane__hint">Folder ids use characters the on-screen keyboard can't type — paste the
-           link here, or enter it at <b>${location.host}/setup</b> from your phone.</p>
+         <p class="pane__hint">Folder ids use characters the on-screen keyboard can't type — paste the link,
+           or use a code from <b>${location.host}/photo-setup</b> (below).</p>
          <button class="btn" data-paste>Paste link</button>`
       : `<p class="pane__label">Album link</p>
          <p class="pane__hint">Paste the link, or type just the token after the <code>#</code>.</p>
@@ -435,57 +452,58 @@ function renderPhotos() {
          </div>
          <div class="photo-kb" hidden></div>`}
     <p class="code__status"></p>
-    <p class="pane__label">Prefer your phone?</p>
-    <p class="pane__hint">Scan for the full step-by-step — create the ${src === 'gdrive' ? 'folder' : 'album'},
-      copy its link, and paste it right there.</p>
+    <div class="photo-preview"></div>
+    <hr class="pane__rule">
+    <p class="pane__label">Set it up from your phone</p>
+    <p class="pane__hint">Scan for the full step-by-step. Build the album or folder, check the link, and it hands
+      you a short code to enter here — only your photos change, nothing else on the board.</p>
     <div class="qr qr--photos"></div>
-    <div class="photo-preview"></div>`;
+    <button class="btn" data-code-reveal>Have a code from photo-setup?</button>
+    <div class="photo-code" hidden></div>`;
   // Short-URL QR renders eagerly (unlike the dense config QR behind a button):
   // it's version ~3, cheap to draw. The .then re-queries the pane so a
-  // source-flip re-render can't paint into a detached node.
+  // re-render can't paint into a detached node.
   import('../vendor/qrcode.js').then(({ default: qrcode }) => {
     const box = pane()?.querySelector('.qr--photos');
     if (!box) return;
     const qr = qrcode(0, 'M');
-    qr.addData(`https://${location.host}/setup#go=photos`);
+    qr.addData(`https://${location.host}/photo-setup`);
     qr.make();
     box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
   });
-  pane().querySelectorAll('[data-photo-src]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      if (btn.dataset.photoSrc === src) return;
-      state.cfg.photos = { ...state.cfg.photos, source: btn.dataset.photoSrc, album: '' };
-      renderPhotos();
-    }),
-  );
-  pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg.photos.album = ''; renderPhotos(); });
-  pane().querySelector('[data-ss]').addEventListener('click', () => { state.cfg.photos.screensaver = !state.cfg.photos.screensaver; renderPhotos(); });
+  pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg[cfgKey].album = ''; rerender(); });
+  pane().querySelector('[data-ss]').addEventListener('click', () => {
+    const on = !state.cfg[cfgKey].screensaver;
+    state.cfg[cfgKey].screensaver = on;
+    if (on) state.cfg[otherKey].screensaver = false; // screensaver is exclusive across Art + both photo widgets
+    rerender();
+  });
   pane().querySelectorAll('[data-every]').forEach((btn) =>
     btn.addEventListener('click', () => {
-      state.cfg.photos.every = Number(btn.dataset.every);
-      renderPhotos();
+      state.cfg[cfgKey].every = Number(btn.dataset.every);
+      rerender();
     }),
   );
   const status = pane().querySelector('.code__status');
   const preview = pane().querySelector('.photo-preview');
   const validate = async (raw) => {
-    const id = src === 'gdrive' ? parseDriveFolder(raw) : parseAlbumToken(raw);
-    if (!id) { status.textContent = `That doesn't look like a ${src === 'gdrive' ? 'Drive folder' : 'album'} link — check it and try again.`; return; }
+    const id = gd ? parseDriveFolder(raw) : parseAlbumToken(raw);
+    if (!id) { status.textContent = `That doesn't look like a ${gd ? 'Drive folder' : 'album'} link — check it and try again.`; return; }
     status.textContent = 'Checking…';
     preview.innerHTML = '';
     try {
-      const endpoint = src === 'gdrive'
+      const endpoint = gd
         ? `${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(id)}`
         : `${WORKER_URL}/icloud/album?token=${encodeURIComponent(id)}`;
       const res = await fetch(endpoint);
       if (res.status === 503) { status.textContent = 'The server needs a Google Drive key (GDRIVE_KEY) — ask whoever runs it.'; return; }
       const digest = await res.json();
       if (!digest.photos?.length) throw new Error('empty');
-      state.cfg.photos = { ...state.cfg.photos, source: src, album: id };
+      state.cfg[cfgKey].album = id;
       status.textContent = `Found ${digest.photos.length} photo${digest.photos.length > 1 ? 's' : ''}.`;
       preview.innerHTML = `<img class="photo-preview__img" src="${escapeHtml(digest.photos[0].url)}" alt="">`;
     } catch {
-      status.textContent = src === 'gdrive'
+      status.textContent = gd
         ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
         : "Couldn't open that album — check Public Website is on and the link/token is exact (it's case-sensitive).";
       preview.innerHTML = '';
@@ -493,12 +511,11 @@ function renderPhotos() {
   };
   // The keyboard reveals on demand: mounted eagerly it pushed its own action
   // row (with ⌫/Check) below the 1080 fold with no hint it existed. Revealing
-  // on tap + scrolling it fully into view keeps every key on screen. It's the
-  // shared qwertyKeypad (shiftable variant) — the bespoke keyboard.js path is
-  // retired (settings review Batch 3).
+  // on tap + scrolling it fully into view keeps every key on screen. iCloud only
+  // (Drive folder ids aren't OSK-typeable — paste or a code).
   let kbValue = '';
   let kbShift = false;
-  const kbHost = src === 'icloud' ? pane().querySelector('.photo-kb') : null;
+  const kbHost = gd ? null : pane().querySelector('.photo-kb');
   const paintKb = () => {
     kbHost.innerHTML = `<output class="osk__display" aria-live="polite">${escapeHtml(kbValue) || '·'}</output>`
       + qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [],
@@ -526,9 +543,56 @@ function renderPhotos() {
     revealKb();
   });
   pane().querySelector('[data-paste]').addEventListener('click', async () => {
-    const parse = src === 'gdrive' ? parseDriveFolder : parseAlbumToken;
-    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { kbValue = id; if (kbHost && !kbHost.hidden) paintKb(); validate(id); } else { status.textContent = `That clipboard text isn't a ${src === 'gdrive' ? 'folder' : 'album'} link.`; } }
-    catch { status.textContent = src === 'gdrive' ? `Paste unavailable on this display — use ${location.host}/setup from your phone.` : 'Paste unavailable on this display — type the link instead.'; }
+    const parse = gd ? parseDriveFolder : parseAlbumToken;
+    try { const t = await navigator.clipboard.readText(); const id = parse(t); if (id) { kbValue = id; if (kbHost && !kbHost.hidden) paintKb(); validate(id); } else { status.textContent = `That clipboard text isn't a ${gd ? 'folder' : 'album'} link.`; } }
+    catch { status.textContent = gd ? `Paste unavailable on this display — use ${location.host}/photo-setup from your phone.` : 'Paste unavailable on this display — type the link instead.'; }
+  });
+  // "Have a code?" — a photos-only code from /photo-setup. It merges just the
+  // photo slots it carries (never the rest of the board), applying either or
+  // both sources; enter it on either photo pane.
+  wirePhotoCodeEntry(src, status);
+}
+
+// Reveals a 6-char code keypad that redeems a photos-only setup code and merges
+// it into the photo blocks. Shared by both photo panes; src is the pane to
+// re-render on success.
+function wirePhotoCodeEntry(src, status) {
+  const host = pane().querySelector('.photo-code');
+  let code = '';
+  const paint = () => {
+    host.innerHTML = `<output class="osk__display code__display--pin" aria-live="polite">${code.padEnd(6, '·')}</output>`
+      + qwertyKeypad('ABCDEFGHJKMNPQRSTVWXYZ0123456789', [],
+        '<button class="key osk__key osk__key--wide" data-key="⌫">⌫</button>');
+    host.querySelectorAll('[data-key]').forEach((btn) =>
+      btn.addEventListener('click', async () => {
+        const k = btn.dataset.key;
+        if (k === '⌫') code = code.slice(0, -1);
+        else if (code.length < 6) code += k;
+        paint();
+        if (code.length === 6) {
+          status.textContent = 'Checking…';
+          try {
+            const { cfg: encoded } = await fetchJSON(`${WORKER_URL}/code/${code}`);
+            const decoded = await decodeCode(encoded);
+            if (decoded.scope !== 'photos') { status.textContent = 'That code holds a full board setup — enter it under Settings → Setup code instead.'; code = ''; paint(); return; }
+            const changed = applyPhotosPatch(decoded.patch);
+            if (!changed.length) { status.textContent = "That code didn't carry a usable photo link."; code = ''; paint(); return; }
+            renderPhotoPane(src);
+            const applied = pane().querySelector('.code__status');
+            if (applied) applied.textContent = `Applied ${changed.join(' + ')} photos. Review, then press Save.`;
+          } catch {
+            status.textContent = 'Code not found (codes expire after an hour).';
+            code = '';
+            paint();
+          }
+        }
+      }));
+  };
+  pane().querySelector('[data-code-reveal]').addEventListener('click', (e) => {
+    e.currentTarget.hidden = true;
+    paint();
+    host.hidden = false;
+    host.scrollIntoView({ block: 'end' });
   });
 }
 
@@ -1452,9 +1516,18 @@ function renderCode() {
         status.textContent = 'Checking…';
         try {
           const { cfg: encoded } = await fetchJSON(`${WORKER_URL}/code/${code}`);
-          const incoming = await decodeConfig(encoded);
-          state.cfg = incoming;
-          status.textContent = 'Applied! Review the other sections, then press Save.';
+          const decoded = await decodeCode(encoded);
+          if (decoded.scope === 'photos') {
+            // A photos-only code merges just the photo blocks (Settings → Photos
+            // is the home for these, but redeeming here shouldn't dead-end).
+            const changed = applyPhotosPatch(decoded.patch);
+            status.textContent = changed.length
+              ? `Applied ${changed.join(' + ')} photos. Review, then press Save.`
+              : "That code didn't carry a usable photo link.";
+          } else {
+            state.cfg = decoded.cfg;
+            status.textContent = 'Applied! Review the other sections, then press Save.';
+          }
         } catch {
           status.textContent = 'Code not found (codes expire after an hour).';
           code = '';

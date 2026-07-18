@@ -29,6 +29,7 @@ export const MIN_SIZE = {
   wotd: [2, 2],
   art: [2, 2],
   photos: [2, 2],
+  gdrivephotos: [2, 2],
   apod: [3, 3],
   chart: [2, 4], // contain-fit infographic; 2-wide is a slim teaser (in-image text reads best at 3+)
   citibike: [3, 2],

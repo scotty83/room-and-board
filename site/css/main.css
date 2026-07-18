@@ -266,6 +266,9 @@ html, body {
 
 /* ---------- photos settings thumbnail ---------- */
 .photo-preview__img { max-width: 240px; border-radius: 10px; margin-top: 12px; }
+/* Revealed photo-code keypad (Settings → Photos → "Have a code?"). */
+.photo-code { margin-top: 14px; }
+.photo-code .osk__display { margin-bottom: 10px; }
 
 /* ---------- history / quote / sky / markets ---------- */
 .history { display: flex; flex-direction: column; gap: 10px; }

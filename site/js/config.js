@@ -19,7 +19,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'gdrivephotos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -31,7 +31,7 @@ export const WIDGET_GROUPS = [
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup', 'f1'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
-  { label: 'Ambient', ids: ['art', 'photos', 'apod', 'worldclock'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'gdrivephotos', 'apod', 'worldclock'] },
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services', 'chart'] },
 ];
 
@@ -107,7 +107,13 @@ export const DEFAULT_CONFIG = Object.freeze({
   path: Object.freeze({ station: '33S', dir: 'ToNJ' }), // ridepath consideredStation code; default NJ-bound (evening commute home)
   ferry: Object.freeze({ landing: '17' }), // NYC Ferry stop_id (East 34th Street)
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
-  photos: Object.freeze({ source: 'icloud', album: '', screensaver: false, every: 30 }), // iCloud shared-album token; every = rotation minutes
+  // Two independent photo widgets share this render but keep separate config:
+  // photos = iCloud shared-album token, gdrivephotos = Drive folder id. album =
+  // the source's id, every = rotation minutes, screensaver = drive ambient (at
+  // most ONE of art/photos/gdrivephotos owns the screensaver — normalizeConfig
+  // enforces it). Legacy single-source {source, album} migrates in normalizeConfig.
+  photos: Object.freeze({ album: '', screensaver: false, every: 30 }),
+  gdrivephotos: Object.freeze({ album: '', screensaver: false, every: 30 }),
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   theme: 'momentum',
@@ -158,7 +164,7 @@ export function normalizeConfig(raw) {
       ? raw.layout.map((r) => ({ id: r.id, x: r.x * 2, y: r.y * 2, w: r.w * 2, h: r.h * 2 }))
       : raw.layout
     : null;
-  const layout =
+  let layout =
     // An explicitly-present layout (even empty — the user removed every widget)
     // is honored; only a truly ABSENT layout falls back to the legacy widgets
     // list or the default. Previously `[]` failed the length check and silently
@@ -168,6 +174,16 @@ export function normalizeConfig(raw) {
       : Array.isArray(raw.widgets)
         ? migrateWidgetsToLayout(raw.widgets)
         : [...DEFAULT_LAYOUT];
+  // Legacy single-source migration: a board whose photos source was Drive keeps
+  // its placed card, re-homed onto the new gdrivephotos widget id.
+  if (raw.photos?.source === 'gdrive') {
+    layout = layout.map((r) => (r.id === 'photos' ? { ...r, id: 'gdrivephotos' } : r));
+  }
+  const photos = normalizePhotos(raw.photos);
+  const gdrivephotos = normalizeGdrivePhotos(raw.gdrivephotos, raw.photos);
+  // Screensaver is exclusive across Art + both photo widgets ("never together").
+  // iCloud wins a double-set deterministically; the UI enforces single-select.
+  if (photos.screensaver && gdrivephotos.screensaver) gdrivephotos.screensaver = false;
 
   return {
     v: 3,
@@ -318,25 +334,8 @@ export function normalizeConfig(raw) {
       every: Math.min(Math.max(num(raw.art?.every, 30), 1), 360),
       cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
     },
-    photos: (() => {
-      const p = raw.photos ?? {};
-      const source = p.source === 'gdrive' ? 'gdrive' : 'icloud';
-      // Per-source album shapes: iCloud = case-sensitive base62 token,
-      // Drive = folder id ([-\w], ~33 chars). Unknown sources fall back to
-      // icloud with an empty album (treated as unconfigured).
-      const album = source === 'gdrive'
-        ? (/^[-\w]{10,80}$/.test(p.album ?? '') ? p.album : '')
-        : (/^[A-Za-z0-9]{8,25}$/.test(p.album ?? '') ? p.album : '');
-      return {
-        source,
-        album,
-        screensaver: p.screensaver === true,
-        // Photos' own rotation interval (card + ambient slideshow). Key order
-        // must match DEFAULT_CONFIG (the encode wire-strip compares
-        // JSON.stringify of the whole object).
-        every: Math.min(Math.max(num(p.every, 30), 1), 360),
-      };
-    })(),
+    photos,
+    gdrivephotos,
     worldclock: {
       cities: (() => {
         const seen = new Set();
@@ -406,6 +405,7 @@ export async function encodeConfig(cfg) {
   if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
   if (wire.theme === DEFAULT_CONFIG.theme) delete wire.theme; // default theme → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
+  if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
@@ -417,6 +417,72 @@ export async function decodeConfig(encoded) {
   const compressed = base64urlToBytes(encoded);
   const bytes = await pipe(compressed, new DecompressionStream('deflate-raw'));
   return normalizeConfig(JSON.parse(new TextDecoder().decode(bytes)));
+}
+
+// Per-source album shapes: an iCloud shared-album token is case-sensitive
+// base62 (8-25 chars); a Drive folder id is [-\w] (~10-80). Shared by the
+// config normalizers and the photos-only code so validation stays identical.
+const isIcloudToken = (v) => /^[A-Za-z0-9]{8,25}$/.test(v ?? '');
+const isDriveFolder = (v) => /^[-\w]{10,80}$/.test(v ?? '');
+const photoEvery = (p) => Math.min(Math.max(num(p?.every, 30), 1), 360);
+
+// iCloud Photos block, from the new shape ({album,...}) or a legacy single-
+// source block ({source,album,...}) — but a legacy Drive album belongs to
+// gdrivephotos, so it's dropped here. Key order matches DEFAULT_CONFIG.photos
+// (encodeConfig's wire-strip compares JSON.stringify of the whole object).
+export function normalizePhotos(raw) {
+  const p = raw ?? {};
+  const legacyDrive = p.source === 'gdrive';
+  const tok = legacyDrive ? '' : p.album;
+  return {
+    album: isIcloudToken(tok) ? tok : '',
+    screensaver: p.screensaver === true && !legacyDrive,
+    every: photoEvery(p),
+  };
+}
+
+// GDrive Photos block, from its own new-shape block, else migrated from a
+// legacy Drive-sourced photos block ({source:'gdrive',album,...}).
+export function normalizeGdrivePhotos(raw, rawPhotos) {
+  const p = raw ?? (rawPhotos?.source === 'gdrive' ? rawPhotos : {});
+  return {
+    album: isDriveFolder(p.album) ? p.album : '',
+    screensaver: p.screensaver === true,
+    every: photoEvery(p),
+  };
+}
+
+// Photos-only setup code. The board MERGES this into the photo blocks rather
+// than overwriting the whole config (what a full setup code does), so a user
+// can set a photo source from their phone without losing the rest of the
+// board's setup. Sparse: only the slots the sender filled travel, so applying
+// an iCloud-only code never disturbs an existing Drive slot. The '~P~' sentinel
+// can't collide with a full-config code (those are pure base64url).
+const PHOTOS_CODE_MARK = '~P~';
+
+export async function encodePhotosCode({ icloud, gdrive } = {}) {
+  const patch = {};
+  if (isIcloudToken(icloud)) patch.icloud = icloud;
+  if (isDriveFolder(gdrive)) patch.gdrive = gdrive;
+  const bytes = new TextEncoder().encode(JSON.stringify(patch));
+  return PHOTOS_CODE_MARK + bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
+}
+
+// Resolve a redeemed setup-code payload: { scope:'photos', patch:{icloud?,gdrive?} }
+// for a photos code (merge only the present slots), or { scope:'full', cfg }
+// for a normal config (replace, as before). Both board code-entries branch on
+// scope.
+export async function decodeCode(encoded) {
+  if (typeof encoded === 'string' && encoded.startsWith(PHOTOS_CODE_MARK)) {
+    const compressed = base64urlToBytes(encoded.slice(PHOTOS_CODE_MARK.length));
+    const bytes = await pipe(compressed, new DecompressionStream('deflate-raw'));
+    const p = JSON.parse(new TextDecoder().decode(bytes));
+    const patch = {};
+    if (isIcloudToken(p.icloud)) patch.icloud = p.icloud;
+    if (isDriveFolder(p.gdrive)) patch.gdrive = p.gdrive;
+    return { scope: 'photos', patch };
+  }
+  return { scope: 'full', cfg: await decodeConfig(encoded) };
 }
 
 export function pickNewest(a, b) {

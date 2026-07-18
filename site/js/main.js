@@ -41,6 +41,7 @@ import * as news from './widgets/news.js';
 import * as substack from './widgets/substack.js';
 import * as bsky from './widgets/bsky.js';
 import * as photos from './widgets/photos.js';
+import * as gdrivephotos from './widgets/gdrivephotos.js';
 import * as services from './widgets/services.js';
 import * as apod from './widgets/apod.js';
 import * as chart from './widgets/chart.js';
@@ -48,7 +49,7 @@ import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, services, apod, chart, citibike, tfl, f1];
+const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, services, apod, chart, citibike, tfl, f1];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };
@@ -173,11 +174,12 @@ async function startSlideshow() {
     let manifest;
     if (DEMO) manifest = [DEMO_VMS.art];
     else if (src === 'photos') manifest = await resolvePhotosManifest(cfg, net, photos);
+    else if (src === 'gdrivephotos') manifest = await resolvePhotosManifest(cfg, net, gdrivephotos);
     else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
     if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
-    // Each ambient source owns its interval: photos.every for the photo
-    // slideshow, art.every for art (art's setting used to leak into photos).
-    const everyMin = (src === 'photos' ? cfg.photos?.every : cfg.art?.every) ?? 30;
+    // Each ambient source owns its interval: the chosen photo widget's every for
+    // its slideshow, art.every for art (art's setting used to leak into photos).
+    const everyMin = (src === 'photos' ? cfg.photos?.every : src === 'gdrivephotos' ? cfg.gdrivephotos?.every : cfg.art?.every) ?? 30;
     slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000 });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }

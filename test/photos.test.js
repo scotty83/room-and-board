@@ -31,19 +31,30 @@ describe('mapPhotos', () => {
   });
 });
 
-describe('fetchData source routing', () => {
-  const photos = () => import('../site/js/widgets/photos.js');
-  it('routes a gdrive source to /gdrive/album', async () => {
-    const { fetchData } = await photos();
+describe('fetchData source routing (two widgets)', () => {
+  const okNet = () => {
     const calls = [];
-    const net = { fetchJSON: (u) => { calls.push(u); return Promise.resolve({ photos: [{ url: 'x', ar: 1, caption: '', date: '' }] }); } };
-    const vm = await fetchData({ photos: { source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz' } }, net);
+    return { calls, net: { fetchJSON: (u) => { calls.push(u); return Promise.resolve({ photos: [{ url: 'x', ar: 1, caption: '', date: '' }] }); } } };
+  };
+  it('the iCloud widget reads cfg.photos.album → /icloud/album', async () => {
+    const { fetchData } = await import('../site/js/widgets/photos.js');
+    const { calls, net } = okNet();
+    const vm = await fetchData({ photos: { album: 'B1m5fk75vLWwX' } }, net);
+    expect(calls[0]).toContain('/icloud/album?token=B1m5fk75vLWwX');
+    expect(vm.photos).toHaveLength(1);
+  });
+  it('the GDrive widget reads cfg.gdrivephotos.album → /gdrive/album', async () => {
+    const { fetchData } = await import('../site/js/widgets/gdrivephotos.js');
+    const { calls, net } = okNet();
+    const vm = await fetchData({ gdrivephotos: { album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz' } }, net);
     expect(calls[0]).toContain('/gdrive/album?folder=1RHow60mcBwzMturimQSbziK3hqCvP2lz');
     expect(vm.photos).toHaveLength(1);
   });
-  it('returns empty without fetching when unconfigured', async () => {
-    const { fetchData } = await photos();
-    const vm = await fetchData({ photos: { source: 'gdrive', album: '' } }, { fetchJSON: () => { throw new Error('no fetch'); } });
-    expect(vm.photos).toEqual([]);
+  it('each returns empty without fetching when its block is unconfigured', async () => {
+    const noFetch = { fetchJSON: () => { throw new Error('no fetch'); } };
+    const ic = await import('../site/js/widgets/photos.js');
+    const gd = await import('../site/js/widgets/gdrivephotos.js');
+    expect((await ic.fetchData({ photos: { album: '' } }, noFetch)).photos).toEqual([]);
+    expect((await gd.fetchData({ gdrivephotos: { album: '' } }, noFetch)).photos).toEqual([]);
   });
 });

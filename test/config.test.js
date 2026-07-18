@@ -4,6 +4,8 @@ import {
   normalizeConfig,
   encodeConfig,
   decodeConfig,
+  encodePhotosCode,
+  decodeCode,
   pickNewest,
   WIDGET_IDS,
   WIDGET_GROUPS,
@@ -290,25 +292,72 @@ describe('substack/bsky config', () => {
   });
 });
 
-describe('photos config', () => {
-  it('defaults empty and sanitizes source/album/screensaver', () => {
-    expect(normalizeConfig({}).photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
-    const cfg = normalizeConfig({ photos: { source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 } });
-    expect(cfg.photos).toEqual({ source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
-    const bad = normalizeConfig({ photos: { source: 'myspace', album: 'nope!', screensaver: 'yes', every: 'soon' } });
-    expect(bad.photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
+describe('photos config (iCloud + GDrive widgets)', () => {
+  const GDRIVE_ID = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
+  it('defaults both blocks empty and sanitizes each', () => {
+    const d = normalizeConfig({});
+    expect(d.photos).toEqual({ album: '', screensaver: false, every: 30 });
+    expect(d.gdrivephotos).toEqual({ album: '', screensaver: false, every: 30 });
+    const cfg = normalizeConfig({
+      photos: { album: 'B1m5fk75vLWwX', screensaver: true, every: 15 },
+      gdrivephotos: { album: GDRIVE_ID, screensaver: false, every: 60 },
+    });
+    expect(cfg.photos).toEqual({ album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
+    expect(cfg.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: false, every: 60 });
+    // Cross-shaped albums are rejected by the other block's rule.
+    expect(normalizeConfig({ photos: { album: GDRIVE_ID } }).photos.album).toBe(''); // not an iCloud token
+    expect(normalizeConfig({ gdrivephotos: { album: 'nope!' } }).gdrivephotos.album).toBe('');
     // every clamps like art.every (1–360 minutes)
     expect(normalizeConfig({ photos: { every: 0 } }).photos.every).toBe(1);
-    expect(normalizeConfig({ photos: { every: 999 } }).photos.every).toBe(360);
+    expect(normalizeConfig({ gdrivephotos: { every: 999 } }).gdrivephotos.every).toBe(360);
   });
-  it('accepts a gdrive source with a folder-id album', () => {
-    const cfg = normalizeConfig({ photos: { source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz', screensaver: true, every: 15 } });
-    expect(cfg.photos).toEqual({ source: 'gdrive', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz', screensaver: true, every: 15 });
-    expect(normalizeConfig({ photos: { source: 'gdrive', album: 'nope!' } }).photos.album).toBe('');
-    expect(normalizeConfig({ photos: { source: 'gdrive', album: 'short' } }).photos.album).toBe('');
-    // icloud tokens are NOT valid gdrive ids by length alone — but a 10+ char
-    // icloud-looking string is structurally a valid id; the source disambiguates.
-    expect(normalizeConfig({ photos: { source: 'bogus', album: '1RHow60mcBwzMturimQSbziK3hqCvP2lz' } }).photos).toEqual({ source: 'icloud', album: '', screensaver: false, every: 30 });
+  it('makes the screensaver exclusive across the two photo widgets', () => {
+    const cfg = normalizeConfig({
+      photos: { album: 'B1m5fk75vLWwX', screensaver: true },
+      gdrivephotos: { album: GDRIVE_ID, screensaver: true },
+    });
+    expect(cfg.photos.screensaver).toBe(true);
+    expect(cfg.gdrivephotos.screensaver).toBe(false); // iCloud wins the tie
+  });
+  it('migrates the legacy single-source shape', () => {
+    // Legacy iCloud: album stays on photos, gdrivephotos empty.
+    const ic = normalizeConfig({ photos: { source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 } });
+    expect(ic.photos).toEqual({ album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
+    expect(ic.gdrivephotos.album).toBe('');
+    // Legacy Drive: album + screensaver move to gdrivephotos; photos empties;
+    // a placed `photos` layout entry re-homes to `gdrivephotos`.
+    const gd = normalizeConfig({
+      layout: [{ id: 'photos', x: 0, y: 0, w: 2, h: 2 }],
+      photos: { source: 'gdrive', album: GDRIVE_ID, screensaver: true, every: 60 },
+    });
+    expect(gd.photos).toEqual({ album: '', screensaver: false, every: 60 });
+    expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
+    expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
+    expect(gd.layout.map((r) => r.id)).not.toContain('photos');
+  });
+});
+
+describe('photos-only setup code', () => {
+  const IC = 'B1m5fk75vLWwX';
+  const GD = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
+  it('round-trips both slots and marks the photos scope', async () => {
+    const decoded = await decodeCode(await encodePhotosCode({ icloud: IC, gdrive: GD }));
+    expect(decoded).toEqual({ scope: 'photos', patch: { icloud: IC, gdrive: GD } });
+  });
+  it('is sparse — only carries the slots that were filled', async () => {
+    const one = await decodeCode(await encodePhotosCode({ icloud: IC }));
+    expect(one).toEqual({ scope: 'photos', patch: { icloud: IC } });
+    expect('gdrive' in one.patch).toBe(false);
+  });
+  it('drops invalid ids so a bad link never mints a slot', async () => {
+    const decoded = await decodeCode(await encodePhotosCode({ icloud: 'nope!', gdrive: GD }));
+    expect(decoded.patch).toEqual({ gdrive: GD });
+  });
+  it('a full-config code still decodes as scope:full', async () => {
+    const encoded = await encodeConfig(normalizeConfig({ name: 'Sam' }));
+    const decoded = await decodeCode(encoded);
+    expect(decoded.scope).toBe('full');
+    expect(decoded.cfg.name).toBe('Sam');
   });
 });
 

@@ -91,6 +91,10 @@ button.primary { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.9
 .ps-ok { color: #5ec27a; }
 .ps-bad { color: #e8737a; }
 .code-out__label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px; }
+/* The mint button breathes: air above the hint and roomier pill padding; a
+   dimmed disabled state so "nothing validated yet" is visible, not a dead tap. */
+#ps-getcode { margin-top: 12px; padding: 16px 36px; }
+button:disabled { opacity: 0.45; cursor: default; }
 
 /* Scheduled-mode window rows (native time inputs). */
 #schedule-editor { margin-top: 10px; }

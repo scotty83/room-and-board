@@ -253,8 +253,9 @@ html, body {
    Art/photos keep the aesthetic cover crop; the viewer always shows full. */
 .artwork--contain .artwork__img { object-fit: contain; }
 /* Tone-map the white Statista chart: luminance rank should follow information
-   rank — untreated it's the brightest object on the whole board. */
-.card--chart .artwork__img { filter: brightness(0.88); }
+   rank — untreated it's the brightest object on the whole board. 0.72 turns
+   the white ground soft grey (0.88 still glared on the glass, per Sean). */
+.card--chart .artwork__img { filter: brightness(0.72); }
 .artwork__caption { display: flex; flex-direction: column; gap: 2px; }
 .artwork__title { font-size: 22px; font-weight: 600; }
 .artwork__artist { font-size: 20px; color: var(--ink-dim); }

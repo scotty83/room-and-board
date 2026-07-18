@@ -791,20 +791,16 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 }
 /* Markets in a shallow card: single-line rows (name beside price) — stacked
    rows plus the +N hint clip a 2-tall body (measured: 141px into 121px) */
-/* space-between pushes the price to the info column's right edge; since 1fr
-   makes that edge identical across rows, the tabular-nums prices line up on
-   the decimal. */
-.card--markets.t-s .index__info { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
-.card--markets.t-s .index__price { font-size: 22px; }
+/* The info wrapper dissolves into the grid (display:contents) so name and
+   price are their own snug columns: the price track hugs the widest price
+   (right-aligned → decimals share an edge) right beside the names — no dead
+   1fr stretch between them — and the freed middle goes to the sparkline. */
+.card--markets.t-s .indexes { grid-template-columns: auto auto 1fr auto auto; }
+.card--markets.t-s .index__info { display: contents; }
+.card--markets.t-s .index__price { font-size: 22px; text-align: right; }
 .card--markets.t-s .index__name { font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card--markets.t-s .delta { font-size: 16px; }
-.card--markets.t-s .spark { height: 20px; }
-/* Sparkline shows at every size; narrower where the row is tight so the price
-   and delta keep their room. The 3-wide 2-tall min is the tightest — the name
-   ellipsizes there so the price stays decimal-aligned. */
-.card--markets.t-narrow .spark { width: 104px; }
-.card--markets.t-s.t-narrow .spark { width: 72px; }
-.card--markets.t-s[data-w="3"] .spark { width: 56px; }
+.card--markets.t-s .spark { height: 20px; width: 100%; min-width: 40px; }
 /* Stacked narrow cards (name over price, ≤4 cols, ≥3 tall): a fixed spark
    crushed the 1fr info column, so the wide price overflowed onto the sparkline
    (3×3 overlap). Give info its own content width instead — the spark fills

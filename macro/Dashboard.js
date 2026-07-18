@@ -1,9 +1,6 @@
 /**
   * Author(s):               Sean Scott
-  *                          <Title>
-  *                          <Company>
   *
-  * Consulting Engineer(s)   None
   *
   * Date Created:            July 17, 2026
   * Revised:                 July 18, 2026
@@ -107,20 +104,16 @@ async function ensureConfig(node, label, value) {
   * @roomosxapi [xConfiguration Macros AutoStart](https://roomos.cisco.com/xapi/Config.Macros.AutoStart/)
   */
 async function configureSignage() {
-  // Macro engine survives reboots even on a hand-provisioned board.
   await ensureConfig(xapi.Config.Macros.Mode, 'Macros Mode', 'On');
   await ensureConfig(xapi.Config.Macros.AutoStart, 'Macros AutoStart', 'On');
-  // The web engine renders the signage page.
   await ensureConfig(xapi.Config.WebEngine.Mode, 'WebEngine Mode', 'On');
-  // Signage displays in half-wake; Interactive = the touchscreen drives it.
   await ensureConfig(xapi.Config.Standby.Signage.Mode, 'Standby Signage Mode', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.InteractionMode, 'Standby Signage InteractionMode', 'Interactive');
   await ensureConfig(xapi.Config.Standby.Signage.Url, 'Standby Signage Url', SIGNAGE_URL);
 }
 
 /**
-  * Creates or overwrites the Control Panel button (idempotent — keyed by
-  * PanelId).
+  * Creates or overwrites the Control Panel button (idempotent — keyed by PanelId).
   * @roomosxapi [xCommand UserInterface Extensions Panel Save](https://roomos.cisco.com/xapi/Command.UserInterface.Extensions.Panel.Save/)
   */
 async function deployPanel() {

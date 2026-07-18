@@ -152,6 +152,10 @@ html, body {
 .wx-trend__row { display: flex; }
 .wx-trend__row > span { flex: 1; min-width: 0; text-align: center; font-size: 18px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
 .wx-trend__row--hours > span { font-size: 14px; font-weight: 400; color: var(--ink-dim); } /* AA: ink-faint fails below 18px */
+/* Guaranteed air between the hour labels and the day chips (.wx-days'
+   margin-top:auto collapses to zero on a full card, landing the labels
+   right on the chips). */
+.wx-trend__row--hours { margin-bottom: 8px; }
 .wx-trend__chart { width: 100%; height: 60px; display: block; }
 .wx-trend__line { fill: none; stroke: var(--wx-accent); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .wx-trend__g0 { stop-color: var(--wx-accent); stop-opacity: 0.30; }
@@ -197,7 +201,7 @@ html, body {
    shorter body. Verified zero-overflow at every w×h from 3×4→12×8, alert
    present or not. (Placed last so these win over the tier rules above.) */
 .card--weather.t-m .wx-rule { margin: 8px 0 6px; }
-.card--weather.t-m .wx-trend__chart { height: 40px; }
+.card--weather.t-m .wx-trend__chart { height: 36px; } /* 40 -> 36 funds the hours/chips seam gap at the tight 3x4 */
 .card--weather.t-m:not(.t-narrow) .wx-now__temp { font-size: 78px; }
 .card--weather.t-m:not(.t-narrow) .wx-day { padding: 7px 4px; }
 .card--weather.t-l .wx-trend__chart { height: 100px; }
@@ -1255,3 +1259,18 @@ body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0
   border-top: 2px solid #ff5050;
 }
 .displaytest__unsafe span { position: absolute; right: 10px; top: 6px; color: #ff6b6b; font-size: 14px; }
+
+/* Momentum weather type: the hero temperature goes properly thin (the device
+   exposes CiscoSansTT ExtraLight) and a step smaller; tight negative tracking
+   relaxes for the thin face; day-chip highs calm from bold to Medium. */
+body.theme-momentum .wx-now__temp {
+  font-family: 'CiscoSansTT ExtraLight', 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-weight: 200;
+  font-size: 72px;
+  letter-spacing: -0.01em;
+}
+body.theme-momentum .card--weather:not(.t-narrow) .wx-now__temp { font-size: 84px; }
+body.theme-momentum .wx-day__hi {
+  font-family: 'CiscoSansTT Medium', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+}

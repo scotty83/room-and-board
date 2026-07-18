@@ -55,7 +55,7 @@ function sparkSvg(ix, up) {
     // the overnight jump (split-1 → split) belongs to the dimmed history.
     paths = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split + 1))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
               <path d="${toPath(pts.slice(ix.split))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
-              <line class="spark__div" x1="${dx}" y1="0" x2="${dx}" y2="28" vector-effect="non-scaling-stroke"/>`;
+              <line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
   } else {
     paths = `<path d="${sparkPath(series, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
   }

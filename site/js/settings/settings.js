@@ -435,7 +435,22 @@ function renderPhotos() {
          </div>
          <div class="photo-kb" hidden></div>`}
     <p class="code__status"></p>
+    <p class="pane__label">Prefer your phone?</p>
+    <p class="pane__hint">Scan for the full step-by-step — create the ${src === 'gdrive' ? 'folder' : 'album'},
+      copy its link, and paste it right there.</p>
+    <div class="qr qr--photos"></div>
     <div class="photo-preview"></div>`;
+  // Short-URL QR renders eagerly (unlike the dense config QR behind a button):
+  // it's version ~3, cheap to draw. The .then re-queries the pane so a
+  // source-flip re-render can't paint into a detached node.
+  import('../vendor/qrcode.js').then(({ default: qrcode }) => {
+    const box = pane()?.querySelector('.qr--photos');
+    if (!box) return;
+    const qr = qrcode(0, 'M');
+    qr.addData(`https://${location.host}/setup#go=photos`);
+    qr.make();
+    box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
+  });
   pane().querySelectorAll('[data-photo-src]').forEach((btn) =>
     btn.addEventListener('click', () => {
       if (btn.dataset.photoSrc === src) return;

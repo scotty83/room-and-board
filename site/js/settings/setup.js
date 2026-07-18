@@ -89,10 +89,6 @@ export function stepTwoVisibility(placed) {
 }
 
 let cfg = structuredClone(DEFAULT_CONFIG);
-// New boards start on Momentum. Seeded on the fresh clone only — a scanned
-// board QR replaces cfg wholesale below, keeping that board's saved theme
-// (and pre-theme configs stay on Room & Board, the DEFAULT_CONFIG default).
-cfg.theme = 'momentum';
 
 async function boot() {
   // Pre-fill from a scanned board QR (#cfg=...).
@@ -157,6 +153,20 @@ async function boot() {
   await safe(renderPhotos);
   await safe(renderServicesField);
   await safe(renderChartField);
+
+  // Deep link from the board's Photos pane QR (#go=photos): the user is
+  // mid-task on their phone, so skip the wizard and land on Photos with its
+  // walkthrough open. The section un-hides explicitly because applyStepTwo
+  // only shows sections whose widget is already placed.
+  if (hash.get('go') === 'photos') {
+    applyStepTwo();
+    $('#step-1').hidden = true;
+    $('#step-2').hidden = false;
+    const field = document.getElementById('photos-field');
+    field.hidden = false;
+    field.querySelector('details:not([hidden])')?.setAttribute('open', '');
+    field.scrollIntoView();
+  }
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -641,11 +651,19 @@ function renderPhotos() {
   $('#photos-ss').addEventListener('change', (e) => (cfg.photos.screensaver = e.target.checked));
   const srcOf = () => ($('#photos-source').value === 'gdrive' ? 'gdrive' : 'icloud');
   const placeholders = { icloud: 'paste the album link', gdrive: 'paste the Drive folder link' };
+  // Only the selected source's walkthrough shows; the open/closed state is
+  // the user's (a source flip re-folds both, which reads as a fresh start).
+  const syncHowto = () => {
+    $('#photos-howto-icloud').hidden = srcOf() !== 'icloud';
+    $('#photos-howto-gdrive').hidden = srcOf() !== 'gdrive';
+  };
   $('#photos-source').value = cfg.photos.source === 'gdrive' ? 'gdrive' : 'icloud';
+  syncHowto();
   $('#photos-album').placeholder = placeholders[srcOf()];
   $('#photos-album').value = cfg.photos.album;
   $('#photos-source').addEventListener('change', () => {
     cfg.photos = { ...cfg.photos, source: srcOf(), album: '' };
+    syncHowto();
     $('#photos-album').value = '';
     $('#photos-album').placeholder = placeholders[srcOf()];
     $('#photos-status').textContent = '';

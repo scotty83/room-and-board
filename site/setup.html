@@ -206,6 +206,27 @@
           <option value="icloud">iCloud Shared Album (Public Website on)</option>
           <option value="gdrive">Google Drive Folder (Anyone with the link)</option>
         </select>
+        <details class="howto" id="photos-howto-icloud">
+          <summary>How do I get the album link?</summary>
+          <ol>
+            <li>Open the <b>Photos</b> app on your iPhone or iPad</li>
+            <li>Tap <b>Collections</b>, then <b>Shared Albums</b></li>
+            <li>Tap <b>+</b> to create an album — name it (e.g. Office Board Photos) and add at least one photo</li>
+            <li>Open the album, tap the <b>⋯</b> button, then the people icon</li>
+            <li>Turn on the <b>Public Website</b> slider</li>
+            <li>Tap <b>Copy Link</b> and paste it below — or, on the board, type just the code after the <code>#</code> (Settings → Photos)</li>
+          </ol>
+        </details>
+        <details class="howto" id="photos-howto-gdrive" hidden>
+          <summary>How do I get the folder link?</summary>
+          <ol>
+            <li>In <b>Google Drive</b>, choose <b>+ New → New folder</b> and name it (e.g. Office Board Photos)</li>
+            <li>Upload your photos — add more anytime and the board picks them up automatically</li>
+            <li>Tap the folder name, then <b>Share</b></li>
+            <li>Under <b>General access</b>, switch to <b>Anyone with the link</b></li>
+            <li>Tap <b>Copy link</b> — it looks like <code>drive.google.com/drive/folders/…</code> — and paste it below</li>
+          </ol>
+        </details>
         <p class="hint">Public link — anyone with it can view; add only office-appropriate photos.</p>
         <div class="ziprow">
           <input id="photos-album" type="text" maxlength="200" placeholder="paste the album link">

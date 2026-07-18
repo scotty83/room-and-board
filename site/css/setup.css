@@ -83,6 +83,20 @@ button.primary { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.9
 .tflchip__dot { width: 12px; height: 12px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); }
 .tflchip--off { opacity: 0.4; }
 
+/* Collapsible walkthrough ("How do I get the link?") — the steps happen in
+   the Photos/Drive app on the phone, so they stay folded until asked. */
+.howto {
+  margin-top: 10px; background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 14px;
+}
+.howto summary { padding: 14px 16px; cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+.howto summary::-webkit-details-marker { display: none; }
+.howto summary::before { content: '▸'; display: inline-block; width: 1.2em; }
+.howto[open] summary::before { content: '▾'; }
+.howto ol { margin: 0; padding: 0 18px 16px 40px; color: var(--ink-dim); display: flex; flex-direction: column; gap: 8px; }
+.howto li::marker { color: var(--ink-dim); }
+.howto b, .howto code { color: var(--ink); font-weight: 600; }
+
 /* Scheduled-mode window rows (native time inputs). */
 #schedule-editor { margin-top: 10px; }
 #schedule-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }

@@ -188,7 +188,7 @@ html, body {
 .card--weather.t-l .wx-now__icon { width: 72px; height: 72px; }
 .card--weather.t-l .wx-trend__chart { height: 116px; }
 .card--weather.t-l .wx-days { margin-top: 0; }
-.card--weather.t-l .wx-day { padding: 16px 4px; gap: 8px; }
+.card--weather.t-l .wx-day { padding: 11px 4px; gap: 6px; }
 .card--weather.t-l .wx-day__name { font-size: 18px; }
 .card--weather.t-l .wx-day__ico { width: 34px; height: 34px; }
 .card--weather.t-l .wx-day__hi { font-size: 27px; }

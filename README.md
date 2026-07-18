@@ -35,6 +35,7 @@ with its ambient info band.*
 ┌─ Static site (Cloudflare Pages) ─────────────────────────────┐
 │ /        dashboard (widgets, ambient art, touch settings)    │
 │ /setup   companion page → 6-char setup code                  │
+│ /photo-setup  album/folder walkthrough → photos-only code    │
 └──────────────────────────────────────────────────────────────┘
 ┌─ Cloudflare Worker (worker/) ────────────────────────────────┐
 │ /code            setup-code exchange (KV, 1h TTL, single-use)│
@@ -168,14 +169,19 @@ remove like any other.
   under **Settings → Display**: *Always dashboard*, *Always art*, or
   **Scheduled** — the dashboard shows during your own daily time windows (up to
   four, 15-minute steps) and art shows the rest of the time.
-- **Photos** — a rotating slideshow from an **iCloud Shared Album** or a
-  **public Google Drive folder**; tap for full screen, swipe to browse. Can
-  replace Art as the ambient screensaver. *Configure:* Settings → Photos →
-  pick the source, then paste the link — iCloud: Photos app → the album →
-  Share → enable **Public Website** → Copy Link; Drive: right-click the
-  folder → Share → **Anyone with the link** → Copy link (Drive needs a free
-  API key on the Worker; see Data sources). ⚠️ Anyone with the link can view
-  the photos — add only office-appropriate ones.
+- **iCloud Photos** / **GDrive Photos** — rotating photo slideshows from an
+  iCloud **Shared Album** and/or a **public Google Drive folder**. They're two
+  independent widgets — add either or both, each with its own album, rotation
+  interval, and screensaver option (on the dashboard both cards are titled
+  simply "Photos"); tap for full screen, swipe to browse. Either one — never
+  both — can replace Art as the ambient screensaver. *Configure:* from your
+  phone at **`/photo-setup`** (each widget's Settings pane shows a QR straight
+  to it): the page walks through creating the shared album/folder, checks your
+  link against the live feed, and mints a short board code — one code covers
+  either source or both, and entering it changes only the photo slots it
+  carries. Drive needs a free API key on the Worker; see Data sources.
+  ⚠️ The album/folder is shared with a public link — anyone with the link can
+  view the photos, so add only office-appropriate ones.
 - **NASA Daily Photo** — NASA's Astronomy Picture of the Day: the image + its
   title, tap for full screen with the explanation. Changes once a day; video
   days are skipped automatically. *Configure:* none (uses a free NASA key on the
@@ -375,7 +381,7 @@ the URL fragment and the dashboard returns configured.
 | MTA LIRR + MNR GTFS-RT | direct, keyless | GET only (HEAD returns 403); 60 s jittered polling |
 | MTA alert feeds (camsys) | Worker digest | raw subway feed ~800 KB → ~2 KB digest shared fleet-wide |
 | MTA BusTime SIRI | Worker + free key | `wrangler secret put MTA_BUS_KEY`; widget reports unconfigured until set |
-| Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); Photos' Drive source reports unconfigured until set |
+| Google Drive API | Worker + free key | `wrangler secret put GDRIVE_KEY` (free Cloud project, Drive API enabled, key restricted to it); the GDrive Photos widget reports unconfigured until set. Lists images sitting directly in the folder — subfolders aren't traversed |
 | Service status pages | Worker proxy, no keys | Statuspage instances (Zoom/Ubiquiti/Cloudflare/GitHub/Claude) + OpenAI (incident.io compat) + Slack/Microsoft/Google/Webex/AWS public JSON; failures report "Unknown", never fake green |
 | NASA APOD | Worker + free key | `wrangler secret put NASA_KEY` (free key from api.nasa.gov); falls back to `DEMO_KEY` when unset — viable because the 1h fleet-shared cache stays under DEMO_KEY's daily cap, but the real key is preferred |
 | Statista Chart of the Day | Worker, keyless | No feed exists — the worker scrapes the listing page (session-cookie SSO bounce walked manually, see `worker/src/chart.js`), cached 1 h; boards hotlink the infographic from `cdn.statcdn.com` (probe-verified: no referer/cookie checks). Scrape breaks if Statista reworks the page markup |

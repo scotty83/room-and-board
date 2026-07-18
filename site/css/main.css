@@ -1077,6 +1077,14 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    Mets NY clipped at the sides) */
 .team__logo { width: 44px; height: 44px; object-fit: contain; flex: none; background: rgba(232, 237, 244, 0.08); border-radius: 50%; padding: 7px; }
 .team__last { font-size: 17px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } /* AA */
+/* Shallow cards: two compact rows fit (a 3×2 showed just one team over dead
+   space) — smaller logo/type, no "Last:" line; the result line carries it. */
+.card--sports.t-s .team { min-height: 0; gap: 10px; }
+.card--sports.t-s .team__logo { width: 32px; height: 32px; padding: 5px; }
+.card--sports.t-s .team__abbr { width: 32px; font-size: 18px; }
+.card--sports.t-s .team__name { font-size: 19px; }
+.card--sports.t-s .team__line { font-size: 18px; }
+.card--sports.t-s .team__last { display: none; }
 .wc-flag { width: 26px; height: 26px; object-fit: contain; vertical-align: -5px; margin-right: 5px; border-radius: 3px; }
 
 /* ---------- on-screen keyboard (OSK) ---------- */

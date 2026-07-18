@@ -33,7 +33,7 @@ const MODELS = {
   // 3x3–4x8, hint included) — e.g. a 3x3 now packs 5 rows, not 2.
   bus: listCapacity(50, 56),
   history: listCapacity(64, 54),
-  sports: listCapacity(94, 70),
+  sports: listCapacity(94, 55), // shallow rows are compact (no Last line, 32px logo) — 2 teams fit a 3×2
   worldcup: listCapacity(60, 46),
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).

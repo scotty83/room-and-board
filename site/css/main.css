@@ -814,6 +814,11 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .card--markets.t-narrow:not(.t-s) .spark { width: 100%; min-width: 40px; }
 .card--markets.t-narrow:not(.t-s) .delta { font-size: 18px; }
 .card--markets.t-narrow:not(.t-s) .index__name { max-width: 150px; }
+/* The info column is ONE shared grid track, so right-aligning the price
+   inside it anchors every row's decimal on a common edge (tabular-nums)
+   while the block itself stays left-justified under the names. */
+.card--markets.t-narrow:not(.t-s) .index__price { text-align: right; }
+.card--markets.t-narrow:not(.t-s) .index__name { text-align: left; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

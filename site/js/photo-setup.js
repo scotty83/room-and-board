@@ -64,7 +64,7 @@ async function getCode() {
     const { code } = await res.json();
     const which = [valid.icloud && 'iCloud', valid.gdrive && 'Google Drive'].filter(Boolean).join(' + ');
     $('#ps-code-out').textContent = code;
-    $('#ps-code-note').textContent = `Covers ${which}. On your board, open Settings → Photos, tap Have a code?, and type this in. Only your photos change. Press Save. The code expires in 1 hour.`;
+    $('#ps-code-note').textContent = `Covers ${which}. On your board, open Settings → Photos, tap Enter code, and type this in. Press Save. The code expires in 1 hour.`;
     $('#ps-code').hidden = false;
     $('#ps-code').scrollIntoView({ block: 'end' });
   } catch (err) {

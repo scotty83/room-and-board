@@ -443,7 +443,7 @@ function renderPhotoPane(src) {
     ${configured}
     <p class="pane__label">${p.album ? 'Change it from your phone' : 'Set it up from your phone'}</p>
     <p class="pane__hint">Scan for the step-by-step: build the ${gd ? 'folder' : 'album'}, check its link, and it
-      hands you a short code. Enter the code below — only your photos change, nothing else on the board.</p>
+      hands you a short code. Enter the code below.</p>
     <div class="qr qr--photos"></div>
     <button class="btn" data-code-reveal>Enter code</button>
     <div class="photo-code" hidden></div>

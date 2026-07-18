@@ -459,7 +459,22 @@ function renderPhotoPane(src) {
     qr.make();
     box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
   });
-  pane().querySelector('[data-clear-album]')?.addEventListener('click', () => { state.cfg[cfgKey].album = ''; rerender(); });
+  // Removing an album is destructive-ish (re-adding means the phone dance
+  // again), so it takes two taps: first arms the button (red, relabeled),
+  // second clears; it disarms itself after 4s if the user walks away.
+  pane().querySelector('[data-clear-album]')?.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.dataset.armed) { state.cfg[cfgKey].album = ''; rerender(); return; }
+    btn.dataset.armed = '1';
+    btn.textContent = 'Tap again to remove';
+    btn.classList.add('btn--armed');
+    setTimeout(() => {
+      if (!pane()?.contains(btn)) return; // pane re-rendered meanwhile
+      delete btn.dataset.armed;
+      btn.textContent = 'Remove';
+      btn.classList.remove('btn--armed');
+    }, 4000);
+  });
   pane().querySelector('[data-ss]')?.addEventListener('click', () => {
     const on = !state.cfg[cfgKey].screensaver;
     state.cfg[cfgKey].screensaver = on;

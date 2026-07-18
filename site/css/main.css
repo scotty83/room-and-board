@@ -270,6 +270,11 @@ html, body {
 .photo-code { margin-top: 14px; }
 .photo-code .osk__display { margin-bottom: 10px; }
 .qr--photos { margin-bottom: 20px; } /* air between the QR tile and Enter code */
+/* Two-tap Remove: armed state ignites the destructive red (calm ghost at
+   rest). Both selectors so the momentum ghost override doesn't win. */
+.btn--armed, body.theme-momentum .btn--armed {
+  color: var(--bad); border-color: rgba(248, 81, 73, 0.6); background: var(--bad-tint);
+}
 
 /* ---------- history / quote / sky / markets ---------- */
 .history { display: flex; flex-direction: column; gap: 10px; }

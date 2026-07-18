@@ -33,7 +33,11 @@ const MODELS = {
   // 3x3–4x8, hint included) — e.g. a 3x3 now packs 5 rows, not 2.
   bus: listCapacity(50, 56),
   history: listCapacity(64, 54),
-  sports: listCapacity(94, 55), // shallow rows are compact (no Last line, 32px logo) — 2 teams fit a 3×2
+  // 74px pitch (was a too-tall 94 that estimated ~row+gap far above the ~66px
+  // t-m rows) makes a 3×3 fit 3 teams instead of 2 — verified worst-case
+  // (all-3-line rows) overflow-safe with the t-m font compaction below.
+  // Shallow rows are compact (no Last line, 32px logo) — 2 teams fit a 3×2.
+  sports: listCapacity(74, 55),
   worldcup: listCapacity(60, 46),
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).

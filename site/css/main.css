@@ -1090,6 +1090,17 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .card--sports.t-s .team__name { font-size: 19px; }
 .card--sports.t-s .team__line { font-size: 18px; }
 .card--sports.t-s .team__last { display: none; }
+/* Medium cards (h 3-4): shave the row footprint a touch so a 3×3 packs 3
+   full three-line teams (name+record / matchup / Last) without clipping any
+   data — worst-case 3 rows measured 233px in a 234px body before this, too
+   tight for the board's taller CiscoSansTT metrics. ~9px/row of headroom. */
+.card--sports.t-m .card__body { gap: 8px; }
+.card--sports.t-m .team { min-height: 0; gap: 12px; }
+.card--sports.t-m .team__info { line-height: 1.2; }
+.card--sports.t-m .team__name { font-size: 20px; }
+.card--sports.t-m .team__name small { font-size: 17px; }
+.card--sports.t-m .team__line { font-size: 19px; }
+.card--sports.t-m .team__last { font-size: 16px; }
 .wc-flag { width: 26px; height: 26px; object-fit: contain; vertical-align: -5px; margin-right: 5px; border-radius: 3px; }
 
 /* ---------- on-screen keyboard (OSK) ---------- */

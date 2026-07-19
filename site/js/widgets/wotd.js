@@ -7,8 +7,10 @@ import { cardSize, sizeTier } from '../capacity.js';
 export const meta = { id: 'wotd', title: 'Word of the Day', refreshMs: 24 * 60 * 60 * 1000 };
 
 export function render(el, vm, _cfg) {
-  const [, h] = cardSize(el, [3, 3]);
-  const showExample = sizeTier(h) !== 's' && vm.ex;
+  const [w, h] = cardSize(el, [3, 3]);
+  // Shallow cards have no vertical room; 2-wide portrait cards wrap the
+  // definition so deep the example's tail clips. Both drop the example.
+  const showExample = sizeTier(h) !== 's' && w > 2 && vm.ex;
   el.innerHTML = `
     <div class="wotd">
       <div class="wotd__word">${escapeHtml(vm.w)}</div>

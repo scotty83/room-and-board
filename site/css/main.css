@@ -989,7 +989,10 @@ body.mode-ambient .gear { bottom: 7px; }
    the later 3-line clamp was winning — the definition then overflowed the
    centered flex column and hard-clipped mid-line. Two lines is the budget. */
 .card--wotd.t-s.t-narrow .wotd__def { -webkit-line-clamp: 2; }
-.card--wotd.t-s .wotd { justify-content: flex-start; }
+/* Shallow budget is ~121px: word 36 + meta + 2-line def + gaps must land
+   under it, so the meta drops a step and the column tightens. */
+.card--wotd.t-s .wotd { justify-content: flex-start; gap: 5px; }
+.card--wotd.t-s .wotd__meta { font-size: 18px; }
 
 /* ---------- edit-mode gesture preview ---------- */
 .edit-placeholder {

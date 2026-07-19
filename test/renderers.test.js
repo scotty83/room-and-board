@@ -359,6 +359,20 @@ describe('widget renderers', () => {
     card.remove();
   });
 
+  it('wotd hides the example sentence in 2-wide portrait cards', () => {
+    const card = document.createElement('article');
+    card.className = 'card card--wotd';
+    card.dataset.w = '2';
+    card.dataset.h = '3';
+    card.innerHTML = '<div class="card__body"></div>';
+    document.body.appendChild(card);
+    const body = card.querySelector('.card__body');
+    wotd.render(body, DEMO_VMS.wotd, CFG);
+    expect(body.querySelector('.wotd__ex')).toBeNull();
+    expect(body.textContent).toContain('petrichor');
+    card.remove();
+  });
+
   it('wotd hides the example sentence in shallow cards', () => {
     const card = document.createElement('article');
     card.className = 'card card--wotd';

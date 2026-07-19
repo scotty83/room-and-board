@@ -212,9 +212,8 @@ export function normalizeLayout(raw, caps) {
 // it relocates first-fit. Cascades through chains. Returns a fresh layout,
 // or null when the arrangement is unsolvable. Never mutates the input.
 export function placeWithPush(layout, rect, dir = { dx: 0, dy: 0 }, caps) {
-  const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
   const [Mw, Mh] = maxOf(rect.id, caps);
-  if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return null;
+  if (!meetsMin(rect.id, rect.w, rect.h) || rect.w > Mw || rect.h > Mh) return null;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return null;
   }

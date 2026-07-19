@@ -258,6 +258,14 @@ describe('multi-mode minimums (MIN_ALTS)', () => {
     expect(canPlace([], { id: 'wotd', x: 0, y: 0, w: 2, h: 3 })).toBe(true);
   });
 
+  it('placeWithPush accepts both wotd orientations (the resize-gesture path)', () => {
+    // Regression: placeWithPush carried its own MIN_SIZE check, so the board
+    // resize gesture rejected 3x2 even though canPlace allowed it.
+    expect(placeWithPush([], { id: 'wotd', x: 0, y: 0, w: 3, h: 2 })).toBeTruthy();
+    expect(placeWithPush([], { id: 'wotd', x: 0, y: 0, w: 2, h: 3 })).toBeTruthy();
+    expect(placeWithPush([], { id: 'wotd', x: 0, y: 0, w: 2, h: 2 })).toBeNull();
+  });
+
   it('firstFitAny falls through to the landscape alternative', () => {
     // Fill everything except a 3x2 hole at the bottom-left: portrait 2x3
     // cannot fit, landscape 3x2 must.

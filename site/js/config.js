@@ -488,6 +488,16 @@ export function normalizeGdrivePhotos(raw, rawPhotos) {
 export const RETIRED_AFTER = Object.freeze({ worldcup: Date.UTC(2026, 6, 28) });
 export const isRetired = (id, nowMs = Date.now()) => (RETIRED_AFTER[id] ?? Infinity) < nowMs;
 
+// Staged rollout: ids listed here surface only on staging hosts (beta.
+// roomboard.app, the rvc.tech fallback, local dev) — prod ships the code
+// dark and the pickers/settings nav hide the id until launch. A card that
+// is already PLACED still renders everywhere, so a beta-configured board
+// never breaks by visiting prod.
+const BETA_ONLY = Object.freeze(['iptv']);
+export const isBetaHost = (host = (typeof location !== 'undefined' ? location.hostname : 'localhost')) =>
+  host !== 'roomboard.app' && host !== 'www.roomboard.app';
+export const isLaunched = (id, host) => !BETA_ONLY.includes(id) || isBetaHost(host);
+
 const PHOTOS_CODE_MARK = '~P~';
 // Live Video rides the same phone-to-board bridge: '~V~' carries just the
 // stream URL (+ optional label) so redeeming never disturbs the board's setup.

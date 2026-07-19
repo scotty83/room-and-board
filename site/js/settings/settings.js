@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { isRetired, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
+import { isRetired, isLaunched, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -214,7 +214,7 @@ export function navGroupForSection(id) {
 // Pure nav HTML: pinned items as nav buttons; groups as a toggle header (chevron
 // + aria-expanded) followed by indented child buttons only when the group is open.
 export function navHtml(section, openGroup) {
-  return NAV_MODEL.map((e) => {
+  return NAV_MODEL.filter((e) => e.type !== 'item' || isLaunched(e.id)).map((e) => {
     if (e.type === 'item') {
       return `<button class="settings__navitem ${e.id === section ? 'is-active' : ''}" data-section="${e.id}">${e.label}</button>`;
     }
@@ -288,7 +288,7 @@ export function widgetGroupsHtml(layout) {
   return WIDGET_GROUPS.map((g) => `
     <section class="wgroup">
       <h3 class="wgroup__title">${g.label}</h3>
-      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || !isRetired(id)).map((id) => {
+      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id))).map((id) => {
         const on = placed.has(id);
         const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
         return `<div class="row">

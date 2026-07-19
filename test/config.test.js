@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  isLaunched,
   isRetired,
   DEFAULT_CONFIG,
   normalizeConfig,
@@ -336,6 +337,17 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
     expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
     expect(gd.layout.map((r) => r.id)).not.toContain('photos');
+  });
+});
+
+describe('staged rollout (BETA_ONLY widgets)', () => {
+  it('iptv hides on prod hosts only; launched widgets show everywhere', () => {
+    expect(isLaunched('iptv', 'roomboard.app')).toBe(false);
+    expect(isLaunched('iptv', 'www.roomboard.app')).toBe(false);
+    expect(isLaunched('iptv', 'beta.roomboard.app')).toBe(true);
+    expect(isLaunched('iptv', 'signage.rvc.tech')).toBe(true);
+    expect(isLaunched('iptv', 'localhost')).toBe(true);
+    expect(isLaunched('weather', 'roomboard.app')).toBe(true);
   });
 });
 

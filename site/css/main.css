@@ -503,6 +503,9 @@ body.mode-ambient .gear { bottom: 7px; }
 /* Sub-section label inside a pane (e.g. Display's Mode / Greeting name):
    bigger and brighter than a hint so the groups read as separate settings. */
 .pane__label { font-size: 25px; font-weight: 600; color: var(--ink); margin: 26px 0 12px; }
+/* The photo panes' phone-setup heading is the pane's primary section, not a
+   field label; a step up from .pane__label without competing with the title. */
+.pane__label--head { font-size: 29px; }
 .pane__empty { font-size: 21px; color: var(--ink-faint); }
 .pane__rule { border: none; border-top: 1px solid var(--bg-card-2); margin: 28px 0; }
 

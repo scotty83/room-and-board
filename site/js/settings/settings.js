@@ -443,7 +443,7 @@ function renderPhotoPane(src) {
       it, but <b>anyone with the link could view these photos</b>; if you're not comfortable with that, don't add
       personal photos. It's your responsibility to make sure photos are workplace appropriate.</p>
     ${configured}
-    <p class="pane__label">${p.album ? 'Change it from your phone' : 'Set it up from your phone'}</p>
+    <p class="pane__label pane__label--head">${p.album ? 'Change it from your phone' : 'Set it up from your phone'}</p>
     <p class="pane__hint">Scan for the step-by-step: build the ${gd ? 'folder' : 'album'}, check its link, and it
       hands you a short code. Enter the code below.</p>
     <div class="qr qr--photos"></div>

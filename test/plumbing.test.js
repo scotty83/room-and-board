@@ -39,13 +39,11 @@ describe('store', () => {
   });
 });
 
-describe('theme config', () => {
-  it('momentum is the only theme; everything else normalizes to it', () => {
-    expect(normalizeConfig({ theme: 'momentum' }).theme).toBe('momentum');
-    expect(normalizeConfig({}).theme).toBe('momentum');
-    expect(normalizeConfig({ theme: 'neon' }).theme).toBe('momentum');
-    // Room & Board is hidden: a board saved on 'dark' auto-migrates to Momentum.
-    expect(normalizeConfig({ theme: 'dark' }).theme).toBe('momentum');
+describe('theme (retired)', () => {
+  it('legacy theme keys are accepted and dropped — old configs/QRs still decode', () => {
+    expect(normalizeConfig({ theme: 'momentum' }).theme).toBeUndefined();
+    expect(normalizeConfig({ theme: 'dark' }).theme).toBeUndefined();
+    expect(normalizeConfig({}).theme).toBeUndefined();
   });
 });
 

@@ -3,7 +3,7 @@
 import { normalizeConfig, decodeConfig } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
-import { fmtClock, applyTheme } from './util.js';
+import { fmtClock } from './util.js';
 import { schedule } from './scheduler.js';
 import { resolveMode, ambientSource } from './modes.js';
 import { registerWidget, getWidget } from './registry.js';
@@ -222,8 +222,6 @@ function startClock() {
 
 function showWelcome() {
   // New boards default to Momentum, so the welcome screen wears it too. If a
-  // setup code brings an older config, startRuntime re-applies its theme.
-  applyTheme('momentum');
   const welcome = $('#welcome');
   welcome.hidden = false;
   $('#grid').hidden = true;
@@ -291,7 +289,6 @@ function startSelfHealing() {
 }
 
 function startRuntime() {
-  applyTheme(cfg.theme);
   startClock();
   for (const rect of cfg.layout) {
     const mod = getWidget(rect.id);

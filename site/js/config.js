@@ -116,17 +116,13 @@ export const DEFAULT_CONFIG = Object.freeze({
   gdrivephotos: Object.freeze({ album: '', screensaver: false, every: 30 }),
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
-  theme: 'momentum',
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
   clock24: false, // 24-hour time for the topbar Clock + World Clock only (departures keep fmtTime's 12h)
 });
 
 const MODES = ['scheduled', 'dashboard', 'ambient'];
-// Momentum is the only user-facing theme. The 'dark' / Room & Board base is
-// still the :root palette that Momentum overrides — kept in code but no longer
-// selectable; any saved 'dark' now normalizes to Momentum (auto-migration).
-// Re-expose by re-adding 'dark' here + the Display picker (see settings.js).
-const THEMES = ['momentum'];
+// (Theme machinery retired 2026-07-19: Momentum is baked into :root.
+// Legacy configs may still carry a `theme` key — normalize drops it.)
 const MAX_NAME = 24;
 
 const str = (v, fallback, max = 64) =>
@@ -379,7 +375,6 @@ export function normalizeConfig(raw) {
         .slice(0, 4);
       return clean.length ? clean : DEFAULT_CONFIG.schedule.map((w) => ({ ...w }));
     })(),
-    theme: THEMES.includes(raw.theme) ? raw.theme : DEFAULT_CONFIG.theme,
     beacon: raw.beacon !== false, // absent (older configs) → on
     clock24: raw.clock24 === true, // absent/anything-but-true → 12-hour default
   };
@@ -419,7 +414,6 @@ export async function encodeConfig(cfg) {
   if (wire.schedule && isDefault(wire.schedule, DEFAULT_CONFIG.schedule)) delete wire.schedule;
   if (wire.beacon === DEFAULT_CONFIG.beacon) delete wire.beacon;
   if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
-  if (wire.theme === DEFAULT_CONFIG.theme) delete wire.theme; // default theme → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
   const bytes = new TextEncoder().encode(JSON.stringify(wire));

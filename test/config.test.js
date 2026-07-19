@@ -18,7 +18,7 @@ describe('normalizeConfig', () => {
     expect(cfg.layout).toEqual(DEFAULT_CONFIG.layout);
     expect(cfg.widgets).toEqual(cfg.layout.map((r) => r.id)); // derived
     expect(cfg.mode).toBe('dashboard');
-    expect(cfg.theme).toBe('momentum');
+    expect(cfg.theme).toBeUndefined(); // theme machinery retired: single baked-in look
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001', units: 'F' });
     expect(cfg.lirr).toEqual({ dest: '', alerts: true, origin: 'penn' });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
@@ -114,11 +114,11 @@ describe('normalizeConfig', () => {
     expect(() => normalizeConfig({ v: 99 })).toThrow(TypeError);
   });
 
-  it('clamps name length and invalid mode/theme', () => {
+  it('clamps name length and invalid mode; drops legacy theme keys', () => {
     const cfg = normalizeConfig({ name: 'x'.repeat(99), mode: 'weird', theme: 'neon' });
     expect(cfg.name.length).toBeLessThanOrEqual(24);
     expect(cfg.mode).toBe('dashboard');
-    expect(cfg.theme).toBe('momentum');
+    expect(cfg.theme).toBeUndefined();
   });
 });
 

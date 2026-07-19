@@ -41,6 +41,8 @@ export const WIDGET_LABELS = {
   sports: 'My Teams (sports)',
   worldcup: 'World Cup 2026',
   f1: 'Formula 1',
+  golf: 'Golf (PGA)',
+  tennis: 'Tennis',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',

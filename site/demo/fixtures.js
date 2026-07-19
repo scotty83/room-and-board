@@ -117,6 +117,25 @@ export const DEMO_VMS = {
       { lg: 'nfl', abbr: 'NYJ', name: 'Jets', record: '', state: 'post', line: 'W 24-17 @ NE · Final', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500-dark/nyj.png', lastLine: null, nextLine: 'vs MIA · 10/28 - 8:15 PM EDT' },
     ],
   },
+  golf: {
+    name: 'The Open', state: 'in', startsAt: null, round: '3',
+    players: [
+      { pos: 1, name: 'S. Burns', score: '-10', today: '+3' },
+      { pos: 2, name: 'R. Fox', score: '-8', today: '-2' },
+      { pos: 3, name: 'S.W. Kim', score: '-8', today: 'E' },
+      { pos: 4, name: 'R. Gerard', score: '-7', today: '-1' },
+      { pos: 5, name: 'S. Scheffler', score: '-6', today: '+1' },
+      { pos: 6, name: 'R. McIlroy', score: '-5', today: '-3' },
+    ],
+  },
+  tennis: {
+    name: 'Nordea Open',
+    rows: [
+      { tour: 'ATP', state: 'in', t: 1783000000000, round: 'Semifinal', a: 'C. Alcaraz', b: 'A. Zverev', sets: '6-4 3-2', winner: null, detail: 'Set 2' },
+      { tour: 'WTA', state: 'pre', t: 1783005000000, round: 'Final', a: 'I. Swiatek', b: 'A. Sabalenka', sets: '', winner: null, detail: '3:00 PM' },
+      { tour: 'WTA', state: 'post', t: 1782990000000, round: 'Quarterfinal', a: 'V. Strakhova', b: 'M. Bulgaru', sets: '6-2 6-2', winner: 'b', detail: 'Final' },
+    ],
+  },
   worldcup: {
     nowMs: 1783000000000,
     live: [

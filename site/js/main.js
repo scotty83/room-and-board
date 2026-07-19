@@ -37,6 +37,8 @@ import * as worldclock from './widgets/worldclock.js';
 import * as sports from './widgets/sports.js';
 import * as worldcup from './widgets/worldcup.js';
 import * as f1 from './widgets/f1.js';
+import * as golf from './widgets/golf.js';
+import * as tennis from './widgets/tennis.js';
 import * as news from './widgets/news.js';
 import * as substack from './widgets/substack.js';
 import * as bsky from './widgets/bsky.js';
@@ -49,7 +51,7 @@ import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
 
-const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, services, apod, chart, citibike, tfl, f1];
+const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, services, apod, chart, citibike, tfl, f1, golf, tennis];
 for (const m of MODULES) registerWidget(m);
 
 const net = { fetchJSON, fetchBuffer, fetchText };

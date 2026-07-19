@@ -31,6 +31,8 @@ import * as chart from '../site/js/widgets/chart.js';
 import * as citibike from '../site/js/widgets/citibike.js';
 import * as tfl from '../site/js/widgets/tfl.js';
 import * as f1 from '../site/js/widgets/f1.js';
+import * as golf from '../site/js/widgets/golf.js';
+import * as tennis from '../site/js/widgets/tennis.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
@@ -679,6 +681,50 @@ describe('f1 render', () => {
     const el = document.createElement('div');
     f1.render(el, { updatedAt: 0, stale: false, next: null, lastRace: null, podium: null, drivers: [], teams: [] }, CFG);
     expect(el.textContent.length).toBeGreaterThan(0);
+  });
+});
+
+describe('golf render', () => {
+  it('renders the leaderboard from the demo VM', () => {
+    const el = document.createElement('div');
+    golf.render(el, DEMO_VMS.golf, CFG);
+    expect(el.textContent).toContain('S. Burns');
+    expect(el.textContent).toContain('-10');
+    expect(el.querySelector('.golf-row__score--under')).toBeTruthy();
+    expect(el.querySelectorAll('.golf-row').length).toBeGreaterThan(3);
+  });
+
+  it('shows the start date when the tournament has not begun', () => {
+    const el = document.createElement('div');
+    golf.render(el, { name: 'Travelers Championship', state: 'pre', startsAt: Date.UTC(2026, 6, 24), round: null, players: [] }, CFG);
+    expect(el.textContent).toContain('Travelers Championship');
+    expect(el.textContent).toContain('Starts Jul');
+  });
+
+  it('shows a non-empty state with no tournament', () => {
+    const el = document.createElement('div');
+    golf.render(el, { name: null, state: 'none', startsAt: null, round: null, players: [] }, CFG);
+    expect(el.textContent).toContain('No tournament');
+  });
+});
+
+describe('tennis render', () => {
+  it('renders live, upcoming, and finished matches from the demo VM', () => {
+    const el = document.createElement('div');
+    tennis.render(el, DEMO_VMS.tennis, CFG);
+    expect(el.textContent).toContain('C. Alcaraz vs A. Zverev');
+    expect(el.textContent).toContain('6-4 3-2');
+    expect(el.querySelector('.tennis-row--live')).toBeTruthy();
+    // Finished match uses defeated notation with the winner first.
+    expect(el.textContent).toContain('M. Bulgaru d. V. Strakhova');
+    // Upcoming match shows its start detail, not a score.
+    expect(el.textContent).toContain('3:00 PM');
+  });
+
+  it('shows a non-empty state with no matches', () => {
+    const el = document.createElement('div');
+    tennis.render(el, { name: null, rows: [] }, CFG);
+    expect(el.textContent).toContain('No tournament');
   });
 });
 

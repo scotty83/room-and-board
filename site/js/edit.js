@@ -47,6 +47,8 @@ const TITLES = {
   sports: 'My Teams',
   worldcup: 'World Cup',
   f1: 'Formula 1',
+  golf: 'Golf',
+  tennis: 'Tennis',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',

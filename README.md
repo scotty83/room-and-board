@@ -149,6 +149,11 @@ remove like any other.
   constructor standings. Team-colour dots and driver country flags; the layout
   adapts to the card size (standings side-by-side when wide, stacked when
   narrow). *Configure:* none.
+- **Golf (PGA)** — live PGA Tour leaderboard for the current tournament
+  (majors included), with each player's total and today's round. Off weeks
+  show the next event and start date. *Configure:* none.
+- **Tennis** — the current ATP and WTA tournaments: live singles matches
+  first, then today's upcoming and the freshest finals. *Configure:* none.
 - **Markets News** — newest finance stories merged across the sources you
   enable (MarketWatch, WSJ Markets, FT Markets, CNBC, NYT Business, Yahoo
   Finance on by default; Seeking Alpha opt-in). *Configure:* Settings →
@@ -389,6 +394,7 @@ the URL fragment and the dashboard returns configured.
 | Statista Chart of the Day | Worker, keyless | No feed exists — the worker scrapes the listing page (session-cookie SSO bounce walked manually, see `worker/src/chart.js`), cached 1 h; boards hotlink the infographic from `cdn.statcdn.com` (probe-verified: no referer/cookie checks). Scrape breaks if Statista reworks the page markup |
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | Amtraker (Amtrak) | Worker, keyless | unofficial community API (no official public Amtrak feed); worker filters the all-trains feed to NYP departures, caches 60 s fleet-wide, empty/stale-tolerant; destination filter is client-side over each train's downstream stops (`worker/src/amtrak.js`) |
+| ESPN scoreboard (Golf, Tennis) | Browser, keyless | CORS-open golf/pga + tennis atp/wta scoreboards fetched directly by the board; config-less, 5-min refresh (`site/js/widgets/golf.js`, `tennis.js`) |
 | Jolpica-F1 (Formula 1) | Worker, keyless | Ergast successor, not CORS-open; worker fans out next race + last result + driver/constructor standings, merges + caches 1 h, serves partial on upstream failure (`worker/src/f1.js`) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

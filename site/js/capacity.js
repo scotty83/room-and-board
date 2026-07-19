@@ -48,6 +48,9 @@ const MODELS = {
   // Shallow rows are compact (no Last line, 32px logo) — 2 teams fit a 3×2.
   sports: listCapacity(74, 55),
   worldcup: listCapacity(60, 46),
+  // Single-line leaderboard/match rows, worldclock-like density.
+  golf: listCapacity(45, 40),
+  tennis: listCapacity(45, 40),
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).
   news: listCapacity(75, 57),
@@ -93,6 +96,10 @@ export function capacityLabel(id, w, h, cfg = {}) {
     case 'njt':
     case 'amtrak':
       return `next ${n} trains`;
+    case 'golf':
+      return `top ${n} players`;
+    case 'tennis':
+      return `${n} matches`;
     case 'bus': {
       // Mirror the renderer's row split (each stop spends 1 header row, then
       // up to 3 arrival rows, while rows remain): the raw row budget counted

@@ -151,7 +151,9 @@ remove like any other.
   constructor standings. Team-colour dots and driver country flags; the layout
   adapts to the card size (standings side-by-side when wide, stacked when
   narrow). *Configure:* none.
-- **Live Video** *(beta-only for now: beta.roomboard.app)* — a live HLS stream (your own https `.m3u8` link) playing
+- **Live Video** *(beta-only for now: beta.roomboard.app)* — a UniFi Protect
+  Share-Livestream link (`monitor.ui.com/...`, embedded via UI's own player)
+  or a live HLS stream (your own https `.m3u8` link) playing
   muted on the card via a vendored hls.js (no native HLS in RoomOS's
   Chromium). No stream is bundled; paste and preview the link at
   `/video-setup` on your phone, then type the short code on the board.

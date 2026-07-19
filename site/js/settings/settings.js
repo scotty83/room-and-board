@@ -1120,7 +1120,7 @@ async function renderIptv() {
   const host = (() => { try { return new URL(c.url).host; } catch { return ''; } })();
   pane().innerHTML = `
     <h2 class="pane__title">Live Video</h2>
-    <p class="pane__hint">Streams a live HLS feed on the card, always muted. Use a stream you have the rights to show.</p>
+    <p class="pane__hint">Streams a live HLS feed (always muted) or a UniFi camera share link on the card. Use a stream you have the rights to show.</p>
     ${c.url ? `
     <div class="rows">
       <div class="row"><span class="row__label">Stream</span><span class="row__value">${escapeHtml(host)}</span></div>

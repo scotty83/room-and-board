@@ -6,6 +6,7 @@
 
 import { WORKER_URL } from './env.js';
 import { encodeVideoCode } from './config.js';
+import { isCameraShare } from './widgets/iptv.js';
 
 const $ = (sel) => document.querySelector(sel);
 const STREAM_RE = /^https:\/\/\S+$/i;
@@ -35,6 +36,17 @@ refresh();
 async function preview() {
   const url = currentUrl();
   if (!url) { refresh(); return; }
+  const frame = document.getElementById('vs-frame');
+  if (isCameraShare(url)) {
+    // UniFi's own player in an iframe — nothing for hls.js to do.
+    video.hidden = true;
+    frame.innerHTML = `<iframe src="${url.replace(/"/g, '&quot;')}" allow="autoplay" style="width:100%;height:240px;border:0;border-radius:12px;background:#000"></iframe>`;
+    frame.hidden = false;
+    status.textContent = "If UniFi's player appears and plays, the board will show the same thing.";
+    status.className = 'hint';
+    return;
+  }
+  frame.hidden = true;
   hls?.destroy();
   hls = null;
   video.hidden = false;

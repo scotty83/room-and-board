@@ -4,9 +4,20 @@
 // Muted always — signage never makes sound, and muted is what allows
 // autoplay. No stream is bundled or defaulted; the URL is the user's.
 
-import { setupPrompt, setCardNote } from '../util.js';
+import { setupPrompt, setCardNote, escapeHtml } from '../util.js';
 
 export const meta = { id: 'iptv', title: 'Live Video', refreshMs: 60 * 1000 };
+
+// UniFi Protect "share livestream" pages (monitor.ui.com/<id>) embed cleanly
+// (no frame-ancestors as of 2026-07); they play via UI's WebRTC relay, so
+// they work with zero local infrastructure. Frame mode instead of hls.
+export const isCameraShare = (u) => {
+  try {
+    return new URL(u).host === 'monitor.ui.com';
+  } catch {
+    return false;
+  }
+};
 
 let hlsLoader = null;
 function loadHls() {
@@ -36,6 +47,8 @@ const mounts = new Map(); // el -> { url, hls, video, wrap, retryTimer, gen, ful
 
 const MUTED_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const SOUND_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const EXPAND_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const COLLAPSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 // Sound is a full-screen-only affair (Sean's call: muted by default even
 // there, unmute via the glyph; the dashboard card never makes noise).
@@ -68,7 +81,11 @@ function exitFull(m, el) {
 function destroyMount(el) {
   const m = mounts.get(el);
   if (!m) return;
-  if (m.full) exitFull(m, el); // ambient/teardown while full screen
+  if (m.full) {
+    // Video mode reparents back into the card; frame mode is CSS-only.
+    if (m.video) exitFull(m, el);
+    else { m.full = false; m.wrap.classList.remove('iptv--full'); }
+  }
   clearTimeout(m.retryTimer);
   m.gen++; // invalidates any in-flight async attach
   try { m.hls?.destroy(); } catch { /* already torn down */ }
@@ -90,7 +107,32 @@ function showError(el, m, msg) {
   }, 60 * 1000);
 }
 
+// Share-page mode: an iframe hosts UI's own player. Iframes reload when
+// reparented (unlike media elements), so full screen toggles a fixed-position
+// class in place; the corner button drives it because the iframe swallows
+// taps. Sound is whatever the embedded player does — we can't reach inside.
+function mountFrame(el, url) {
+  el.innerHTML = `<div class="iptv">
+    <iframe class="iptv__frame" src="${escapeHtml(url)}" allow="autoplay; fullscreen" referrerpolicy="no-referrer" title="Live camera"></iframe>
+    <button class="iptv__expand" aria-label="Full screen">${EXPAND_ICON}</button>
+  </div>`;
+  const wrap = el.querySelector('.iptv');
+  const m = { url, hls: null, video: null, wrap, retryTimer: 0, gen: 0, full: false };
+  mounts.set(el, m);
+  const btn = el.querySelector('.iptv__expand');
+  btn.addEventListener('click', () => {
+    m.full = !m.full;
+    wrap.classList.toggle('iptv--full', m.full);
+    btn.innerHTML = m.full ? COLLAPSE_ICON : EXPAND_ICON;
+    btn.setAttribute('aria-label', m.full ? 'Exit full screen' : 'Full screen');
+  });
+}
+
 function mount(el, url) {
+  if (isCameraShare(url)) {
+    mountFrame(el, url);
+    return;
+  }
   el.innerHTML = '<div class="iptv"><video class="iptv__video" muted autoplay playsinline></video></div>';
   const video = el.querySelector('video');
   const wrap = el.querySelector('.iptv');

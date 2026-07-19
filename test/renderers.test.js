@@ -787,6 +787,38 @@ describe('iptv render', () => {
     expect(el.textContent).toContain('add a stream');
   });
 
+  it('mounts a UniFi share link as an iframe with a working expand toggle', () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    try {
+      iptv.render(el, { url: 'https://monitor.ui.com/e1d0e73e-8d15-4ab0-8c25-27bdc824b8be', label: 'Cam' }, CFG);
+      expect(el.querySelector('video')).toBeNull();
+      const frame = el.querySelector('iframe.iptv__frame');
+      expect(frame).toBeTruthy();
+      expect(frame.getAttribute('allow')).toContain('autoplay');
+      const btn = el.querySelector('.iptv__expand');
+      btn.click();
+      expect(el.querySelector('.iptv--full')).toBeTruthy(); // CSS full screen, no reparent
+      expect(el.querySelector('iframe')).toBe(frame); // same iframe: no reload
+      btn.click();
+      expect(el.querySelector('.iptv--full')).toBeNull();
+      // Swapping to an HLS url tears the frame down for the video path.
+      iptv.render(el, { url: 'https://x.test/c.m3u8', label: '' }, CFG);
+      expect(el.querySelector('iframe')).toBeNull();
+      expect(el.querySelector('video')).toBeTruthy();
+    } finally {
+      iptv.render(el, { url: '', label: '' }, CFG);
+      el.remove();
+    }
+  });
+
+  it('isCameraShare matches only monitor.ui.com links', () => {
+    expect(iptv.isCameraShare('https://monitor.ui.com/abc')).toBe(true);
+    expect(iptv.isCameraShare('https://evil.test/monitor.ui.com')).toBe(false);
+    expect(iptv.isCameraShare('https://x.test/a.m3u8')).toBe(false);
+    expect(iptv.isCameraShare('not a url')).toBe(false);
+  });
+
   it('tap toggles full screen with a muted-by-default mute control', () => {
     const el = document.createElement('div');
     document.body.appendChild(el);

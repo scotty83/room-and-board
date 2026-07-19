@@ -1148,13 +1148,22 @@ body.mode-ambient .gear { bottom: 7px; }
    viewer's 45/46 tier, below the editor's 50. Sound exists ONLY here. */
 .iptv--full { position: fixed; inset: 0; z-index: 47; background: #000; }
 .iptv--full .iptv__video { border-radius: 0; }
-.iptv__mute {
+.iptv__mute,
+.iptv__expand {
   position: absolute; top: 28px; right: 28px; width: 64px; height: 64px;
   border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(0, 0, 0, 0.55); color: var(--ink);
   display: flex; align-items: center; justify-content: center;
 }
-.iptv__mute svg { width: 30px; height: 30px; }
+.iptv__mute svg,
+.iptv__expand svg { width: 30px; height: 30px; }
+/* Camera-share mode: the wrapper is the positioning context for the corner
+   button; the card-sized button shrinks so it doesn't dominate a 3x3. */
+.iptv { position: relative; }
+.iptv .iptv__expand { top: 10px; right: 10px; width: 52px; height: 52px; }
+.iptv--full .iptv__expand { top: 28px; right: 28px; width: 64px; height: 64px; }
+.iptv__frame { width: 100%; height: 100%; border: 0; border-radius: 12px; background: #000; display: block; }
+.iptv--full .iptv__frame { border-radius: 0; }
 
 /* ---------- golf / tennis ---------- */
 /* Golf runs denser rows than the citibike elastic family (30px vs 36px). */

@@ -482,6 +482,10 @@ export function normalizeGdrivePhotos(raw, rawPhotos) {
 // an iCloud-only code never disturbs an existing Drive slot. The '~P~' sentinel
 // can't collide with a full-config code (those are pure base64url).
 const PHOTOS_CODE_MARK = '~P~';
+// Live Video rides the same phone-to-board bridge: '~V~' carries just the
+// stream URL (+ optional label) so redeeming never disturbs the board's setup.
+const VIDEO_CODE_MARK = '~V~';
+const isStreamUrl = (u) => typeof u === 'string' && /^https:\/\/\S+$/i.test(u.trim());
 
 export async function encodePhotosCode({ icloud, gdrive } = {}) {
   const patch = {};
@@ -489,6 +493,14 @@ export async function encodePhotosCode({ icloud, gdrive } = {}) {
   if (isDriveFolder(gdrive)) patch.gdrive = gdrive;
   const bytes = new TextEncoder().encode(JSON.stringify(patch));
   return PHOTOS_CODE_MARK + bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
+}
+
+export async function encodeVideoCode({ url, label } = {}) {
+  const patch = {};
+  if (isStreamUrl(url)) patch.url = url.trim();
+  if (typeof label === 'string' && label.trim()) patch.label = label.trim().slice(0, 40);
+  const bytes = new TextEncoder().encode(JSON.stringify(patch));
+  return VIDEO_CODE_MARK + bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
 
 // Resolve a redeemed setup-code payload: { scope:'photos', patch:{icloud?,gdrive?} }
@@ -504,6 +516,15 @@ export async function decodeCode(encoded) {
     if (isIcloudToken(p.icloud)) patch.icloud = p.icloud;
     if (isDriveFolder(p.gdrive)) patch.gdrive = p.gdrive;
     return { scope: 'photos', patch };
+  }
+  if (typeof encoded === 'string' && encoded.startsWith(VIDEO_CODE_MARK)) {
+    const compressed = base64urlToBytes(encoded.slice(VIDEO_CODE_MARK.length));
+    const bytes = await pipe(compressed, new DecompressionStream('deflate-raw'));
+    const p = JSON.parse(new TextDecoder().decode(bytes));
+    const patch = {};
+    if (isStreamUrl(p.url)) patch.url = p.url.trim();
+    if (typeof p.label === 'string' && p.label.trim()) patch.label = p.label.trim().slice(0, 40);
+    return { scope: 'video', patch };
   }
   return { scope: 'full', cfg: await decodeConfig(encoded) };
 }

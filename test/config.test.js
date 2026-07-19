@@ -9,6 +9,7 @@ import {
   pickNewest,
   WIDGET_IDS,
   WIDGET_GROUPS,
+  encodeVideoCode,
 } from '../site/js/config.js';
 
 describe('normalizeConfig', () => {
@@ -334,6 +335,28 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
     expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
     expect(gd.layout.map((r) => r.id)).not.toContain('photos');
+  });
+});
+
+describe('video-only setup code (~V~)', () => {
+  it('round-trips url + label and scopes as video', async () => {
+    const code = await encodeVideoCode({ url: ' https://cdn.example.com/live/a.m3u8 ', label: ' Lobby cam ' });
+    expect(code.startsWith('~V~')).toBe(true);
+    const decoded = await decodeCode(code);
+    expect(decoded.scope).toBe('video');
+    expect(decoded.patch).toEqual({ url: 'https://cdn.example.com/live/a.m3u8', label: 'Lobby cam' });
+  });
+
+  it('drops junk urls and clamps the label on decode', async () => {
+    const decoded = await decodeCode(await encodeVideoCode({ url: 'http://insecure.test/a.m3u8', label: 'x'.repeat(60) }));
+    expect(decoded.patch.url).toBeUndefined();
+    const ok = await decodeCode(await encodeVideoCode({ url: 'https://x.test/a.m3u8', label: 'x'.repeat(60) }));
+    expect(ok.patch.label).toHaveLength(40);
+  });
+
+  it('full-config codes still decode as scope full', async () => {
+    const full = await encodeConfig(normalizeConfig({}));
+    expect((await decodeCode(full)).scope).toBe('full');
   });
 });
 

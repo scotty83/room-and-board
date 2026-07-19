@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; media-src https: blob:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room &amp; Board — Add live video</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/room-and-board-favicon-32.png">
+<link rel="apple-touch-icon" href="assets/room-and-board-icon-180.png">
+<link rel="stylesheet" href="css/setup.css">
+</head>
+<body>
+  <main class="setup">
+    <header class="setup__head">
+      <h1>Add live video to your board</h1>
+      <p>Paste an HLS stream link, preview it here, and get a short code to type on your board.</p>
+      <p class="setup__head-note">The link must be https and is usually an address ending in .m3u8 (an HLS stream from your IPTV system, a public camera, or a media server you run). The board plays it muted. Use only streams you have the rights to show.</p>
+    </header>
+
+    <section class="field" id="vs-stream">
+      <h2>Stream link</h2>
+      <div class="ziprow">
+        <input id="vs-url" type="url" maxlength="500" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://example.com/live/stream.m3u8">
+        <button id="vs-preview" class="primary" type="button">Preview</button>
+      </div>
+      <p id="vs-status" class="hint" aria-live="polite"></p>
+      <video id="vs-video" muted autoplay playsinline hidden style="width:100%;max-height:240px;background:#000;border-radius:12px;margin-top:10px"></video>
+      <label for="vs-label" style="display:block;margin-top:14px">Label shown on the card (optional)</label>
+      <input id="vs-label" type="text" maxlength="40" placeholder="Lobby cam">
+    </section>
+
+    <section class="field">
+      <p class="hint">Preview is optional; some streams only allow playback from certain networks, so a preview that fails here can still work on your board.</p>
+      <button id="vs-getcode" class="primary" type="button" disabled>Get board code</button>
+      <div class="code-out" id="vs-code" hidden>
+        <p class="code-out__label">Your board code</p>
+        <output id="vs-code-out" aria-live="polite"></output>
+        <p id="vs-code-note"></p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="js/video-setup.js"></script>
+</body>
+</html>

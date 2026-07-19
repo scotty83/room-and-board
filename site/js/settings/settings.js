@@ -542,6 +542,50 @@ function wirePhotoCodeEntry(src, status) {
   });
 }
 
+// Reveals the 6-char keypad that redeems a video-only setup code ('~V~')
+// into cfg.iptv. Mirrors wirePhotoCodeEntry.
+function wireVideoCodeEntry(status) {
+  const host = pane().querySelector('.photo-code');
+  let code = '';
+  const paint = () => {
+    host.innerHTML = `<output class="osk__display code__display--pin" aria-live="polite">${code.padEnd(6, '\u00b7')}</output>`
+      + qwertyKeypad('ABCDEFGHJKMNPQRSTVWXYZ0123456789', [],
+        '<button class="key osk__key osk__key--wide" data-key="\u232b">\u232b</button>');
+    host.querySelectorAll('[data-key]').forEach((btn) =>
+      btn.addEventListener('click', async () => {
+        const k = btn.dataset.key;
+        if (k === '\u232b') code = code.slice(0, -1);
+        else if (code.length < 6) code += k;
+        paint();
+        if (code.length === 6) {
+          status.textContent = 'Checking\u2026';
+          try {
+            const { cfg: encoded } = await fetchJSON(`${WORKER_URL}/code/${code}`);
+            const decoded = await decodeCode(encoded);
+            if (decoded.scope !== 'video') { status.textContent = 'That code is not a Live Video code; full setups go under Settings \u2192 Setup code.'; code = ''; paint(); return; }
+            if (!decoded.patch.url) { status.textContent = "That code didn't carry a usable stream link."; code = ''; paint(); return; }
+            state.cfg.iptv = { ...state.cfg.iptv, ...decoded.patch };
+            renderIptv();
+            const applied = pane().querySelector('.code__status');
+            if (applied) applied.textContent = 'Applied the stream. Press Save to finish.';
+          } catch (err) {
+            status.textContent = err?.status === 404
+              ? 'Code not found (codes expire after an hour).'
+              : "Couldn't reach the code service. Check the network and try again.";
+            code = '';
+            paint();
+          }
+        }
+      }));
+  };
+  pane().querySelector('[data-code-reveal]').addEventListener('click', (e) => {
+    e.currentTarget.hidden = true;
+    paint();
+    host.hidden = false;
+    host.scrollIntoView({ block: 'end' });
+  });
+}
+
 /* ---------- subway ---------- */
 
 function renderSubway() {
@@ -1076,14 +1120,28 @@ async function renderIptv() {
   const host = (() => { try { return new URL(c.url).host; } catch { return ''; } })();
   pane().innerHTML = `
     <h2 class="pane__title">Live Video</h2>
-    <p class="pane__hint">Streams a live HLS feed (an https link ending in .m3u8) on the card, always muted. Paste the link from your phone at <b>${escapeHtml(location.host)}/setup</b> - scan the Setup code QR first so your layout comes along.</p>
+    <p class="pane__hint">Streams a live HLS feed on the card, always muted. Use a stream you have the rights to show.</p>
     ${c.url ? `
     <div class="rows">
       <div class="row"><span class="row__label">Stream</span><span class="row__value">${escapeHtml(host)}</span></div>
       ${c.label ? `<div class="row"><span class="row__label">Label</span><span class="row__value">${escapeHtml(c.label)}</span></div>` : ''}
     </div>
-    <button class="btn btn--ghost" data-clear-stream>Remove</button>` : `
-    <p class="pane__hint">No stream configured yet.</p>`}`;
+    <button class="btn btn--ghost" data-clear-stream>Remove</button>` : ''}
+    <p class="pane__label pane__label--head">${c.url ? 'Change it from your phone' : 'Set it up from your phone'}</p>
+    <p class="pane__hint">Scan to paste the stream link and preview it; the page hands you a short code. Enter the code below.</p>
+    <div class="qr qr--photos"></div>
+    <button class="btn" data-code-reveal>Enter code</button>
+    <div class="photo-code" hidden></div>
+    <p class="code__status"></p>`;
+  import('../vendor/qrcode.js').then(({ default: qrcode }) => {
+    const box = pane()?.querySelector('.qr--photos');
+    if (!box) return;
+    const qr = qrcode(0, 'M');
+    qr.addData(`https://${location.host}/video-setup`);
+    qr.make();
+    box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 4 });
+  });
+  wireVideoCodeEntry(pane().querySelector('.code__status'));
   // Two-tap remove, matching the photo-album pattern: first tap arms (red),
   // second clears; disarms after 4s.
   pane().querySelector('[data-clear-stream]')?.addEventListener('click', (e) => {
@@ -1486,6 +1544,13 @@ function renderCode() {
             status.textContent = changed.length
               ? `Applied ${changed.join(' + ')} photos. Press Save to finish.`
               : "That code didn't carry a usable photo link.";
+          } else if (decoded.scope === 'video') {
+            if (decoded.patch.url) {
+              state.cfg.iptv = { ...state.cfg.iptv, ...decoded.patch };
+              status.textContent = 'Applied the Live Video stream. Press Save to finish.';
+            } else {
+              status.textContent = "That code didn't carry a usable stream link.";
+            }
           } else {
             state.cfg = decoded.cfg;
             status.textContent = 'Applied! Review the other sections, then press Save.';

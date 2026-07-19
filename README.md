@@ -151,8 +151,9 @@ remove like any other.
   narrow). *Configure:* none.
 - **Live Video** — a live HLS stream (your own https `.m3u8` link) playing
   muted on the card via a vendored hls.js (no native HLS in RoomOS's
-  Chromium). No stream is bundled; add yours from the phone setup page.
-  *Configure:* /setup → Live Video.
+  Chromium). No stream is bundled; paste and preview the link at
+  `/video-setup` on your phone, then type the short code on the board.
+  *Configure:* Settings → Live Video (or /setup → Live Video).
 - **Golf (PGA)** — live PGA Tour leaderboard for the current tournament
   (majors included), with each player's total and today's round. Off weeks
   show the next event and start date. *Configure:* none.

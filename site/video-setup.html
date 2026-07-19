@@ -14,7 +14,7 @@
     <header class="setup__head">
       <h1>Add live video to your board</h1>
       <p>Paste an HLS stream link or a UniFi camera share link, preview it here, and get a short code to type on your board.</p>
-      <p class="setup__head-note">Two kinds of links work: an HLS stream (https, usually ending in .m3u8) which the board plays muted, or a UniFi Protect <b>Share Livestream</b> link (monitor.ui.com/...) which embeds UniFi's own player. Anyone with a share link can view that camera; revoke it in Protect to cut access. Use only streams you have the rights to show.</p>
+      <p class="setup__head-note">Two kinds of links work: an HLS stream (https, usually ending in .m3u8) which the board plays muted, or a UniFi Protect <b>Share Livestream</b> link (monitor.ui.com/...) which embeds UniFi's own player. Share links play in regular browsers but <b>not on Board/Desk hardware</b> (its engine can't complete UniFi's stream handshake) - for boards, restream cameras as HLS instead (e.g. a go2rtc gateway). Anyone with a share link can view that camera; revoke it in Protect to cut access. Use only streams you have the rights to show.</p>
     </header>
 
     <section class="field" id="vs-stream">

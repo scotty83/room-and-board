@@ -36,7 +36,7 @@ export function render(el, vm, _cfg) {
     return;
   }
   if (!vm.stops.length) {
-    el.innerHTML = '<div class="empty">Add an express route in Settings → Express Bus</div>';
+    el.innerHTML = '<div class="empty" data-setup="bus">Add an express route in Settings → Express Bus</div>';
     return;
   }
   // Slice to the card, don't clip: each stop costs one header row plus its

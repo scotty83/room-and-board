@@ -36,7 +36,7 @@ export function mapSubwayStatus(alerts, lines) {
 
 export function render(el, vm, _cfg) {
   if (!vm.lines?.length) {
-    el.innerHTML = '<div class="empty">Pick your lines in Settings → Subway</div>';
+    el.innerHTML = '<div class="empty" data-setup="subway">Pick your lines in Settings → Subway</div>';
     return;
   }
   const [w, h] = cardSize(el, [4, 4]);

@@ -54,7 +54,7 @@ export function render(el, vm, _cfg) {
   if (vm.needsStation) {
     setCardNote(el, null);
     el.classList.remove('has-alerts');
-    el.innerHTML = '<div class="empty">Pick a station in Settings → Metro-North</div>';
+    el.innerHTML = '<div class="empty" data-setup="mnr">Pick a station in Settings → Metro-North</div>';
     return;
   }
   setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);

@@ -41,7 +41,7 @@ export function render(el, vm, cfg) {
   if (vm.updatedAt) setCardNote(el, `as of ${fmtClock(vm.updatedAt, cfg?.clock24)}`);
   const all = vm.services ?? [];
   if (!all.length) {
-    el.innerHTML = '<div class="empty">Pick services in Settings → Cloud Services</div>';
+    el.innerHTML = '<div class="empty" data-setup="services">Pick services in Settings → Cloud Services</div>';
     return;
   }
   const rowHtml = (s, i, dropNote) => `<div class="svc ${s.state !== 'ok' ? 'svc--tap' : ''}" data-svc="${i}">

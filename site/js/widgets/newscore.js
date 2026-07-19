@@ -63,7 +63,7 @@ export function ageLabel(t, nowMs) {
 
 export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
   if (!vm.items?.length) {
-    el.innerHTML = `<div class="empty">${emptyHint}</div>`;
+    el.innerHTML = `<div class="empty" data-setup="${widgetId}">${emptyHint}</div>`;
     return;
   }
   const nowMs = vm.nowMs ?? Date.now();

@@ -77,6 +77,15 @@ function cardFor(mod, rect) {
       <h2 class="card__title">${mod.meta.title}</h2>
       <div class="card__body"></div>
       <div class="card__stamp" hidden></div>`;
+    // Unconfigured cards tap straight into their Settings section — the
+    // prompt names the destination; the tap saves the trip. Card-level and
+    // inert unless a data-setup prompt is currently showing.
+    card.addEventListener('click', async () => {
+      const prompt = card.querySelector('[data-setup]');
+      if (!prompt) return;
+      const settings = await import('./settings/settings.js');
+      settings.openSettings(cfg ?? normalizeConfig({}), { focus: prompt.dataset.setup });
+    });
     $('#grid').appendChild(card);
   }
   if (rect) {

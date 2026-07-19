@@ -20,7 +20,7 @@ export function render(el, vm, cfg) {
   if (vm.needsStation) {
     setCardNote(el, null);
     el.classList.remove('has-alerts');
-    el.innerHTML = '<div class="empty">Pick a destination in Settings → Amtrak</div>';
+    el.innerHTML = '<div class="empty" data-setup="amtrak">Pick a destination in Settings → Amtrak</div>';
     return;
   }
   const dest = cfg?.amtrak?.dest || '';

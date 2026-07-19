@@ -33,7 +33,7 @@ export function createPhotoWidget({ id, cfgKey, endpoint, emptyMsg }) {
   function render(el, vm, cfg) {
     sessionList = vm.photos ?? [];
     if (!sessionList.length) {
-      el.innerHTML = `<div class="empty">${emptyMsg}</div>`;
+      el.innerHTML = `<div class="empty" data-setup="${id}">${emptyMsg}</div>`;
       return;
     }
     // Rotate deterministically on the user's interval bucket, like Art.

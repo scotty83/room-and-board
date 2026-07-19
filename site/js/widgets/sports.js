@@ -24,7 +24,7 @@ export const LEAGUE_PATHS = {
 
 export function render(el, vm, _cfg) {
   if (!vm.rows?.length) {
-    el.innerHTML = '<div class="empty">Pick your teams in Settings → My Teams</div>';
+    el.innerHTML = '<div class="empty" data-setup="sports">Pick your teams in Settings → My Teams</div>';
     return;
   }
   const [w, h] = cardSize(el, [4, 4]);

@@ -11,7 +11,7 @@ export const meta = { id: 'citibike', title: 'Citi Bike', refreshMs: 60 * 1000 }
 export function render(el, vm, cfg) {
   const chosen = cfg.citibike?.stations ?? [];
   if (!chosen.length) {
-    el.innerHTML = '<div class="empty">Add stations in Settings → Citi Bike</div>';
+    el.innerHTML = '<div class="empty" data-setup="citibike">Add stations in Settings → Citi Bike</div>';
     return;
   }
   const byId = new Map((vm.stations ?? []).map((s) => [s.id, s]));

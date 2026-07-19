@@ -27,7 +27,7 @@ export function render(el, vm, cfg) {
   if (vm.needsStation) {
     setCardNote(el, null);
     el.classList.remove('has-alerts');
-    el.innerHTML = '<div class="empty">Pick a station in Settings → LIRR</div>';
+    el.innerHTML = '<div class="empty" data-setup="lirr">Pick a station in Settings → LIRR</div>';
     return;
   }
   const note = [vm.destName ? `stops at ${vm.destName}` : null, vm.viaTraintime ? 'via TrainTime' : null]

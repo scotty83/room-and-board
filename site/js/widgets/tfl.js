@@ -14,7 +14,7 @@ const LINE_META = new Map(TFL_LINES.map((l) => [l.id, l]));
 export function render(el, vm, cfg) {
   const chosen = cfg.tfl?.lines ?? [];
   if (!chosen.length) {
-    el.innerHTML = '<div class="empty">Pick lines in Settings → TfL Status</div>';
+    el.innerHTML = '<div class="empty" data-setup="tfl">Pick lines in Settings → TfL Status</div>';
     return;
   }
   const byId = new Map((vm.lines ?? []).map((l) => [l.id, l]));

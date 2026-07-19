@@ -61,9 +61,10 @@ export async function openSettings(cfg, { focus } = {}) {
   state = {
     cfg: structuredClone(cfg),
     root: document.querySelector('#settings-root'),
-    // Land on the nav's first entry (Display) unless asked to focus elsewhere.
-    section: focus === 'code' ? 'code' : NAV_MODEL[0].id,
-    openGroup: navGroupForSection(focus === 'code' ? 'code' : NAV_MODEL[0].id),
+    // Land on the nav's first entry (Display) unless asked to focus a
+    // specific section (setup-code path, or an unconfigured card's tap).
+    section: focus && SECTION_IDS.includes(focus) ? focus : NAV_MODEL[0].id,
+    openGroup: navGroupForSection(focus && SECTION_IDS.includes(focus) ? focus : NAV_MODEL[0].id),
     stack: [],
     dirty: false,
   };

@@ -7,7 +7,7 @@ describe('itemCapacity', () => {
   it('scales list rows with card height', () => {
     expect(itemCapacity('markets', 4, 2)).toBe(3); // shallow rows are spark-less — 3 tickers fit
     expect(itemCapacity('markets', 4, 3)).toBe(3);
-    expect(itemCapacity('markets', 4, 4)).toBe(4);
+    expect(itemCapacity('markets', 4, 4)).toBe(5); // trimmed rows: five fit a 4-tall
     // 3-wide runs the trimmed stacked rows (data-w=3 CSS): a 3x4 fits five.
     expect(itemCapacity('markets', 3, 3)).toBe(3);
     expect(itemCapacity('markets', 3, 4)).toBe(5);

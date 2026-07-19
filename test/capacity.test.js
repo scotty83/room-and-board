@@ -8,6 +8,10 @@ describe('itemCapacity', () => {
     expect(itemCapacity('markets', 4, 2)).toBe(3); // shallow rows are spark-less — 3 tickers fit
     expect(itemCapacity('markets', 4, 3)).toBe(3);
     expect(itemCapacity('markets', 4, 4)).toBe(4);
+    // 3-wide runs the compact stacked rows (data-w=3 CSS): more fit per height.
+    expect(itemCapacity('markets', 3, 3)).toBe(4);
+    expect(itemCapacity('markets', 3, 4)).toBe(5);
+    expect(itemCapacity('markets', 3, 5)).toBe(7);
     expect(itemCapacity('markets', 4, 8)).toBe(11);
     expect(itemCapacity('bus', 3, 3)).toBe(4); // stop headers + arrivals share the row budget
     expect(itemCapacity('bus', 4, 8)).toBe(15);

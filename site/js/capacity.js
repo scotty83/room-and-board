@@ -19,7 +19,16 @@ const MODELS = {
   // ~67px row pitch (name+price stacked over a 28px spark, +10px row-gap) with
   // headroom for the "+N more" hint. 69 (was a too-tall 78) makes a 4x3 fit 3
   // index rows instead of 2 — verified overflow-safe with the hint at 3–8 tall.
-  markets: listCapacity(69, 36), // shallow rows are spark-less ~33px — 36 fits all 3 tickers at 3x2
+  // Markets rows are width-sensitive: the 3-wide stacked variant compacts to
+  // ~50px rows + 8px gaps (data-w=3 CSS), the 4-wide classic runs the 69px
+  // pitch, and shallow spark-less rows 36 (fits all 3 tickers at 3x2).
+  // Browser-calibrated (6-ticker fixture, w3/w4 x h3-6): a 3x4 now shows 5.
+  markets: (w, h) =>
+    Math.max(1, sizeTier(h) === 's'
+      ? Math.floor(bodyPx(h) / 36)
+      : w <= 3
+        ? Math.floor((bodyPx(h) + 8) / 58)
+        : Math.floor(bodyPx(h) / 69)),
   subway: listCapacity(58, 42),
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),

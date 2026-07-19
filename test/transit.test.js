@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { decodeGtfsRt } from '../site/js/gtfs.js';
 import { mapSubwayStatus, SUBWAY_LINES } from '../site/js/widgets/subway.js';
@@ -258,6 +258,43 @@ describe('mapSubwayStatus aliases', () => {
     const vm = mapSubwayStatus([{ routes: ['GS'], header: 'x' }], ['1']);
     expect(vm[0].ok).toBe(true);
   });
+});
+
+describe('mapTrainTime (LIRR fallback board)', () => {
+  const now = 1000;
+  const stations = [
+    { id: '183', name: 'Rockville Centre', tt: 'RVC' },
+    { id: '27', name: 'Babylon', tt: 'BTA' },
+    { id: '102', name: 'Jamaica', tt: 'JAM' },
+  ];
+  const perOrigin = [
+    { key: 'penn', arrivals: [
+      // departing eastbound, stops at RVC then Babylon
+      { time: now + 300, direction: 'E', branch: 'BY', train_num: 6190, track: '18', stops: ['JAM', 'RVC', 'BTA'], status: { canceled: false } },
+      // inbound westbound run: never a departure
+      { time: now + 200, direction: 'W', branch: 'PW', train_num: 6369, stops: ['JAM'], status: {} },
+      // already left
+      { time: now - 60, direction: 'E', branch: 'BY', train_num: 6100, stops: ['RVC'], status: {} },
+      // canceled
+      { time: now + 400, direction: 'E', branch: 'BY', train_num: 6101, stops: ['RVC'], status: { canceled: true } },
+    ] },
+    { key: 'gct', arrivals: [
+      { time: now + 500, direction: 'E', branch: 'BY', train_num: 6272, sched_track: '203', stops: ['JAM', 'RVC', 'BTA'], status: {} },
+    ] },
+  ];
+  it('builds departures from eastbound rows, filtered to the stops-at station', () => {
+    const { mapTrainTime } = trainTimeMod;
+    const vm = mapTrainTime(perOrigin, { dest: '183' }, now, stations);
+    expect(vm.departures.map((d) => d.trainNum)).toEqual(['6190', '6272']);
+    expect(vm.departures[0]).toMatchObject({ dest: 'Babylon', destId: '27', origin: 'penn', branch: 'Babylon', track: '18', min: 5 });
+    expect(vm.departures[1]).toMatchObject({ origin: 'gct', track: '203' });
+  });
+  it('drops everything when the chosen station has no tt code (no dishonest unfiltered board)', () => {
+    const { mapTrainTime } = trainTimeMod;
+    expect(mapTrainTime(perOrigin, { dest: '999' }, now, stations).departures).toHaveLength(0);
+  });
+  let trainTimeMod;
+  beforeAll(async () => { trainTimeMod = await import('../site/js/widgets/lirr.js'); });
 });
 
 describe('rail boards force a stops-at pick', () => {

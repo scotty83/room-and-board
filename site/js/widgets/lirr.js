@@ -30,7 +30,9 @@ export function render(el, vm, cfg) {
     el.innerHTML = '<div class="empty">Pick a station in Settings → LIRR</div>';
     return;
   }
-  setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);
+  const note = [vm.destName ? `stops at ${vm.destName}` : null, vm.viaTraintime ? 'via TrainTime' : null]
+    .filter(Boolean).join(' · ');
+  setCardNote(el, note || null);
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
   const [w, h] = cardSize(el, [4, 4]);
   // Each alert banner costs roughly one train row of space.
@@ -127,30 +129,88 @@ export function mapLirr(decoded, trackJson, cfgLirr, nowSec, stationNames = {}) 
   return { departures: departures.slice(0, 12) };
 }
 
+// TrainTime branch codes → display names (best-effort; the codes are
+// unofficial and undocumented, so unknowns render as an empty branch, which
+// the row template already tolerates). HH covers the Huntington/Port
+// Jefferson service; CI is the City Terminal Zone.
+export const TT_BRANCH_NAMES = Object.freeze({
+  PW: 'Port Washington', BY: 'Babylon', RK: 'Ronkonkoma', LB: 'Long Beach',
+  FR: 'Far Rockaway', WH: 'West Hempstead', HM: 'Hempstead', HE: 'Hempstead',
+  OB: 'Oyster Bay', PJ: 'Port Jefferson', HH: 'Port Jefferson', MK: 'Montauk',
+  MO: 'Montauk', BP: 'Belmont Park', CI: 'City Terminal',
+});
+
+// Fallback departure board straight from TrainTime, used when the official
+// GTFS-RT feed is wedged (it served a 19h-old snapshot on 2026-07-18 while
+// TrainTime stayed live). Eastbound rows at a terminal ARE the departures:
+// `stops` carries the downstream station codes, so the stops-at filter works
+// against the bundled stations' tt codes; tracks are native to the payload.
+export function mapTrainTime(perOrigin, cfgLirr, nowSec, stations = []) {
+  const byTt = Object.fromEntries(stations.map((s) => [s.tt, s]));
+  const destTt = cfgLirr.dest ? stations.find((s) => s.id === cfgLirr.dest)?.tt ?? null : null;
+  if (cfgLirr.dest && !destTt) return { departures: [] }; // can't filter honestly
+  const departures = [];
+  for (const { key, arrivals } of perOrigin) {
+    for (const a of arrivals) {
+      if (a?.direction !== 'E') continue; // westbound rows are inbound runs
+      if (!a.time || a.time <= nowSec) continue;
+      if (a.status?.canceled) continue;
+      const stops = Array.isArray(a.stops) ? a.stops : [];
+      if (!stops.length) continue; // terminating here, not departing
+      if (destTt && !stops.includes(destTt)) continue;
+      const last = byTt[stops[stops.length - 1]];
+      departures.push({
+        t: a.time,
+        min: Math.max(1, Math.round((a.time - nowSec) / 60)),
+        dest: last?.name ?? stops[stops.length - 1],
+        destId: last?.id ?? '',
+        origin: key,
+        branch: TT_BRANCH_NAMES[a.branch] ?? '',
+        trainNum: a.train_num ? String(a.train_num) : null,
+        track: a.track != null ? String(a.track) : a.sched_track != null ? String(a.sched_track) : null,
+      });
+    }
+  }
+  departures.sort((a, b) => a.t - b.t);
+  return { departures: departures.slice(0, 12) };
+}
+
 export async function fetchData(cfg, net) {
   // No station picked yet: skip every fetch and let the card prompt.
   if (!cfg.lirr.dest) return { departures: [], needsStation: true };
   const decoded = decodeGtfsRt(await net.fetchBuffer(FEED_URL));
-  // Track assignments come per-terminal from TrainTime; fetch one list per
-  // active origin and merge (the maps key on train_num, which is unique).
-  const trackLists = await Promise.all(
-    activeOrigins(cfg.lirr.origin).map((key) =>
-      net.fetchJSON(TRAINTIME_BASE + ORIGINS[key].tt, { headers: { 'Accept-Version': '3.0' } }).catch(() => null),
-    ),
+  // TrainTime per active terminal: track enrichment always, full fallback
+  // board when the official feed is stale. v3 wraps the list
+  // ({arrivals: [...]}); older shapes were a bare array. (The shipped
+  // array-only check meant tracks silently never enriched.)
+  const ttPerOrigin = await Promise.all(
+    activeOrigins(cfg.lirr.origin).map(async (key) => ({
+      key,
+      arrivals: await net
+        .fetchJSON(TRAINTIME_BASE + ORIGINS[key].tt, { headers: { 'Accept-Version': '3.0' } })
+        .then((r) => (Array.isArray(r) ? r : Array.isArray(r?.arrivals) ? r.arrivals : []))
+        .catch(() => []),
+    })),
   );
-  // v3 wraps the list ({arrivals: [...]}); older shapes were a bare array.
-  // (The shipped array-only check meant tracks silently never enriched.)
-  const trackJson = trackLists.flatMap((r) => (Array.isArray(r) ? r : Array.isArray(r?.arrivals) ? r.arrivals : []));
-  const names = await stationNames(net);
+  const trackJson = ttPerOrigin.flatMap((o) => o.arrivals);
+  const stations = await loadStations(net);
+  const names = Object.fromEntries(stations.map((s) => [s.id, s.name]));
   const nowSec = Math.floor(Date.now() / 1000);
   const vm = mapLirr(decoded, trackJson.length ? trackJson : null, cfg.lirr, nowSec, names);
   vm.destName = (cfg.lirr.dest && names[cfg.lirr.dest]) || null;
   // A 200 response can still carry a wedged feed (2026-07-18: the LIRR origin
   // served a 19h-old snapshot all day — every departure in the past, board
-  // blank but looking fresh). Surface it through the standard stale idiom.
+  // blank but looking fresh). Prefer a live TrainTime board over a dead one;
+  // otherwise surface the wedge through the standard stale idiom.
   if (decoded.timestamp && nowSec - decoded.timestamp > 15 * 60) {
-    vm.stale = true;
-    vm.updatedAt = decoded.timestamp;
+    const fallback = mapTrainTime(ttPerOrigin, cfg.lirr, nowSec, stations);
+    if (fallback.departures.length) {
+      vm.departures = fallback.departures;
+      vm.viaTraintime = true;
+    } else {
+      vm.stale = true;
+      vm.updatedAt = decoded.timestamp;
+    }
   }
   if (cfg.lirr.alerts) {
     try {
@@ -164,13 +224,13 @@ export async function fetchData(cfg, net) {
 }
 
 let stationsCache = null;
-async function stationNames(net) {
+async function loadStations(net) {
   if (!stationsCache) {
     try {
       stationsCache = await net.fetchJSON('data/stations-lirr.json');
     } catch {
-      return {}; // leave the cache unset so the next 60 s refresh retries
+      return []; // leave the cache unset so the next 60 s refresh retries
     }
   }
-  return Object.fromEntries(stationsCache.map((s) => [s.id, s.name]));
+  return stationsCache;
 }

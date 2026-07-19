@@ -93,8 +93,22 @@ export function capacityLabel(id, w, h, cfg = {}) {
     case 'njt':
     case 'amtrak':
       return `next ${n} trains`;
-    case 'bus':
-      return `next ${n} buses`;
+    case 'bus': {
+      // Mirror the renderer's row split (each stop spends 1 header row, then
+      // up to 3 arrival rows, while rows remain): the raw row budget counted
+      // headers as buses and over-stated.
+      const legs = Math.max(1, cfg.bus?.legs?.length || 1);
+      let rows = n;
+      let buses = 0;
+      for (let i = 0; i < legs && rows >= 2; i++) {
+        rows -= 1; // stop header
+        const take = Math.min(3, rows);
+        buses += take;
+        rows -= take;
+      }
+      buses = buses || n;
+      return `next ${buses} bus${buses === 1 ? '' : 'es'}`;
+    }
     case 'path':
       return `next ${n} trains`;
     case 'ferry':

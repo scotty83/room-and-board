@@ -55,6 +55,13 @@ describe('capacityLabel', () => {
     expect(capacityLabel('weather', 4, 5, cfg)).toBe('8 hourly · 5-day forecast');
     expect(capacityLabel('weather', 5, 4, cfg)).toBe('8 hourly · 5-day forecast');
   });
+  it('bus label counts buses, not header rows', () => {
+    // 3x3 (4 rows): 1 leg = header + 3 arrivals; 2 legs at 4x4 (6 rows) =
+    // two headers + 3 + 1 arrivals. The old label printed the raw row count.
+    expect(capacityLabel('bus', 3, 3, { bus: { legs: [{}] } })).toBe('next 3 buses');
+    expect(capacityLabel('bus', 4, 4, { bus: { legs: [{}, {}] } })).toBe('next 4 buses');
+  });
+
   it('describes subway lines against the selection', () => {
     expect(capacityLabel('subway', 4, 2, cfg)).toBe('shows 2 of 4 lines');
     expect(capacityLabel('subway', 4, 4, cfg)).toBe('shows all 4 lines');

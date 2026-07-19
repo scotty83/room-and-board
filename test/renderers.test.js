@@ -787,6 +787,28 @@ describe('iptv render', () => {
     expect(el.textContent).toContain('add a stream');
   });
 
+  it('plays a progressive .mp4 stream directly (no hls.js), not an iframe', () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    try {
+      iptv.render(el, { url: 'https://go2rtc.test/api/stream.mp4?src=front_door_med', label: 'Cam' }, CFG);
+      const video = el.querySelector('video.iptv__video');
+      expect(video).toBeTruthy();
+      expect(video.getAttribute('src')).toBe('https://go2rtc.test/api/stream.mp4?src=front_door_med'); // direct src, no hls
+      expect(el.querySelector('iframe')).toBeNull();
+    } finally {
+      iptv.render(el, { url: '', label: '' }, CFG);
+      el.remove();
+    }
+  });
+
+  it('isHlsUrl only matches .m3u8 playlists', () => {
+    expect(iptv.isHlsUrl('https://x.test/a.m3u8')).toBe(true);
+    expect(iptv.isHlsUrl('https://x.test/a.m3u8?src=cam')).toBe(true);
+    expect(iptv.isHlsUrl('https://go2rtc.test/api/stream.mp4?src=cam')).toBe(false);
+    expect(iptv.isHlsUrl('https://x.test/feed.mp4')).toBe(false);
+  });
+
   it('mounts a UniFi share link as an iframe with a working expand toggle', () => {
     const el = document.createElement('div');
     document.body.appendChild(el);

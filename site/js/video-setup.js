@@ -6,7 +6,7 @@
 
 import { WORKER_URL } from './env.js';
 import { encodeVideoCode } from './config.js';
-import { isCameraShare } from './widgets/iptv.js';
+import { isCameraShare, isHlsUrl } from './widgets/iptv.js';
 
 const $ = (sel) => document.querySelector(sel);
 const STREAM_RE = /^https:\/\/\S+$/i;
@@ -57,7 +57,9 @@ async function preview() {
     status.textContent = "Couldn't play it here. If the stream is network-restricted it may still work on your board.";
     status.className = 'hint ps-bad';
   };
-  if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  // Progressive video (go2rtc stream.mp4, direct .mp4) or native HLS (Safari):
+  // straight into the <video> element, no hls.js.
+  if (!isHlsUrl(url) || video.canPlayType('application/vnd.apple.mpegurl')) {
     video.src = url;
     video.onplaying = ok;
     video.onerror = bad;

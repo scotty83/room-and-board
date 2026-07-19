@@ -19,6 +19,10 @@ export const isCameraShare = (u) => {
   }
 };
 
+// HLS playlists go through hls.js; everything else (progressive .mp4/.webm,
+// go2rtc's stream.mp4) plays directly in the <video> element.
+export const isHlsUrl = (u) => /\.m3u8(?:[?#]|$)/i.test(u);
+
 let hlsLoader = null;
 function loadHls() {
   if (window.Hls) return Promise.resolve(window.Hls);
@@ -176,7 +180,20 @@ function mount(el, url) {
   });
   const gen = m.gen;
 
-  // Native HLS first (covers phone-side previews); Chromium boards use MSE.
+  // Progressive video (go2rtc's stream.mp4, a direct .mp4/.webm) plays straight
+  // in the <video> element over one long-lived connection — no hls.js, no
+  // segment fetching. This is the reliable path for go2rtc cameras, whose
+  // segmented HLS output 404s its own segments (verified 2026-07-19). Anything
+  // that isn't an .m3u8 playlist takes this path.
+  if (!isHlsUrl(url)) {
+    video.src = url;
+    video.addEventListener('error', () => { if (m.gen === gen) showError(el, m, 'Stream unavailable'); });
+    video.play?.().catch(() => {});
+    video.addEventListener('canplay', () => { if (m.gen === gen && video.paused) video.play?.().catch(() => {}); });
+    return;
+  }
+
+  // Native HLS (iPhone Safari on the setup page); Chromium boards use hls.js.
   if (typeof video.canPlayType === 'function' && video.canPlayType('application/vnd.apple.mpegurl')) {
     video.src = url;
     video.addEventListener('error', () => { if (m.gen === gen) showError(el, m, 'Stream unavailable'); });

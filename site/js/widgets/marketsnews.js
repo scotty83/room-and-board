@@ -1,7 +1,7 @@
 // Markets/finance headlines from selectable outlets. Reuses the shared news
 // engine (newscore.js); non-CORS feeds go through the Worker proxy.
 import { renderHeadlines, fetchHeadlines } from './newscore.js';
-import { icon } from '../icons.js';
+import { viaSettings } from '../util.js';
 
 export const meta = { id: 'marketsnews', title: 'Markets News', refreshMs: 10 * 60 * 1000 };
 
@@ -19,7 +19,7 @@ export const DEFAULT_MARKET_SOURCES = ['mw', 'wsj-markets', 'ft-markets', 'cnbc'
 const SOURCE_BY_ID = Object.fromEntries(MARKET_SOURCES.map((s) => [s[0], s]));
 
 export function render(el, vm, _cfg) {
-  renderHeadlines(el, vm, { widgetId: 'marketsnews', emptyHint: `No markets news yet. Tap here to pick sources or via ${icon('settings', 'icon--inline')} → Markets News` });
+  renderHeadlines(el, vm, { widgetId: 'marketsnews', emptyHint: `No markets news yet. Tap here to pick sources or ${viaSettings('Markets News')}` });
 }
 export async function fetchData(cfg, net) {
   const ids = cfg.marketsnews?.sources?.length ? cfg.marketsnews.sources : DEFAULT_MARKET_SOURCES;

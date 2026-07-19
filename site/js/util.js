@@ -98,8 +98,13 @@ export function parseDriveFolder(input) {
 // focused on `section` — see main.js) and shows the gear GLYPH so users can
 // find the settings button visually. Copy shape per Sean:
 // "Tap here to <action> or via <gear> → <section name>".
+// The "via ⚙ → X" unit stays unbreakable (nowrap span): it wraps to the
+// next line whole or not at all.
+export const viaSettings = (dest) =>
+  `<span class="empty__via">via ${icon('settings', 'icon--inline')} → ${dest}</span>`;
+
 export function setupPrompt(section, action, dest) {
-  return `<div class="empty" data-setup="${section}">Tap here to ${action} or via ${icon('settings', 'icon--inline')} → ${dest}</div>`;
+  return `<div class="empty" data-setup="${section}">Tap here to ${action} or ${viaSettings(dest)}</div>`;
 }
 
 // Deterministic per-calendar-day pick, shared by the quote and word widgets.

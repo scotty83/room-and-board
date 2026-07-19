@@ -4,7 +4,7 @@
 // so the logic is unit-testable in Node).
 
 import { renderHeadlines, fetchHeadlines } from './newscore.js';
-import { icon } from '../icons.js';
+import { viaSettings } from '../util.js';
 export { parseRss, mergeNews, ageLabel } from './newscore.js'; // preserve existing test imports
 
 export const meta = { id: 'news', title: 'Headlines', refreshMs: 10 * 60 * 1000 };
@@ -23,7 +23,7 @@ export const NEWS_SOURCES = [
 const SOURCE_BY_ID = Object.fromEntries(NEWS_SOURCES.map((s) => [s[0], s]));
 
 export function render(el, vm, _cfg) {
-  renderHeadlines(el, vm, { widgetId: 'news', emptyHint: `No headlines yet. Tap here to pick sources or via ${icon('settings', 'icon--inline')} → Headlines` });
+  renderHeadlines(el, vm, { widgetId: 'news', emptyHint: `No headlines yet. Tap here to pick sources or ${viaSettings('Headlines')}` });
 }
 
 export async function fetchData(cfg, net) {

@@ -77,7 +77,11 @@ html, body {
 .card__stamp { position: absolute; top: 24px; right: 26px; font-size: 20px; color: var(--warn); }
 .card.is-stale { opacity: 0.75; }
 
-.empty { color: var(--ink-faint); font-size: 22px; }
+/* Empty/prompt states center on the card (auto margins absorb the flex
+   body's free space — placement no longer depends on which cards carry
+   elastic body rules). The via-phrase never breaks across lines. */
+.empty { color: var(--ink-faint); font-size: 22px; margin: auto; text-align: center; padding: 0 12px; }
+.empty__via { white-space: nowrap; }
 
 /* ---------- world clock ---------- */
 /* 35px rows (capacity constant 45 = row + gap): five zones fit a 3-tall card.
@@ -936,7 +940,7 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 }
 .card.t-s .talert__text { -webkit-line-clamp: 1; }
 .bullet--sm { width: 26px; height: 26px; font-size: 15px; }
-.trains { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; }
+.trains { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: hidden; flex: 1; } /* fills the body so an .empty inside centers */
 
 /* ---------- subway line-status board ---------- */
 .linestatus { display: flex; align-items: center; gap: 14px; min-height: 50px; }

@@ -848,18 +848,22 @@ describe('iptv render', () => {
       iptv.render(el, { url: 'https://x.test/fs.m3u8', label: '' }, CFG);
       const wrap = el.querySelector('.iptv');
       const video = el.querySelector('video');
+      video.src = 'https://x.test/fs.m3u8'; // stand in for a live connection
       wrap.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      const full = document.body.querySelector(':scope > .iptv--full');
-      expect(full).toBeTruthy();
-      expect(full.querySelector('video')).toBe(video);
-      const btn = full.querySelector('.iptv__mute');
+      // Full screen is CSS-only IN PLACE: the wrap stays inside the card (never
+      // reparented to body), so the video node and its live src are untouched.
+      expect(wrap.classList.contains('iptv--full')).toBe(true);
+      expect(el.contains(video)).toBe(true); // never left the card
+      expect(video.getAttribute('src')).toBe('https://x.test/fs.m3u8'); // connection intact
+      const btn = wrap.querySelector('.iptv__mute');
       expect(btn).toBeTruthy();
       expect(video.muted).toBe(true); // muted by default even in full screen
       btn.click();
       expect(video.muted).toBe(false); // glyph unmutes
       wrap.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      expect(document.body.querySelector(':scope > .iptv--full')).toBeNull();
-      expect(el.querySelector('video')).toBe(video); // back in the card
+      expect(wrap.classList.contains('iptv--full')).toBe(false);
+      expect(el.contains(video)).toBe(true); // still the same node, still in the card
+      expect(video.getAttribute('src')).toBe('https://x.test/fs.m3u8'); // still intact
       expect(video.muted).toBe(true); // sound never returns to the dashboard
     } finally {
       iptv.render(el, { url: '', label: '' }, CFG); // tear down the mount

@@ -1144,9 +1144,12 @@ body.mode-ambient .gear { bottom: 7px; }
 /* contain letterboxes on the near-black card; cover would crop tickers. */
 .iptv__video { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; background: #000; }
 
-/* Tap-to-full-screen: the wrapper reparents to <body> above the art
-   viewer's 45/46 tier, below the editor's 50. Sound exists ONLY here. */
-.iptv--full { position: fixed; inset: 0; z-index: 47; background: #000; }
+/* Tap-to-full-screen, in place (no reparent — that aborts a progressive
+   stream). Above the art viewer's 45/46 tier, below the editor's 50.
+   Compound .iptv.iptv--full (0,2,0) so it beats the later
+   .iptv{position:relative} (0,1,0); otherwise full screen never escapes the
+   card's flow. Sound exists ONLY here. */
+.iptv.iptv--full { position: fixed; inset: 0; z-index: 47; background: #000; }
 .iptv--full .iptv__video { border-radius: 0; }
 .iptv__mute,
 .iptv__expand {

@@ -58,8 +58,11 @@ const COLLAPSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8
 // there, unmute via the glyph; the dashboard card never makes noise).
 function enterFull(m) {
   m.full = true;
+  // CSS-only, in place: .iptv--full is position:fixed inset:0 and no card
+  // ancestor has a transform/filter/contain, so it fills the viewport without
+  // reparenting. Moving the <video> node in the DOM aborts a progressive
+  // stream's connection (the bug this replaces) — never reparent it.
   m.wrap.classList.add('iptv--full');
-  document.body.appendChild(m.wrap); // media elements keep playing across a reparent
   const btn = document.createElement('button');
   btn.className = 'iptv__mute';
   btn.setAttribute('aria-label', 'Unmute');
@@ -73,13 +76,12 @@ function enterFull(m) {
   m.muteBtn = btn;
 }
 
-function exitFull(m, el) {
+function exitFull(m, _el) {
   m.full = false;
   m.muteBtn?.remove();
   m.muteBtn = null;
   m.video.muted = true; // never carry sound back to the dashboard
-  m.wrap.classList.remove('iptv--full');
-  el.appendChild(m.wrap);
+  m.wrap.classList.remove('iptv--full'); // in place, so nothing to reparent back
 }
 
 function destroyMount(el) {

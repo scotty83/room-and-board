@@ -92,13 +92,19 @@ export function mapAqi(aqJson, sunJson, now) {
   const rawAqi = aqJson?.current?.us_aqi;
   if (!Number.isFinite(rawAqi)) throw new Error('aqi: no us_aqi reading');
   const aqi = Math.round(rawAqi);
+  // CURRENT UV, not the daily max: the card is a "now" reading and the max
+  // ran 3+ points hot against every consumer weather app until midday
+  // (peak 8 shown at 9 AM while the sky said 5). Fall back to the daily max
+  // only when the current reading is missing.
+  const uvNow = sunJson?.current?.uv_index;
   const uvMax = sunJson?.daily?.uv_index_max?.[0];
+  const uv = Number.isFinite(uvNow) ? uvNow : uvMax;
   return {
     aqi,
     category: aqiCategory(aqi),
     sunrise: sunJson?.daily?.sunrise?.[0] ?? null,
     sunset: sunJson?.daily?.sunset?.[0] ?? null,
-    uv: Number.isFinite(uvMax) ? Math.round(uvMax) : null, // row omitted when absent
+    uv: Number.isFinite(uv) ? Math.round(uv) : null, // row omitted when absent
     moonPhase: moonPhase(now),
   };
 }
@@ -113,7 +119,7 @@ export async function fetchData(cfg, net) {
     // widget being enabled or having fetched first.
     net
       .fetchJSON(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=sunrise,sunset,uv_index_max&forecast_days=1&timezone=auto`,
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=uv_index&daily=sunrise,sunset,uv_index_max&forecast_days=1&timezone=auto`,
       )
       .catch(() => null),
   ]);

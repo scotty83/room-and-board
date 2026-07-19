@@ -62,7 +62,13 @@ describe('mapAqi', () => {
     expect(vm.category).toBe('Moderate');
     expect(vm.sunrise).toBe('2026-07-02T05:28');
     expect(vm.sunset).toBe('2026-07-02T20:30');
+    expect(vm.uv).toBe(5); // CURRENT uv (4.6 rounded), not the daily max
     expect(vm.moonPhase.name).toBeTypeOf('string');
+  });
+
+  it('falls back to the daily max when the current uv reading is missing', () => {
+    const sun = { daily: { sunrise: ['x'], sunset: ['x'], uv_index_max: [7.8] } };
+    expect(mapAqi({ current: { us_aqi: 40 } }, sun, new Date('2026-07-02')).uv).toBe(8);
   });
 
   it('degrades to null sun times when the forecast call fails', async () => {

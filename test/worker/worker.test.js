@@ -48,7 +48,7 @@ function stubFetch(routes) {
 
 afterEach(async () => {
   vi.unstubAllGlobals();
-  await resetNjtToken(); // clears the Cache-API session token so it can't leak between cases
+  await resetNjtToken(env); // clears the KV session token + isolate memo so it can't leak between cases
 });
 
 describe('CORS and routing', () => {
@@ -249,6 +249,21 @@ describe('/njt/departures', () => {
     ]);
     const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(502);
+  });
+});
+
+describe('njt token persistence (KV)', () => {
+  it('mints once, persists to KV, and reuses without re-authenticating', async () => {
+    const calls = stubFetch([
+      { match: /getToken/, body: { UserToken: 'tok-1' } },
+      { match: /getStationSchedule/, body: [], times: 2 },
+      { match: /getStationMSG/, body: [], times: 2 },
+    ]);
+    const creds = { NJT_USER: 'u', NJT_PASS: 'p' };
+    expect((await call('/njt/departures', {}, creds)).status).toBe(200);
+    expect((await call('/njt/departures', {}, creds)).status).toBe(200);
+    expect(calls.filter((u) => u.includes('getToken'))).toHaveLength(1);
+    expect(await env.CODES.get('njt:token')).toBe('tok-1'); // durable, global — the Cache API layer this replaces was colo-local and evictable
   });
 });
 

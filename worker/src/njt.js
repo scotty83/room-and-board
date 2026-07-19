@@ -89,30 +89,38 @@ async function form(url, params) {
 
 // The RailData session token is the scarce resource: getToken is capped at just
 // 10 requests/day (verified in the portal 2026-07-14), while the data endpoints
-// allow 40,000/day. So the token is cached in the Cache API — NOT module-level
-// memory — so it survives Cloudflare isolate eviction and is reused across every
-// board and every fresh isolate in a colo. getToken then fires only ~once per
-// token lifetime (driven by the 401 path below), not on each cold start. The TTL
-// is a long ceiling; real refresh happens when the token actually expires upstream
-// and a request gets a 401.
-const TOKEN_KEY = 'https://njt-token.roomboard.internal/token';
-const TOKEN_TTL = 24 * 3600; // seconds
+// allow 40,000/day. It lived in the Cache API first, but caches.default is
+// COLO-LOCAL and evictable — every colo (and every eviction) minted its own
+// token against the shared global cap, which is exactly the recurring
+// exhaustion we kept hitting. The token now lives in KV: global, durable,
+// ~1-2 writes/day (nowhere near the 1000/day write cap that keeps CODES
+// codes-only for high-churn data; a token is the textbook low-write case).
+// A module-level memo still short-circuits the KV read for warm isolates.
+const TOKEN_KV_KEY = 'njt:token';
+const TOKEN_TTL = 24 * 3600; // seconds (KV expirationTtl ceiling; real refresh is the 401 path)
 
-async function readToken() {
+let tokenMemo = null; // { token, until } per isolate
+
+async function readToken(env) {
+  if (tokenMemo && tokenMemo.until > Date.now()) return tokenMemo.token;
   try {
-    const hit = await caches.default.match(TOKEN_KEY);
-    if (hit) return (await hit.text()) || null;
+    const token = await env.CODES.get(TOKEN_KV_KEY);
+    if (token) {
+      tokenMemo = { token, until: Date.now() + 5 * 60 * 1000 };
+      return token;
+    }
   } catch {
-    // Cache unavailable (e.g. some test contexts) — fall back to a fresh token.
+    // KV unavailable — fall through to a fresh mint.
   }
   return null;
 }
 
-async function writeToken(token) {
+async function writeToken(env, token) {
+  tokenMemo = { token, until: Date.now() + 5 * 60 * 1000 };
   try {
-    await caches.default.put(TOKEN_KEY, new Response(token, { headers: { 'Cache-Control': `max-age=${TOKEN_TTL}` } }));
+    await env.CODES.put(TOKEN_KV_KEY, token, { expirationTtl: TOKEN_TTL });
   } catch {
-    // Best effort: a failed cache write just means the next call re-authenticates.
+    // Best effort: a failed KV write just means a later isolate re-authenticates.
   }
 }
 
@@ -124,10 +132,11 @@ async function writeToken(token) {
 let tokenInFlight = null;
 
 // Test hook: clear the cached token so state can't leak between cases.
-export async function resetNjtToken() {
+export async function resetNjtToken(env) {
   tokenInFlight = null;
+  tokenMemo = null;
   try {
-    await caches.default.delete(TOKEN_KEY);
+    await env?.CODES?.delete(TOKEN_KV_KEY);
   } catch {
     // ignore
   }
@@ -137,15 +146,16 @@ export async function resetNjtToken() {
 // `fresh` forces it (after a 401). A minted token is cached for reuse.
 async function njtToken(env, fresh = false) {
   if (!fresh) {
-    const cached = await readToken();
+    const cached = await readToken(env);
     if (cached) return cached;
     if (tokenInFlight) return tokenInFlight; // a concurrent caller is already minting — join it
   }
+  if (fresh) tokenMemo = null; // the current token is known-bad
   const mint = (async () => {
     const tok = await form(`${BASE}/getToken`, { username: env.NJT_USER, password: env.NJT_PASS });
     const token = tok?.UserToken;
     if (!token) throw new Error('njt token missing');
-    await writeToken(token);
+    await writeToken(env, token);
     return token;
   })();
   // Only publish the non-forced mint: a `fresh` re-auth knows the current token

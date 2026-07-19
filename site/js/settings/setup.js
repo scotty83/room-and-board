@@ -316,7 +316,7 @@ function renderLocation() {
     const results = await locationSearch($('#loc-search').value);
     $('#loc-results').innerHTML = results.length
       ? results.map((r, i) => `<button type="button" class="btn" data-pick="${i}">${escapeHtml(r.label)}</button>`).join('')
-      : '<span class="hint">No matches — try a city name or a 5-digit US ZIP.</span>';
+      : '<span class="hint">No matches. Try a city name or a 5-digit US ZIP.</span>';
     $('#loc-results').querySelectorAll('[data-pick]').forEach((b) =>
       b.addEventListener('click', () => {
         const r = results[Number(b.dataset.pick)];
@@ -407,8 +407,8 @@ function renderTickers() {
       $('#sym-status').textContent = '';
       renderChips();
     } else {
-      const tip = /^[A-Z]{1,6}$/.test(t) ? ' If it trades outside the US, add the exchange suffix — London CBG.L, Frankfurt SAP.DE, Toronto SHOP.TO.' : '';
-      $('#sym-status').textContent = `${t} isn't a known ticker — check the symbol.${tip}`;
+      const tip = /^[A-Z]{1,6}$/.test(t) ? ' If it trades outside the US, add the exchange suffix: London CBG.L, Frankfurt SAP.DE, Toronto SHOP.TO.' : '';
+      $('#sym-status').textContent = `${t} isn't a known ticker. Check the symbol.${tip}`;
     }
     btn.disabled = false;
   });
@@ -673,8 +673,8 @@ function renderPhotoField(src) {
       status.textContent = `Found ${digest.photos.length} photos.`;
     } catch {
       status.textContent = gd
-        ? "Couldn't open that folder — make sure it's shared to Anyone with the link."
-        : "Couldn't open that album — check Public Website is on and the link is exact.";
+        ? "Couldn't open that folder. Make sure it's shared to Anyone with the link."
+        : "Couldn't open that album. Check Public Website is on and the link is exact.";
     }
   });
 }

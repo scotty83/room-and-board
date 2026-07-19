@@ -224,7 +224,7 @@ function showWelcome() {
       <h1>Welcome to your office display</h1>
       <p>Set it up from your phone or desktop, or start with sensible defaults and fine-tune later.</p>
       <div class="qr welcome__qr"></div>
-      <p class="welcome__hint">Scan to build a setup code on your phone — or visit <b>${location.host}/setup</b>.</p>
+      <p class="welcome__hint">Scan to build a setup code on your phone, or visit <b>${location.host}/setup</b>.</p>
       <div class="welcome__actions">
         <button class="btn btn--primary" data-action="enter-code">I have a setup code</button>
         <button class="btn" data-action="quick-start">Quick start</button>

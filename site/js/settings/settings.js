@@ -593,7 +593,7 @@ async function renderLirr() {
   const byId = Object.fromEntries(lirrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">LIRR — Penn Station departures</h2>
-    <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station — the branch shows per train, so multi-branch destinations just work.</p>
+    <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station; the branch shows per train, so multi-branch destinations just work.</p>
     <div class="rows">
       ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
       ${alertsToggleHtml('lirr')}
@@ -625,7 +625,7 @@ async function renderAmtrak() {
   const byId = Object.fromEntries(amtrakStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">Amtrak — Moynihan / Penn departures</h2>
-    <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination — the arrival time there shows per train.</p>
+    <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination; the arrival time there shows per train.</p>
     <div class="rows">
       ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station'), 'data-pick-dest')}
       ${alertsToggleHtml('amtrak')}
@@ -655,7 +655,7 @@ async function renderMnr() {
   const byId = Object.fromEntries(mnrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">Metro-North — Grand Central departures</h2>
-    <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station — the line shows per train.</p>
+    <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station; the line shows per train.</p>
     <div class="rows">
       ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
       ${alertsToggleHtml('mnr')}
@@ -689,7 +689,7 @@ function renderNjt() {
   }).join('');
   pane().innerHTML = `
     <h2 class="pane__title">NJ Transit — Penn Station departures</h2>
-    <p class="pane__hint">Departures from New York Penn Station. Pick the lines to show — leave all off to show every line.</p>
+    <p class="pane__hint">Departures from New York Penn Station. Pick the lines to show; leave all off to show every line.</p>
     <div class="chips">${lineChips}</div>
     ${alertsToggleHtml('njt')}`;
   bindAlertsToggle(renderNjt);
@@ -749,7 +749,7 @@ async function renderFerry() {
     );
   } catch {
     const d = pane().querySelector('.drill');
-    if (d) d.innerHTML = '<p class="pane__empty">Landing list unavailable — redeploy the site data.</p>';
+    if (d) d.innerHTML = '<p class="pane__empty">Landing list unavailable. Redeploy the site data.</p>';
   }
 }
 
@@ -801,7 +801,7 @@ function renderTfl() {
   }).join('');
   pane().innerHTML = `
     <h2 class="pane__title">TfL Status</h2>
-    <p class="pane__hint">Pick the London lines to watch — each shows Good Service or the current disruption.</p>
+    <p class="pane__hint">Pick the London lines to watch; each shows Good Service or the current disruption.</p>
     ${groups}`;
   pane().querySelectorAll('[data-line]').forEach((chip) =>
     chip.addEventListener('click', () => {
@@ -827,7 +827,7 @@ async function renderCitibike() {
     pane().innerHTML = `
       <h2 class="pane__title">Citi Bike</h2>
       <p class="pane__hint">Search a station by its cross-streets. Add up to 6.</p>
-      <div class="chips">${chips || '<span class="pane__empty">No stations — defaults return on save</span>'}</div>
+      <div class="chips">${chips || '<span class="pane__empty">No stations; defaults return on save</span>'}</div>
       <output class="code__display">${escapeHtml(query) || '&nbsp;'}</output>
       <div class="picklist">${matches
         .map((s) => (s.added
@@ -837,7 +837,7 @@ async function renderCitibike() {
       ${chosen.length < 6
         ? qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', [' ', '-', '/'],
           '<button class="key osk__key" data-key="⌫">⌫</button>')
-        : '<p class="pane__hint">Max 6 — remove one to add another.</p>'}`;
+        : '<p class="pane__hint">Max 6; remove one to add another.</p>'}`;
     pane().querySelectorAll('[data-remove]').forEach((c) =>
       c.addEventListener('click', () => { state.cfg.citibike.stations = chosen.filter((_, i) => i !== Number(c.dataset.remove)); draw(); }));
     pane().querySelectorAll('[data-add]').forEach((b) =>
@@ -897,8 +897,8 @@ function renderMarkets() {
     .join('');
   pane().innerHTML = `
     <h2 class="pane__title">Markets</h2>
-    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Non-US listings use the exchange suffix — London CBG.L, Frankfurt SAP.DE, Tokyo 7203.T. Remove any you don't want — the defaults are just entries like the rest.</p>
-    <div class="chips">${chips || '<span class="pane__empty">No tickers — defaults return on save</span>'}</div>
+    <p class="pane__hint">Add up to 10 tickers (indexes start with ^). Non-US listings use the exchange suffix: London CBG.L, Frankfurt SAP.DE, Tokyo 7203.T. Remove any you don't want; the defaults are just entries like the rest.</p>
+    <div class="chips">${chips || '<span class="pane__empty">No tickers; defaults return on save</span>'}</div>
     <output class="code__display" aria-live="polite"></output>
     ${qwertyKeypad('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', ['^', '.', '-'],
       '<button class="key osk__key" data-key="⌫">⌫</button><button class="key osk__key osk__key--primary osk__key--wide" data-key="Add">Add</button>')}
@@ -924,7 +924,7 @@ function renderMarkets() {
           renderMarkets();
           return;
         }
-        status.textContent = `${ticker} isn't a known ticker — check the symbol.${/^[A-Z]{1,6}$/.test(ticker) ? ' Non-US listings need the exchange suffix — e.g. CBG.L for London.' : ''}`;
+        status.textContent = `${ticker} isn't a known ticker. Check the symbol.${/^[A-Z]{1,6}$/.test(ticker) ? ' Non-US listings need the exchange suffix, e.g. CBG.L for London.' : ''}`;
       } else if (ticker.length < 10) ticker += k;
       display.textContent = ticker;
     }),
@@ -946,7 +946,7 @@ async function renderSports() {
     .join('');
   pane().innerHTML = `
     <h2 class="pane__title">My Teams</h2>
-    <p class="pane__hint">Follow up to 6 teams — one glanceable row each: live score, final, or next game.</p>
+    <p class="pane__hint">Follow up to 6 teams; one glanceable row each: live score, final, or next game.</p>
     <div class="chips">${chips || '<span class="pane__empty">No teams yet</span>'}</div>
     <button class="btn btn--primary" data-add-team>Add a team</button>
     <div class="drill"></div>`;
@@ -988,7 +988,7 @@ async function renderNews() {
   const groups = ['National', 'Local NYC'];
   pane().innerHTML = `
     <h2 class="pane__title">Headlines</h2>
-    <p class="pane__hint">Pick your sources — newest stories across all of them, merged.</p>
+    <p class="pane__hint">Pick your sources: newest stories across all of them, merged.</p>
     ${groups.map((g) => `
       <p class="pane__label">${g}</p>
       <div class="rows">${NEWS_SOURCES.filter((s) => s[4] === g).map(([id, label]) => {
@@ -1503,7 +1503,7 @@ function renderCode() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { code } = await res.json();
       codeEl.textContent = code;
-      note.textContent = `Write it down. Enter it on another board (Settings → Setup code) or at ${location.host}/setup — expires in 1 hour.`;
+      note.textContent = `Write it down. Enter it on another board (Settings → Setup code) or at ${location.host}/setup; expires in 1 hour.`;
     } catch (err) {
       codeEl.textContent = '—';
       note.textContent = `Couldn't reach the code service (${err.message}). Check that the Worker is deployed.`;
@@ -1593,7 +1593,7 @@ function renderDiag() {
       </button>
       <span class="row__label">Anonymous usage ping</span>
     </div>
-    <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone — nothing personal. Helps the operator count active boards.</p>
+    <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone; nothing personal. Helps the operator count active boards.</p>
     <p class="pane__label">Display</p>
     <div class="btnrow">
       <button class="btn btn--primary" data-reload>Reload display now</button>
@@ -1604,7 +1604,7 @@ function renderDiag() {
       <button class="btn" data-clear>Clear web storage (test vault recovery)</button>
       <button class="btn" data-reset>Reset this display</button>
     </div>
-    <p class="pane__hint">Clear wipes this page's saved data — on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
+    <p class="pane__hint">Clear wipes this page's saved data; on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
   pane().querySelector('[data-beacon]').addEventListener('click', () => {
     state.cfg.beacon = !state.cfg.beacon;
     renderDiag();

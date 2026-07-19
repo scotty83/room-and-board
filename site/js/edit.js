@@ -5,7 +5,7 @@
 // (green = will commit, red = unsolvable) and neighbor blocks preview their
 // pushed positions live. The drag ghost moves via transform only.
 
-import { GRID, MIN_SIZE, MAX_SIZE, firstFit, placeWithPush, contentMaxH } from './layout.js';
+import { GRID, MIN_SIZE, MAX_SIZE, firstFit, firstFitAny, placeWithPush, contentMaxH } from './layout.js';
 import { capacityLabel } from './capacity.js';
 import { WIDGET_GROUPS } from './config.js';
 
@@ -126,7 +126,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   }
 
   function add(id) {
-    const rect = firstFit(layout, id, MIN_SIZE[id], caps);
+    const rect = firstFitAny(layout, id, caps);
     if (!rect) return false;
     layout = [...layout, rect];
     render();
@@ -158,7 +158,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     // wrapped the tray to 5 rows and squeezed the grid preview above it.
     let anyBlocked = false;
     const chip = (id) => {
-      const fits = firstFit(layout, id, MIN_SIZE[id], caps) !== null;
+      const fits = firstFitAny(layout, id, caps) !== null;
       if (!fits) anyBlocked = true;
       const [mw, mh] = MIN_SIZE[id];
       // Enabled chips are just the title; the min-size hint shows only on blocked

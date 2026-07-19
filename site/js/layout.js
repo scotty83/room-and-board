@@ -28,7 +28,7 @@ export const MIN_SIZE = {
   marketsnews: [3, 2],
   history: [2, 2],
   quote: [2, 2],
-  wotd: [2, 2],
+  wotd: [2, 3], // canonical shape; 3x2 also legal via MIN_ALTS
   art: [2, 2],
   photos: [2, 2],
   gdrivephotos: [2, 2],
@@ -117,6 +117,17 @@ export function contentMaxH(cfg) {
   return caps;
 }
 
+// Orientation-alternative minimums: some widgets don't fit their smallest
+// square but work in EITHER portrait or landscape (wotd text never fits 2x2;
+// 2x3 or 3x2 both do). First alternative is the canonical shape — MIN_SIZE
+// carries it so single-min consumers stay simple; meetsMin/firstFitAny and
+// clampRect understand the full set.
+export const MIN_ALTS = {
+  wotd: [[2, 3], [3, 2]],
+};
+export const minAlternatives = (id) => MIN_ALTS[id] ?? [MIN_SIZE[id] ?? [1, 1]];
+export const meetsMin = (id, w, h) => minAlternatives(id).some(([mw, mh]) => w >= mw && h >= mh);
+
 const maxOf = (id, caps) => {
   const [Mw, Mh] = MAX_SIZE[id] ?? [GRID.cols, GRID.rows];
   const dyn = caps?.[id];
@@ -126,10 +137,21 @@ const maxOf = (id, caps) => {
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);
 
 export function clampRect(rect, caps) {
-  const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
+  const [fw, fh] = minAlternatives(rect.id)[0];
   const [Mw, Mh] = maxOf(rect.id, caps);
-  let w = Math.min(Math.max(int(rect.w, mw), mw), Mw, GRID.cols);
-  let h = Math.min(Math.max(int(rect.h, mh), mh), Mh, GRID.rows);
+  // Grow an undersized rect toward whichever minimum alternative costs the
+  // least added area (ties go to the canonical first entry).
+  const rw = int(rect.w, fw);
+  const rh = int(rect.h, fh);
+  let best = null;
+  for (const [mw, mh] of minAlternatives(rect.id)) {
+    const nw = Math.max(rw, mw);
+    const nh = Math.max(rh, mh);
+    const growth = nw * nh - rw * rh;
+    if (!best || growth < best.growth) best = { nw, nh, growth };
+  }
+  let w = Math.min(best.nw, Mw, GRID.cols);
+  let h = Math.min(best.nh, Mh, GRID.rows);
   let x = Math.min(Math.max(int(rect.x), 0), GRID.cols - w);
   let y = Math.min(Math.max(int(rect.y), 0), GRID.rows - h);
   return { id: rect.id, x, y, w, h };
@@ -140,9 +162,8 @@ export function rectsOverlap(a, b) {
 }
 
 export function canPlace(layout, rect, caps) {
-  const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
   const [Mw, Mh] = maxOf(rect.id, caps);
-  if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return false;
+  if (!meetsMin(rect.id, rect.w, rect.h) || rect.w > Mw || rect.h > Mh) return false;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return false;
   }
@@ -159,6 +180,15 @@ export function firstFit(layout, id, [w, h], caps) {
   return null;
 }
 
+// firstFit trying each minimum alternative in order (canonical first).
+export function firstFitAny(layout, id, caps) {
+  for (const alt of minAlternatives(id)) {
+    const rect = firstFit(layout, id, alt, caps);
+    if (rect) return rect;
+  }
+  return null;
+}
+
 export function normalizeLayout(raw, caps) {
   if (!Array.isArray(raw) || raw.length === 0) return [...DEFAULT_LAYOUT];
   const out = [];
@@ -170,7 +200,7 @@ export function normalizeLayout(raw, caps) {
     if (canPlace(out, rect, caps)) {
       out.push(rect);
     } else {
-      const placed = firstFit(out, rect.id, [rect.w, rect.h], caps) ?? firstFit(out, rect.id, MIN_SIZE[rect.id], caps);
+      const placed = firstFit(out, rect.id, [rect.w, rect.h], caps) ?? firstFitAny(out, rect.id, caps);
       if (placed) out.push(placed);
     }
   }

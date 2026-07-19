@@ -11,6 +11,8 @@ import {
   migrateWidgetsToLayout,
   placeWithPush,
   contentMaxH,
+  meetsMin,
+  firstFitAny,
 } from '../site/js/layout.js';
 
 const area = (r) => r.w * r.h;
@@ -230,5 +232,39 @@ describe('placeWithPush', () => {
     const snapshot = JSON.stringify(layout);
     placeWithPush(layout, { id: 'art', x: 2, y: 0, w: 2, h: 2 }, { dx: 1, dy: 0 });
     expect(JSON.stringify(layout)).toBe(snapshot);
+  });
+});
+
+describe('multi-mode minimums (MIN_ALTS)', () => {
+  it('wotd accepts either orientation but never 2x2', () => {
+    expect(meetsMin('wotd', 2, 2)).toBe(false);
+    expect(meetsMin('wotd', 2, 3)).toBe(true);
+    expect(meetsMin('wotd', 3, 2)).toBe(true);
+    expect(meetsMin('wotd', 4, 2)).toBe(true); // covers the 3x2 alternative
+    expect(meetsMin('weather', 3, 4)).toBe(true); // single-min widgets unaffected
+  });
+
+  it('clampRect grows an undersized wotd to the cheapest alternative', () => {
+    expect(clampRect({ id: 'wotd', x: 0, y: 0, w: 2, h: 2 })).toMatchObject({ w: 2, h: 3 });
+    // Wide-but-short snaps to landscape (no width shrink, +1 row only).
+    expect(clampRect({ id: 'wotd', x: 0, y: 0, w: 4, h: 1 })).toMatchObject({ w: 4, h: 2 });
+    // Already valid in landscape: untouched.
+    expect(clampRect({ id: 'wotd', x: 0, y: 0, w: 3, h: 2 })).toMatchObject({ w: 3, h: 2 });
+  });
+
+  it('canPlace rejects 2x2 wotd and accepts both orientations', () => {
+    expect(canPlace([], { id: 'wotd', x: 0, y: 0, w: 2, h: 2 })).toBe(false);
+    expect(canPlace([], { id: 'wotd', x: 0, y: 0, w: 3, h: 2 })).toBe(true);
+    expect(canPlace([], { id: 'wotd', x: 0, y: 0, w: 2, h: 3 })).toBe(true);
+  });
+
+  it('firstFitAny falls through to the landscape alternative', () => {
+    // Fill everything except a 3x2 hole at the bottom-left: portrait 2x3
+    // cannot fit, landscape 3x2 must.
+    const blocker = [
+      { id: 'art', x: 0, y: 0, w: 12, h: 6 },
+      { id: 'weather', x: 3, y: 6, w: 9, h: 2 },
+    ];
+    expect(firstFitAny(blocker, 'wotd')).toMatchObject({ x: 0, y: 6, w: 3, h: 2 });
   });
 });

@@ -2,7 +2,7 @@
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
 import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
-import { MIN_SIZE, firstFit } from '../layout.js';
+import { firstFitAny } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
 import { locationSearch } from '../geo.js';
@@ -225,7 +225,7 @@ function renderWidgets() {
     if (!e.target.checked) {
       cfg.layout = cfg.layout.filter((r) => r.id !== id);
     } else {
-      const rect = firstFit(cfg.layout, id, MIN_SIZE[id]);
+      const rect = firstFitAny(cfg.layout, id);
       if (rect) cfg.layout = [...cfg.layout, rect];
       else {
         e.target.checked = false;

@@ -399,7 +399,7 @@ the URL fragment and the dashboard returns configured.
 | ESPN site API (sports, World Cup) | Worker + browser | live scores join the league scoreboard Worker-side (team feed nulls them mid-game) |
 | Amtraker (Amtrak) | Worker, keyless | unofficial community API (no official public Amtrak feed); worker filters the all-trains feed to NYP departures, caches 60 s fleet-wide, empty/stale-tolerant; destination filter is client-side over each train's downstream stops (`worker/src/amtrak.js`) |
 | Your HLS stream (Live Video) | Browser, user-supplied | https .m3u8 the user provides; played via vendored hls.js light (Apache-2.0) over MSE, quality capped to card size; nothing bundled or defaulted (`site/js/widgets/iptv.js`, `site/js/vendor/hls.light.min.js`) |
-| ESPN scoreboard (Golf, Tennis) | Browser, keyless | CORS-open golf/pga + tennis atp/wta scoreboards fetched directly by the board; config-less, 5-min refresh (`site/js/widgets/golf.js`, `tennis.js`) |
+| ESPN scoreboard (Golf, Tennis) | Worker-first, keyless | Raw scoreboards run 0.6-2.4 MB, so the worker digests them to ~2 KB via the shared mappers (`site/js/espn-scores.js`, cached 5 min + 24h stale); the board falls back to the CORS-open feeds directly if the worker is unreachable (`worker/src/scores.js`) |
 | Jolpica-F1 (Formula 1) | Worker, keyless | Ergast successor, not CORS-open; worker fans out next race + last result + driver/constructor standings, merges + caches 1 h, serves partial on upstream failure (`worker/src/f1.js`) |
 | NYT / Gothamist / NPR / BBC (headlines) | direct + Worker proxy | feed whitelist in `worker/src/news.js` |
 | Substack publications (latest posts) | Worker, keyless | `/posts/substack?pub=<slug>` digest; no CORS upstream |

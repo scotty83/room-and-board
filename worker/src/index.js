@@ -20,6 +20,7 @@ import { fetchTfl } from './tfl.js';
 import { parseBeacon, beaconDataPoint, deviceModel } from './fleet.js';
 import { fetchChart, CHART_TOPICS } from './chart.js';
 import { fetchF1 } from './f1.js';
+import { fetchGolf, fetchTennis } from './scores.js';
 import { fetchAmtrak } from './amtrak.js';
 
 const CORS = {
@@ -268,6 +269,14 @@ export default {
       if (!ids.length) return json({ error: 'bad_ids' }, 400);
       // Sorted ids in the key so permutations share one cache entry.
       return cached(url.origin, `svc:${[...ids].sort().join(',')}`, 180, () => fetchServiceStatuses(ids));
+    }
+
+    if (path === '/golf' && request.method === 'GET') {
+      return cached(url.origin, 'golf', 300, () => fetchGolf());
+    }
+
+    if (path === '/tennis' && request.method === 'GET') {
+      return cached(url.origin, 'tennis', 300, () => fetchTennis());
     }
 
     if (path === '/f1' && request.method === 'GET') {

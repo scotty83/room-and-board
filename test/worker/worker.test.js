@@ -1,3 +1,4 @@
+import { fetchGolf, fetchTennis } from '../../worker/src/scores.js';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { digestNext, digestSchedule, mapTeamSummary } from '../../worker/src/sports.js';
 import { env } from 'cloudflare:test';
@@ -328,6 +329,51 @@ describe('/sports/team', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.row).toMatchObject({ abbr: 'NYM', record: '48-37', lastLine: 'L 3-9 @ TOR · Final' });
+  });
+});
+
+describe('golf/tennis digest routes (scores.js)', () => {
+  const golfBody = { events: [{ shortName: 'The Open', date: '2026-07-16T06:00Z', competitions: [{
+    status: { type: { state: 'in', detail: 'Round 3 - Play Complete' } },
+    competitors: [{ order: 1, score: '-10', athlete: { shortName: 'S. Burns' }, linescores: [{ displayValue: '+3' }] }],
+  }] }] };
+  const tennisBody = { events: [{ id: '306', shortName: 'Nordea Open', groupings: [{
+    grouping: { displayName: "Men's Singles" },
+    competitions: [{ id: 'm1', date: '2026-07-19T13:00Z', status: { type: { state: 'post', shortDetail: 'Final' } },
+      competitors: [
+        { athlete: { shortName: 'A' }, winner: true, linescores: [{ value: 6 }] },
+        { athlete: { shortName: 'B' }, winner: false, linescores: [{ value: 4 }] },
+      ] }],
+  }] }] };
+
+  it('fetchGolf digests the scoreboard through the shared mapper', async () => {
+    stubFetch([{ match: /golf\/pga\/scoreboard/, body: golfBody }]);
+    const d = await fetchGolf();
+    expect(d.stale).toBe(false);
+    expect(d.name).toBe('The Open');
+    expect(d.players[0]).toMatchObject({ pos: 1, name: 'S. Burns', score: '-10' });
+  });
+
+  it('fetchGolf throws on upstream failure (so cached() serves stale)', async () => {
+    stubFetch([{ match: /golf\/pga\/scoreboard/, body: 'nope', status: 503 }]);
+    await expect(fetchGolf()).rejects.toThrow('espn golf/pga 503');
+  });
+
+  it('fetchTennis serves a partial when one tour fails, throws when both do', async () => {
+    stubFetch([
+      { match: /tennis\/atp\/scoreboard/, body: tennisBody },
+      { match: /tennis\/wta\/scoreboard/, body: 'down', status: 500 },
+    ]);
+    const d = await fetchTennis();
+    expect(d.name).toBe('Nordea Open');
+    expect(d.rows).toHaveLength(1);
+    expect(d.rows[0]).toMatchObject({ tour: 'ATP', winner: 'a', sets: '6-4' });
+
+    stubFetch([
+      { match: /tennis\/atp\/scoreboard/, body: 'down', status: 500 },
+      { match: /tennis\/wta\/scoreboard/, body: 'down', status: 500 },
+    ]);
+    await expect(fetchTennis()).rejects.toThrow('both tours failed');
   });
 });
 

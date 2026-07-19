@@ -1162,8 +1162,12 @@ body.mode-ambient .gear { bottom: 7px; }
 .iptv { position: relative; }
 .iptv .iptv__expand { top: 10px; right: 10px; width: 52px; height: 52px; }
 .iptv--full .iptv__expand { top: 28px; right: 28px; width: 64px; height: 64px; }
-.iptv__frame { width: 100%; height: 100%; border: 0; border-radius: 12px; background: #000; display: block; }
-.iptv--full .iptv__frame { border-radius: 0; }
+.iptv__frame { border: 0; background: #000; display: block; }
+/* Camera crop: the fixed-viewport iframe is transformed so only the player
+   region shows; the wrap clips it to the card's rounded corners. */
+.iptv--cam { overflow: hidden; border-radius: 12px; }
+.iptv--cam .iptv__frame { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.iptv--cam.iptv--full { border-radius: 0; }
 
 /* ---------- golf / tennis ---------- */
 /* Golf runs denser rows than the citibike elastic family (30px vs 36px). */

@@ -87,6 +87,7 @@ function destroyMount(el) {
     else { m.full = false; m.wrap.classList.remove('iptv--full'); }
   }
   clearTimeout(m.retryTimer);
+  m.ro?.disconnect();
   m.gen++; // invalidates any in-flight async attach
   try { m.hls?.destroy(); } catch { /* already torn down */ }
   mounts.delete(el);
@@ -107,24 +108,48 @@ function showError(el, m, msg) {
   }, 60 * 1000);
 }
 
-// Share-page mode: an iframe hosts UI's own player. Iframes reload when
-// reparented (unlike media elements), so full screen toggles a fixed-position
-// class in place; the corner button drives it because the iframe swallows
-// taps. Sound is whatever the embedded player does — we can't reach inside.
+// Share-page mode: an iframe hosts UI's own player — but the page brings its
+// whole Protect chrome (header, white padding). The iframe therefore renders
+// at a FIXED internal viewport, which makes UniFi's layout deterministic, and
+// a cover-scale transform maps just the player region onto the card. The
+// constants are the one thing to retune if UI redesigns the share page
+// (measured 2026-07 at 1280x720: 50px header, centered ~820x500 player well).
+// Iframes reload when reparented (unlike media elements), so full screen
+// toggles a fixed-position class in place; the corner button drives it
+// because the iframe swallows taps. Sound is the embedded player's own.
+const CAM_VIEW = { w: 1280, h: 720 };
+const CAM_RECT = { x: 230, y: 131, w: 820, h: 461 }; // the 16:9 video within the well
+
+function layoutFrame(m) {
+  const { clientWidth: ww, clientHeight: wh } = m.wrap;
+  if (!ww || !wh) return; // layout-less test env / not measured yet
+  const s = Math.max(ww / CAM_RECT.w, wh / CAM_RECT.h); // cover: fill, crop edges
+  const tx = ww / 2 - s * (CAM_RECT.x + CAM_RECT.w / 2);
+  const ty = wh / 2 - s * (CAM_RECT.y + CAM_RECT.h / 2);
+  m.iframe.style.transform = `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${s.toFixed(4)})`;
+}
+
 function mountFrame(el, url) {
-  el.innerHTML = `<div class="iptv">
-    <iframe class="iptv__frame" src="${escapeHtml(url)}" allow="autoplay; fullscreen" referrerpolicy="no-referrer" title="Live camera"></iframe>
+  el.innerHTML = `<div class="iptv iptv--cam">
+    <iframe class="iptv__frame" src="${escapeHtml(url)}" width="${CAM_VIEW.w}" height="${CAM_VIEW.h}" allow="autoplay; fullscreen" referrerpolicy="no-referrer" title="Live camera"></iframe>
     <button class="iptv__expand" aria-label="Full screen">${EXPAND_ICON}</button>
   </div>`;
   const wrap = el.querySelector('.iptv');
-  const m = { url, hls: null, video: null, wrap, retryTimer: 0, gen: 0, full: false };
+  const m = { url, hls: null, video: null, wrap, iframe: wrap.querySelector('iframe'), retryTimer: 0, gen: 0, full: false };
   mounts.set(el, m);
+  layoutFrame(m);
+  if (typeof ResizeObserver !== 'undefined') {
+    // Re-crop on any wrap size change (card resize, full-screen toggle).
+    m.ro = new ResizeObserver(() => layoutFrame(m));
+    m.ro.observe(wrap);
+  }
   const btn = el.querySelector('.iptv__expand');
   btn.addEventListener('click', () => {
     m.full = !m.full;
     wrap.classList.toggle('iptv--full', m.full);
     btn.innerHTML = m.full ? COLLAPSE_ICON : EXPAND_ICON;
     btn.setAttribute('aria-label', m.full ? 'Exit full screen' : 'Full screen');
+    layoutFrame(m);
   });
 }
 

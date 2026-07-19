@@ -441,8 +441,7 @@ function renderPhotoPane(src) {
     <p class="pane__hint">Shows a ${gd ? '<b>Google Drive folder</b> of photos' : 'iCloud <b>Shared Album</b>'}.
       The ${gd ? 'folder' : 'album'} must be shared with a public link. It's unlikely anyone would randomly discover
       it, but <b>anyone with the link could view these photos</b>; if you're not comfortable with that, don't add
-      personal photos. If the board is in a publicly visible space, it's your responsibility to make sure the
-      photos are appropriate.</p>
+      personal photos. It's your responsibility to make sure photos are workplace appropriate.</p>
     ${configured}
     <p class="pane__label">${p.album ? 'Change it from your phone' : 'Set it up from your phone'}</p>
     <p class="pane__hint">Scan for the step-by-step: build the ${gd ? 'folder' : 'album'}, check its link, and it

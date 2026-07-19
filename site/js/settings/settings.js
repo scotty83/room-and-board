@@ -726,28 +726,28 @@ function renderPath() {
 }
 
 let ferryStops = null;
+// Mirrors renderPath: a flat pill grid with the current pick outlined (the old
+// drill-list picker read as a different idiom from its PATH neighbor).
 async function renderFerry() {
   const _nav = navToken;
   pane().innerHTML = `
     <h2 class="pane__title">NYC Ferry</h2>
-    <div class="row"><span class="row__label row__label--dim">Landing</span><span class="row__value" data-landing>Loading…</span></div>
-    <div class="drill"></div>`;
+    <p class="pane__label">Landing</p>
+    <div class="rows rows--grid rows--pill"><p class="pane__empty">Loading…</p></div>`;
   try {
     ferryStops ??= (await fetchJSON('data/ferry.json')).stops;
-    const byId = Object.fromEntries(ferryStops.map((s) => [s.id, s]));
-    pane().querySelector('[data-landing]').textContent =
-      byId[state.cfg.ferry.landing]?.name ?? state.cfg.ferry.landing;
-    drillList(
-      'Choose a landing',
-      ferryStops.map((s) => ({ html: escapeHtml(s.name), value: s })),
-      (pick) => {
-        state.cfg.ferry.landing = pick.value.id;
+    if (navStale(_nav)) return;
+    pane().querySelector('.rows').innerHTML = ferryStops.map((s) =>
+      `<button class="row row--tap ${state.cfg.ferry.landing === s.id ? 'is-selected' : ''}" data-landing-id="${escapeHtml(s.id)}">${escapeHtml(s.name)}</button>`,
+    ).join('');
+    pane().querySelectorAll('[data-landing-id]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        state.cfg.ferry.landing = btn.dataset.landingId;
         renderFerry();
-      },
-      { back: false }, // the drill IS this pane's picker — nothing to go back to
+      }),
     );
   } catch {
-    const d = pane().querySelector('.drill');
+    const d = pane().querySelector('.rows');
     if (d) d.innerHTML = '<p class="pane__empty">Landing list unavailable. Redeploy the site data.</p>';
   }
 }

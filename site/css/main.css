@@ -3,23 +3,28 @@
    anything that moves, system font stack. */
 
 :root {
-  --bg: #0d1117;
-  --bg-card: #161c26;
-  --bg-card-2: #1b2230;
-  --ink: #e8edf4;
-  --ink-dim: #93a0b4;
-  --ink-faint: #74849a;
-  --accent: #58a6ff;
-  --good: #3fb950;
-  --bad: #f85149;
-  --warn: #d29922;
-  --radius: 18px;
+  /* Momentum, the app's single theme (the old Room & Board palette retired
+     2026-07-19): native RoomOS neutrals per Cisco's Webex Frame — pure-black
+     canvas, #121212 surfaces, white-alpha .11 tiles/wells/hairlines. */
+  --bg: #000;
+  --bg-card: #121212;
+  --bg-card-2: rgba(255, 255, 255, 0.11);
+  --ink: rgba(255, 255, 255, 0.95);
+  --ink-mid: rgba(255, 255, 255, 0.84);
+  --ink-dim: rgba(255, 255, 255, 0.72);
+  --ink-faint: rgba(255, 255, 255, 0.56);
+  --accent: #64b4fa;
+  --good: #3cc29a;
+  --bad: #fc8b98;
+  --warn: #f2990a;
+  --radius: 24px;
   --gap: 20px;
-  /* Semantic surface tints (tokens so themes can retint them). */
-  --warn-tint: rgba(210, 153, 34, 0.15);
-  --good-tint: rgba(63, 185, 80, 0.08);
-  --bad-tint: rgba(248, 81, 73, 0.10);
-  --ink-mid: #c1ccda; /* between --ink and --ink-dim (weather labels) */
+  /* Solid "wells" under bright semantic text — the native badge idiom
+     (Webex Frame: #0a274a well + #64b4fa text) — instead of alpha tints,
+     which go muddy on the OLED black. */
+  --warn-tint: #36220c;
+  --good-tint: #0e2b20;
+  --bad-tint: #4f0e10;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -40,7 +45,7 @@ html, body {
   overflow: hidden;
   background: var(--bg);
   color: var(--ink);
-  font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -241,7 +246,8 @@ html, body {
 .card--weather.t-m .wx-days { margin-top: 0; }
 .card--weather.t-m .wx-rule { margin: 8px 0 6px; }
 .card--weather.t-m .wx-trend__chart { height: 36px; } /* 40 -> 36 funds the hours/chips seam gap at the tight 3x4 */
-.card--weather.t-m:not(.t-narrow) .wx-now__temp { font-size: 78px; }
+/* (t-m hero cap removed: Momentum's 84px non-narrow hero out-specified it
+   even before the fold — keeping it would shrink the hero post-fold.) */
 .card--weather.t-m:not(.t-narrow) .wx-day { padding: 7px 4px; }
 .card--weather.t-l .wx-trend__chart { height: 100px; }
 
@@ -311,7 +317,7 @@ html, body {
 .qr--photos { margin-bottom: 20px; } /* air between the QR tile and Enter code */
 /* Two-tap Remove: armed state ignites the destructive red (calm ghost at
    rest). Both selectors so the momentum ghost override doesn't win. */
-.btn--armed, body.theme-momentum .btn--armed {
+.btn--armed {
   color: var(--bad); border-color: rgba(248, 81, 73, 0.6); background: var(--bad-tint);
 }
 
@@ -583,30 +589,26 @@ body.mode-ambient .gear { bottom: 7px; }
 /* 56px tall: the board's touch floor (was 76x44 — under the floor). */
 .toggle {
   width: 72px; height: 40px; border-radius: 20px; border: none; cursor: pointer;
-  background: var(--bg-card-2); position: relative; flex: none;
+  background: rgba(255, 255, 255, 0.3); position: relative; flex: none;
   transition: background 0.2s;
 }
 .toggle__knob {
   position: absolute; top: 4px; left: 4px; width: 32px; height: 32px;
-  border-radius: 50%; background: var(--ink-faint);
+  border-radius: 50%; background: #fff;
   transition: transform 0.2s ease-out, background 0.2s;
 }
-.toggle.is-on { background: rgba(88, 166, 255, 0.35); }
-.toggle.is-on .toggle__knob { transform: translateX(32px); background: var(--accent); }
+.toggle.is-on { background: var(--accent); }
+.toggle.is-on .toggle__knob { transform: translateX(32px); background: rgba(0, 0, 0, 0.9); }
 /* RoomOS toggle: grey off-track with a white knob, solid-blue on-track with
    a dark knob — the knob's ink flips to black on the bright fill, same as
    the pill buttons. (Base theme keeps its blue-on-translucent-blue style.) */
-body.theme-momentum .toggle { background: rgba(255, 255, 255, 0.3); }
-body.theme-momentum .toggle__knob { background: #fff; }
-body.theme-momentum .toggle.is-on { background: var(--accent); }
-body.theme-momentum .toggle.is-on .toggle__knob { background: rgba(0, 0, 0, 0.9); }
 /* Pill tap-rows (PATH stations): the button-group pill language instead of
    the accent-outline tile selection — transparent + white-30% ring, selected
    = white fill / black text (like Save/Cancel). Momentum-scoped. */
-body.theme-momentum .rows--pill .row--tap {
+.rows--pill .row--tap {
   background: none; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
 }
-body.theme-momentum .rows--pill .row--tap.is-selected {
+.rows--pill .row--tap.is-selected {
   outline: none; background: rgba(255, 255, 255, 0.95);
   border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95);
 }
@@ -1210,48 +1212,21 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    numerals. Pure token overrides + a few scoped treatments — card markup and
    every capacity/size number are untouched. (Palette values follow the public
    momentum-design tokens; no Cisco fonts or marks ship with this.) */
-body.theme-momentum {
-  /* RoomOS exposes the device's Cisco Sans to web content (board-verified via
-     the Diagnostics probe) — reference it by name, never bundle it. Firmware
-     builds vary between the spaced and unspaced family name (Cisco's own
-     Webex Frame declares 'Cisco SansTT'), so list both. Off Cisco hardware
-     this silently falls through to the base stack. */
-  font-family: 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --bg: #000;
-  /* Native RoomOS neutrals (Webex Frame): #121212 surfaces, white-alpha .11
-     tiles/wells/hairlines. */
-  --bg-card: #121212;
-  --bg-card-2: rgba(255, 255, 255, 0.11);
-  --ink: rgba(255, 255, 255, 0.95);
-  --ink-mid: rgba(255, 255, 255, 0.84);
-  --ink-dim: rgba(255, 255, 255, 0.72);
-  --ink-faint: rgba(255, 255, 255, 0.56);
-  --accent: #64b4fa;
-  --good: #3cc29a;
-  --bad: #fc8b98;
-  --warn: #f2990a;
-  --radius: 24px;
-  /* Solid "wells" under bright semantic text — the native badge idiom
-     (Webex Frame: #0a274a well + #64b4fa text) — instead of alpha tints,
-     which go muddy on the OLED black. */
-  --warn-tint: #36220c;
-  --good-tint: #0e2b20;
-  --bad-tint: #4f0e10;
-}
+/* (Momentum token block folded into :root and body, 2026-07-19.) */
 /* Cards on pure black need a hairline edge to hold their shape. */
-body.theme-momentum .card { border: 1px solid rgba(255, 255, 255, 0.07); }
+.card { border: 1px solid rgba(255, 255, 255, 0.07); }
 /* Momentum's signature: the big numerals go light (300), not bold. */
-body.theme-momentum .topbar__time,
-body.theme-momentum .wx-now__temp,
-body.theme-momentum .index__price,
-body.theme-momentum .delta,
-body.theme-momentum .train__min > span,
-body.theme-momentum .wc-row__time,
-body.theme-momentum .wx-trend__row:not(.wx-trend__row--hours) > span,
-body.theme-momentum .sky__aqi-value,
-body.theme-momentum .strip__time,
-body.theme-momentum .strip__temp,
-body.theme-momentum .strip__transit b {
+.topbar__time,
+.wx-now__temp,
+.index__price,
+.delta,
+.train__min > span,
+.wc-row__time,
+.wx-trend__row:not(.wx-trend__row--hours) > span,
+.sky__aqi-value,
+.strip__time,
+.strip__temp,
+.strip__transit b {
   /* Deterministic Light: the device exposes 'CiscoSansTT Light' as its own
      family (Diagnostics inventory) — don't rely on the base family
      resolving a 300 request. Absent families fall through harmlessly. */
@@ -1261,15 +1236,15 @@ body.theme-momentum .strip__transit b {
 /* Ambient text over photos gets the native depth treatment (Cisco's Webex
    Frame ships this exact shadow on the same gen-1 hardware; the no-shadow
    rule is for animated elements, and these sit static above the slides). */
-body.theme-momentum .strip,
-body.theme-momentum .slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
+.strip,
+.slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); }
 /* The semibold tier (600 in the base design) snapped UP to full Bold on the
    board — too heavy (and Cisco Bold blends the ff in "office"). The device
    exposes 'CiscoSansTT Medium' as its OWN family (Diagnostics inventory,
    board-verified), so lead the stack with it for a TRUE middle weight; off
    Cisco hardware the family is absent and weight 500 picks the system
    Medium. The 700 tier stays intentionally bold. */
-body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
+:is(.topbar__greeting, .card__title, .artwork__title,
   .slide-caption__title, .headline__title, .wx-now__label,
   .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
@@ -1281,59 +1256,59 @@ body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
 /* Buttons take Webex Frame's native pill language: white fill for the
    primary action, transparent with a white-alpha ring otherwise, regular
    weight. Sizes stay ours (64px touch floor for arm's-length boards). */
-body.theme-momentum .btn {
+.btn {
   border-radius: 999px;
   background: none;
   border: 2px solid rgba(255, 255, 255, 0.3);
   font-weight: 400;
 }
-body.theme-momentum .btn:active { background: rgba(255, 255, 255, 0.11); }
-body.theme-momentum .btn--primary {
+.btn:active { background: rgba(255, 255, 255, 0.11); }
+.btn--primary {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(255, 255, 255, 0.3);
   color: rgba(0, 0, 0, 0.95);
 }
-body.theme-momentum .btn--primary:active { background: rgba(255, 255, 255, 0.8); }
-body.theme-momentum .btn--ghost { border-color: transparent; background: none; }
+.btn--primary:active { background: rgba(255, 255, 255, 0.8); }
+.btn--ghost { border-color: transparent; background: none; }
 /* Segmented pickers and chips join the pill language: round radius, the
    white-alpha ring, and selection = the white fill (accent stays for data,
    not control chrome). The 2px divider stays (Sean's explicit earlier pick).
    Keyboard keys keep their tile grid — a typing surface, not actions. */
-body.theme-momentum .segmented { border-radius: 999px; border-color: rgba(255, 255, 255, 0.3); background: none; }
-body.theme-momentum .seg { color: var(--ink-dim); }
-body.theme-momentum .seg + .seg { border-left-color: rgba(255, 255, 255, 0.3); }
-body.theme-momentum .seg.is-active { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.95); font-weight: 500; }
-body.theme-momentum .chip,
-body.theme-momentum .tflchip { border-radius: 999px; border: 2px solid rgba(255, 255, 255, 0.3); }
-body.theme-momentum .chip--on { background: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95); }
+.segmented { border-radius: 999px; border-color: rgba(255, 255, 255, 0.3); background: none; }
+.seg { color: var(--ink-dim); }
+.seg + .seg { border-left-color: rgba(255, 255, 255, 0.3); }
+.seg.is-active { background: rgba(255, 255, 255, 0.95); color: rgba(0, 0, 0, 0.95); font-weight: 500; }
+.chip,
+.tflchip { border-radius: 999px; border: 2px solid rgba(255, 255, 255, 0.3); }
+.chip--on { background: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95); }
 /* Rail Save/Cancel: equal-width pills (the wider label sets the shared grid
    track, floored by the 216px wordmark) centered in the rail — the reference
    ratio, not full-width slabs. Edit-mode's Cancel earns the ring + full ink —
    it's a peer action beside Done, unlike the quiet inline ghosts ("Remove
    name") which stay borderless. */
-body.theme-momentum .settings__railfoot { display: grid; justify-content: center; }
-body.theme-momentum .settings__railfoot .btn { min-width: 0; padding: 0 32px; }
-body.theme-momentum .editor__actions .btn--ghost { border-color: rgba(255, 255, 255, 0.3); color: var(--ink); }
+.settings__railfoot { display: grid; justify-content: center; }
+.settings__railfoot .btn { min-width: 0; padding: 0 32px; }
+.editor__actions .btn--ghost { border-color: rgba(255, 255, 255, 0.3); color: var(--ink); }
 /* The resize placeholder overlays the tile (z-index 4 during the gesture) —
    its fill must stay translucent so the underlying card shows through.
    Momentum's solid wells (right for banners) blanked it out. */
-body.theme-momentum .edit-placeholder { background: rgba(60, 194, 154, 0.12); }
-body.theme-momentum .edit-placeholder--invalid { background: rgba(252, 139, 152, 0.14); }
+.edit-placeholder { background: rgba(60, 194, 154, 0.12); }
+.edit-placeholder--invalid { background: rgba(252, 139, 152, 0.14); }
 /* Edit tiles join the card treatment: white-alpha edge instead of the base
    blue-grey hairline (invisible-ish on pure black). */
-body.theme-momentum .edit-block { border-color: rgba(255, 255, 255, 0.14); }
+.edit-block { border-color: rgba(255, 255, 255, 0.14); }
 /* Empty grid cells: the base blue-grey dashed hairline is near-invisible on
    pure black, so the drop targets vanish. Brighter white-alpha dashes. */
-body.theme-momentum .editor__cell { border-color: rgba(255, 255, 255, 0.18); }
+.editor__cell { border-color: rgba(255, 255, 255, 0.18); }
 /* The widget tray joins the pill language — the base blue-grey hairlines are
    hard to see on pure black. Disabled chips dim the ring but keep the shape. */
-body.theme-momentum .edit-tray__chip,
-body.theme-momentum .edit-tray__toggle { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px; }
-body.theme-momentum .edit-tray__chip:active { border-color: var(--accent); }
-body.theme-momentum .edit-tray__chip:disabled { border-color: rgba(255, 255, 255, 0.12); }
+.edit-tray__chip,
+.edit-tray__toggle { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px; }
+.edit-tray__chip:active { border-color: var(--accent); }
+.edit-tray__chip:disabled { border-color: rgba(255, 255, 255, 0.12); }
 /* Group inset: NOT a full pill — with two rows of chips the 999px end-caps
    crowd the corner chips. 28px (half a chip) echoes the chip curve instead. */
-body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.05); border-radius: 28px; padding: 10px 14px; }
+.edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.05); border-radius: 28px; padding: 10px 14px; }
 
 /* ---------- Diagnostics display test ---------- */
 /* Full-screen alignment pattern for board captures. Static gradients only
@@ -1361,14 +1336,14 @@ body.theme-momentum .edit-tray__group { border: 1px dashed rgba(255, 255, 255, 0
 /* Momentum weather type: the hero temperature goes properly thin (the device
    exposes CiscoSansTT ExtraLight) and a step smaller; tight negative tracking
    relaxes for the thin face; day-chip highs calm from bold to Medium. */
-body.theme-momentum .wx-now__temp {
+.wx-now__temp {
   font-family: 'CiscoSansTT ExtraLight', 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   font-weight: 200;
   font-size: 72px;
   letter-spacing: -0.01em;
 }
-body.theme-momentum .card--weather:not(.t-narrow) .wx-now__temp { font-size: 84px; }
-body.theme-momentum .wx-day__hi {
+.card--weather:not(.t-narrow) .wx-now__temp { font-size: 84px; }
+.wx-day__hi {
   /* Chip highs join the Light-numerals voice (same face as the clock times
      and hourly temps) — was Medium 500. */
   font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
@@ -1377,4 +1352,4 @@ body.theme-momentum .wx-day__hi {
 /* The shared tile alpha (--bg-card-2, .11) is tuned for interactive tiles;
    on the passive forecast chips it reads as the brightest surface on the
    board. Dim just the chips — buttons/keys/nav keep the .11 idiom. */
-body.theme-momentum .wx-day { background: rgba(255, 255, 255, 0.07); }
+.wx-day { background: rgba(255, 255, 255, 0.07); }

@@ -61,6 +61,11 @@ function showError(el, m, msg) {
 function mount(el, url) {
   el.innerHTML = '<div class="iptv"><video class="iptv__video" muted autoplay playsinline></video></div>';
   const video = el.querySelector('video');
+  // Belt and suspenders for autoplay policy: some Chromium builds only honor
+  // the muted IDL property (not the parsed attribute) when deciding whether
+  // a gesture-less play() is allowed.
+  video.muted = true;
+  video.autoplay = true;
   const m = { url, hls: null, video, retryTimer: 0, gen: 0 };
   mounts.set(el, m);
   const gen = m.gen;
@@ -99,6 +104,8 @@ function mount(el, url) {
     h.loadSource(url);
     h.attachMedia(video);
     h.on(Hls.Events.MANIFEST_PARSED, () => video.play?.().catch(() => {}));
+    // If the policy rejected that early play(), retry once frames exist.
+    video.addEventListener('canplay', () => { if (video.paused) video.play?.().catch(() => {}); });
   }).catch(() => {
     if (m.gen === gen) showError(el, m, 'Video player failed to load');
   });

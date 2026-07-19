@@ -835,13 +835,16 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    while the block itself stays left-justified under the names. */
 .card--markets.t-narrow:not(.t-s) .index__price { text-align: right; }
 .card--markets.t-narrow:not(.t-s) .index__name { text-align: left; }
-/* 3-wide compaction: the stacked rows shave ~7px each so a 3x4 fits five
-   tickers (the old metrics left a 4-row board over visible slack). Scoped by
-   data-w so the 4-wide scale is untouched; t-s keeps its own compact set. */
+/* 3-wide trim: the stacked rows give up just enough (~61px vs 68) that a
+   3x4 fits five tickers — barely below the classic scale, not a visible
+   shrink. Scoped by data-w so 4-wide is untouched; t-s keeps its own set. */
 .card--markets[data-w="3"]:not(.t-s) .indexes { row-gap: 8px; }
-.card--markets[data-w="3"]:not(.t-s) .index__info { line-height: 1.2; }
-.card--markets[data-w="3"]:not(.t-s) .index__price { font-size: 22px; }
-.card--markets[data-w="3"]:not(.t-s) .index__name { font-size: 19px; }
+.card--markets[data-w="3"]:not(.t-s) .index__info { line-height: 1.25; }
+.card--markets[data-w="3"]:not(.t-s) .index__price { font-size: 24px; }
+.card--markets[data-w="3"]:not(.t-s) .index__name { font-size: 20px; }
+/* Any leftover height spreads BETWEEN the rows (departure-board style)
+   instead of pooling as dead space under the last ticker. */
+.card--markets .indexes { flex: 1; align-content: space-evenly; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

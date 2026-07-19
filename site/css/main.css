@@ -1285,9 +1285,12 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .btn--primary:active { background: rgba(255, 255, 255, 0.8); }
 .btn--ghost { border-color: transparent; background: none; }
-/* Two-tap Remove: the armed state ignites the destructive red (calm ghost at
-   rest). Must sit after .btn/.btn--ghost — same specificity, order decides. */
-.btn--armed { color: var(--bad); }
+/* Two-tap Remove: the ghost stays calm (no container) at rest; ARMING is the
+   ignition — a persistent red pill, not just red text, so the destructive
+   state reads as a state and not a flicker of :active. Must sit after
+   .btn/.btn--ghost/.btn:active — same specificity, order decides. */
+.btn--armed { color: var(--bad); border-color: rgba(252, 139, 152, 0.45); background: var(--bad-tint); }
+.btn--armed:active { background: #6a1418; }
 /* Segmented pickers and chips join the pill language: round radius, the
    white-alpha ring, and selection = the white fill (accent stays for data,
    not control chrome). The 2px divider stays (Sean's explicit earlier pick).

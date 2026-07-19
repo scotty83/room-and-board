@@ -223,7 +223,6 @@ function startClock() {
 }
 
 function showWelcome() {
-  // New boards default to Momentum, so the welcome screen wears it too. If a
   const welcome = $('#welcome');
   welcome.hidden = false;
   $('#grid').hidden = true;

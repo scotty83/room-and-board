@@ -317,12 +317,6 @@ html, body {
 .photo-code { margin-top: 14px; }
 .photo-code .osk__display { margin-bottom: 10px; }
 .qr--photos { margin-bottom: 20px; } /* air between the QR tile and Enter code */
-/* Two-tap Remove: armed state ignites the destructive red (calm ghost at
-   rest). Both selectors so the momentum ghost override doesn't win. */
-.btn--armed {
-  color: var(--bad); border-color: rgba(248, 81, 73, 0.6); background: var(--bad-tint);
-}
-
 /* ---------- history / quote / sky / markets ---------- */
 .history { display: flex; flex-direction: column; gap: 10px; }
 /* Year column hugs four tabular digits; right-aligned so short years ("324")
@@ -733,8 +727,6 @@ body.mode-ambient .gear { bottom: 7px; }
   cursor: grab; touch-action: none; user-select: none;
 }
 .edit-block.is-dragging { opacity: 0.85; z-index: 5; cursor: grabbing; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); }
-/* Keep the "won't fit" signal loud even though the resting border is now hairline. */
-.edit-block.is-invalid { border: 2px solid var(--bad); }
 .edit-block__title { font-size: 26px; font-weight: 600; color: var(--ink-dim); pointer-events: none; }
 /* Delete: a neutral grey badge in the TOP-LEFT (iOS home-screen convention) so
    it reads as "remove this widget" not "close", and stays calm at rest — the
@@ -1145,7 +1137,7 @@ body.mode-ambient .gear { bottom: 7px; }
 .golf-row__pos { flex: none; width: 34px; text-align: right; color: var(--ink-dim); font-size: 18px; font-variant-numeric: tabular-nums; }
 .golf-row__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 21px; }
 .golf-row__today { flex: none; color: var(--ink-dim); font-size: 18px; font-variant-numeric: tabular-nums; }
-.golf-row__score { flex: none; font-size: 23px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
+.golf-row__score { flex: none; font-size: 23px; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
 .golf-row__score--under { color: var(--good); }
 .tennis-row { display: flex; align-items: baseline; gap: 10px; min-height: 35px; }
 .tennis-row__tour { flex: none; font-size: 15px; font-weight: 600; color: var(--ink-dim); width: 40px; }
@@ -1287,6 +1279,9 @@ body.mode-ambient .gear { bottom: 7px; }
 }
 .btn--primary:active { background: rgba(255, 255, 255, 0.8); }
 .btn--ghost { border-color: transparent; background: none; }
+/* Two-tap Remove: the armed state ignites the destructive red (calm ghost at
+   rest). Must sit after .btn/.btn--ghost — same specificity, order decides. */
+.btn--armed { color: var(--bad); }
 /* Segmented pickers and chips join the pill language: round radius, the
    white-alpha ring, and selection = the white fill (accent stays for data,
    not control chrome). The 2px divider stays (Sean's explicit earlier pick).

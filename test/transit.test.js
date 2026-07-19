@@ -265,6 +265,20 @@ describe('rail boards force a stops-at pick', () => {
     fetchJSON: () => { throw new Error('no fetch'); },
     fetchBuffer: () => { throw new Error('no fetch'); },
   };
+  it('marks the vm stale when the feed timestamp is old (wedged upstream)', async () => {
+    // The recorded fixture's timestamp is historical, so against the real
+    // clock it reads as a wedged feed — the card must dim, not look fresh.
+    const { fetchData } = await import('../site/js/widgets/lirr.js');
+    const buf = await readFile(new URL('./fixtures/lirr.pb', import.meta.url));
+    const net = {
+      fetchBuffer: async () => new Uint8Array(buf),
+      fetchJSON: async (u) => { if (String(u).includes('stations')) return []; throw new Error('offline'); },
+    };
+    const vm = await fetchData({ lirr: { dest: '183', origin: 'penn', alerts: false } }, net);
+    expect(vm.stale).toBe(true);
+    expect(vm.updatedAt).toBeGreaterThan(0);
+  });
+
   it('lirr/mnr/amtrak fetchData short-circuit to needsStation without touching the network', async () => {
     const { fetchData: lirrFetch } = await import('../site/js/widgets/lirr.js');
     const { fetchData: mnrFetch } = await import('../site/js/widgets/mnr.js');

@@ -142,8 +142,16 @@ export async function fetchData(cfg, net) {
   // (The shipped array-only check meant tracks silently never enriched.)
   const trackJson = trackLists.flatMap((r) => (Array.isArray(r) ? r : Array.isArray(r?.arrivals) ? r.arrivals : []));
   const names = await stationNames(net);
-  const vm = mapLirr(decoded, trackJson.length ? trackJson : null, cfg.lirr, Math.floor(Date.now() / 1000), names);
+  const nowSec = Math.floor(Date.now() / 1000);
+  const vm = mapLirr(decoded, trackJson.length ? trackJson : null, cfg.lirr, nowSec, names);
   vm.destName = (cfg.lirr.dest && names[cfg.lirr.dest]) || null;
+  // A 200 response can still carry a wedged feed (2026-07-18: the LIRR origin
+  // served a 19h-old snapshot all day — every departure in the past, board
+  // blank but looking fresh). Surface it through the standard stale idiom.
+  if (decoded.timestamp && nowSec - decoded.timestamp > 15 * 60) {
+    vm.stale = true;
+    vm.updatedAt = decoded.timestamp;
+  }
   if (cfg.lirr.alerts) {
     try {
       const digest = await net.fetchJSON(`${WORKER_URL}/alerts/lirr`);

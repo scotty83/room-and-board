@@ -89,8 +89,15 @@ export async function fetchData(cfg, net) {
   if (!cfg.mnr.dest) return { departures: [], needsStation: true };
   const decoded = decodeGtfsRt(await net.fetchBuffer(FEED_URL));
   const names = await stationNames(net);
-  const vm = mapMnr(decoded, cfg.mnr, Math.floor(Date.now() / 1000), names);
+  const nowSec = Math.floor(Date.now() / 1000);
+  const vm = mapMnr(decoded, cfg.mnr, nowSec, names);
   vm.destName = (cfg.mnr.dest && names[cfg.mnr.dest]) || null;
+  // Mirror lirr: a 200 can carry a wedged feed (all-past departures) — mark
+  // it stale so the card dims and stamps its real age instead of lying.
+  if (decoded.timestamp && nowSec - decoded.timestamp > 15 * 60) {
+    vm.stale = true;
+    vm.updatedAt = decoded.timestamp;
+  }
   if (cfg.mnr.alerts) {
     try {
       const digest = await net.fetchJSON(`${WORKER_URL}/alerts/mnr`);

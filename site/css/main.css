@@ -98,6 +98,21 @@ html, body {
   justify-content: center;
   row-gap: clamp(10px, calc((100% - var(--n, 5) * 35px) / max(var(--n, 5) - 1, 1)), 26px);
 }
+/* Same bounded elastic for the other uniform-row list cards. Row vars are
+   worst-case heights: overshooting a var only leaves centered air, while
+   undershooting would overflow. Subway/services opt OUT: their rows expand
+   (alerts/incident notes) and both shed rows via measure-trim instead. */
+.card--sports .card__body {
+  --trow: 66px;
+  justify-content: center;
+  row-gap: clamp(10px, calc((100% - var(--n, 3) * var(--trow)) / max(var(--n, 3) - 1, 1)), 22px);
+}
+.card--sports.t-s .card__body { --trow: 47px; }
+.card--citibike .card__body,
+.card--tfl .card__body {
+  justify-content: center;
+  row-gap: clamp(10px, calc((100% - var(--n, 3) * 36px) / max(var(--n, 3) - 1, 1)), 20px);
+}
 
 /* ---------- weather ---------- */
 .alert { display: flex; gap: 10px; align-items: center; background: var(--warn-tint); color: var(--warn); border-radius: 10px; padding: 6px 14px; font-size: 20px; font-weight: 600; }
@@ -1013,10 +1028,13 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 /* ---------- service status ---------- */
 .svc { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
 .svc__row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-.svc__name { font-size: 21px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.svc__state { font-size: 18px; font-weight: 600; white-space: nowrap; flex: none; }
+/* Type matches the World Clock rows (they sit side by side on boards):
+   name = .wc-row__city (20/dim), state = .wc-row__time (23/700). */
+.svc__name { font-size: 20px; color: var(--ink-dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.svc__state { font-size: 23px; font-weight: 700; white-space: nowrap; flex: none; }
 /* "All fine" rests quiet — green is reserved for deviation (calm-at-rest principle). */
-.svc__state--ok { color: var(--ink-dim); font-weight: 400; }
+/* Operational reads like a clock time: full ink, same weight (was dim/400
+   before the world-clock type match). Issue states keep semantic colors. */
 .svc__state--minor { color: var(--warn); }
 .svc__state--major { color: var(--bad); }
 .svc__state--unknown { color: var(--ink-faint); }
@@ -1199,6 +1217,7 @@ body.theme-momentum .wx-now__temp,
 body.theme-momentum .index__price,
 body.theme-momentum .train__min > span,
 body.theme-momentum .wc-row__time,
+body.theme-momentum .svc__state,
 body.theme-momentum .sky__aqi-value,
 body.theme-momentum .strip__time,
 body.theme-momentum .strip__temp,

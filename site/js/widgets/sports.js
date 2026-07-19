@@ -31,6 +31,7 @@ export function render(el, vm, _cfg) {
   const cap = itemCapacity('sports', w, h);
   const shown = vm.rows.slice(0, cap);
   const hidden = vm.rows.length - shown.length;
+  el.style.setProperty('--n', String(shown.length)); // elastic row-gap divisor
   el.innerHTML =
     shown
       .map(

@@ -49,17 +49,18 @@ export const MIN_SIZE = {
 
 // Nine widgets in four 3-wide columns, tiling all 96 cells. Re-tiled
 // 2026-07-19 for the content-aware height caps: worldclock (5 default
-// cities) and markets (3 default tickers) each cap at 3 tall, so weather
-// and art absorb the freed rows. Every size is overflow-audited.
+// cities), markets (3 default tickers) and subway (3 default lines) each
+// cap at 3 tall, so weather, art and lirr absorb the freed rows. Every
+// size is overflow-audited.
 export const DEFAULT_LAYOUT = Object.freeze([
   { id: 'weather', x: 0, y: 0, w: 3, h: 5 },
   { id: 'worldcup', x: 3, y: 0, w: 3, h: 3 },
   { id: 'worldclock', x: 6, y: 0, w: 3, h: 3 },
-  { id: 'subway', x: 9, y: 0, w: 3, h: 5 },
+  { id: 'subway', x: 9, y: 0, w: 3, h: 3 },
   { id: 'sports', x: 3, y: 3, w: 3, h: 3 },
   { id: 'markets', x: 0, y: 5, w: 3, h: 3 },
   { id: 'art', x: 6, y: 3, w: 3, h: 5 },
-  { id: 'lirr', x: 9, y: 5, w: 3, h: 3 },
+  { id: 'lirr', x: 9, y: 3, w: 3, h: 5 },
   { id: 'history', x: 3, y: 6, w: 3, h: 2 },
 ].map(Object.freeze));
 
@@ -82,6 +83,22 @@ export const MAX_SIZE = {
 // shallow tier drops sparklines, and capping there would lock the richer view
 // out. Returns a {id: maxH} map for the layout functions' optional `caps`
 // parameter; widgets absent from the map keep their static bounds.
+// [id, count-of-followed-list, search-floor]. Floors above the widget's MIN
+// height mark where a REDUCED presentation lives below: markets h<=2 drops
+// sparklines, sports h<=2 drops the "Last:" line — the cap must not lock the
+// richer tier out. Subway/services keep alert/incident headroom through their
+// deliberately generous capacity pitches, and both renderers shed rows to the
+// corner badge when expanded rows overflow anyway.
+const CONTENT_CAPPED = [
+  ['worldclock', (cfg) => cfg?.worldclock?.cities?.length, 3],
+  ['markets', (cfg) => cfg?.markets?.symbols?.length, 3],
+  ['sports', (cfg) => cfg?.sports?.teams?.length, 3],
+  ['services', (cfg) => cfg?.services?.list?.length, 2],
+  ['citibike', (cfg) => cfg?.citibike?.stations?.length, 2],
+  ['tfl', (cfg) => cfg?.tfl?.lines?.length, 2],
+  ['subway', (cfg) => cfg?.subway?.lines?.length, 2],
+];
+
 export function contentMaxH(cfg) {
   const caps = {};
   const fit = (id, n, fromH) => {
@@ -90,10 +107,10 @@ export function contentMaxH(cfg) {
     }
     return GRID.rows;
   };
-  const cities = cfg?.worldclock?.cities?.length;
-  if (cities) caps.worldclock = fit('worldclock', cities, MIN_SIZE.worldclock[1]);
-  const symbols = cfg?.markets?.symbols?.length;
-  if (symbols) caps.markets = fit('markets', symbols, 3);
+  for (const [id, countOf, fromH] of CONTENT_CAPPED) {
+    const n = countOf(cfg);
+    if (n) caps[id] = fit(id, n, Math.max(fromH, MIN_SIZE[id][1]));
+  }
   return caps;
 }
 

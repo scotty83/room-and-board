@@ -64,6 +64,21 @@ describe('contentMaxH (content-aware height caps)', () => {
     expect(contentMaxH(cfgWith(6, 5))).toEqual({ worldclock: 4, markets: 4 });
     expect(contentMaxH(cfgWith(10, 7))).toEqual({ worldclock: 5, markets: 6 });
   });
+  it('caps the second-pass widgets from their followed lists', () => {
+    const caps = contentMaxH({
+      subway: { lines: ['1', '2', '3'] },
+      tfl: { lines: Array.from({ length: 11 }, (_, i) => `l${i}`) },
+      services: { list: ['webex', 'slack', 'm365'] },
+      citibike: { stations: [{}, {}, {}] },
+      sports: { teams: [{}, {}, {}, {}, {}, {}] },
+    });
+    expect(caps.subway).toBe(3);
+    expect(caps.services).toBe(3);
+    expect(caps.citibike).toBe(3);
+    expect(caps.sports).toBe(5); // 6 teams; the h<=2 tier (no Last line) never caps it
+    expect(caps.tfl).toBeGreaterThanOrEqual(5); // 11 lines need a tall card
+    expect(contentMaxH({ sports: { teams: [{}] } }).sports).toBe(3); // floor: richer tier stays reachable
+  });
   it('markets never caps below h=3 — the shallow tier drops sparklines', () => {
     expect(contentMaxH(cfgWith(5, 1)).markets).toBe(3);
   });

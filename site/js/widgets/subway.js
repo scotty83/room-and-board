@@ -46,19 +46,23 @@ export function render(el, vm, _cfg) {
   const rows = vm.lines.length > cap
     ? [...vm.lines].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, cap)
     : vm.lines;
-  const hidden = vm.lines.length - rows.length;
-  el.innerHTML = rows
-    .map(
-      (row) => `<div class="linestatus ${row.ok ? '' : 'linestatus--alert'}">
+  const rowHtml = (row) => `<div class="linestatus ${row.ok ? '' : 'linestatus--alert'}">
         <span class="bullet bullet--${escapeHtml(row.line)}">${escapeHtml(row.line)}</span>
         <span class="linestatus__text">${
           row.ok ? 'Good Service' : escapeHtml(row.headers[0])
         }</span>
         ${row.ok ? '' : '<span class="linestatus__icon" aria-hidden="true">⚠</span>'}
-      </div>`,
-    )
-    .join('');
-  setMoreBadge(el, hidden);
+      </div>`;
+  const build = (n) => rows.slice(0, n).map(rowHtml).join('');
+  let shown = rows.length;
+  el.innerHTML = build(shown);
+  // Alert rows wrap taller than the capacity pitch budgets; when they push
+  // past the body, shed rows to the corner badge (services-style trim) rather
+  // than clipping — the content-aware height caps assume this backstop.
+  if (el.clientHeight > 0) {
+    while (shown > 1 && el.scrollHeight > el.clientHeight) { shown -= 1; el.innerHTML = build(shown); }
+  }
+  setMoreBadge(el, vm.lines.length - shown);
 }
 
 export async function fetchData(cfg, net) {

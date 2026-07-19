@@ -167,9 +167,15 @@ export function normalizeConfig(raw) {
   // Content-aware height caps from the RAW lists (validation only ever drops
   // entries, so a raw overcount can only make a cap more permissive); absent
   // lists fall back to the defaults the normalized config will carry.
+  const rawList = (v, dflt) => (Array.isArray(v) && v.length ? v : dflt);
   const contentCaps = contentMaxH({
-    worldclock: { cities: Array.isArray(raw.worldclock?.cities) && raw.worldclock.cities.length ? raw.worldclock.cities : DEFAULT_CONFIG.worldclock.cities },
-    markets: { symbols: Array.isArray(raw.markets?.symbols) && raw.markets.symbols.length ? raw.markets.symbols : DEFAULT_CONFIG.markets.symbols },
+    worldclock: { cities: rawList(raw.worldclock?.cities, DEFAULT_CONFIG.worldclock.cities) },
+    markets: { symbols: rawList(raw.markets?.symbols, DEFAULT_CONFIG.markets.symbols) },
+    sports: { teams: rawList(raw.sports?.teams, DEFAULT_CONFIG.sports.teams) },
+    services: { list: rawList(raw.services?.list, DEFAULT_CONFIG.services.list) },
+    citibike: { stations: rawList(raw.citibike?.stations, DEFAULT_CONFIG.citibike.stations) },
+    tfl: { lines: rawList(raw.tfl?.lines, DEFAULT_CONFIG.tfl.lines) },
+    subway: { lines: rawList(raw.subway?.lines, DEFAULT_CONFIG.subway.lines) },
   });
   let layout =
     // An explicitly-present layout (even empty — the user removed every widget)

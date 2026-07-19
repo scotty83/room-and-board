@@ -19,6 +19,7 @@ export function render(el, vm, cfg) {
   const cap = itemCapacity('citibike', w, h) ?? 4;
   const shown = chosen.slice(0, cap);
   const hidden = chosen.length - shown.length;
+  el.style.setProperty('--n', String(shown.length)); // elastic row-gap divisor
   el.innerHTML = shown
     .map((st) => {
       const live = byId.get(st.id);

@@ -33,6 +33,7 @@ export function render(el, vm, cfg) {
     ? [...rows].sort((a, b) => Number(a.ok) - Number(b.ok)).slice(0, cap)
     : rows;
   const hidden = rows.length - ordered.length;
+  el.style.setProperty('--n', String(ordered.length)); // elastic row-gap divisor
   el.innerHTML = ordered
     .map((r, i) => `<div class="tfl ${r.ok ? '' : 'tfl--alert'}${!r.ok && r.reason ? ' tfl--tap' : ''}" data-i="${i}">
         <span class="tfl__dot" style="background:${r.color}"></span>

@@ -32,6 +32,7 @@ export function render(el, vm, _cfg) {
     .map(
       (p) => `<div class="golf-row">
         <span class="golf-row__pos">${p.pos ?? ''}</span>
+        ${p.flag ? `<img class="golf-row__flag" src="${escapeHtml(p.flag)}" alt="">` : ''}
         <span class="golf-row__name">${escapeHtml(p.name)}</span>
         ${p.today ? `<span class="golf-row__today">${escapeHtml(p.today)}</span>` : ''}
         <span class="golf-row__score ${p.score.startsWith('-') ? 'golf-row__score--under' : ''}">${escapeHtml(p.score)}</span>

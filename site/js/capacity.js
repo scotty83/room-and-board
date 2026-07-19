@@ -48,8 +48,9 @@ const MODELS = {
   // Shallow rows are compact (no Last line, 32px logo) — 2 teams fit a 3×2.
   sports: listCapacity(74, 55),
   worldcup: listCapacity(60, 46),
-  // Single-line leaderboard/match rows, worldclock-like density.
-  golf: listCapacity(45, 40),
+  // Golf: compact 30px rows (flags carry identity, lines stay single).
+  golf: listCapacity(38, 34),
+  // Tennis: single-line match rows, worldclock-like density.
   tennis: listCapacity(45, 40),
   // Stacked rows: meta line + up to 2 title lines = 73.6px worst case (+gap);
   // shallow cards clamp titles to 1 line (47.4px + gap).

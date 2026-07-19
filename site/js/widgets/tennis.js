@@ -30,17 +30,22 @@ export function render(el, vm, _cfg) {
   el.innerHTML = shown
     .map((m) => {
       const live = m.state === 'in';
+      // Commas keep multi-set lines scannable ("4-6, 6-4, 4-6").
+      const sets = escapeHtml((m.sets || '').split(' ').join(', '));
+      const flag = (href) => (href ? `<img class="tennis-row__flag" src="${escapeHtml(href)}" alt="">` : '');
+      // Finished: the winner carries the weight, the rest goes quiet — no
+      // tour tag, no labels; the typography does the explaining.
+      const [wN, wF, lN, lF] = m.winner === 'a' ? [m.a, m.aFlag, m.b, m.bFlag] : [m.b, m.bFlag, m.a, m.aFlag];
       const label = m.state === 'post' && m.winner
-        ? `${m.winner === 'a' ? m.a : m.b} d. ${m.winner === 'a' ? m.b : m.a}`
-        : `${m.a} vs ${m.b}`;
+        ? `${flag(wF)}<b>${escapeHtml(wN)}</b> <span class="tennis-row__quiet">d.</span> ${flag(lF)}<span class="tennis-row__quiet">${escapeHtml(lN)}</span>`
+        : `${flag(m.aFlag)}${escapeHtml(m.a)} <span class="tennis-row__quiet">vs</span> ${flag(m.bFlag)}${escapeHtml(m.b)}`;
       const right = live
-        ? `<b class="tennis-row__live">●</b> ${escapeHtml(m.sets)}`
+        ? `<b class="tennis-row__live">●</b> ${sets}`
         : m.state === 'post'
-          ? escapeHtml(m.sets || m.detail) // walkovers have no sets
+          ? (sets || escapeHtml(m.detail)) // walkovers have no sets
           : escapeHtml(m.detail);
       return `<div class="tennis-row ${live ? 'tennis-row--live' : ''}">
-        <span class="tennis-row__tour">${escapeHtml(m.tour)}</span>
-        <span class="tennis-row__match">${escapeHtml(label)}</span>
+        <span class="tennis-row__match">${label}</span>
         <span class="tennis-row__score">${right}</span>
       </div>`;
     })

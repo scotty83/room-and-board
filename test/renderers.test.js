@@ -714,8 +714,9 @@ describe('tennis render', () => {
     const el = document.createElement('div');
     tennis.render(el, DEMO_VMS.tennis, CFG);
     expect(el.textContent).toContain('C. Alcaraz vs A. Zverev');
-    expect(el.textContent).toContain('6-4 3-2');
+    expect(el.textContent).toContain('6-4, 3-2');
     expect(el.querySelector('.tennis-row--live')).toBeTruthy();
+    expect(el.querySelector('img.tennis-row__flag')).toBeTruthy();
     // Finished match uses defeated notation with the winner first.
     expect(el.textContent).toContain('M. Bulgaru d. V. Strakhova');
     // Upcoming match shows its start detail, not a score.

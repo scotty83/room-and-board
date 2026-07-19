@@ -13,7 +13,7 @@ const golfPayload = {
     competitions: [{
       status: { type: { state: 'in', detail: 'Round 3 - Play Complete' } },
       competitors: [
-        { order: 2, score: '-8', athlete: { displayName: 'Ryan Fox', shortName: 'R. Fox' }, linescores: [{ displayValue: '-4' }, { displayValue: '-2' }] },
+        { order: 2, score: '-8', athlete: { displayName: 'Ryan Fox', shortName: 'R. Fox', flag: { href: 'https://a.espncdn.com/i/teamlogos/countries/500/nzl.png' } }, linescores: [{ displayValue: '-4' }, { displayValue: '-2' }] },
         { order: 1, score: '-10', athlete: { displayName: 'Sam Burns', shortName: 'S. Burns' }, linescores: [{ displayValue: '-6' }, { displayValue: '+3' }, { period: 3 }] },
         { order: 3, score: '-8', athlete: { displayName: 'Si Woo Kim' }, linescores: [] },
       ],
@@ -30,6 +30,8 @@ describe('mapGolf', () => {
     expect(vm.players.map((p) => p.name)).toEqual(['S. Burns', 'R. Fox', 'Si Woo Kim']);
     expect(vm.players[0]).toMatchObject({ pos: 1, score: '-10', today: '+3' });
     expect(vm.players[2].today).toBe('');
+    expect(vm.players[1].flag).toContain('nzl.png'); // ESPN CDN flag passthrough
+    expect(vm.players[0].flag).toBeNull();
   });
 
   it('surfaces the start date for a pre-tournament event', () => {
@@ -57,7 +59,7 @@ const match = (over) => ({
   round: { displayName: 'Quarterfinal' },
   status: { type: { state: 'post', shortDetail: 'Final' } },
   competitors: [
-    { athlete: { shortName: 'V. Strakhova' }, winner: false, linescores: [{ value: 2 }, { value: 2 }] },
+    { athlete: { shortName: 'V. Strakhova', flag: { href: 'https://a.espncdn.com/i/teamlogos/countries/500/ukr.png' } }, winner: false, linescores: [{ value: 2 }, { value: 2 }] },
     { athlete: { shortName: 'M. Bulgaru' }, winner: true, linescores: [{ value: 6 }, { value: 6 }] },
   ],
   ...over,
@@ -76,6 +78,8 @@ describe('mapTennisEvent', () => {
     });
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ tour: 'WTA', state: 'post', winner: 'b', sets: '6-2 6-2', round: 'Quarterfinal' });
+    expect(rows[0].aFlag).toContain('ukr.png');
+    expect(rows[0].bFlag).toBeNull();
     expect(rows[1].tour).toBe('ATP');
   });
 

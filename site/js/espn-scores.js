@@ -23,6 +23,7 @@ export function mapGolf(payload) {
       return {
         pos: c.order ?? null,
         name: c.athlete?.shortName ?? c.athlete?.displayName ?? '',
+        flag: c.athlete?.flag?.href ?? null, // ESPN CDN country flag PNG
         // ESPN has flipped score between string and {value, displayValue} on
         // sibling endpoints; tolerate both.
         score: c.score != null && typeof c.score === 'object' ? (c.score.displayValue ?? '') : c.score != null ? String(c.score) : '',
@@ -78,6 +79,8 @@ export function mapTennisEvent(ev) {
         round: m.round?.displayName ?? '',
         a: nameOf(a),
         b: nameOf(b),
+        aFlag: a?.athlete?.flag?.href ?? null,
+        bFlag: b?.athlete?.flag?.href ?? null,
         // Winner-first when decided ("Bulgaru d. Strakhova 6-2 6-2"), else
         // the a-vs-b orientation matching the "a vs b" label.
         sets: winnerB ? setline(b, a) : setline(a, b),

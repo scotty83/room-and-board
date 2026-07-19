@@ -126,7 +126,6 @@ html, body {
 .card--citibike .card__body,
 .card--tfl .card__body,
 .card--services .card__body,
-.card--golf .card__body,
 .card--tennis .card__body {
   justify-content: center;
   row-gap: clamp(10px, calc((100% - var(--n, 3) * 36px) / max(var(--n, 3) - 1, 1)), 20px);
@@ -1139,15 +1138,20 @@ body.mode-ambient .gear { bottom: 7px; }
 .iptv__video { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; background: #000; }
 
 /* ---------- golf / tennis ---------- */
-.golf-row { display: flex; align-items: baseline; gap: 12px; min-height: 35px; }
+/* Golf runs denser rows than the citibike elastic family (30px vs 36px). */
+.card--golf .card__body { justify-content: center; row-gap: clamp(6px, calc((100% - var(--n, 3) * 30px) / max(var(--n, 3) - 1, 1)), 14px); }
+.golf-row { display: flex; align-items: baseline; gap: 10px; min-height: 30px; }
+.golf-row__flag { width: 26px; height: 17px; object-fit: contain; flex: none; align-self: center; }
 .golf-row__pos { flex: none; width: 34px; text-align: right; color: var(--ink-dim); font-size: 18px; font-variant-numeric: tabular-nums; }
 .golf-row__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 21px; }
 .golf-row__today { flex: none; color: var(--ink-dim); font-size: 18px; font-variant-numeric: tabular-nums; }
 .golf-row__score { flex: none; font-size: 23px; font-variant-numeric: tabular-nums; min-width: 44px; text-align: right; }
 .golf-row__score--under { color: var(--good); }
 .tennis-row { display: flex; align-items: baseline; gap: 10px; min-height: 35px; }
-.tennis-row__tour { flex: none; font-size: 15px; font-weight: 600; color: var(--ink-dim); width: 40px; }
 .tennis-row__match { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; }
+.tennis-row__match b { font-weight: 600; }
+.tennis-row__quiet { color: var(--ink-dim); }
+.tennis-row__flag { width: 21px; height: 14px; object-fit: contain; vertical-align: -1px; margin-right: 5px; }
 .tennis-row__score { flex: none; font-size: 19px; color: var(--ink-dim); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tennis-row--live .tennis-row__score { color: var(--ink); font-weight: 600; }
 .tennis-row__live { color: var(--bad); font-size: 13px; }

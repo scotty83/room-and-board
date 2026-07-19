@@ -521,7 +521,7 @@ function wirePhotoCodeEntry(src, status) {
             if (!changed.length) { status.textContent = "That code didn't carry a usable photo link."; code = ''; paint(); return; }
             renderPhotoPane(src);
             const applied = pane().querySelector('.code__status');
-            if (applied) applied.textContent = `Applied ${changed.join(' + ')} photos. Review, then press Save.`;
+            if (applied) applied.textContent = `Applied ${changed.join(' + ')} photos. Press Save to finish.`;
           } catch {
             status.textContent = 'Code not found (codes expire after an hour).';
             code = '';
@@ -1450,7 +1450,7 @@ function renderCode() {
             // is the home for these, but redeeming here shouldn't dead-end).
             const changed = applyPhotosPatch(decoded.patch);
             status.textContent = changed.length
-              ? `Applied ${changed.join(' + ')} photos. Review, then press Save.`
+              ? `Applied ${changed.join(' + ')} photos. Press Save to finish.`
               : "That code didn't carry a usable photo link.";
           } else {
             state.cfg = decoded.cfg;

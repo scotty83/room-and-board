@@ -1032,7 +1032,10 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 /* Type matches the World Clock rows (they sit side by side on boards):
    name = .wc-row__city (20/dim), state = .wc-row__time (23/700). */
 .svc__name { font-size: 20px; color: var(--ink-dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.svc__state { font-size: 23px; font-weight: 400; white-space: nowrap; flex: none; }
+/* Same metrics as the name (20/400/CiscoSansTT): only ink level and the
+   issue-bolding differentiate the sides — a size gap here reads as a
+   different font even when the family matches. */
+.svc__state { font-size: 20px; font-weight: 400; white-space: nowrap; flex: none; }
 /* "All fine" rests quiet — green is reserved for deviation (calm-at-rest principle). */
 /* Operational reads calm: full ink at regular weight. Only real issues
    (minor/major) go bold, mirroring the bolded name on the left. */

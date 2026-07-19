@@ -32,11 +32,43 @@ function loadHls() {
 // One live mount per card body. The runtime re-renders every refreshMs and on
 // layout/settings changes; a stream must survive re-renders untouched (same
 // URL → no-op) but be torn down when the card goes away or the URL changes.
-const mounts = new Map(); // el -> { url, hls, video, retryTimer, gen }
+const mounts = new Map(); // el -> { url, hls, video, wrap, retryTimer, gen, full }
+
+const MUTED_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="23" y1="9" x2="17" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const SOUND_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.4 5.6a9 9 0 0 1 0 12.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+// Sound is a full-screen-only affair (Sean's call: muted by default even
+// there, unmute via the glyph; the dashboard card never makes noise).
+function enterFull(m) {
+  m.full = true;
+  m.wrap.classList.add('iptv--full');
+  document.body.appendChild(m.wrap); // media elements keep playing across a reparent
+  const btn = document.createElement('button');
+  btn.className = 'iptv__mute';
+  btn.setAttribute('aria-label', 'Unmute');
+  btn.innerHTML = MUTED_ICON;
+  btn.addEventListener('click', () => {
+    m.video.muted = !m.video.muted;
+    btn.innerHTML = m.video.muted ? MUTED_ICON : SOUND_ICON;
+    btn.setAttribute('aria-label', m.video.muted ? 'Unmute' : 'Mute');
+  });
+  m.wrap.appendChild(btn);
+  m.muteBtn = btn;
+}
+
+function exitFull(m, el) {
+  m.full = false;
+  m.muteBtn?.remove();
+  m.muteBtn = null;
+  m.video.muted = true; // never carry sound back to the dashboard
+  m.wrap.classList.remove('iptv--full');
+  el.appendChild(m.wrap);
+}
 
 function destroyMount(el) {
   const m = mounts.get(el);
   if (!m) return;
+  if (m.full) exitFull(m, el); // ambient/teardown while full screen
   clearTimeout(m.retryTimer);
   m.gen++; // invalidates any in-flight async attach
   try { m.hls?.destroy(); } catch { /* already torn down */ }
@@ -61,13 +93,20 @@ function showError(el, m, msg) {
 function mount(el, url) {
   el.innerHTML = '<div class="iptv"><video class="iptv__video" muted autoplay playsinline></video></div>';
   const video = el.querySelector('video');
+  const wrap = el.querySelector('.iptv');
   // Belt and suspenders for autoplay policy: some Chromium builds only honor
   // the muted IDL property (not the parsed attribute) when deciding whether
   // a gesture-less play() is allowed.
   video.muted = true;
   video.autoplay = true;
-  const m = { url, hls: null, video, retryTimer: 0, gen: 0 };
+  const m = { url, hls: null, video, wrap, retryTimer: 0, gen: 0, full: false };
   mounts.set(el, m);
+  // Tap in for full screen (with the mute control), tap the video to leave.
+  wrap.addEventListener('click', (ev) => {
+    if (ev.target.closest('.iptv__mute')) return;
+    if (m.full) exitFull(m, el);
+    else enterFull(m);
+  });
   const gen = m.gen;
 
   // Native HLS first (covers phone-side previews); Chromium boards use MSE.

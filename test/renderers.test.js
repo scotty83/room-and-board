@@ -787,6 +787,32 @@ describe('iptv render', () => {
     expect(el.textContent).toContain('add a stream');
   });
 
+  it('tap toggles full screen with a muted-by-default mute control', () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    try {
+      iptv.render(el, { url: 'https://x.test/fs.m3u8', label: '' }, CFG);
+      const wrap = el.querySelector('.iptv');
+      const video = el.querySelector('video');
+      wrap.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const full = document.body.querySelector(':scope > .iptv--full');
+      expect(full).toBeTruthy();
+      expect(full.querySelector('video')).toBe(video);
+      const btn = full.querySelector('.iptv__mute');
+      expect(btn).toBeTruthy();
+      expect(video.muted).toBe(true); // muted by default even in full screen
+      btn.click();
+      expect(video.muted).toBe(false); // glyph unmutes
+      wrap.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(document.body.querySelector(':scope > .iptv--full')).toBeNull();
+      expect(el.querySelector('video')).toBe(video); // back in the card
+      expect(video.muted).toBe(true); // sound never returns to the dashboard
+    } finally {
+      iptv.render(el, { url: '', label: '' }, CFG); // tear down the mount
+      el.remove();
+    }
+  });
+
   it('tears the stream down in ambient mode and remounts on return', () => {
     const el = document.createElement('div');
     document.body.appendChild(el);

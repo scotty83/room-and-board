@@ -176,7 +176,7 @@ html, body {
 /* hero */
 /* Slight right inset: the nowrap feels-like line otherwise rides the card's
    padding edge and reads cramped on-device. */
-.wx-now { display: flex; align-items: center; gap: 16px; padding-right: 6px; }
+.wx-now { display: flex; align-items: center; gap: 16px; padding-right: 16px; }
 .wx-now__icon { width: 50px; height: 50px; flex: none; }
 .wx-now__temp { font-size: 72px; font-weight: 700; line-height: 0.9; letter-spacing: -0.03em; }
 .wx-now__meta { display: flex; flex-direction: column; gap: 2px; margin-left: auto; text-align: right; min-width: 0; }
@@ -1143,6 +1143,18 @@ body.mode-ambient .gear { bottom: 7px; }
 .iptv { flex: 1; min-height: 0; display: flex; }
 /* contain letterboxes on the near-black card; cover would crop tickers. */
 .iptv__video { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; background: #000; }
+
+/* Tap-to-full-screen: the wrapper reparents to <body> above the art
+   viewer's 45/46 tier, below the editor's 50. Sound exists ONLY here. */
+.iptv--full { position: fixed; inset: 0; z-index: 47; background: #000; }
+.iptv--full .iptv__video { border-radius: 0; }
+.iptv__mute {
+  position: absolute; top: 28px; right: 28px; width: 64px; height: 64px;
+  border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.55); color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.iptv__mute svg { width: 30px; height: 30px; }
 
 /* ---------- golf / tennis ---------- */
 /* Golf runs denser rows than the citibike elastic family (30px vs 36px). */

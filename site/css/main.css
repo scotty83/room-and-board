@@ -234,6 +234,11 @@ html, body {
    still clear the body; at h==5 the fixed t-l chart must shrink to fit the
    shorter body. Verified zero-overflow at every w×h from 3×4→12×8, alert
    present or not. (Placed last so these win over the tier rules above.) */
+/* Like t-l: slack spreads between the sections instead of pooling into the
+   chips' auto margin (one dead band under the hours on alert-less cards).
+   With the NWS alert present the content is exact-fit and this is a no-op. */
+.card--weather.t-m .card__body { justify-content: space-between; }
+.card--weather.t-m .wx-days { margin-top: 0; }
 .card--weather.t-m .wx-rule { margin: 8px 0 6px; }
 .card--weather.t-m .wx-trend__chart { height: 36px; } /* 40 -> 36 funds the hours/chips seam gap at the tight 3x4 */
 .card--weather.t-m:not(.t-narrow) .wx-now__temp { font-size: 78px; }
@@ -1242,6 +1247,7 @@ body.theme-momentum .index__price,
 body.theme-momentum .delta,
 body.theme-momentum .train__min > span,
 body.theme-momentum .wc-row__time,
+body.theme-momentum .wx-trend__row:not(.wx-trend__row--hours) > span,
 body.theme-momentum .sky__aqi-value,
 body.theme-momentum .strip__time,
 body.theme-momentum .strip__temp,
@@ -1264,7 +1270,7 @@ body.theme-momentum .slide-caption { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); 
    Cisco hardware the family is absent and weight 500 picks the system
    Medium. The 700 tier stays intentionally bold. */
 body.theme-momentum :is(.topbar__greeting, .card__title, .artwork__title,
-  .slide-caption__title, .headline__title, .wx-now__label, .wx-trend__row > span,
+  .slide-caption__title, .headline__title, .wx-now__label,
   .stop-group__name, .train__dest, .alert, .f1-next__hd,
   .wc-row__day, .pane__label, .row__value, .kv-grid > b,
   .settings__navitem.is-active, .edit-block__title,
@@ -1363,8 +1369,10 @@ body.theme-momentum .wx-now__temp {
 }
 body.theme-momentum .card--weather:not(.t-narrow) .wx-now__temp { font-size: 84px; }
 body.theme-momentum .wx-day__hi {
-  font-family: 'CiscoSansTT Medium', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  font-weight: 500;
+  /* Chip highs join the Light-numerals voice (same face as the clock times
+     and hourly temps) — was Medium 500. */
+  font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-weight: 300;
 }
 /* The shared tile alpha (--bg-card-2, .11) is tuned for interactive tiles;
    on the passive forecast chips it reads as the brightest surface on the

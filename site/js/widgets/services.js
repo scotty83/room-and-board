@@ -46,7 +46,7 @@ export function render(el, vm, cfg) {
   }
   const rowHtml = (s, i, dropNote) => `<div class="svc ${s.state !== 'ok' ? 'svc--tap' : ''}" data-svc="${i}">
         <div class="svc__row">
-          <span class="svc__name">${escapeHtml(s.label)}</span>
+          <span class="svc__name ${s.state === 'minor' || s.state === 'major' ? 'svc__name--alert' : ''}">${escapeHtml(s.label)}</span>
           <span class="svc__state svc__state--${escapeHtml(s.state)}">${STATE_LABEL[s.state] ?? escapeHtml(s.state)}</span>
         </div>
         ${!dropNote && s.state !== 'ok' && s.note ? `<div class="svc__note">${escapeHtml(s.note)}</div>` : ''}
@@ -56,28 +56,34 @@ export function render(el, vm, cfg) {
   // row's incident note to spend leftover slack (the note is one line taller).
   const build = (n, dropLastNote = false) =>
     all.slice(0, n).map((s, i) => rowHtml(s, i, dropLastNote && i === n - 1)).join('');
+  // Stamp the elastic row-gap divisor with every rebuild so the gap math
+  // tracks the rows actually shown as the trim/grow loops move n.
+  const apply = (n, dropLastNote = false) => {
+    el.style.setProperty('--n', String(n));
+    el.innerHTML = build(n, dropLastNote);
+  };
   // Static estimate from the capacity model — the final answer when there's no
   // rendered box to measure (happy-dom tests).
   const [w, h] = cardSize(el, [3, 4]);
   const cap = itemCapacity('services', w, h) ?? 5;
   let n = Math.min(all.length, cap);
-  el.innerHTML = build(n);
+  apply(n);
   // Fill-to-fit: the static estimate reserves worst-case (two-line degraded)
   // height per row, but most rows are one-line "Operational", so the card
   // usually has room for more. Grow/shrink to what actually fits.
   if (el.clientHeight > 0) {
-    while (n > 1 && el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
+    while (n > 1 && el.scrollHeight > el.clientHeight) { n -= 1; apply(n); }
     while (n < all.length) {
       n += 1;
-      el.innerHTML = build(n);
-      if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); break; }
+      apply(n);
+      if (el.scrollHeight > el.clientHeight) { n -= 1; apply(n); break; }
     }
     // Rows fit whole, so a degraded row's note-line of slack can sit empty.
     // Spend it: show one more service without its note (tap still reveals it).
     if (n < all.length) {
       n += 1;
-      el.innerHTML = build(n, true);
-      if (el.scrollHeight > el.clientHeight) { n -= 1; el.innerHTML = build(n); }
+      apply(n, true);
+      if (el.scrollHeight > el.clientHeight) { n -= 1; apply(n); }
     }
   }
   setMoreBadge(el, all.length - n);

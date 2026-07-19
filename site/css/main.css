@@ -109,7 +109,8 @@ html, body {
 }
 .card--sports.t-s .card__body { --trow: 47px; }
 .card--citibike .card__body,
-.card--tfl .card__body {
+.card--tfl .card__body,
+.card--services .card__body {
   justify-content: center;
   row-gap: clamp(10px, calc((100% - var(--n, 3) * 36px) / max(var(--n, 3) - 1, 1)), 20px);
 }
@@ -1038,6 +1039,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .svc__state--minor { color: var(--warn); }
 .svc__state--major { color: var(--bad); }
 .svc__state--unknown { color: var(--ink-faint); }
+/* An actual issue lights the LEFT side up too: full ink + bold name
+   (unknown states stay quiet — no evidence of a problem). */
+.svc__name--alert { color: var(--ink); font-weight: 700; }
 .svc__note { font-size: 17px; color: var(--warn); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
 .svc--tap { cursor: pointer; }
 
@@ -1215,9 +1219,9 @@ body.theme-momentum .card { border: 1px solid rgba(255, 255, 255, 0.07); }
 body.theme-momentum .topbar__time,
 body.theme-momentum .wx-now__temp,
 body.theme-momentum .index__price,
+body.theme-momentum .delta,
 body.theme-momentum .train__min > span,
 body.theme-momentum .wc-row__time,
-body.theme-momentum .svc__state,
 body.theme-momentum .sky__aqi-value,
 body.theme-momentum .strip__time,
 body.theme-momentum .strip__temp,

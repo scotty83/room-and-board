@@ -67,7 +67,13 @@ function enterFull(m) {
   btn.className = 'iptv__mute';
   btn.setAttribute('aria-label', 'Unmute');
   btn.innerHTML = MUTED_ICON;
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', (ev) => {
+    // Stop the click from bubbling to the wrap's tap-to-toggle handler, which
+    // would exit full screen (and re-mute) instead of just toggling sound.
+    // The .closest('.iptv__mute') guard on the wrap isn't enough: a real tap
+    // lands on the inner SVG, whose closest() lookup is unreliable on older
+    // engines. stopPropagation + pointer-events:none on the glyph is robust.
+    ev.stopPropagation();
     m.video.muted = !m.video.muted;
     btn.innerHTML = m.video.muted ? MUTED_ICON : SOUND_ICON;
     btn.setAttribute('aria-label', m.video.muted ? 'Unmute' : 'Mute');

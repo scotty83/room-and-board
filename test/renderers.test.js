@@ -858,8 +858,11 @@ describe('iptv render', () => {
       const btn = wrap.querySelector('.iptv__mute');
       expect(btn).toBeTruthy();
       expect(video.muted).toBe(true); // muted by default even in full screen
-      btn.click();
+      // A real tap lands on the inner glyph, not the button. The click must
+      // unmute AND stay full screen (not bubble to the wrap's exit handler).
+      btn.querySelector('svg').dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(video.muted).toBe(false); // glyph unmutes
+      expect(wrap.classList.contains('iptv--full')).toBe(true); // did NOT exit full screen
       wrap.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       expect(wrap.classList.contains('iptv--full')).toBe(false);
       expect(el.contains(video)).toBe(true); // still the same node, still in the card

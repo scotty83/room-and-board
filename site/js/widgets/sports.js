@@ -41,6 +41,7 @@ export function render(el, vm, _cfg) {
             <span class="team__name">${escapeHtml(r.name)}${r.record ? ` <small>${escapeHtml(r.record)}</small>` : ''}</span>
             <span class="team__line">${r.state === 'in' ? '<b class="team__livedot">●</b> ' : ''}${escapeHtml(r.line)}</span>
             ${r.lastLine && r.state !== 'post' ? `<span class="team__last">Last: ${escapeHtml(r.lastLine)}</span>` : ''}
+            ${r.nextLine && (r.state === 'post' || r.state === 'none' || /postpone/i.test(r.line)) ? `<span class="team__last">Next: ${escapeHtml(r.nextLine)}</span>` : ''}
           </div>
         </div>`,
       )

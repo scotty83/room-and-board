@@ -105,7 +105,7 @@ const CASES = [
   ['lirr', lirr, ['Port Washington', '8', 'Track 17']],
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
   ['bus', busw, ['QM24', 'Madison Av / E 34 St', 'Wall St', '8']],
-  ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:']],
+  ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:', 'Next: vs MIA']],
   ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
   ['substack', substack, ['AI Superforecasters', 'Astral Codex Ten', 'Hidden Cost of Meetings']],
@@ -252,6 +252,19 @@ describe('widget renderers', () => {
       mod.render(host, vm, CFG);
       expect(host.querySelector('.train__line').textContent).toMatch(/\d{1,2}:\d{2}\s?(AM|PM)/);
     }
+  });
+
+  it('sports shows the Next line only after finals/postponed/offseason', () => {
+    const rowBase = { lg: 'mlb', abbr: 'X', name: 'X', record: '', logo: null, lastLine: null, nextLine: 'vs LAD · 7/20 - 7:10 PM' };
+    const host1 = el();
+    sports.render(host1, { rows: [{ ...rowBase, state: 'pre', line: 'vs LAD · 7/20 - 7:10 PM' }] }, CFG);
+    expect(host1.textContent).not.toContain('Next:'); // upcoming line IS the next game already
+    const host2 = el();
+    sports.render(host2, { rows: [{ ...rowBase, state: 'pre', line: 'T 0-0 vs LAD · Postponed' }] }, CFG);
+    expect(host2.textContent).toContain('Next:'); // postponed: look past the stuck pointer
+    const host3 = el();
+    sports.render(host3, { rows: [{ ...rowBase, state: 'none', line: 'No scheduled games' }] }, CFG);
+    expect(host3.textContent).toContain('Next:');
   });
 
   it('rail cards prompt for a station when fetchData flags needsStation', () => {

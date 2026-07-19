@@ -46,12 +46,26 @@ export function digestSchedule(schedJson, ourAbbr) {
   return eventLine(last.competitions[0], ourAbbr, { withWL: true });
 }
 
+// Next FUTURE scheduled game -> compact line ("vs LAD · 7/20 - 7:10 PM EDT").
+// The date check matters: postponed games keep state 'pre' with their ORIGINAL
+// (past) date, and ESPN's team nextEvent pointer can sit on them for hours —
+// this digest looks past that to the next real fixture.
+export function digestNext(schedJson, ourAbbr, nowMs = Date.now()) {
+  const future = (schedJson?.events ?? []).filter((e) => {
+    const c = e.competitions?.[0];
+    return c?.status?.type?.state === 'pre' && Date.parse(e.date ?? c?.date ?? '') > nowMs;
+  });
+  if (!future.length) return null;
+  future.sort((a, b) => Date.parse(a.date ?? '') - Date.parse(b.date ?? ''));
+  return eventLine(future[0].competitions[0], ourAbbr);
+}
+
 export function pickLogo(logos = []) {
   const dark = logos.find((l) => l.rel?.includes('dark') && !l.rel?.includes('scoreboard'));
   return (dark ?? logos[0])?.href ?? null;
 }
 
-export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null) {
+export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null, nextLine = null) {
   const team = teamJson?.team;
   if (!team) return null;
   const row = {
@@ -65,6 +79,7 @@ export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null) {
     state: 'none',
     line: 'No scheduled games',
     lastLine: lastLine ?? null,
+    nextLine: nextLine ?? null,
   };
   const comp = liveComp ?? team.nextEvent?.[0]?.competitions?.[0];
   if (comp) {
@@ -74,32 +89,42 @@ export function mapTeamSummary(teamJson, lastLine, lg, liveComp = null) {
   return row;
 }
 
-// The schedule payload runs ~2 MB and its last result changes a few times a
-// day, but the /sports/team summary is only 120s-cached (for live scores).
-// Cache the digested last-game line on its own 30-min Cache-API entry so the
-// heavy schedule isn't re-downloaded on every 120s refresh per followed team.
-async function cachedLastLine(origin, lg, id, abbr, base) {
+// The schedule payload runs ~2 MB and its lines change a few times a day,
+// but the /sports/team summary is only 120s-cached (for live scores). Cache
+// the digested last-game + next-game lines on their own 30-min Cache-API
+// entry so the heavy schedule isn't re-downloaded every 120s per team.
+// (Key is sched2 — the old sched entries carried lastLine only.)
+async function cachedSchedLines(origin, lg, id, abbr, base) {
   const cache = caches.default;
-  const key = origin && new Request(`${origin}/__cache/sched/${lg}:${id}`);
+  const key = origin && new Request(`${origin}/__cache/sched2/${lg}:${id}`);
   if (key) {
     const hit = await cache.match(key);
-    if (hit) return (await hit.json()).lastLine ?? null;
+    if (hit) {
+      const j = await hit.json();
+      return { lastLine: j.lastLine ?? null, nextLine: j.nextLine ?? null };
+    }
   }
   let lastLine = null;
+  let nextLine = null;
   try {
     const schedRes = await fetch(`${base}/schedule`);
-    if (schedRes.ok) lastLine = digestSchedule(await schedRes.json(), abbr);
+    if (schedRes.ok) {
+      const sched = await schedRes.json();
+      lastLine = digestSchedule(sched, abbr);
+      nextLine = digestNext(sched, abbr);
+    }
   } catch {
     lastLine = null;
+    nextLine = null;
   }
   if (key) {
     try {
-      await cache.put(key, new Response(JSON.stringify({ lastLine }), { headers: { 'Cache-Control': 'max-age=1800' } }));
+      await cache.put(key, new Response(JSON.stringify({ lastLine, nextLine }), { headers: { 'Cache-Control': 'max-age=1800' } }));
     } catch {
       // best-effort
     }
   }
-  return lastLine;
+  return { lastLine, nextLine };
 }
 
 export async function fetchTeamSummary(lg, id, origin) {
@@ -109,7 +134,7 @@ export async function fetchTeamSummary(lg, id, origin) {
   const teamJson = await teamRes.json();
   const abbr = teamJson?.team?.abbreviation ?? '';
 
-  const lastLine = await cachedLastLine(origin, lg, id, abbr, base);
+  const { lastLine, nextLine } = await cachedSchedLines(origin, lg, id, abbr, base);
   // The team endpoint nulls competitor scores while a game is live; only the
   // league scoreboard carries them (verified 2026-07-03). Join by event id,
   // Worker-side only — the ~250 KB scoreboard never reaches a board, and it's
@@ -127,5 +152,5 @@ export async function fetchTeamSummary(lg, id, origin) {
       liveComp = null; // scoreless live line still renders cleanly
     }
   }
-  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, row: mapTeamSummary(teamJson, lastLine || null, lg, liveComp) };
+  return { updatedAt: Math.floor(Date.now() / 1000), stale: false, row: mapTeamSummary(teamJson, lastLine || null, lg, liveComp, nextLine || null) };
 }

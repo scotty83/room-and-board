@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { digestNext, mapTeamSummary } from '../../worker/src/sports.js';
 import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
 import { resetNjtToken } from '../../worker/src/njt.js';
@@ -312,6 +313,47 @@ describe('/sports/team', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.row).toMatchObject({ abbr: 'NYM', record: '48-37', lastLine: 'L 3-9 @ TOR · Final' });
+  });
+});
+
+describe('digestNext (next scheduled game)', () => {
+  const NOW = Date.parse('2026-07-19T04:00:00Z');
+  const ev = (date, state, opp = 'LAD', home = true) => ({
+    date,
+    competitions: [{
+      status: { type: { state, shortDetail: state === 'pre' ? '7/20 - 7:10 PM EDT' : 'Final' } },
+      competitors: [
+        { team: { abbreviation: 'NYY' }, homeAway: home ? 'home' : 'away', score: { value: 2 } },
+        { team: { abbreviation: opp }, homeAway: home ? 'away' : 'home', score: { value: 1 } },
+      ],
+    }],
+  });
+  it('picks the earliest FUTURE pre event', () => {
+    const sched = { events: [
+      ev('2026-07-25T23:00:00Z', 'pre', 'BOS'),
+      ev('2026-07-18T23:00:00Z', 'post'),
+      ev('2026-07-20T23:00:00Z', 'pre', 'LAD'),
+    ] };
+    expect(digestNext(sched, 'NYY', NOW)).toBe('vs LAD · 7/20 - 7:10 PM EDT');
+  });
+  it('skips postponed games (state pre with a PAST date)', () => {
+    const sched = { events: [
+      ev('2026-07-18T23:00:00Z', 'pre', 'LAD'), // postponed: pre but already past
+      ev('2026-07-21T23:00:00Z', 'pre', 'BAL'),
+    ] };
+    expect(digestNext(sched, 'NYY', NOW)).toBe('vs BAL · 7/20 - 7:10 PM EDT');
+  });
+  it('returns null with no future games (offseason)', () => {
+    expect(digestNext({ events: [ev('2026-07-18T23:00:00Z', 'post')] }, 'NYY', NOW)).toBeNull();
+    expect(digestNext({}, 'NYY', NOW)).toBeNull();
+  });
+});
+
+describe('mapTeamSummary nextLine passthrough', () => {
+  it('carries nextLine onto the row (null default)', () => {
+    const teamJson = { team: { abbreviation: 'NYJ', shortDisplayName: 'Jets', logos: [] } };
+    expect(mapTeamSummary(teamJson, null, 'nfl', null, 'vs MIA · 10/28').nextLine).toBe('vs MIA · 10/28');
+    expect(mapTeamSummary(teamJson, null, 'nfl').nextLine).toBeNull();
   });
 });
 

@@ -3,7 +3,8 @@
 // upcoming by kickoff, then recent finals — the canonical tournament-widget
 // ordering. Rolling window: 3 days back, 5 days ahead.
 
-import { escapeHtml, fmtTime } from '../util.js';
+import { escapeHtml, fmtTime, editPrompt } from '../util.js';
+import { isRetired } from '../config.js';
 import { logoUrl } from './sports.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -64,6 +65,10 @@ function matchRow(m, nowMs) {
 }
 
 export function render(el, vm, _cfg) {
+  if (isRetired('worldcup')) {
+    el.innerHTML = editPrompt('The World Cup has concluded.');
+    return;
+  }
   const [w, h] = cardSize(el, [4, 4]);
   const cap = itemCapacity('worldcup', w, h);
   const nowMs = vm.nowMs ?? Date.now();
@@ -95,6 +100,8 @@ export function render(el, vm, _cfg) {
 }
 
 export async function fetchData(cfg, net) {
+  // Post-tournament there is nothing to fetch; keep the scheduler quiet.
+  if (isRetired('worldcup')) return { live: [], upcoming: [], results: [] };
   const now = Date.now();
   const from = ymd(new Date(now - 3 * 86400e3));
   const to = ymd(new Date(now + 5 * 86400e3));

@@ -7,7 +7,7 @@
 
 import { GRID, MIN_SIZE, MAX_SIZE, firstFit, firstFitAny, placeWithPush, contentMaxH } from './layout.js';
 import { capacityLabel } from './capacity.js';
-import { WIDGET_GROUPS } from './config.js';
+import { WIDGET_GROUPS, isRetired } from './config.js';
 
 // Diagonal two-headed arrow (↖↘ — the axis a corner-resize actually moves
 // along). Lives inside the filled resize chip; stroke follows the chip color.
@@ -165,11 +165,11 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       // ones (where "needs MxM, no room" is the relevant fact).
       return `<button class="edit-tray__chip" data-add="${id}"${fits ? '' : ' disabled title="No room at its minimum size"'}>${TITLES[id]}${fits ? '' : ` <small>${mw}×${mh}</small>`}</button>`;
     };
-    const chipsFor = (g) => g.ids.filter((id) => !rectOf(id))
+    const chipsFor = (g) => g.ids.filter((id) => !rectOf(id) && !isRetired(id))
       .sort((a, b) => TITLES[a].localeCompare(TITLES[b]))
       .map(chip).join('');
     const inlineChips = TRAY_INLINE_GROUPS.map(chipsFor).join('');
-    const commuteN = TRAY_COMMUTE.ids.filter((id) => !rectOf(id)).length;
+    const commuteN = TRAY_COMMUTE.ids.filter((id) => !rectOf(id) && !isRetired(id)).length;
     const commuteChips = chipsFor(TRAY_COMMUTE);
     tray.innerHTML =
       '<p class="edit-tray__head">Add a widget</p>' +

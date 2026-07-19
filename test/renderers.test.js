@@ -109,7 +109,6 @@ const CASES = [
   ['mnr', mnr, ['Southeast', 'Harlem', 'Poughkeepsie']],
   ['bus', busw, ['QM24', 'Madison Av / E 34 St', 'Wall St', '8']],
   ['sports', sports, ['Mets', 'Bot 7th', 'W 24-17', 'Last:', 'Next: vs MIA']],
-  ['worldcup', worldcup, ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']],
   ['news', news, ['Council reaches deal', 'Gothamist', 'Federal Reserve']],
   ['substack', substack, ['AI Superforecasters', 'Astral Codex Ten', 'Hidden Cost of Meetings']],
   ['bsky', bsky, ['ferry pier opens', 'NYT', 'Jane Dev']],
@@ -128,6 +127,46 @@ const CASES = [
   ['services', services, ['Zoom', 'Operational', 'Cloudflare', 'Minor', 'Minor Service Outage']],
   ['apod', apod, ['Messier 24', 'Chuck Ayoub']],
 ];
+
+// Worldcup renders time-dependently (RETIRED_AFTER sunsets the card after
+// Jul 27 2026), so its render tests pin the clock on each side of the cutoff
+// instead of riding the CASES loop.
+describe('worldcup render (pre-conclusion, pinned clock)', () => {
+  beforeAll(() => vi.useFakeTimers({ now: Date.UTC(2026, 6, 10) }));
+  afterAll(() => vi.useRealTimers());
+
+  it('renders its demo fixture', () => {
+    const host = el();
+    worldcup.render(host, DEMO_VMS.worldcup, CFG);
+    for (const t of ['USA', 'FRA vs NGA', 'penalties', 'Live', 'Upcoming']) expect(host.textContent).toContain(t);
+  });
+
+  it('escapes upstream score text', () => {
+    const host = el();
+    worldcup.render(host, { nowMs: 1783000000000, live: [{ state: 'in', detail: "12'", home: 'USA', away: 'CRC', hs: '<img src=x>', as: '0', hf: '', af: '', note: '' }], upcoming: [], results: [] }, CFG);
+    expect(host.innerHTML).not.toContain('<img src=x>');
+  });
+});
+
+describe('worldcup retirement (post Jul 27 2026, pinned clock)', () => {
+  beforeAll(() => vi.useFakeTimers({ now: Date.UTC(2026, 7, 1) }));
+  afterAll(() => vi.useRealTimers());
+
+  it('renders the tap-to-swap prompt with the pencil glyph', () => {
+    const host = el();
+    worldcup.render(host, DEMO_VMS.worldcup, CFG);
+    const prompt = host.querySelector('[data-edit]');
+    expect(prompt).toBeTruthy();
+    expect(host.textContent).toContain('The World Cup has concluded');
+    expect(host.textContent).toContain('replace this card');
+    expect(prompt.querySelector('svg')).toBeTruthy(); // pencil glyph present
+  });
+
+  it('fetchData goes quiet instead of hitting ESPN', async () => {
+    const vm = await worldcup.fetchData(CFG, { fetchJSON: () => { throw new Error('must not fetch'); } });
+    expect(vm).toEqual({ live: [], upcoming: [], results: [] });
+  });
+});
 
 describe('widget renderers', () => {
   for (const [id, mod, expectedTexts] of CASES) {
@@ -184,11 +223,7 @@ describe('widget renderers', () => {
     expect(host.querySelectorAll('.linestatus--alert').length).toBe(2);
   });
 
-  it('worldcup escapes upstream score text', () => {
-    const host = el();
-    worldcup.render(host, { nowMs: 1783000000000, live: [{ state: 'in', detail: "12'", home: 'USA', away: 'CRC', hs: '<img src=x>', as: '0', hf: '', af: '', note: '' }], upcoming: [], results: [] }, CFG);
-    expect(host.innerHTML).not.toContain('<img src=x>');
-  });
+
 
   it('news and history surface overflow as a title badge, not an in-flow row', () => {
     const mkCard = (id) => {

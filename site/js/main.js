@@ -84,6 +84,8 @@ function cardFor(mod, rect) {
     // prompt names the destination; the tap saves the trip. Card-level and
     // inert unless a data-setup prompt is currently showing.
     card.addEventListener('click', async () => {
+      // Retired-card prompt: straight into edit mode to swap the widget.
+      if (card.querySelector('[data-edit]')) { $('#edit').click(); return; }
       const prompt = card.querySelector('[data-setup]');
       if (!prompt) return;
       const settings = await import('./settings/settings.js');

@@ -144,6 +144,8 @@ remove like any other.
   next game, with the last result. *Configure:* Settings → My Teams (up to 6,
   across MLB/NFL/NBA/NHL/MLS/EPL).
 - **World Cup 2026** — live / upcoming / recent matches during the tournament.
+  Results linger through July 27, 2026; after that the card invites a
+  tap-to-swap (never auto-removed) and leaves the add pickers.
   *Configure:* none.
 - **Formula 1** — next Grand Prix, last race's podium, and the driver and
   constructor standings. Team-colour dots and driver country flags; the layout

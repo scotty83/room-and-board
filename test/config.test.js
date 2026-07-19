@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  isRetired,
   DEFAULT_CONFIG,
   normalizeConfig,
   encodeConfig,
@@ -335,6 +336,16 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
     expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
     expect(gd.layout.map((r) => r.id)).not.toContain('photos');
+  });
+});
+
+describe('widget retirement (RETIRED_AFTER)', () => {
+  it('worldcup retires after Jul 27 2026, never before; other ids never', () => {
+    expect(isRetired('worldcup', Date.UTC(2026, 6, 19))).toBe(false); // final day
+    expect(isRetired('worldcup', Date.UTC(2026, 6, 27))).toBe(false); // results linger
+    expect(isRetired('worldcup', Date.UTC(2026, 7, 1))).toBe(true);
+    expect(isRetired('weather', Date.UTC(2030, 0, 1))).toBe(false);
+    expect(isRetired('nonexistent', Date.UTC(2030, 0, 1))).toBe(false);
   });
 });
 

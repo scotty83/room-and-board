@@ -1,7 +1,7 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
+import { isRetired, normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
 import { firstFitAny } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
@@ -170,7 +170,7 @@ export function widgetChecksHtml(labels, placed) {
   return WIDGET_GROUPS.map((g) => `
     <section class="wpick__group">
       <h3 class="wpick__title">${g.label}</h3>
-      <div class="checks">${g.ids.map((id) =>
+      <div class="checks">${g.ids.filter((id) => placed.has(id) || !isRetired(id)).map((id) =>
         `<label><input type="checkbox" data-w="${id}" ${placed.has(id) ? 'checked' : ''}> ${labels[id]}</label>`,
       ).join('')}</div>
     </section>`).join('');

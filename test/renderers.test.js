@@ -256,9 +256,9 @@ describe('widget renderers', () => {
 
   it('rail cards prompt for a station when fetchData flags needsStation', () => {
     for (const [mod, msg] of [
-      [lirr, 'Settings → LIRR'],
-      [mnr, 'Settings → Metro-North'],
-      [amtrak, 'Settings → Amtrak'],
+      [lirr, '→ LIRR'],
+      [mnr, '→ Metro-North'],
+      [amtrak, '→ Amtrak'],
     ]) {
       const host = el();
       mod.render(host, { departures: [], needsStation: true }, CFG);

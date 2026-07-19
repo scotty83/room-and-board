@@ -4,7 +4,7 @@
 // shared module namespace. The board loads the Worker's signed <img> URLs
 // directly (CORS-exempt).
 
-import { escapeHtml } from '../util.js';
+import { escapeHtml, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { openImageViewer } from '../imageshow.js';
 
@@ -17,10 +17,10 @@ export function mapPhotos(digest) {
 // Builds one photo-widget module.
 //   cfgKey   — config block with this widget's { album, every } (photos | gdrivephotos)
 //   endpoint — worker album path incl. its query key, e.g. '/icloud/album?token='
-//   emptyMsg — guidance shown when no album is configured
+//   emptyAction/emptyDest — the unconfigured tap-prompt pieces (setupPrompt)
 // title is always "Photos" so the dashboard card stays clean; the descriptive
 // picker/edit label ("iCloud Photos" / "GDrive Photos") lives in WIDGET_LABELS.
-export function createPhotoWidget({ id, cfgKey, endpoint, emptyMsg }) {
+export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest }) {
   let sessionList = []; // most recent fetch, for the viewer to browse
 
   // refreshMs is the render cadence, not the photo-change rate: like Art, the
@@ -33,7 +33,7 @@ export function createPhotoWidget({ id, cfgKey, endpoint, emptyMsg }) {
   function render(el, vm, cfg) {
     sessionList = vm.photos ?? [];
     if (!sessionList.length) {
-      el.innerHTML = `<div class="empty" data-setup="${id}">${emptyMsg}</div>`;
+      el.innerHTML = setupPrompt(id, emptyAction, emptyDest);
       return;
     }
     // Rotate deterministically on the user's interval bucket, like Art.

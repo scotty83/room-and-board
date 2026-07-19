@@ -9,7 +9,8 @@ const widget = createPhotoWidget({
   id: 'gdrivephotos',
   cfgKey: 'gdrivephotos',
   endpoint: '/gdrive/album?folder=',
-  emptyMsg: 'Add a Google Drive folder in Settings → GDrive Photos',
+  emptyAction: 'add a Google Drive folder',
+  emptyDest: 'GDrive Photos',
 });
 
 export const meta = widget.meta;

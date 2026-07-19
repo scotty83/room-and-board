@@ -128,6 +128,8 @@ html, body {
    the trimmed banner padding is what the h=4 budget affords (audited). */
 .card--weather .alert { margin-bottom: 10px; }
 .icon { width: 28px; height: 28px; }
+/* Glyph inline with prompt text (the gear in "or via ⚙ → …"). */
+.icon--inline { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -0.15em; }
 .icon--sm { width: 24px; height: 24px; }
 .icon--xl { width: 96px; height: 96px; }
 

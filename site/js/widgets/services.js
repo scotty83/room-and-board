@@ -3,7 +3,7 @@
 // /services/status proxy. Degraded rows are tappable — the existing
 // full-screen text viewer shows the incident detail.
 
-import { escapeHtml, fmtClock, setCardNote, setMoreBadge } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote, setMoreBadge, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
@@ -41,7 +41,7 @@ export function render(el, vm, cfg) {
   if (vm.updatedAt) setCardNote(el, `as of ${fmtClock(vm.updatedAt, cfg?.clock24)}`);
   const all = vm.services ?? [];
   if (!all.length) {
-    el.innerHTML = '<div class="empty" data-setup="services">Pick services in Settings → Cloud Services</div>';
+    el.innerHTML = setupPrompt('services', 'pick services', 'Cloud Services');
     return;
   }
   const rowHtml = (s, i, dropNote) => `<div class="svc ${s.state !== 'ok' ? 'svc--tap' : ''}" data-svc="${i}">

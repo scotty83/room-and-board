@@ -4,7 +4,7 @@
 // stop at the chosen station — matched client-side against each departure's
 // downstream stops, showing the arrival time there; unfiltered rows show the
 // train's terminus.
-import { escapeHtml, fmtTime, fmtClock, setCardNote } from '../util.js';
+import { escapeHtml, fmtTime, fmtClock, setCardNote, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
@@ -20,7 +20,7 @@ export function render(el, vm, cfg) {
   if (vm.needsStation) {
     setCardNote(el, null);
     el.classList.remove('has-alerts');
-    el.innerHTML = '<div class="empty" data-setup="amtrak">Pick a destination in Settings → Amtrak</div>';
+    el.innerHTML = setupPrompt('amtrak', 'pick a destination', 'Amtrak');
     return;
   }
   const dest = cfg?.amtrak?.dest || '';

@@ -3,7 +3,7 @@
 // to Grand Central, optional destination filter, branch shown per train.
 
 import { decodeGtfsRt } from '../gtfs.js';
-import { escapeHtml, fmtTime, setCardNote } from '../util.js';
+import { escapeHtml, fmtTime, setCardNote, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { renderAlertRows } from '../transit-alerts.js';
 import { itemCapacity, cardSize } from '../capacity.js';
@@ -54,7 +54,7 @@ export function render(el, vm, _cfg) {
   if (vm.needsStation) {
     setCardNote(el, null);
     el.classList.remove('has-alerts');
-    el.innerHTML = '<div class="empty" data-setup="mnr">Pick a station in Settings → Metro-North</div>';
+    el.innerHTML = setupPrompt('mnr', 'pick a station', 'Metro-North');
     return;
   }
   setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);

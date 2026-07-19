@@ -3,7 +3,7 @@
 // for the lines you pick). Data is the Worker's cached digest of the MTA
 // alert feed — the raw feed runs ~800 KB, the digest ~2 KB.
 
-import { escapeHtml, setMoreBadge } from '../util.js';
+import { escapeHtml, setMoreBadge, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
@@ -36,7 +36,7 @@ export function mapSubwayStatus(alerts, lines) {
 
 export function render(el, vm, _cfg) {
   if (!vm.lines?.length) {
-    el.innerHTML = '<div class="empty" data-setup="subway">Pick your lines in Settings → Subway</div>';
+    el.innerHTML = setupPrompt('subway', 'pick your lines', 'Subway');
     return;
   }
   const [w, h] = cardSize(el, [4, 4]);

@@ -1,3 +1,4 @@
+import { icon } from './icons.js';
 export function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
@@ -91,6 +92,14 @@ export function parseDriveFolder(input) {
   const m = s.match(/folders\/([-\w]{10,80})/);
   if (m) return m[1];
   return /^[-\w]{10,80}$/.test(s) ? s : null;
+}
+
+// Unconfigured-card prompt: invites the tap (the card itself opens Settings
+// focused on `section` — see main.js) and shows the gear GLYPH so users can
+// find the settings button visually. Copy shape per Sean:
+// "Tap here to <action> or via <gear> → <section name>".
+export function setupPrompt(section, action, dest) {
+  return `<div class="empty" data-setup="${section}">Tap here to ${action} or via ${icon('settings', 'icon--inline')} → ${dest}</div>`;
 }
 
 // Deterministic per-calendar-day pick, shared by the quote and word widgets.

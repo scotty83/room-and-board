@@ -2,7 +2,7 @@
 // the worker's /tfl/status digest. Colour dot + name + status; tap a disrupted
 // line for the full reason.
 
-import { escapeHtml, setMoreBadge } from '../util.js';
+import { escapeHtml, setMoreBadge, setupPrompt } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 import { openTextViewer } from '../textviewer.js';
@@ -14,7 +14,7 @@ const LINE_META = new Map(TFL_LINES.map((l) => [l.id, l]));
 export function render(el, vm, cfg) {
   const chosen = cfg.tfl?.lines ?? [];
   if (!chosen.length) {
-    el.innerHTML = '<div class="empty" data-setup="tfl">Pick lines in Settings → TfL Status</div>';
+    el.innerHTML = setupPrompt('tfl', 'pick lines', 'TfL Status');
     return;
   }
   const byId = new Map((vm.lines ?? []).map((l) => [l.id, l]));

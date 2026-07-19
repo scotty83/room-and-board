@@ -3,7 +3,7 @@
 // Bus Time's distance ("approaching", "2 stops away").
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, setMoreBadge } from '../util.js';
+import { escapeHtml, setMoreBadge, setupPrompt } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'bus', title: 'Express Bus', refreshMs: 60 * 1000 };
@@ -36,7 +36,7 @@ export function render(el, vm, _cfg) {
     return;
   }
   if (!vm.stops.length) {
-    el.innerHTML = '<div class="empty" data-setup="bus">Add an express route in Settings → Express Bus</div>';
+    el.innerHTML = setupPrompt('bus', 'add an express route', 'Express Bus');
     return;
   }
   // Slice to the card, don't clip: each stop costs one header row plus its

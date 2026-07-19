@@ -9,7 +9,8 @@ const widget = createPhotoWidget({
   id: 'photos',
   cfgKey: 'photos',
   endpoint: '/icloud/album?token=',
-  emptyMsg: 'Add an iCloud shared album in Settings → iCloud Photos',
+  emptyAction: 'add an iCloud shared album',
+  emptyDest: 'iCloud Photos',
 });
 
 export const meta = widget.meta;

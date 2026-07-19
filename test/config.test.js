@@ -337,6 +337,34 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   });
 });
 
+describe('iptv config (Live Video)', () => {
+  it('defaults to unconfigured and accepts an https stream + label', () => {
+    expect(normalizeConfig({}).iptv).toEqual({ url: '', label: '' });
+    const cfg = normalizeConfig({ iptv: { url: ' https://cdn.example.com/live/a.m3u8 ', label: '  Lobby cam  ' } });
+    expect(cfg.iptv.url).toBe('https://cdn.example.com/live/a.m3u8');
+    expect(cfg.iptv.label).toBe('Lobby cam');
+  });
+
+  it('drops non-https and junk urls (mixed content would be blocked anyway)', () => {
+    expect(normalizeConfig({ iptv: { url: 'http://x.test/a.m3u8' } }).iptv.url).toBe('');
+    expect(normalizeConfig({ iptv: { url: 'not a url' } }).iptv.url).toBe('');
+    expect(normalizeConfig({ iptv: { url: 42 } }).iptv.url).toBe('');
+  });
+
+  it('clamps the label to 40 chars', () => {
+    expect(normalizeConfig({ iptv: { label: 'x'.repeat(60) } }).iptv.label).toHaveLength(40);
+  });
+
+  it('stays off the wire when unconfigured, survives the round trip when set', async () => {
+    const base = normalizeConfig({});
+    const bare = await decodeConfig(await encodeConfig(base));
+    expect(JSON.parse(JSON.stringify(bare)).iptv ?? { url: '', label: '' }).toEqual({ url: '', label: '' });
+    const withStream = normalizeConfig({ iptv: { url: 'https://x.test/a.m3u8', label: 'Cam' } });
+    const rt = await decodeConfig(await encodeConfig(withStream));
+    expect(rt.iptv).toEqual({ url: 'https://x.test/a.m3u8', label: 'Cam' });
+  });
+});
+
 describe('content-aware layout caps', () => {
   it('shrinks an over-tall worldclock/markets on load to the content fit', () => {
     const cfg = normalizeConfig({

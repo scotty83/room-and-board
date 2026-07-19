@@ -33,6 +33,7 @@ import * as tfl from '../site/js/widgets/tfl.js';
 import * as f1 from '../site/js/widgets/f1.js';
 import * as golf from '../site/js/widgets/golf.js';
 import * as tennis from '../site/js/widgets/tennis.js';
+import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
@@ -725,6 +726,35 @@ describe('tennis render', () => {
     const el = document.createElement('div');
     tennis.render(el, { name: null, rows: [] }, CFG);
     expect(el.textContent).toContain('No tournament');
+  });
+});
+
+describe('iptv render', () => {
+  it('shows the tappable setup prompt when no stream is configured', () => {
+    const el = document.createElement('div');
+    iptv.render(el, { url: '', label: '' }, CFG);
+    expect(el.querySelector('[data-setup="iptv"]')).toBeTruthy();
+    expect(el.textContent).toContain('add a stream');
+  });
+
+  it('mounts a muted video shell for a configured stream and survives re-render', () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    try {
+      iptv.render(el, { url: 'https://x.test/a.m3u8', label: 'Cam' }, CFG);
+      const video = el.querySelector('video.iptv__video');
+      expect(video).toBeTruthy();
+      expect(video.hasAttribute('muted')).toBe(true);
+      // Same URL re-render must NOT tear down the playing stream.
+      iptv.render(el, { url: 'https://x.test/a.m3u8', label: 'Cam' }, CFG);
+      expect(el.querySelector('video')).toBe(video);
+      // A cleared URL tears it down and returns to the prompt.
+      iptv.render(el, { url: '', label: '' }, CFG);
+      expect(el.querySelector('video')).toBeNull();
+      expect(el.querySelector('[data-setup="iptv"]')).toBeTruthy();
+    } finally {
+      el.remove();
+    }
   });
 });
 

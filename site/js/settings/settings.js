@@ -43,6 +43,7 @@ export const WIDGET_LABELS = {
   f1: 'Formula 1',
   golf: 'Golf (PGA)',
   tennis: 'Tennis',
+  iptv: 'Live Video',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',
@@ -197,6 +198,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'sports', label: 'My Teams' },
   { type: 'item', id: 'services', label: 'Cloud Services' },
   { type: 'item', id: 'chart', label: 'Chart of the Day' },
+  { type: 'item', id: 'iptv', label: 'Live Video' },
   { type: 'item', id: 'code', label: 'Setup code' },
   { type: 'item', id: 'diag', label: 'Diagnostics' },
 ];
@@ -259,7 +261,7 @@ function pane() {
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
-  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart, iptv: renderIptv,
   art: renderArt, photos: renderPhotos, gdrivephotos: renderGdrivePhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
@@ -1066,6 +1068,36 @@ async function renderChart() {
   pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
     state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
     renderChart();
+  });
+}
+
+async function renderIptv() {
+  const c = state.cfg.iptv;
+  const host = (() => { try { return new URL(c.url).host; } catch { return ''; } })();
+  pane().innerHTML = `
+    <h2 class="pane__title">Live Video</h2>
+    <p class="pane__hint">Streams a live HLS feed (an https link ending in .m3u8) on the card, always muted. Paste the link from your phone at <b>${escapeHtml(location.host)}/setup</b> - scan the Setup code QR first so your layout comes along.</p>
+    ${c.url ? `
+    <div class="rows">
+      <div class="row"><span class="row__label">Stream</span><span class="row__value">${escapeHtml(host)}</span></div>
+      ${c.label ? `<div class="row"><span class="row__label">Label</span><span class="row__value">${escapeHtml(c.label)}</span></div>` : ''}
+    </div>
+    <button class="btn btn--ghost" data-clear-stream>Remove</button>` : `
+    <p class="pane__hint">No stream configured yet.</p>`}`;
+  // Two-tap remove, matching the photo-album pattern: first tap arms (red),
+  // second clears; disarms after 4s.
+  pane().querySelector('[data-clear-stream]')?.addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.dataset.armed) { state.cfg.iptv = { url: '', label: '' }; renderIptv(); return; }
+    btn.dataset.armed = '1';
+    btn.textContent = 'Tap again to remove';
+    btn.classList.add('btn--armed');
+    setTimeout(() => {
+      if (!pane()?.contains(btn)) return;
+      delete btn.dataset.armed;
+      btn.textContent = 'Remove';
+      btn.classList.remove('btn--armed');
+    }, 4000);
   });
 }
 

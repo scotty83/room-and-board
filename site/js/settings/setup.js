@@ -45,6 +45,7 @@ export const WIDGET_LABELS = {
   f1: 'Formula 1',
   golf: 'Golf (PGA)',
   tennis: 'Tennis',
+  iptv: 'Live Video (HLS)',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',
@@ -75,6 +76,7 @@ export const SETUP_SECTIONS = [
   { id: 'art-field', group: 'Ambient', triggers: ['art'] },
   { id: 'photos-field', group: 'Ambient', triggers: ['photos'] },
   { id: 'gdrivephotos-field', group: 'Ambient', triggers: ['gdrivephotos'] },
+  { id: 'iptv-field', group: 'Ambient', triggers: ['iptv'] },
   { id: 'wc-field', group: 'Ambient', triggers: ['worldclock'] },
   { id: 'services-field', group: 'Daily Extras', triggers: ['services'] },
   { id: 'chart-field', group: 'Daily Extras', triggers: ['chart'] },
@@ -158,6 +160,7 @@ async function boot() {
   await safe(renderGdrivePhotos);
   await safe(renderServicesField);
   await safe(renderChartField);
+  await safe(renderIptvField);
 }
 
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
@@ -469,6 +472,16 @@ async function renderMarketsNewsSources() {
     const id = e.target.dataset.mn;
     if (id) cfg.marketsnews.sources = toggleIn(cfg.marketsnews.sources, id);
   });
+}
+
+// Live Video: two plain inputs (URL + optional label) bound straight to cfg.
+function renderIptvField() {
+  const url = document.getElementById('iptv-url');
+  const label = document.getElementById('iptv-label');
+  url.value = cfg.iptv?.url ?? '';
+  label.value = cfg.iptv?.label ?? '';
+  url.addEventListener('input', () => { cfg.iptv = { ...cfg.iptv, url: url.value.trim() }; });
+  label.addEventListener('input', () => { cfg.iptv = { ...cfg.iptv, label: label.value.trim() }; });
 }
 
 async function renderChartField() {

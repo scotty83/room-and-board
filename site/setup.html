@@ -243,6 +243,14 @@
         <p id="gdrivephotos-status" class="hint"></p>
       </section>
 
+      <section class="field" id="iptv-field">
+        <h2>Live Video</h2>
+        <label for="iptv-url">HLS stream link (https, usually ends in .m3u8)</label>
+        <input type="url" id="iptv-url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://example.com/live/stream.m3u8">
+        <label for="iptv-label">Label shown on the card (optional)</label>
+        <input type="text" id="iptv-label" maxlength="40" placeholder="Lobby cam">
+        <p class="hint">The card plays it muted. Use a stream you have the rights to show.</p>
+      </section>
       <section class="field" id="wc-field">
         <h2>World Clock <small>(shown in order of current time — up to 10)</small></h2>
         <div id="wc-chips" class="chips"></div>

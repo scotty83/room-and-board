@@ -1132,6 +1132,12 @@ body.mode-ambient .gear { bottom: 7px; }
 .wc-match--live .wc-match__meta { color: var(--ink); font-weight: 600; }
 .wc-match__note { font-size: 17px; color: var(--ink-dim); margin-top: -4px; } /* AA */
 
+/* ---------- live video (iptv) ---------- */
+.card--iptv .card__body { display: flex; }
+.iptv { flex: 1; min-height: 0; display: flex; }
+/* contain letterboxes on the near-black card; cover would crop tickers. */
+.iptv__video { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; background: #000; }
+
 /* ---------- golf / tennis ---------- */
 .golf-row { display: flex; align-items: baseline; gap: 12px; min-height: 35px; }
 .golf-row__pos { flex: none; width: 34px; text-align: right; color: var(--ink-dim); font-size: 18px; font-variant-numeric: tabular-nums; }

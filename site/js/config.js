@@ -19,7 +19,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'gdrivephotos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1', 'golf', 'tennis',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'gdrivephotos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1', 'golf', 'tennis', 'iptv',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -31,7 +31,7 @@ export const WIDGET_GROUPS = [
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup', 'f1', 'golf', 'tennis'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
-  { label: 'Ambient', ids: ['art', 'photos', 'gdrivephotos', 'apod', 'worldclock'] },
+  { label: 'Ambient', ids: ['art', 'photos', 'gdrivephotos', 'apod', 'iptv', 'worldclock'] },
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services', 'chart'] },
 ];
 
@@ -77,6 +77,9 @@ export const DEFAULT_CONFIG = Object.freeze({
   // topics = curated CHART_TOPICS slugs the card cycles through on refresh.
   // [] = any/global listing (the newest chart across everything).
   chart: Object.freeze({ excludePolitics: true, topics: Object.freeze([]) }),
+  // Live Video: user-supplied HLS stream (https .m3u8). Nothing bundled --
+  // rights sit with the user. label is an optional card-corner name.
+  iptv: Object.freeze({ url: '', label: '' }),
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -318,6 +321,15 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : DEFAULT_CONFIG.citibike.stations.map((s) => ({ id: s.id, name: s.name }));
       })(),
     },
+    iptv: {
+      // https-only: the site is https, so an http stream would be blocked as
+      // mixed content anyway. Anything else normalizes to unconfigured.
+      url: (() => {
+        const u = typeof raw.iptv?.url === 'string' ? raw.iptv.url.trim() : '';
+        return /^https:\/\/\S+$/i.test(u) ? u : '';
+      })(),
+      label: typeof raw.iptv?.label === 'string' ? raw.iptv.label.trim().slice(0, 40) : '',
+    },
     tfl: {
       lines: (() => {
         const picked = [...new Set((Array.isArray(raw.tfl?.lines) ? raw.tfl.lines : []).filter((id) => TFL_LINE_IDS.has(id)))];
@@ -416,6 +428,7 @@ export async function encodeConfig(cfg) {
   if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
+  if (wire.iptv && isDefault(wire.iptv, DEFAULT_CONFIG.iptv)) delete wire.iptv; // unconfigured → off the wire
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }

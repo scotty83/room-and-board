@@ -117,6 +117,9 @@ export const DEMO_VMS = {
       { lg: 'nfl', abbr: 'NYJ', name: 'Jets', record: '', state: 'post', line: 'W 24-17 @ NE · Final', logo: 'https://a.espncdn.com/i/teamlogos/nfl/500-dark/nyj.png', lastLine: null, nextLine: 'vs MIA · 10/28 - 8:15 PM EDT' },
     ],
   },
+  // No demo stream: rights sit with the user, so demo/audit shows the
+  // unconfigured tap-to-set-up state.
+  iptv: { url: '', label: '' },
   golf: {
     name: 'The Open', state: 'in', startsAt: null, round: '3',
     players: [

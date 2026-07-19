@@ -49,6 +49,7 @@ const TITLES = {
   f1: 'Formula 1',
   golf: 'Golf',
   tennis: 'Tennis',
+  iptv: 'Live Video',
   news: 'Headlines',
   substack: 'Substack',
   bsky: 'Bluesky',

@@ -21,3 +21,7 @@ RoomOS.md
 !.dev.vars.example
 .env*
 !.env.example
+
+# Local visual-audit harnesses (dev-only, not deployed)
+site/_audit.html
+site/_settings-audit.html

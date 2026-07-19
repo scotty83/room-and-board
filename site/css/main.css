@@ -354,7 +354,7 @@ html, body {
 .spark { overflow: visible; }
 .spark__prev { opacity: 0.4; }
 .spark__div { stroke: var(--ink-dim); opacity: 0.6; stroke-width: 1.75; stroke-dasharray: 3 3; }
-.delta { font-size: 21px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.delta { font-size: 24px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .delta--up { color: var(--good); }
 .delta--down { color: var(--bad); }
 
@@ -850,7 +850,7 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    long instrument name can't blow the column out. */
 .card--markets.t-narrow:not(.t-s) .indexes { grid-template-columns: auto 1fr auto auto; column-gap: 12px; }
 .card--markets.t-narrow:not(.t-s) .spark { width: 100%; min-width: 40px; }
-.card--markets.t-narrow:not(.t-s) .delta { font-size: 18px; }
+.card--markets.t-narrow:not(.t-s) .delta { font-size: 21px; }
 .card--markets.t-narrow:not(.t-s) .index__name { max-width: 150px; }
 /* The info column is ONE shared grid track, so right-aligning the price
    inside it anchors every row's decimal on a common edge (tabular-nums)
@@ -1032,12 +1032,12 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 /* Type matches the World Clock rows (they sit side by side on boards):
    name = .wc-row__city (20/dim), state = .wc-row__time (23/700). */
 .svc__name { font-size: 20px; color: var(--ink-dim); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.svc__state { font-size: 23px; font-weight: 700; white-space: nowrap; flex: none; }
+.svc__state { font-size: 23px; font-weight: 400; white-space: nowrap; flex: none; }
 /* "All fine" rests quiet — green is reserved for deviation (calm-at-rest principle). */
-/* Operational reads like a clock time: full ink, same weight (was dim/400
-   before the world-clock type match). Issue states keep semantic colors. */
-.svc__state--minor { color: var(--warn); }
-.svc__state--major { color: var(--bad); }
+/* Operational reads calm: full ink at regular weight. Only real issues
+   (minor/major) go bold, mirroring the bolded name on the left. */
+.svc__state--minor { color: var(--warn); font-weight: 700; }
+.svc__state--major { color: var(--bad); font-weight: 700; }
 .svc__state--unknown { color: var(--ink-faint); }
 /* An actual issue lights the LEFT side up too: full ink + bold name
    (unknown states stay quiet — no evidence of a problem). */

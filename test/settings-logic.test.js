@@ -229,7 +229,7 @@ import { widgetChecksHtml, WIDGET_LABELS as SETUP_LABELS } from '../site/js/sett
 
 describe('widgetChecksHtml (setup picker)', () => {
   it('renders six grouped sections, one checkbox per widget, reflecting the placed set', () => {
-    const html = widgetChecksHtml(SETUP_LABELS, new Set(['subway', 'photos']));
+    const html = widgetChecksHtml(SETUP_LABELS, new Set(['subway', 'photos']), { nerdMode: true });
     for (const label of ['Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras']) {
       expect(html).toContain(`<h3 class="wpick__title">${label}</h3>`);
     }
@@ -248,7 +248,7 @@ import { widgetGroupsHtml } from '../site/js/settings/settings.js';
 
 describe('widgetGroupsHtml', () => {
   it('renders all six group headers and one toggle per widget with correct on-state', () => {
-    const html = widgetGroupsHtml([{ id: 'weather', x: 0, y: 0, w: 4, h: 4 }]);
+    const html = widgetGroupsHtml([{ id: 'weather', x: 0, y: 0, w: 4, h: 4 }], { nerdMode: true });
     // six group headers
     for (const label of ['Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras']) {
       expect(html).toContain(`<h3 class="wgroup__title">${label}</h3>`);
@@ -272,6 +272,8 @@ describe('widgetGroupsHtml', () => {
 });
 
 import { NAV_MODEL, navGroupForSection, SECTION_IDS, navHtml } from '../site/js/settings/settings.js';
+import { widgetChecksHtml } from '../site/js/settings/setup.js';
+import { WIDGET_LABELS as SETUP_LABELS } from '../site/js/settings/setup.js';
 
 describe('settings nav model', () => {
   it('navGroupForSection maps grouped sections and returns null for pinned/standalone', () => {
@@ -414,5 +416,20 @@ describe('isBridgeHost (fragment IP validation)', () => {
     expect(isBridgeHost('a@b')).toBe(false);
     expect(isBridgeHost('has space')).toBe(false);
     expect(isBridgeHost(undefined)).toBe(false);
+  });
+});
+
+describe('nerd-mode picker gating', () => {
+  it('widgetChecksHtml hides iptv unless nerd mode is on or it is already placed', () => {
+    expect(widgetChecksHtml(SETUP_LABELS, new Set())).not.toContain('data-w="iptv"');
+    expect(widgetChecksHtml(SETUP_LABELS, new Set(), { nerdMode: true })).toContain('data-w="iptv"');
+    expect(widgetChecksHtml(SETUP_LABELS, new Set(['iptv']))).toContain('data-w="iptv"'); // placed stays visible
+    expect(widgetChecksHtml(SETUP_LABELS, new Set(), { nerdMode: true })).toContain('data-w="weather"');
+  });
+
+  it('navHtml hides the Live Video item unless nerd mode or placed', () => {
+    expect(navHtml('widgets', null, { nerdMode: false, layout: [] })).not.toContain('Live Video');
+    expect(navHtml('widgets', null, { nerdMode: true, layout: [] })).toContain('Live Video');
+    expect(navHtml('widgets', null, { nerdMode: false, layout: [{ id: 'iptv', x: 0, y: 0, w: 3, h: 3 }] })).toContain('Live Video');
   });
 });

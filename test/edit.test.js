@@ -36,7 +36,7 @@ describe('openEditMode', () => {
   });
 
   it('labels every widget in the tray and on blocks (no raw ids, no undefined)', () => {
-    openEditMode({ layout: [{ id: 'weather', x: 0, y: 0, w: 6, h: 4 }] }, { root, cellSize: { w: 100, h: 100 } });
+    openEditMode({ layout: [{ id: 'weather', x: 0, y: 0, w: 6, h: 4 }], nerdMode: true }, { root, cellSize: { w: 100, h: 100 } });
     const chips = [...root.querySelectorAll('.edit-tray [data-add]')];
     expect(chips.map((b) => b.dataset.add).sort()).toEqual(
       WIDGET_IDS.filter((id) => id !== 'weather').sort(),

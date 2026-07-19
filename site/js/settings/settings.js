@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { isRetired, isLaunched, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
+import { isRetired, isLaunched, isAdvancedHidden, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -213,8 +213,10 @@ export function navGroupForSection(id) {
 
 // Pure nav HTML: pinned items as nav buttons; groups as a toggle header (chevron
 // + aria-expanded) followed by indented child buttons only when the group is open.
-export function navHtml(section, openGroup) {
-  return NAV_MODEL.filter((e) => e.type !== 'item' || isLaunched(e.id)).map((e) => {
+export function navHtml(section, openGroup, cfg = null) {
+  const itemVisible = (id) =>
+    isLaunched(id) && (!isAdvancedHidden(id, cfg) || cfg?.layout?.some((r) => r.id === id));
+  return NAV_MODEL.filter((e) => e.type !== 'item' || itemVisible(e.id)).map((e) => {
     if (e.type === 'item') {
       return `<button class="settings__navitem ${e.id === section ? 'is-active' : ''}" data-section="${e.id}">${e.label}</button>`;
     }
@@ -230,7 +232,7 @@ export function navHtml(section, openGroup) {
 
 function renderNav() {
   const nav = state.root.querySelector('.settings__nav');
-  nav.innerHTML = navHtml(state.section, state.openGroup);
+  nav.innerHTML = navHtml(state.section, state.openGroup, state.cfg);
   nav.querySelectorAll('[data-section]').forEach((btn) =>
     btn.addEventListener('click', () => {
       state.section = btn.dataset.section;
@@ -283,12 +285,12 @@ function renderSection() {
 
 // Pure HTML for the Widgets picker: one .wgroup section per WIDGET_GROUPS entry,
 // each with a small-caps header and the (unchanged) toggle rows. Exported for tests.
-export function widgetGroupsHtml(layout) {
+export function widgetGroupsHtml(layout, cfg = null) {
   const placed = new Set(layout.map((r) => r.id));
   return WIDGET_GROUPS.map((g) => `
     <section class="wgroup">
       <h3 class="wgroup__title">${g.label}</h3>
-      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id))).map((id) => {
+      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id) && !isAdvancedHidden(id, cfg))).map((id) => {
         const on = placed.has(id);
         const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
         return `<div class="row">
@@ -308,7 +310,7 @@ function renderWidgets() {
   pane().innerHTML = `
     <h2 class="pane__title">Widgets</h2>
     <p class="pane__hint">Toggle what appears on your dashboard. To move or resize widgets, close settings and tap the ✎ pencil button.</p>
-    <div class="wgroups">${widgetGroupsHtml(layout)}</div>`;
+    <div class="wgroups">${widgetGroupsHtml(layout, state.cfg)}</div>`;
   pane().querySelectorAll('[data-toggle]').forEach((btn) =>
     btn.addEventListener('click', () => {
       const id = btn.dataset.toggle;
@@ -1683,6 +1685,13 @@ function renderDiag() {
       <span class="row__label">Anonymous usage ping</span>
     </div>
     <p class="pane__hint">Once an hour the board sends a random device id, its widget list, display mode, version, and timezone; nothing personal. Helps the operator count active boards.</p>
+    <div class="row">
+      <button class="toggle ${state.cfg.nerdMode ? 'is-on' : ''}" data-nerd role="switch" aria-checked="${state.cfg.nerdMode}">
+        <span class="toggle__knob"></span>
+      </button>
+      <span class="row__label">Nerd mode</span>
+    </div>
+    <p class="pane__hint">Shows advanced cards in the widget pickers that need self-hosted gear behind them (live video streams, camera gateways). Off keeps the pickers simple.</p>
     <p class="pane__label">Display</p>
     <div class="btnrow">
       <button class="btn btn--primary" data-reload>Reload display now</button>
@@ -1696,6 +1705,10 @@ function renderDiag() {
     <p class="pane__hint">Clear wipes this page's saved data; on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
   pane().querySelector('[data-beacon]').addEventListener('click', () => {
     state.cfg.beacon = !state.cfg.beacon;
+    renderDiag();
+  });
+  pane().querySelector('[data-nerd]').addEventListener('click', () => {
+    state.cfg.nerdMode = !state.cfg.nerdMode;
     renderDiag();
   });
   pane().querySelector('[data-reload]').addEventListener('click', () => location.reload());

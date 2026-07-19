@@ -1,7 +1,7 @@
 // Companion setup page logic: build a config, POST it to the worker's code
 // exchange, show the 6-char code. Reads #cfg= to pre-fill (QR round trip).
 
-import { isRetired, isLaunched, normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
+import { isRetired, isLaunched, isAdvancedHidden, normalizeConfig, encodeConfig, decodeConfig, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, DEFAULT_CONFIG, NJT_LINES } from '../config.js';
 import { firstFitAny } from '../layout.js';
 import { WORKER_URL } from '../env.js';
 import { toggleIn, searchStations } from './pickers.js';
@@ -166,11 +166,11 @@ async function boot() {
 // Grouped checkbox HTML for the setup widget picker. `labels` is this page's
 // WIDGET_LABELS (phone-length); `placed` is a Set of currently-placed ids.
 // Exported for tests. Mirrors the board's widgetGroupsHtml.
-export function widgetChecksHtml(labels, placed) {
+export function widgetChecksHtml(labels, placed, cfgRef = null) {
   return WIDGET_GROUPS.map((g) => `
     <section class="wpick__group">
       <h3 class="wpick__title">${g.label}</h3>
-      <div class="checks">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id))).map((id) =>
+      <div class="checks">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id) && !isAdvancedHidden(id, cfgRef))).map((id) =>
         `<label><input type="checkbox" data-w="${id}" ${placed.has(id) ? 'checked' : ''}> ${labels[id]}</label>`,
       ).join('')}</div>
     </section>`).join('');
@@ -215,7 +215,7 @@ function dismissNotice() {
 
 function renderWidgets() {
   const placed = () => new Set(cfg.layout.map((r) => r.id));
-  $('#widgets').innerHTML = widgetChecksHtml(WIDGET_LABELS, placed());
+  $('#widgets').innerHTML = widgetChecksHtml(WIDGET_LABELS, placed(), cfg);
   $('#widgets').addEventListener('change', (e) => {
     const id = e.target.dataset.w;
     if (!id) return;

@@ -80,6 +80,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   // Live Video: user-supplied HLS stream (https .m3u8). Nothing bundled --
   // rights sit with the user. label is an optional card-corner name.
   iptv: Object.freeze({ url: '', label: '' }),
+  nerdMode: false, // Diagnostics toggle: expose ADVANCED_WIDGETS in pickers
 
   tfl: Object.freeze({ lines: Object.freeze([...TFL_TUBE_IDS]) }),
   citibike: Object.freeze({ stations: Object.freeze([
@@ -321,6 +322,7 @@ export function normalizeConfig(raw) {
         return picked.length ? picked : DEFAULT_CONFIG.citibike.stations.map((s) => ({ id: s.id, name: s.name }));
       })(),
     },
+    nerdMode: raw.nerdMode === true,
     iptv: {
       // https-only: the site is https, so an http stream would be blocked as
       // mixed content anyway. Anything else normalizes to unconfigured.
@@ -429,6 +431,7 @@ export async function encodeConfig(cfg) {
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
   if (wire.iptv && isDefault(wire.iptv, DEFAULT_CONFIG.iptv)) delete wire.iptv; // unconfigured → off the wire
+  if (wire.nerdMode === false) delete wire.nerdMode;
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
@@ -497,6 +500,13 @@ const BETA_ONLY = Object.freeze(['iptv']);
 export const isBetaHost = (host = (typeof location !== 'undefined' ? location.hostname : 'localhost')) =>
   host !== 'roomboard.app' && host !== 'www.roomboard.app';
 export const isLaunched = (id, host) => !BETA_ONLY.includes(id) || isBetaHost(host);
+
+// "Nerd mode": cards that need self-hosted infrastructure (live streams,
+// camera gateways) stay out of every add picker unless the board's owner
+// flips the toggle in Settings → Diagnostics — technical users find them,
+// everyone else never sees the clutter. Placed cards always render.
+export const ADVANCED_WIDGETS = Object.freeze(['iptv']);
+export const isAdvancedHidden = (id, cfg) => ADVANCED_WIDGETS.includes(id) && !cfg?.nerdMode;
 
 const PHOTOS_CODE_MARK = '~P~';
 // Live Video rides the same phone-to-board bridge: '~V~' carries just the

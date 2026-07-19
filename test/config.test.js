@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  isAdvancedHidden,
   isLaunched,
   isRetired,
   DEFAULT_CONFIG,
@@ -348,6 +349,25 @@ describe('staged rollout (BETA_ONLY widgets)', () => {
     expect(isLaunched('iptv', 'signage.rvc.tech')).toBe(true);
     expect(isLaunched('iptv', 'localhost')).toBe(true);
     expect(isLaunched('weather', 'roomboard.app')).toBe(true);
+  });
+});
+
+describe('nerd mode (ADVANCED_WIDGETS gate)', () => {
+  it('defaults off, normalizes strictly, and stays off the wire when false', async () => {
+    expect(normalizeConfig({}).nerdMode).toBe(false);
+    expect(normalizeConfig({ nerdMode: 'yes' }).nerdMode).toBe(false); // boolean true only
+    expect(normalizeConfig({ nerdMode: true }).nerdMode).toBe(true);
+    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ nerdMode: true })));
+    expect(rt.nerdMode).toBe(true);
+    const bare = await decodeConfig(await encodeConfig(normalizeConfig({})));
+    expect(bare.nerdMode).toBe(false); // stripped on the wire, re-derived by normalize
+  });
+
+  it('hides advanced ids unless nerd mode is on', () => {
+    expect(isAdvancedHidden('iptv', { nerdMode: false })).toBe(true);
+    expect(isAdvancedHidden('iptv', null)).toBe(true);
+    expect(isAdvancedHidden('iptv', { nerdMode: true })).toBe(false);
+    expect(isAdvancedHidden('weather', { nerdMode: false })).toBe(false);
   });
 });
 

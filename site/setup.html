@@ -48,16 +48,22 @@
       </section>
 
       <section class="field" id="lirr-field">
-        <h2>LIRR <small>(Penn Station departures; Grand Central trains are never shown)</small></h2>
+        <h2>LIRR <small>(Penn Station and/or Grand Central departures)</small></h2>
+        <label for="lirr-origin">Departs from</label>
+        <select id="lirr-origin">
+          <option value="penn">Penn Station</option>
+          <option value="gct">Grand Central</option>
+          <option value="both">Both stations</option>
+        </select>
         <label for="lirr-dest">Only trains stopping at</label>
-        <select id="lirr-dest"><option value="">Any station</option></select>
+        <select id="lirr-dest"><option value="">Choose a station</option></select>
         <label class="alertcheck"><input type="checkbox" id="lirr-alerts"> Show service alerts</label>
       </section>
 
       <section class="field" id="mnr-field">
         <h2>Metro-North <small>(Grand Central departures)</small></h2>
         <label for="mnr-dest">Only trains stopping at</label>
-        <select id="mnr-dest"><option value="">Any station</option></select>
+        <select id="mnr-dest"><option value="">Choose a station</option></select>
         <label class="alertcheck"><input type="checkbox" id="mnr-alerts"> Show service alerts</label>
       </section>
 
@@ -71,7 +77,7 @@
       <section class="field" id="amtrak-field">
         <h2>Amtrak <small>(Moynihan / New York Penn departures)</small></h2>
         <label for="amtrak-dest">Only trains stopping at</label>
-        <select id="amtrak-dest"><option value="">Any station</option></select>
+        <select id="amtrak-dest"><option value="">Choose a station</option></select>
         <label class="alertcheck"><input type="checkbox" id="amtrak-alerts"> Show service alerts</label>
       </section>
 

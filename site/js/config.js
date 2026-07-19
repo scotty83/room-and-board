@@ -67,7 +67,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   ].map(Object.freeze)) }),
   // Status board defaults to the Penn Station lines (matches 10001 default).
   subway: Object.freeze({ lines: Object.freeze(['1', '2', '3']) }),
-  lirr: Object.freeze({ dest: '', alerts: true }), // Penn board destination filter ('' = all trains)
+  lirr: Object.freeze({ dest: '', alerts: true, origin: 'penn' }), // '' dest = unpicked (card prompts); origin: penn | gct | both
   mnr: Object.freeze({ dest: '', alerts: true }), // Grand Central board destination filter
   bus: Object.freeze({ legs: Object.freeze([]) }), // up to 2 route-first legs
   markets: Object.freeze({ symbols: Object.freeze(['^DJI', '^IXIC', '^GSPC']) }), // removable like any ticker
@@ -199,8 +199,11 @@ export function normalizeConfig(raw) {
         : [...DEFAULT_CONFIG.subway.lines],
     },
     lirr: {
-      dest: str(raw.lirr?.dest, '', 4), // older branches configs fall back to all trains
+      dest: str(raw.lirr?.dest, '', 4), // '' = no station picked yet (card prompts)
       alerts: raw.lirr?.alerts !== false,
+      // Departure terminal(s): Penn, Grand Central, or both. Penn is the
+      // historical behavior and the default.
+      origin: ['penn', 'gct', 'both'].includes(raw.lirr?.origin) ? raw.lirr.origin : 'penn',
     },
     mnr: {
       dest: str(raw.mnr?.dest, '', 4),

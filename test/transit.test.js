@@ -102,6 +102,26 @@ describe('mapLirr (Penn Station departure board)', () => {
     expect(vm.departures.find((d) => d.trainNum === '300').track).toBeNull();
   });
 
+  it('prefers the v3 actual track over sched_track', () => {
+    // Live v3 shape: an arrival carries `track` once assigned (act_track was pre-v3).
+    const trackJson = [{ train_num: '100', track: '21', sched_track: '19' }];
+    const vm = mapLirr(synthetic, trackJson, { dest: '' }, now, {});
+    expect(vm.departures.find((d) => d.trainNum === '100').track).toBe('21');
+  });
+
+  it('origin gct shows Grand Central departures only, tagged', () => {
+    const vm = mapLirr(synthetic, null, { dest: '', origin: 'gct' }, now, {});
+    expect(vm.departures.map((d) => d.trainNum)).toEqual(['200']);
+    expect(vm.departures[0].origin).toBe('gct');
+  });
+
+  it('origin both merges the terminals and tags each row', () => {
+    const vm = mapLirr(synthetic, null, { dest: '', origin: 'both' }, now, {});
+    expect(vm.departures.map((d) => d.trainNum).sort()).toEqual(['100', '200', '300']);
+    expect(vm.departures.find((d) => d.trainNum === '200').origin).toBe('gct');
+    expect(vm.departures.find((d) => d.trainNum === '100').origin).toBe('penn');
+  });
+
   it('never lists a fixture trip that skips Penn', async () => {
     const decoded = await decodedFixture('lirr.pb');
     const vm = mapLirr(decoded, null, { dest: '' }, decoded.timestamp, {});
@@ -237,5 +257,20 @@ describe('mapSubwayStatus aliases', () => {
   it('still shows Good Service for an unaffected line', () => {
     const vm = mapSubwayStatus([{ routes: ['GS'], header: 'x' }], ['1']);
     expect(vm[0].ok).toBe(true);
+  });
+});
+
+describe('rail boards force a stops-at pick', () => {
+  const noNet = {
+    fetchJSON: () => { throw new Error('no fetch'); },
+    fetchBuffer: () => { throw new Error('no fetch'); },
+  };
+  it('lirr/mnr/amtrak fetchData short-circuit to needsStation without touching the network', async () => {
+    const { fetchData: lirrFetch } = await import('../site/js/widgets/lirr.js');
+    const { fetchData: mnrFetch } = await import('../site/js/widgets/mnr.js');
+    const { fetchData: amtrakFetch } = await import('../site/js/widgets/amtrak.js');
+    expect(await lirrFetch({ lirr: { dest: '', origin: 'penn' } }, noNet)).toEqual({ departures: [], needsStation: true });
+    expect(await mnrFetch({ mnr: { dest: '' } }, noNet)).toEqual({ departures: [], needsStation: true });
+    expect(await amtrakFetch({ amtrak: { dest: '' } }, noNet)).toEqual({ departures: [], needsStation: true });
   });
 });

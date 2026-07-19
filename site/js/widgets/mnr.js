@@ -51,6 +51,12 @@ export function mapMnr(decoded, cfgMnr, nowSec, stationNames = {}) {
 }
 
 export function render(el, vm, _cfg) {
+  if (vm.needsStation) {
+    setCardNote(el, null);
+    el.classList.remove('has-alerts');
+    el.innerHTML = '<div class="empty">Pick a station in Settings → Metro-North</div>';
+    return;
+  }
   setCardNote(el, vm.destName ? `stops at ${vm.destName}` : null);
   el.classList.toggle('has-alerts', Boolean(vm.alerts?.length));
   const [w, h] = cardSize(el, [4, 4]);
@@ -79,6 +85,8 @@ export function render(el, vm, _cfg) {
 const FEED_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/mnr%2Fgtfs-mnr';
 
 export async function fetchData(cfg, net) {
+  // No station picked yet: skip every fetch and let the card prompt.
+  if (!cfg.mnr.dest) return { departures: [], needsStation: true };
   const decoded = decodeGtfsRt(await net.fetchBuffer(FEED_URL));
   const names = await stationNames(net);
   const vm = mapMnr(decoded, cfg.mnr, Math.floor(Date.now() / 1000), names);

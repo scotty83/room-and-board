@@ -20,7 +20,7 @@ describe('normalizeConfig', () => {
     expect(cfg.mode).toBe('dashboard');
     expect(cfg.theme).toBe('momentum');
     expect(cfg.loc).toEqual({ lat: 40.7506, lon: -73.9971, label: 'New York 10001', units: 'F' });
-    expect(cfg.lirr).toEqual({ dest: '', alerts: true });
+    expect(cfg.lirr).toEqual({ dest: '', alerts: true, origin: 'penn' });
     expect(cfg.mnr).toEqual({ dest: '', alerts: true });
     expect(cfg.bus).toEqual({ legs: [] });
     expect(cfg.markets).toEqual({ symbols: ['^DJI', '^IXIC', '^GSPC'] });
@@ -43,7 +43,7 @@ describe('normalizeConfig', () => {
     expect(cfg.widgets).toEqual(['weather', 'lirr']); // unknown ids dropped
     const lirr = cfg.layout.find((r) => r.id === 'lirr');
     expect(lirr.w).toBeGreaterThanOrEqual(2);
-    expect(cfg.lirr).toEqual({ dest: 'PWS', alerts: true }); // v1 dest carries into the v2 filter
+    expect(cfg.lirr).toEqual({ dest: 'PWS', alerts: true, origin: 'penn' }); // v1 dest carries into the v2 filter
     expect(cfg.loc.label).toBe('New York 10001'); // old default replaced
     expect(cfg.mode).toBe('ambient');
   });
@@ -334,6 +334,17 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
     expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
     expect(gd.layout.map((r) => r.id)).not.toContain('photos');
+  });
+});
+
+describe('lirr origin', () => {
+  it('defaults to penn and validates the terminal set', () => {
+    expect(normalizeConfig({}).lirr.origin).toBe('penn');
+    expect(normalizeConfig({ lirr: { origin: 'gct' } }).lirr.origin).toBe('gct');
+    expect(normalizeConfig({ lirr: { origin: 'both' } }).lirr.origin).toBe('both');
+    expect(normalizeConfig({ lirr: { origin: 'jfk' } }).lirr.origin).toBe('penn');
+    // Pre-origin configs (no field at all) land on the historical Penn behavior.
+    expect(normalizeConfig({ lirr: { dest: '102', alerts: true } }).lirr.origin).toBe('penn');
   });
 });
 

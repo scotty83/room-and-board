@@ -234,14 +234,18 @@ function renderWidgets() {
 
 async function renderRailDest(selectId, dataUrl, group) {
   const stations = await (await fetch(dataUrl)).json();
+  // No "Any station": a stops-at pick is required (the card prompts until one
+  // is made). The placeholder keeps '' so skipping the section is possible.
   $('#' + selectId).innerHTML =
-    `<option value="">Any station</option>` +
+    `<option value="">Choose a station</option>` +
     stations.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
   $('#' + selectId).value = cfg[group].dest;
   $('#' + selectId).addEventListener('change', (e) => (cfg[group].dest = e.target.value));
 }
 
 async function renderLirrDest() {
+  $('#lirr-origin').value = cfg.lirr.origin ?? 'penn';
+  $('#lirr-origin').addEventListener('change', (e) => (cfg.lirr.origin = e.target.value));
   return renderRailDest('lirr-dest', 'data/stations-lirr.json', 'lirr');
 }
 

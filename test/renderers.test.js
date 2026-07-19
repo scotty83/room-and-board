@@ -254,6 +254,29 @@ describe('widget renderers', () => {
     }
   });
 
+  it('rail cards prompt for a station when fetchData flags needsStation', () => {
+    for (const [mod, msg] of [
+      [lirr, 'Settings → LIRR'],
+      [mnr, 'Settings → Metro-North'],
+      [amtrak, 'Settings → Amtrak'],
+    ]) {
+      const host = el();
+      mod.render(host, { departures: [], needsStation: true }, CFG);
+      expect(host.querySelector('.empty').textContent).toContain(msg);
+      expect(host.querySelector('.train')).toBeNull();
+    }
+  });
+
+  it('lirr rows tag their terminal only when both origins are shown', () => {
+    const vm = { departures: [{ t: 1783000000, min: 5, dest: 'Mineola', origin: 'gct', branch: 'Hempstead', track: null }] };
+    const both = el();
+    lirr.render(both, vm, { ...CFG, lirr: { dest: '102', origin: 'both' } });
+    expect(both.querySelector('.train__line').textContent).toContain('GCT · ');
+    const single = el();
+    lirr.render(single, vm, { ...CFG, lirr: { dest: '102', origin: 'gct' } });
+    expect(single.querySelector('.train__line').textContent).not.toContain('GCT · ');
+  });
+
   it('lirr/mnr title-note the destination filter, and clear it when unset', () => {
     const card = document.createElement('article');
     card.className = 'card card--lirr';

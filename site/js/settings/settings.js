@@ -10,7 +10,7 @@ import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
 import { locationSearch } from '../geo.js';
 import { stepTime, fmtHM } from '../modes.js';
-import { alphaSections, toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
+import { toggleIn, applyNameKey, nameAutoCap, searchStations } from './pickers.js';
 import { MIN_SIZE, firstFit } from '../layout.js';
 
 export const WIDGET_LABELS = {
@@ -584,36 +584,50 @@ function drillList(title, items, onPick, { back = true } = {}) {
 
 /* ---------- LIRR / NJT ---------- */
 
+// PATH-style station pill grid shared by the rail panes. No "Any station"
+// entry: a stops-at pick is required (the card prompts until one is made).
+function stationGridHtml(stations, currentId) {
+  return `<div class="rows rows--grid rows--pill">${stations.map((s) =>
+    `<button class="row row--tap ${currentId === s.id ? 'is-selected' : ''}" data-dest-id="${escapeHtml(s.id)}">${escapeHtml(s.name)}</button>`,
+  ).join('')}</div>`;
+}
+function bindStationGrid(cfgBlock, rerender) {
+  pane().querySelectorAll('[data-dest-id]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      cfgBlock.dest = btn.dataset.destId;
+      rerender();
+    }),
+  );
+  // Long lists (127 LIRR stations): surface the current pick without a hunt.
+  // 'nearest' is a no-op when it's already on screen, so re-renders don't jump.
+  pane().querySelector('.rows--pill .is-selected')?.scrollIntoView({ block: 'nearest' });
+}
+
 let lirrStations = null;
 async function renderLirr() {
   const _nav = navToken;
   lirrStations ??= await fetchJSON('data/stations-lirr.json');
   if (navStale(_nav)) return;
-  const byId = Object.fromEntries(lirrStations.map((s) => [s.id, s]));
+  const origin = state.cfg.lirr.origin ?? 'penn';
   pane().innerHTML = `
-    <h2 class="pane__title">LIRR — Penn Station departures</h2>
-    <p class="pane__hint">Shows trains leaving Penn Station (Grand Central trains are excluded). Filter to trains that stop at your station; the branch shows per train, so multi-branch destinations just work.</p>
-    <div class="rows">
-      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.lirr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-      ${alertsToggleHtml('lirr')}
+    <h2 class="pane__title">LIRR</h2>
+    <p class="pane__label">Departs from</p>
+    <div class="segmented" role="group" aria-label="Departure station">
+      ${[['penn', 'Penn Station'], ['gct', 'Grand Central'], ['both', 'Both stations']].map(([id, label]) =>
+        `<button class="seg ${origin === id ? 'is-active' : ''}" data-origin="${id}">${label}</button>`).join('')}
     </div>
-    <div class="drill"></div>`;
+    <div class="rows">${alertsToggleHtml('lirr')}</div>
+    <p class="pane__label">Trains stopping at</p>
+    <p class="pane__hint">Pick your station; the branch shows per train, so multi-branch destinations just work.</p>
+    ${stationGridHtml(lirrStations, state.cfg.lirr.dest)}`;
   bindAlertsToggle(renderLirr);
-  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
-    drillList(
-      'Destination station',
-      // "Any station" leads the list — it replaces the old separate
-      // "Show all trains" button beside the row.
-      [{ html: 'Any station <small>(show all trains)</small>', value: null },
-        ...alphaSections(lirrStations).flatMap((sec) =>
-          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-        )],
-      (pick) => {
-        state.cfg.lirr.dest = pick.value?.id ?? '';
-        renderLirr();
-      },
-    );
-  });
+  pane().querySelectorAll('[data-origin]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.lirr.origin = btn.dataset.origin;
+      renderLirr();
+    }),
+  );
+  bindStationGrid(state.cfg.lirr, renderLirr);
 }
 
 let amtrakStations = null;
@@ -621,29 +635,15 @@ async function renderAmtrak() {
   const _nav = navToken;
   amtrakStations ??= await fetchJSON('data/stations-amtrak.json');
   if (navStale(_nav)) return;
-  const byId = Object.fromEntries(amtrakStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">Amtrak — Moynihan / Penn departures</h2>
-    <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn). Filter to trains that stop at your destination; the arrival time there shows per train.</p>
-    <div class="rows">
-      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.amtrak.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-      ${alertsToggleHtml('amtrak')}
-    </div>
-    <div class="drill"></div>`;
+    <p class="pane__hint">Shows Amtrak trains leaving Moynihan Train Hall (New York Penn).</p>
+    <div class="rows">${alertsToggleHtml('amtrak')}</div>
+    <p class="pane__label">Trains stopping at</p>
+    <p class="pane__hint">The arrival time at your destination shows per train.</p>
+    ${stationGridHtml(amtrakStations, state.cfg.amtrak.dest)}`;
   bindAlertsToggle(renderAmtrak);
-  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
-    drillList(
-      'Destination station',
-      [{ html: 'Any station <small>(show all trains)</small>', value: null },
-        ...alphaSections(amtrakStations).flatMap((sec) =>
-          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-        )],
-      (pick) => {
-        state.cfg.amtrak.dest = pick.value?.id ?? '';
-        renderAmtrak();
-      },
-    );
-  });
+  bindStationGrid(state.cfg.amtrak, renderAmtrak);
 }
 
 let mnrStations = null;
@@ -651,29 +651,15 @@ async function renderMnr() {
   const _nav = navToken;
   mnrStations ??= await fetchJSON('data/stations-mnr.json');
   if (navStale(_nav)) return;
-  const byId = Object.fromEntries(mnrStations.map((s) => [s.id, s]));
   pane().innerHTML = `
     <h2 class="pane__title">Metro-North — Grand Central departures</h2>
-    <p class="pane__hint">Shows trains leaving Grand Central. Filter to trains that stop at your station; the line shows per train.</p>
-    <div class="rows">
-      ${navRow('Trains stopping at', escapeHtml(byId[state.cfg.mnr.dest]?.name ?? 'Any station'), 'data-pick-dest')}
-      ${alertsToggleHtml('mnr')}
-    </div>
-    <div class="drill"></div>`;
+    <p class="pane__hint">Shows trains leaving Grand Central.</p>
+    <div class="rows">${alertsToggleHtml('mnr')}</div>
+    <p class="pane__label">Trains stopping at</p>
+    <p class="pane__hint">Pick your station; the line shows per train.</p>
+    ${stationGridHtml(mnrStations, state.cfg.mnr.dest)}`;
   bindAlertsToggle(renderMnr);
-  pane().querySelector('[data-pick-dest]').addEventListener('click', () => {
-    drillList(
-      'Destination station',
-      [{ html: 'Any station <small>(show all trains)</small>', value: null },
-        ...alphaSections(mnrStations).flatMap((sec) =>
-          sec.stations.map((s) => ({ html: escapeHtml(s.name), value: s })),
-        )],
-      (pick) => {
-        state.cfg.mnr.dest = pick.value?.id ?? '';
-        renderMnr();
-      },
-    );
-  });
+  bindStationGrid(state.cfg.mnr, renderMnr);
 }
 
 // The board is pinned to New York Penn Station (mirrors LIRR/Amtrak); the user

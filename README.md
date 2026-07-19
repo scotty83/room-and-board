@@ -102,10 +102,12 @@ remove like any other.
 - **Subway Status** — Good Service or the current alert for each line you pick.
   *Configure:* Settings → Subway (tap line bullets; shuttle "S" and express
   variants are matched automatically).
-- **LIRR** / **Metro-North** — Penn Station / Grand Central departure boards
-  with live minutes, track, and service alerts. *Configure:* their Settings
-  sections; optionally filter to trains stopping at one station (named in the
-  card corner), and toggle the alert banner.
+- **LIRR** / **Metro-North** — departure boards with live minutes, track, and
+  service alerts. LIRR picks its terminal — Penn Station (default), Grand
+  Central, or both, with each row tagged by terminal when both. Metro-North is
+  Grand Central. *Configure:* their Settings sections; pick the station your
+  trains must stop at (named in the card corner — required, the card prompts
+  until one is chosen), and toggle the alert banner.
 - **NJ Transit** — scheduled departures from one NJT rail station (default New
   York Penn) — time, destination, and line. RailData's schedule feed carries no
   live track or per-train status, so live delays and disruptions show as a
@@ -113,10 +115,10 @@ remove like any other.
   out (they have their own card). *Configure:* Settings → NJ Transit (pick the
   origin station; toggle alerts).
 - **Amtrak** — departures from Moynihan Train Hall / New York Penn (NYP), with
-  route, train number, status, and platform when assigned. Filter to trains
-  stopping at your destination (named in the card corner) to see the arrival
-  time there; unfiltered rows show the terminus. *Configure:* Settings → Amtrak
-  (pick a destination; toggle alerts).
+  route, train number, status, and platform when assigned. Shows trains
+  stopping at your destination (named in the card corner) with the arrival
+  time there — a destination is required; the card prompts until one is
+  chosen. *Configure:* Settings → Amtrak (pick a destination; toggle alerts).
 - **PATH** — next trains at one station as colored line dots + minutes; choose
   one direction or both. *Configure:* Settings → PATH.
 - **NYC Ferry** — next departures from one landing, with route name and color.
@@ -347,13 +349,13 @@ removed. Invalid drops flash red and snap back. Done saves (localStorage +
 macro vault); Cancel discards. Layouts live in config v3; v1/v2 configs
 migrate automatically on first load.
 
-Widget notes: **LIRR** / **Metro-North** are Penn Station / Grand Central
-departure boards with an optional stops-at-station filter (named in the card
-corner when set); **Subway** is a line-status board — Good Service or the
-current alert per chosen line; **PATH** / **NYC Ferry** show one chosen
-station/landing (named in the card corner); **Weather** defaults to ZIP 10001;
-**World Clock** holds up to 10 cities (defaults: New York, San Francisco,
-London, Hyderabad, Hong Kong).
+Widget notes: **LIRR** (Penn Station, Grand Central, or both) / **Metro-North**
+(Grand Central) are departure boards with a required stops-at-station filter
+(named in the card corner; the card prompts until one is picked); **Subway** is
+a line-status board — Good Service or the current alert per chosen line;
+**PATH** / **NYC Ferry** show one chosen station/landing (named in the card
+corner); **Weather** defaults to ZIP 10001; **World Clock** holds up to 10
+cities (defaults: New York, San Francisco, London, Hyderabad, Hong Kong).
 
 ### User flow
 

@@ -14,6 +14,15 @@ export const meta = { id: 'amtrak', title: 'Amtrak', refreshMs: 60 * 1000 };
 const statusClass = (s) => (/cancel/i.test(s) ? 'is-bad' : /(late|delay)/i.test(s) ? 'is-warn' : '');
 
 export function render(el, vm, cfg) {
+  // No destination picked yet (fetchData sets the flag): prompt instead of an
+  // unfiltered board. Demo fixtures never carry the flag, so ?demo=1 and the
+  // renderer tests still show rows.
+  if (vm.needsStation) {
+    setCardNote(el, null);
+    el.classList.remove('has-alerts');
+    el.innerHTML = '<div class="empty">Pick a destination in Settings → Amtrak</div>';
+    return;
+  }
   const dest = cfg?.amtrak?.dest || '';
   const showAlerts = cfg?.amtrak?.alerts !== false;
   const nowSec = Math.floor(Date.now() / 1000);
@@ -68,8 +77,10 @@ async function stationNames(net) {
 }
 
 export async function fetchData(cfg, net) {
-  const vm = await net.fetchJSON(`${WORKER_URL}/amtrak/departures`);
+  // No destination picked yet: skip the fetch and let the card prompt.
   const dest = cfg?.amtrak?.dest || '';
-  vm.destName = dest ? (await stationNames(net))[dest] || null : null;
+  if (!dest) return { departures: [], needsStation: true };
+  const vm = await net.fetchJSON(`${WORKER_URL}/amtrak/departures`);
+  vm.destName = (await stationNames(net))[dest] || null;
   return vm;
 }

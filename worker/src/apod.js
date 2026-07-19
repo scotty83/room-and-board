@@ -26,7 +26,7 @@ export async function fetchApod(env) {
   const iso = (ms) => new Date(ms).toISOString().slice(0, 10);
   const now = Date.now();
   const start = iso(now - 6 * DAY);
-  const call = (end) => fetch(`https://api.nasa.gov/planetary/apod?api_key=${key}&start_date=${start}&end_date=${end}`);
+  const call = (end) => fetch(`https://api.nasa.gov/planetary/apod?api_key=${key}&start_date=${start}&end_date=${end}`, { signal: AbortSignal.timeout(10000) });
   // APOD posts on US/Eastern "today"; a UTC end_date=today 400s before the new
   // post exists — retry the window ending yesterday.
   let res = await call(iso(now));

@@ -131,6 +131,7 @@ export async function fetchServiceStatuses(ids) {
     // Full browser UA: CloudFront (AWS's status CDN) rejects thin/bot agents
     // from datacenter egress — same lesson as the Yahoo markets fetch.
     const res = await fetch(svc.url, {
+      signal: AbortSignal.timeout(10000),
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36',

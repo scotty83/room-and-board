@@ -737,6 +737,24 @@ describe('iptv render', () => {
     expect(el.textContent).toContain('add a stream');
   });
 
+  it('tears the stream down in ambient mode and remounts on return', () => {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    try {
+      iptv.render(el, { url: 'https://x.test/b.m3u8', label: '' }, CFG);
+      expect(el.querySelector('video')).toBeTruthy();
+      document.body.classList.add('mode-ambient');
+      iptv.render(el, { url: 'https://x.test/b.m3u8', label: '' }, CFG);
+      expect(el.querySelector('video')).toBeNull();
+      document.body.classList.remove('mode-ambient');
+      iptv.render(el, { url: 'https://x.test/b.m3u8', label: '' }, CFG);
+      expect(el.querySelector('video')).toBeTruthy();
+    } finally {
+      el.remove();
+      document.body.classList.remove('mode-ambient');
+    }
+  });
+
   it('mounts a muted video shell for a configured stream and survives re-render', () => {
     const el = document.createElement('div');
     document.body.appendChild(el);

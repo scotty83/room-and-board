@@ -478,9 +478,15 @@ async function renderMarketsNewsSources() {
 function renderIptvField() {
   const url = document.getElementById('iptv-url');
   const label = document.getElementById('iptv-label');
+  const warn = document.getElementById('iptv-url-warn');
   url.value = cfg.iptv?.url ?? '';
   label.value = cfg.iptv?.label ?? '';
-  url.addEventListener('input', () => { cfg.iptv = { ...cfg.iptv, url: url.value.trim() }; });
+  url.addEventListener('input', () => {
+    const v = url.value.trim();
+    cfg.iptv = { ...cfg.iptv, url: v };
+    // Mirror normalizeConfig's rule so a doomed URL isn't a silent surprise.
+    warn.hidden = !v || /^https:\/\/\S+$/i.test(v);
+  });
   label.addEventListener('input', () => { cfg.iptv = { ...cfg.iptv, label: label.value.trim() }; });
 }
 

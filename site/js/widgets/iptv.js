@@ -13,12 +13,17 @@ function loadHls() {
   if (window.Hls) return Promise.resolve(window.Hls);
   hlsLoader ??= new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = 'js/vendor/hls.light.min.js';
-    s.onload = () => resolve(window.Hls);
-    s.onerror = () => {
+    const fail = (msg) => {
+      clearTimeout(guard);
       hlsLoader = null; // allow a later render to retry the load
-      reject(new Error('hls.js failed to load'));
+      reject(new Error(msg));
     };
+    // A network black hole can fire neither onload nor onerror; without the
+    // guard every future render would await a dead promise until 4 AM.
+    const guard = setTimeout(() => fail('hls.js load timed out'), 20000);
+    s.src = 'js/vendor/hls.light.min.js';
+    s.onload = () => { clearTimeout(guard); resolve(window.Hls); };
+    s.onerror = () => fail('hls.js failed to load');
     document.head.appendChild(s);
   });
   return hlsLoader;
@@ -75,7 +80,9 @@ function mount(el, url) {
       return;
     }
     // Cap quality to the card's rendered size — a 3x3 card never needs 1080p.
-    const h = new Hls({ capLevelToPlayerSize: true });
+    // backBufferLength defaults to Infinity: on a live stream between nightly
+    // reloads that grows MSE buffers unbounded on a memory-tight SoC.
+    const h = new Hls({ capLevelToPlayerSize: true, backBufferLength: 90, maxBufferLength: 30 });
     m.hls = h;
     let mediaRecoveries = 0;
     h.on(Hls.Events.ERROR, (_e, d) => {
@@ -99,6 +106,14 @@ function mount(el, url) {
 
 export function render(el, vm, _cfg) {
   sweep();
+  // Ambient mode hides the grid but schedules keep ticking — don't stream and
+  // decode video behind the slideshow all night. The next tick after the
+  // dashboard returns remounts automatically.
+  if (document.body.classList.contains('mode-ambient')) {
+    destroyMount(el);
+    el.innerHTML = '';
+    return;
+  }
   setCardNote(el, vm.label || null);
   if (!vm.url) {
     destroyMount(el);

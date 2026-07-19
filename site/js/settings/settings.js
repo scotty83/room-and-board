@@ -1490,8 +1490,12 @@ function renderCode() {
             state.cfg = decoded.cfg;
             status.textContent = 'Applied! Review the other sections, then press Save.';
           }
-        } catch {
-          status.textContent = 'Code not found (codes expire after an hour).';
+        } catch (err) {
+          // Only a real 404 means the code is wrong; anything else is the
+          // network/service, and regenerating the code won't help.
+          status.textContent = err?.status === 404
+            ? 'Code not found (codes expire after an hour).'
+            : "Couldn't reach the code service. Check the network and try again.";
           code = '';
           display.textContent = '······';
         }

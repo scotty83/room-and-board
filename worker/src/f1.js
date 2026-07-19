@@ -72,7 +72,7 @@ export function mapF1(nextJson, lastJson, driversJson, teamsJson) {
 
 export async function fetchF1() {
   const get = async (path) => {
-    const res = await fetch(`${JOLPICA}/${path}/?format=json`, { headers: { 'User-Agent': UA } });
+    const res = await fetch(`${JOLPICA}/${path}/?format=json`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(10000) });
     if (!res.ok) throw new Error(`jolpica ${path} ${res.status}`);
     return res.json();
   };

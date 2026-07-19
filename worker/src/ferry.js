@@ -20,7 +20,7 @@ export function mapFerryFeed(decoded, nowSec) {
 }
 
 export async function fetchFerryDepartures() {
-  const res = await fetch(FEED);
+  const res = await fetch(FEED, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`nycferry ${res.status}`);
   const decoded = decodeGtfsRt(await res.arrayBuffer());
   return mapFerryFeed(decoded, Math.floor(Date.now() / 1000));

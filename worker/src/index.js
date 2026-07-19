@@ -160,7 +160,7 @@ async function fetchMarkets(symbols) {
       // for LSE tickers all evening). With two days of bars, mapYahooChart
       // takes the daily baseline from the prior session's last close itself.
       const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2d&interval=15m`;
-      const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA } });
+      const res = await fetch(url, { headers: { 'User-Agent': YAHOO_UA }, signal: AbortSignal.timeout(10000) });
       if (!res.ok) throw new Error(`yahoo ${res.status}`);
       const out = mapYahooChart(await res.json(), INDEX_NAMES[symbol]);
       // Yahoo doesn't reliably honor range=2d from Cloudflare egress (it can
@@ -172,7 +172,7 @@ async function fetchMarkets(symbols) {
         try {
           const r2 = await fetch(
             `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`,
-            { headers: { 'User-Agent': YAHOO_UA } },
+            { headers: { 'User-Agent': YAHOO_UA }, signal: AbortSignal.timeout(10000) },
           );
           if (r2.ok) {
             const daily = ((await r2.json())?.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [])
@@ -209,7 +209,10 @@ export default {
       // no caching. A missing ANALYTICS binding (self-host without metrics)
       // accepts and drops so boards never see an error. parseBeacon bounds
       // the body size itself (oversized → 400).
-      const parsed = parseBeacon(await request.text());
+      // Body read can reject on an aborted upload; that's the sender's problem,
+      // not a 1101.
+      const raw = await request.text().catch(() => null);
+      const parsed = raw === null ? null : parseBeacon(raw);
       if (!parsed) return json({ error: 'bad_beacon' }, 400);
       // Country is edge-derived (request.cf.country, CF-IPCountry header at the
       // edge); model is parsed from the RoomOS WebEngine User-Agent — the board

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { digestNext, mapTeamSummary } from '../../worker/src/sports.js';
+import { digestNext, digestSchedule, mapTeamSummary } from '../../worker/src/sports.js';
 import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
 import { resetNjtToken } from '../../worker/src/njt.js';
@@ -328,6 +328,17 @@ describe('/sports/team', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.row).toMatchObject({ abbr: 'NYM', record: '48-37', lastLine: 'L 3-9 @ TOR · Final' });
+  });
+});
+
+describe('eventLine guards', () => {
+  it('digestSchedule/digestNext tolerate a competition with no competitors array', () => {
+    const sched = { events: [
+      { date: '2099-01-01T00:00Z', competitions: [{ status: { type: { state: 'pre', shortDetail: 'TBD' } } }] },
+      { date: '2020-01-01T00:00Z', competitions: [{ status: { type: { state: 'post', shortDetail: 'Final' } } }] },
+    ] };
+    expect(() => digestSchedule(sched, 'NYY')).not.toThrow();
+    expect(() => digestNext(sched, 'NYY', 0)).not.toThrow();
   });
 });
 

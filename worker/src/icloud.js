@@ -16,14 +16,14 @@ function basePartition(token) {
 
 async function callStream(token, host, path, body) {
   let res = await fetch(`https://${host}/${token}/sharedstreams/${path}`, {
-    method: 'POST', headers: HEADERS, body: JSON.stringify(body),
+    method: 'POST', headers: HEADERS, body: JSON.stringify(body), signal: AbortSignal.timeout(10000),
   });
   if (res.status === 330) {
     const next = (await res.json())['X-Apple-MMe-Host'];
     if (!next) throw new Error('icloud 330 without host');
     host = next;
     res = await fetch(`https://${host}/${token}/sharedstreams/${path}`, {
-      method: 'POST', headers: HEADERS, body: JSON.stringify(body),
+      method: 'POST', headers: HEADERS, body: JSON.stringify(body), signal: AbortSignal.timeout(10000),
     });
   }
   if (!res.ok) throw new Error(`icloud ${path} ${res.status}`);

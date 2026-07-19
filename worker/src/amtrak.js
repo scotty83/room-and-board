@@ -57,7 +57,7 @@ export function mapAmtrak(trainsJson, nowMs) {
 }
 
 export async function fetchAmtrak() {
-  const res = await fetch(V3_TRAINS, { headers: { 'User-Agent': UA } });
+  const res = await fetch(V3_TRAINS, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`amtrak upstream ${res.status}`);
   return mapAmtrak(await res.json(), Date.now());
 }

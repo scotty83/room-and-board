@@ -32,7 +32,7 @@ export function mapRidePath(json, nowSec) {
 }
 
 export async function fetchPathRealtime() {
-  const res = await fetch(FEED);
+  const res = await fetch(FEED, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`ridepath ${res.status}`);
   return mapRidePath(await res.json(), Math.floor(Date.now() / 1000));
 }

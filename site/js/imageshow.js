@@ -61,6 +61,7 @@ export function openImageViewer(current, cfg, { list = [], caption = true } = {}
       if (swipeAction(e.clientX - downX, e.clientY - downY) !== 'tap') return;
       viewer.hidden = true;
       clearInterval(stripTimer);
+      viewerList = null; // release the album; reopen passes a fresh list
     });
     document.body.appendChild(viewer);
   }

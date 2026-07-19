@@ -56,7 +56,7 @@ export function siriUrl(key, leg) {
 export async function fetchBusStops(env, legs) {
   const stops = await Promise.all(
     legs.map(async (leg) => {
-      const res = await fetch(siriUrl(env.MTA_BUS_KEY, leg));
+      const res = await fetch(siriUrl(env.MTA_BUS_KEY, leg), { signal: AbortSignal.timeout(10000) });
       if (!res.ok) throw new Error(`bustime ${res.status}`);
       return mapSiriStop(await res.json(), leg.stopId);
     }),

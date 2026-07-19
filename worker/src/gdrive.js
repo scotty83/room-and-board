@@ -42,6 +42,7 @@ export async function fetchGdriveAlbum(env, folderId) {
   );
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=createdTime%20desc&pageSize=100&key=${env.GDRIVE_KEY}`,
+    { signal: AbortSignal.timeout(10000) },
   );
   const json = await res.json();
   if (!res.ok || json.error) throw new Error(`gdrive ${res.status} ${json.error?.message ?? ''}`);

@@ -106,7 +106,7 @@ export async function fetchChart(topic = '') {
   for (let hop = 0; hop < 6; hop += 1) {
     const headers = { 'User-Agent': UA, Accept: 'text/html' };
     if (jar.size) headers.Cookie = [...jar.entries()].map(([k, v]) => `${k}=${v}`).join('; ');
-    const res = await fetch(url, { headers, redirect: 'manual' });
+    const res = await fetch(url, { headers, redirect: 'manual', signal: AbortSignal.timeout(10000) });
     for (const c of res.headers.getSetCookie?.() ?? [res.headers.get('set-cookie')].filter(Boolean)) {
       const pair = c.split(';')[0];
       const eq = pair.indexOf('=');

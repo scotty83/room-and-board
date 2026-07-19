@@ -247,6 +247,7 @@
         <h2>Live Video</h2>
         <label for="iptv-url">HLS stream link (https, usually ends in .m3u8)</label>
         <input type="url" id="iptv-url" inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="https://example.com/live/stream.m3u8">
+        <p class="hint" id="iptv-url-warn" hidden>Must be an https link (usually ending in .m3u8) or the card will stay unconfigured.</p>
         <label for="iptv-label">Label shown on the card (optional)</label>
         <input type="text" id="iptv-label" maxlength="40" placeholder="Lobby cam">
         <p class="hint">The card plays it muted. Use a stream you have the rights to show.</p>

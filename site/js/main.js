@@ -423,4 +423,9 @@ $('#edit').addEventListener('click', async () => {
   });
 });
 
-boot();
+// A boot crash means no runtime and therefore no watchdog — reload is the
+// only recovery path on an unattended board.
+boot().catch((err) => {
+  console.error('[signage] boot failed', err);
+  setTimeout(() => location.reload(), 60 * 1000);
+});

@@ -45,7 +45,7 @@ export function mapMtaAlerts(json, nowSec) {
 }
 
 export async function fetchMtaAlerts(system) {
-  const res = await fetch(FEEDS[system]);
+  const res = await fetch(FEEDS[system], { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`mta alerts ${res.status}`);
   const nowSec = Math.floor(Date.now() / 1000);
   return { updatedAt: nowSec, stale: false, alerts: mapMtaAlerts(await res.json(), nowSec) };

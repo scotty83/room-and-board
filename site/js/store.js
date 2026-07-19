@@ -12,9 +12,11 @@ const CACHE_PREFIX = 'sgn.cache.';
 const storage = () => window.localStorage;
 
 export async function loadConfig() {
-  const raw = storage().getItem(CFG_KEY);
-  if (!raw) return null;
+  // getItem inside the try: a storage-unavailable throw here would otherwise
+  // kill boot before the watchdog exists.
   try {
+    const raw = storage().getItem(CFG_KEY);
+    if (!raw) return null;
     return await decodeConfig(raw);
   } catch {
     return null;
@@ -22,7 +24,18 @@ export async function loadConfig() {
 }
 
 export async function saveConfig(cfg) {
-  storage().setItem(CFG_KEY, await encodeConfig(cfg));
+  const encoded = await encodeConfig(cfg);
+  try {
+    storage().setItem(CFG_KEY, encoded);
+  } catch {
+    // Quota: the config MUST win over the best-effort widget caches — drop
+    // them and retry once. A second failure propagates to the caller.
+    for (let i = storage().length - 1; i >= 0; i--) {
+      const k = storage().key(i);
+      if (k && k.startsWith(CACHE_PREFIX)) storage().removeItem(k);
+    }
+    storage().setItem(CFG_KEY, encoded);
+  }
 }
 
 export function saveCache(id, data, t = Math.floor(Date.now() / 1000)) {

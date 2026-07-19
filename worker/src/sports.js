@@ -19,8 +19,8 @@ const score = (c) => {
 
 function eventLine(comp, ourAbbr, { withWL = false } = {}) {
   const status = comp.status?.type ?? {};
-  const us = comp.competitors.find((c) => c.team?.abbreviation === ourAbbr);
-  const them = comp.competitors.find((c) => c !== us);
+  const us = (comp.competitors ?? []).find((c) => c.team?.abbreviation === ourAbbr);
+  const them = (comp.competitors ?? []).find((c) => c !== us);
   const vsAt = us?.homeAway === 'home' ? 'vs' : '@';
   const opp = them?.team?.abbreviation ?? '?';
   if (status.state === 'pre') return `${vsAt} ${opp} · ${status.shortDetail ?? ''}`.trim();
@@ -107,7 +107,7 @@ async function cachedSchedLines(origin, lg, id, abbr, base) {
   let lastLine = null;
   let nextLine = null;
   try {
-    const schedRes = await fetch(`${base}/schedule`);
+    const schedRes = await fetch(`${base}/schedule`, { signal: AbortSignal.timeout(10000) });
     if (schedRes.ok) {
       const sched = await schedRes.json();
       lastLine = digestSchedule(sched, abbr);
@@ -129,7 +129,7 @@ async function cachedSchedLines(origin, lg, id, abbr, base) {
 
 export async function fetchTeamSummary(lg, id, origin) {
   const base = `https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/teams/${id}`;
-  const teamRes = await fetch(base);
+  const teamRes = await fetch(base, { signal: AbortSignal.timeout(10000) });
   if (!teamRes.ok) throw new Error(`espn team ${teamRes.status}`);
   const teamJson = await teamRes.json();
   const abbr = teamJson?.team?.abbreviation ?? '';
@@ -143,7 +143,7 @@ export async function fetchTeamSummary(lg, id, origin) {
   const nextEv = teamJson?.team?.nextEvent?.[0];
   if (nextEv?.competitions?.[0]?.status?.type?.state === 'in') {
     try {
-      const sbRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/scoreboard`);
+      const sbRes = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${LEAGUE_PATHS[lg]}/scoreboard`, { signal: AbortSignal.timeout(10000) });
       if (sbRes.ok) {
         const sb = await sbRes.json();
         liveComp = (sb.events ?? []).find((e) => e.id === nextEv.id)?.competitions?.[0] ?? null;

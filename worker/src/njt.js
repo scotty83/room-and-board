@@ -82,7 +82,7 @@ export function mapNjtUpstream(json, station = PENN) {
 
 async function form(url, params) {
   const body = new URLSearchParams(params);
-  const res = await fetch(url, { method: 'POST', body });
+  const res = await fetch(url, { method: 'POST', body, signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`njt upstream ${res.status}`);
   return res.json();
 }

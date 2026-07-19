@@ -39,6 +39,12 @@ describe('mapGolf', () => {
     expect(vm.players).toEqual([]);
   });
 
+  it('tolerates ESPN flipping score to an object shape', () => {
+    const p = JSON.parse(JSON.stringify(golfPayload));
+    p.events[0].competitions[0].competitors[0].score = { value: 202, displayValue: '-8' };
+    expect(mapGolf(p).players[1].score).toBe('-8'); // Fox sorts 2nd by order
+  });
+
   it('handles an empty feed (off week)', () => {
     expect(mapGolf({ events: [] })).toMatchObject({ name: null, players: [] });
     expect(mapGolf(null).players).toEqual([]);

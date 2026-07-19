@@ -20,7 +20,7 @@ export function mapCitibike(json, ids) {
 }
 
 export async function fetchCitibike(ids) {
-  const res = await fetch('https://gbfs.lyft.com/gbfs/1.1/bkn/en/station_status.json');
+  const res = await fetch('https://gbfs.lyft.com/gbfs/1.1/bkn/en/station_status.json', { signal: AbortSignal.timeout(10000) });
   if (!res.ok) throw new Error(`citibike ${res.status}`);
   return mapCitibike(await res.json(), ids);
 }

@@ -20,6 +20,7 @@ export async function fetchSubstackPosts(slug) {
   const res = await fetch(`https://${slug}.substack.com/api/v1/posts?limit=12`, {
     redirect: 'follow',
     headers: { 'User-Agent': UA },
+    signal: AbortSignal.timeout(10000),
   });
   if (!res.ok) throw new Error(`substack ${res.status}`);
   return mapSubstackPosts(await res.json());

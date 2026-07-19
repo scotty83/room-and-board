@@ -30,7 +30,9 @@ export function mapGolf(payload) {
       return {
         pos: c.order ?? null,
         name: c.athlete?.shortName ?? c.athlete?.displayName ?? '',
-        score: c.score != null ? String(c.score) : '',
+        // ESPN has flipped score between string and {value, displayValue} on
+        // sibling endpoints; tolerate both.
+        score: c.score != null && typeof c.score === 'object' ? (c.score.displayValue ?? '') : c.score != null ? String(c.score) : '',
         today: line?.displayValue ?? '',
       };
     })

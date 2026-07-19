@@ -508,6 +508,16 @@ export const isLaunched = (id, host) => !BETA_ONLY.includes(id) || isBetaHost(ho
 export const ADVANCED_WIDGETS = Object.freeze(['iptv']);
 export const isAdvancedHidden = (id, cfg) => ADVANCED_WIDGETS.includes(id) && !cfg?.nerdMode;
 
+// Single source of truth for "may this widget be OFFERED to add right now":
+// not sunset (RETIRED_AFTER), launched on this host (BETA_ONLY), and not gated
+// behind nerd mode (ADVANCED_WIDGETS). EVERY add surface — the edit-mode tray,
+// the Settings widget toggles, and the /setup checkboxes — routes through this
+// one predicate, so adding a new gate or a new advanced card can't leak through
+// a picker someone forgot to update. (A PLACED card is always shown for removal
+// regardless; callers OR this with `placed.has(id)`.)
+export const isAddable = (id, cfg, host) =>
+  !isRetired(id) && isLaunched(id, host) && !isAdvancedHidden(id, cfg);
+
 const PHOTOS_CODE_MARK = '~P~';
 // Live Video rides the same phone-to-board bridge: '~V~' carries just the
 // stream URL (+ optional label) so redeeming never disturbs the board's setup.

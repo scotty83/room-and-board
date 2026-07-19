@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  isAddable,
   isAdvancedHidden,
   isLaunched,
   isRetired,
@@ -368,6 +369,16 @@ describe('nerd mode (ADVANCED_WIDGETS gate)', () => {
     expect(isAdvancedHidden('iptv', null)).toBe(true);
     expect(isAdvancedHidden('iptv', { nerdMode: true })).toBe(false);
     expect(isAdvancedHidden('weather', { nerdMode: false })).toBe(false);
+  });
+
+  it('isAddable composes retired + launched + advanced (the one add-policy)', () => {
+    // ordinary widget: always offerable, on any host
+    expect(isAddable('weather', {}, 'roomboard.app')).toBe(true);
+    // advanced widget: needs nerd mode
+    expect(isAddable('iptv', { nerdMode: false }, 'beta.roomboard.app')).toBe(false);
+    expect(isAddable('iptv', { nerdMode: true }, 'beta.roomboard.app')).toBe(true);
+    // ...but the host gate still wins on prod even with nerd mode on
+    expect(isAddable('iptv', { nerdMode: true }, 'roomboard.app')).toBe(false);
   });
 });
 

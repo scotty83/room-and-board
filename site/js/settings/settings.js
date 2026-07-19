@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { isRetired, isLaunched, isAdvancedHidden, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
+import { isLaunched, isAdvancedHidden, isAddable, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -290,7 +290,7 @@ export function widgetGroupsHtml(layout, cfg = null) {
   return WIDGET_GROUPS.map((g) => `
     <section class="wgroup">
       <h3 class="wgroup__title">${g.label}</h3>
-      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || (!isRetired(id) && isLaunched(id) && !isAdvancedHidden(id, cfg))).map((id) => {
+      <div class="wgroup__rows">${g.ids.filter((id) => placed.has(id) || isAddable(id, cfg)).map((id) => {
         const on = placed.has(id);
         const canAdd = on || firstFit(layout, id, MIN_SIZE[id]) !== null;
         return `<div class="row">

@@ -273,6 +273,7 @@ describe('widgetGroupsHtml', () => {
 
 import { NAV_MODEL, navGroupForSection, SECTION_IDS, navHtml } from '../site/js/settings/settings.js';
 import { widgetChecksHtml } from '../site/js/settings/setup.js';
+import { widgetGroupsHtml } from '../site/js/settings/settings.js';
 import { WIDGET_LABELS as SETUP_LABELS } from '../site/js/settings/setup.js';
 
 describe('settings nav model', () => {
@@ -419,17 +420,37 @@ describe('isBridgeHost (fragment IP validation)', () => {
   });
 });
 
-describe('nerd-mode picker gating', () => {
-  it('widgetChecksHtml hides iptv unless nerd mode is on or it is already placed', () => {
-    expect(widgetChecksHtml(SETUP_LABELS, new Set())).not.toContain('data-w="iptv"');
-    expect(widgetChecksHtml(SETUP_LABELS, new Set(), { nerdMode: true })).toContain('data-w="iptv"');
-    expect(widgetChecksHtml(SETUP_LABELS, new Set(['iptv']))).toContain('data-w="iptv"'); // placed stays visible
-    expect(widgetChecksHtml(SETUP_LABELS, new Set(), { nerdMode: true })).toContain('data-w="weather"');
+describe('nerd-mode picker gating (every add surface routes through isAddable)', () => {
+  // An advanced widget (iptv) must be absent from EVERY add surface unless
+  // nerd mode is on — and still manageable once placed. One table so a new
+  // surface or a new advanced card can't silently regress a single path.
+  const hasIptv = {
+    'settings toggles (widgetGroupsHtml)': (cfg) => widgetGroupsHtml(cfg.layout ?? [], cfg).includes('data-toggle="iptv"'),
+    'setup checkboxes (widgetChecksHtml)': (cfg) => widgetChecksHtml(SETUP_LABELS, new Set((cfg.layout ?? []).map((r) => r.id)), cfg).includes('data-w="iptv"'),
+    'settings nav (navHtml)': (cfg) => navHtml('widgets', null, cfg).includes('Live Video'),
+  };
+
+  it('hides iptv on every surface with nerd mode OFF', () => {
+    for (const [surface, has] of Object.entries(hasIptv)) {
+      expect(has({ nerdMode: false, layout: [] }), surface).toBe(false);
+    }
   });
 
-  it('navHtml hides the Live Video item unless nerd mode or placed', () => {
-    expect(navHtml('widgets', null, { nerdMode: false, layout: [] })).not.toContain('Live Video');
-    expect(navHtml('widgets', null, { nerdMode: true, layout: [] })).toContain('Live Video');
-    expect(navHtml('widgets', null, { nerdMode: false, layout: [{ id: 'iptv', x: 0, y: 0, w: 3, h: 3 }] })).toContain('Live Video');
+  it('shows iptv on every surface with nerd mode ON', () => {
+    for (const [surface, has] of Object.entries(hasIptv)) {
+      expect(has({ nerdMode: true, layout: [] }), surface).toBe(true);
+    }
+  });
+
+  it('keeps a PLACED iptv visible even with nerd mode off (removal path)', () => {
+    const placed = { nerdMode: false, layout: [{ id: 'iptv', x: 0, y: 0, w: 3, h: 3 }] };
+    for (const [surface, has] of Object.entries(hasIptv)) {
+      expect(has(placed), surface).toBe(true);
+    }
+  });
+
+  it('never hides an ordinary widget', () => {
+    expect(widgetGroupsHtml([], { nerdMode: false }).includes('data-toggle="weather"')).toBe(true);
+    expect(widgetChecksHtml(SETUP_LABELS, new Set(), { nerdMode: false }).includes('data-w="weather"')).toBe(true);
   });
 });

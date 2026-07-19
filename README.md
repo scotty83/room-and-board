@@ -371,6 +371,23 @@ a line-status board — Good Service or the current alert per chosen line;
 corner); **Weather** defaults to ZIP 10001; **World Clock** holds up to 10
 cities (defaults: New York, San Francisco, London, Hyderabad, Hong Kong).
 
+### Advanced ("nerd mode") cards
+
+Cards that need self-hosted infrastructure behind them (Live Video, and
+camera gateways to come) stay out of every add picker unless the board owner
+turns on **Settings → Diagnostics → Nerd mode**. Non-technical users never
+see them; a placed card always keeps rendering and stays removable regardless.
+
+To gate a new card this way, add its id to `ADVANCED_WIDGETS` in
+`site/js/config.js` — nothing else. Every add surface (edit-mode tray, the
+Settings widget toggles, the `/setup` checkboxes, and the settings nav) routes
+its "may I offer this?" decision through the single `isAddable(id, cfg)`
+predicate, which composes the three gates: `RETIRED_AFTER` (sunset an event
+card), `BETA_ONLY` (staging-host only), and `ADVANCED_WIDGETS` (nerd mode). One
+predicate, so a new surface or a new gated card can't leak through a path
+someone forgot. `test/settings-logic.test.js` asserts the policy holds across
+all surfaces.
+
 ### User flow
 
 1. Board shows a welcome screen → user visits `/setup` on their phone,

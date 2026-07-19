@@ -108,6 +108,12 @@ html, body {
   row-gap: clamp(10px, calc((100% - var(--n, 3) * var(--trow)) / max(var(--n, 3) - 1, 1)), 22px);
 }
 .card--sports.t-s .card__body { --trow: 47px; }
+/* Subway stretches too: 66px = the worst-case (2-line alert) row, so gaps
+   never over-grow on alert days — real overflow stays the trim loop's job. */
+.card--subway .card__body {
+  justify-content: center;
+  row-gap: clamp(10px, calc((100% - var(--n, 3) * 66px) / max(var(--n, 3) - 1, 1)), 20px);
+}
 .card--citibike .card__body,
 .card--tfl .card__body,
 .card--services .card__body {
@@ -997,6 +1003,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
 .editor__blocks.is-resize-gesture .edit-placeholder { z-index: 4; }
 .edit-block__size {
   position: absolute; left: 0; right: 0; bottom: 14px;
+  /* Clear the corner controls (resize handle right, delete badge left) so a
+     wrapped hint never runs underneath them on small tiles. */
+  padding: 0 60px;
   text-align: center; font-size: 18px; color: var(--ink-faint);
   pointer-events: none;
 }

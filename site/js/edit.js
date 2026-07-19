@@ -91,7 +91,12 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     const [mw, mh] = MIN_SIZE[r.id] ?? [1, 1];
     const [Mw] = MAX_SIZE[r.id] ?? [];
     const Mh = caps[r.id];
-    return `${r.w}×${r.h} · min ${mw}×${mh}${Mw && Mw < GRID.cols ? ` · max ${Mw} wide` : ''}${Mh && Mh < GRID.rows ? ` · max ${Mh} tall` : ''}`;
+    const wCap = Mw && Mw < GRID.cols;
+    const hCap = Mh && Mh < GRID.rows;
+    // One compact "max WxH" when both axes cap — the two-phrase form wrapped
+    // into the corner controls on small tiles.
+    const max = wCap && hCap ? ` · max ${Mw}×${Mh}` : wCap ? ` · max ${Mw} wide` : hCap ? ` · max ${Mh} tall` : '';
+    return `${r.w}×${r.h} · min ${mw}×${mh}${max}`;
   };
 
   /* ----- grid operations ----- */

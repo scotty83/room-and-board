@@ -17,7 +17,7 @@ describe('itemCapacity', () => {
     expect(itemCapacity('bus', 4, 8)).toBe(15);
     expect(itemCapacity('lirr', 4, 4)).toBe(4);
     expect(itemCapacity('lirr', 4, 6)).toBe(7);
-    expect(itemCapacity('subway', 4, 4)).toBe(5);
+    expect(itemCapacity('subway', 4, 4)).toBe(6); // optimistic pitch; alert days trim to the badge
     expect(itemCapacity('history', 4, 2)).toBe(2);
     expect(itemCapacity('history', 4, 4)).toBe(5);
     expect(itemCapacity('worldclock', 2, 3)).toBe(5);

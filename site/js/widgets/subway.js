@@ -54,13 +54,19 @@ export function render(el, vm, _cfg) {
         ${row.ok ? '' : '<span class="linestatus__icon" aria-hidden="true">⚠</span>'}
       </div>`;
   const build = (n) => rows.slice(0, n).map(rowHtml).join('');
+  // Stamp the elastic row-gap divisor with every rebuild so the gap math
+  // tracks the rows actually shown as the trim loop moves n.
+  const apply = (n) => {
+    el.style.setProperty('--n', String(n));
+    el.innerHTML = build(n);
+  };
   let shown = rows.length;
-  el.innerHTML = build(shown);
+  apply(shown);
   // Alert rows wrap taller than the capacity pitch budgets; when they push
   // past the body, shed rows to the corner badge (services-style trim) rather
-  // than clipping — the content-aware height caps assume this backstop.
+  // than clipping — the capacity model and height caps assume this backstop.
   if (el.clientHeight > 0) {
-    while (shown > 1 && el.scrollHeight > el.clientHeight) { shown -= 1; el.innerHTML = build(shown); }
+    while (shown > 1 && el.scrollHeight > el.clientHeight) { shown -= 1; apply(shown); }
   }
   setMoreBadge(el, vm.lines.length - shown);
 }

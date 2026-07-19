@@ -26,7 +26,10 @@ const MODELS = {
     Math.max(1, sizeTier(h) === 's'
       ? Math.floor(bodyPx(h) / 36)
       : Math.floor((bodyPx(h) + 8) / 69)),
-  subway: listCapacity(58, 42),
+  // Optimistic 52 pitch (typical Good-Service rows are ~42; wrapped alert
+  // rows are taller, and the renderer's measure-trim sheds those days to the
+  // corner badge) — a 3x3 fits 4 all-quiet lines instead of promising 3.
+  subway: listCapacity(52, 42),
   lirr: listCapacity(80, 56),
   mnr: listCapacity(80, 56),
   njt: listCapacity(80, 56),

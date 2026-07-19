@@ -79,6 +79,7 @@ export function render(el, vm) {
   // split the hour into a fixed-width cell so the colon sits on one axis
   // whether the hour is one or two digits.
   el.classList.toggle('wc-has-day', shown.some((row) => row.dayDiff));
+  el.style.setProperty('--n', String(shown.length)); // elastic row-gap divisor
   el.innerHTML = shown
     .map((row) => {
       const ci = row.time.indexOf(':');

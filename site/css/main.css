@@ -92,6 +92,12 @@ html, body {
 /* Day offset is information, not a warning — quiet dim, and 15px meets the type floor. */
 .wc-row__day { flex: none; width: 0; overflow: hidden; font-size: 15px; color: var(--ink-dim); font-weight: 600; text-align: left; transform: translateY(-2px); }
 .wc-has-day .wc-row__day { width: 30px; margin-left: 4px; }
+/* Bounded elastic rows, same pattern as markets: gaps absorb slack up to a
+   cap, then the list centers. --n stamped by the renderer. */
+.card--worldclock .card__body {
+  justify-content: center;
+  row-gap: clamp(10px, calc((100% - var(--n, 5) * 35px) / max(var(--n, 5) - 1, 1)), 26px);
+}
 
 /* ---------- weather ---------- */
 .alert { display: flex; gap: 10px; align-items: center; background: var(--warn-tint); color: var(--warn); border-radius: 10px; padding: 6px 14px; font-size: 20px; font-weight: 600; }
@@ -839,13 +845,18 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    (price 24/name 20, tighter leading, 8px gaps) so a 4-tall card fits five
    tickers — barely below the classic scale, not a visible shrink. t-s keeps
    its own compact set. */
-.card--markets:not(.t-s) .indexes { row-gap: 8px; }
+
 .card--markets:not(.t-s) .index__info { line-height: 1.25; }
 .card--markets:not(.t-s) .index__price { font-size: 24px; }
 .card--markets:not(.t-s) .index__name { font-size: 20px; }
-/* Any leftover height spreads BETWEEN the rows (departure-board style)
-   instead of pooling as dead space under the last ticker. */
-.card--markets .indexes { flex: 1; align-content: space-evenly; }
+/* Bounded elastic rows: leftover height grows the gaps (departure-board
+   style) up to a cap, then the block centers — the content-aware max height
+   keeps the slack sub-row in practice. --n stamped by the renderer. */
+.card--markets .indexes {
+  flex: 1; align-content: center; --mrow: 61px;
+  row-gap: clamp(8px, calc((100% - var(--n, 3) * var(--mrow)) / max(var(--n, 3) - 1, 1)), 24px);
+}
+.card--markets.t-s .indexes { --mrow: 33px; }
 /* History when shallow or narrow: clamp each event to two lines so the rows
    stay bounded and never overflow (narrow cards wrap text into tall rows) */
 .card--history.t-s .history__text,

@@ -337,6 +337,27 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   });
 });
 
+describe('content-aware layout caps', () => {
+  it('shrinks an over-tall worldclock/markets on load to the content fit', () => {
+    const cfg = normalizeConfig({
+      layout: [
+        { id: 'worldclock', x: 0, y: 0, w: 3, h: 5 },
+        { id: 'markets', x: 3, y: 0, w: 3, h: 5 },
+      ],
+      // 5 default cities and 3 default tickers -> both cap at 3 tall
+    });
+    expect(cfg.layout.find((r) => r.id === 'worldclock').h).toBe(3);
+    expect(cfg.layout.find((r) => r.id === 'markets').h).toBe(3);
+  });
+  it('a longer list raises the cap', () => {
+    const cfg = normalizeConfig({
+      layout: [{ id: 'markets', x: 0, y: 0, w: 3, h: 4 }],
+      markets: { symbols: ['^DJI', '^IXIC', '^GSPC', 'AAPL', 'MSFT'] },
+    });
+    expect(cfg.layout.find((r) => r.id === 'markets').h).toBe(4);
+  });
+});
+
 describe('lirr origin', () => {
   it('defaults to penn and validates the terminal set', () => {
     expect(normalizeConfig({}).lirr.origin).toBe('penn');

@@ -1,6 +1,8 @@
 // Pure grid geometry for the 12×8 dashboard layout. Everything here is
 // side-effect free; edit.js and config.js consume it.
 
+import { itemCapacity } from './capacity.js';
+
 // 12x8: cells ~135x92 logical px. v2 layouts (6x4) migrate by doubling.
 export const GRID = { cols: 12, rows: 8 };
 
@@ -45,16 +47,18 @@ export const MIN_SIZE = {
   services: [3, 2],
 };
 
-// Nine widgets in four 3-wide columns, tiling all 96 cells (Sean's board
-// arrangement, 2026-07-03). Every size is overflow-audited.
+// Nine widgets in four 3-wide columns, tiling all 96 cells. Re-tiled
+// 2026-07-19 for the content-aware height caps: worldclock (5 default
+// cities) and markets (3 default tickers) each cap at 3 tall, so weather
+// and art absorb the freed rows. Every size is overflow-audited.
 export const DEFAULT_LAYOUT = Object.freeze([
-  { id: 'weather', x: 0, y: 0, w: 3, h: 4 },
+  { id: 'weather', x: 0, y: 0, w: 3, h: 5 },
   { id: 'worldcup', x: 3, y: 0, w: 3, h: 3 },
-  { id: 'worldclock', x: 6, y: 0, w: 3, h: 4 },
+  { id: 'worldclock', x: 6, y: 0, w: 3, h: 3 },
   { id: 'subway', x: 9, y: 0, w: 3, h: 5 },
   { id: 'sports', x: 3, y: 3, w: 3, h: 3 },
-  { id: 'markets', x: 0, y: 4, w: 3, h: 4 },
-  { id: 'art', x: 6, y: 4, w: 3, h: 4 },
+  { id: 'markets', x: 0, y: 5, w: 3, h: 3 },
+  { id: 'art', x: 6, y: 3, w: 3, h: 5 },
   { id: 'lirr', x: 9, y: 5, w: 3, h: 3 },
   { id: 'history', x: 3, y: 6, w: 3, h: 2 },
 ].map(Object.freeze));
@@ -69,13 +73,41 @@ export const MAX_SIZE = {
   subway: [3, GRID.rows],
   services: [3, GRID.rows],
 };
-const maxOf = (id) => MAX_SIZE[id] ?? [GRID.cols, GRID.rows];
+
+// Content-aware max heights: for widgets whose list is bounded by config, the
+// cap is the SMALLEST height whose capacity already shows everything the user
+// follows — taller sizes can only add dead air (the bounded elastic row gaps
+// absorb the sub-row remainder). The fit search starts at the height where the
+// widget's full presentation lives: markets starts at h=3 because the h≤2
+// shallow tier drops sparklines, and capping there would lock the richer view
+// out. Returns a {id: maxH} map for the layout functions' optional `caps`
+// parameter; widgets absent from the map keep their static bounds.
+export function contentMaxH(cfg) {
+  const caps = {};
+  const fit = (id, n, fromH) => {
+    for (let h = fromH; h <= GRID.rows; h++) {
+      if ((itemCapacity(id, MIN_SIZE[id][0], h) ?? Infinity) >= n) return h;
+    }
+    return GRID.rows;
+  };
+  const cities = cfg?.worldclock?.cities?.length;
+  if (cities) caps.worldclock = fit('worldclock', cities, MIN_SIZE.worldclock[1]);
+  const symbols = cfg?.markets?.symbols?.length;
+  if (symbols) caps.markets = fit('markets', symbols, 3);
+  return caps;
+}
+
+const maxOf = (id, caps) => {
+  const [Mw, Mh] = MAX_SIZE[id] ?? [GRID.cols, GRID.rows];
+  const dyn = caps?.[id];
+  return [Mw, dyn ? Math.min(Mh, dyn) : Mh];
+};
 
 const int = (v, fallback = 0) => (Number.isInteger(v) ? v : fallback);
 
-export function clampRect(rect) {
+export function clampRect(rect, caps) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  const [Mw, Mh] = maxOf(rect.id);
+  const [Mw, Mh] = maxOf(rect.id, caps);
   let w = Math.min(Math.max(int(rect.w, mw), mw), Mw, GRID.cols);
   let h = Math.min(Math.max(int(rect.h, mh), mh), Mh, GRID.rows);
   let x = Math.min(Math.max(int(rect.x), 0), GRID.cols - w);
@@ -87,9 +119,9 @@ export function rectsOverlap(a, b) {
   return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 }
 
-export function canPlace(layout, rect) {
+export function canPlace(layout, rect, caps) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  const [Mw, Mh] = maxOf(rect.id);
+  const [Mw, Mh] = maxOf(rect.id, caps);
   if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return false;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return false;
@@ -97,28 +129,28 @@ export function canPlace(layout, rect) {
   return !layout.some((r) => r.id !== rect.id && rectsOverlap(r, rect));
 }
 
-export function firstFit(layout, id, [w, h]) {
+export function firstFit(layout, id, [w, h], caps) {
   for (let y = 0; y <= GRID.rows - h; y++) {
     for (let x = 0; x <= GRID.cols - w; x++) {
       const rect = { id, x, y, w, h };
-      if (canPlace(layout, rect)) return rect;
+      if (canPlace(layout, rect, caps)) return rect;
     }
   }
   return null;
 }
 
-export function normalizeLayout(raw) {
+export function normalizeLayout(raw, caps) {
   if (!Array.isArray(raw) || raw.length === 0) return [...DEFAULT_LAYOUT];
   const out = [];
   const seen = new Set();
   for (const entry of raw) {
     if (!entry || !(entry.id in MIN_SIZE) || seen.has(entry.id)) continue;
     seen.add(entry.id);
-    const rect = clampRect(entry);
-    if (canPlace(out, rect)) {
+    const rect = clampRect(entry, caps);
+    if (canPlace(out, rect, caps)) {
       out.push(rect);
     } else {
-      const placed = firstFit(out, rect.id, [rect.w, rect.h]) ?? firstFit(out, rect.id, MIN_SIZE[rect.id]);
+      const placed = firstFit(out, rect.id, [rect.w, rect.h], caps) ?? firstFit(out, rect.id, MIN_SIZE[rect.id], caps);
       if (placed) out.push(placed);
     }
   }
@@ -129,9 +161,9 @@ export function normalizeLayout(raw) {
 // shifted along the drag direction until clear; if that runs off the grid,
 // it relocates first-fit. Cascades through chains. Returns a fresh layout,
 // or null when the arrangement is unsolvable. Never mutates the input.
-export function placeWithPush(layout, rect, dir = { dx: 0, dy: 0 }) {
+export function placeWithPush(layout, rect, dir = { dx: 0, dy: 0 }, caps) {
   const [mw, mh] = MIN_SIZE[rect.id] ?? [1, 1];
-  const [Mw, Mh] = maxOf(rect.id);
+  const [Mw, Mh] = maxOf(rect.id, caps);
   if (rect.w < mw || rect.h < mh || rect.w > Mw || rect.h > Mh) return null;
   if (rect.x < 0 || rect.y < 0 || rect.x + rect.w > GRID.cols || rect.y + rect.h > GRID.rows) {
     return null;

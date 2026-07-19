@@ -5,7 +5,7 @@
 // (green = will commit, red = unsolvable) and neighbor blocks preview their
 // pushed positions live. The drag ghost moves via transform only.
 
-import { GRID, MIN_SIZE, MAX_SIZE, firstFit, placeWithPush } from './layout.js';
+import { GRID, MIN_SIZE, MAX_SIZE, firstFit, placeWithPush, contentMaxH } from './layout.js';
 import { capacityLabel } from './capacity.js';
 import { WIDGET_GROUPS } from './config.js';
 
@@ -82,12 +82,16 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     return { w: rect.width / GRID.cols, h: rect.height / GRID.rows };
   };
 
+  // Content-aware height caps (worldclock/markets): computed once — the
+  // followed lists can't change while edit mode is open.
+  const caps = contentMaxH(cfg);
   const rectOf = (id) => layout.find((r) => r.id === id);
   const capOf = (id, w, h) => capacityLabel(id, w, h, cfg) ?? '';
   const sizeLabel = (r) => {
     const [mw, mh] = MIN_SIZE[r.id] ?? [1, 1];
     const [Mw] = MAX_SIZE[r.id] ?? [];
-    return `${r.w}×${r.h} · min ${mw}×${mh}${Mw && Mw < GRID.cols ? ` · max ${Mw} wide` : ''}`;
+    const Mh = caps[r.id];
+    return `${r.w}×${r.h} · min ${mw}×${mh}${Mw && Mw < GRID.cols ? ` · max ${Mw} wide` : ''}${Mh && Mh < GRID.rows ? ` · max ${Mh} tall` : ''}`;
   };
 
   /* ----- grid operations ----- */
@@ -101,11 +105,11 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
 
   const move = (id, x, y) => {
     const start = rectOf(id);
-    return commit(placeWithPush(layout, { ...start, x, y }, { dx: x - start.x, dy: y - start.y }));
+    return commit(placeWithPush(layout, { ...start, x, y }, { dx: x - start.x, dy: y - start.y }, caps));
   };
   const resize = (id, w, h) => {
     const start = rectOf(id);
-    return commit(placeWithPush(layout, { ...start, w, h }, { dx: w - start.w, dy: h - start.h }));
+    return commit(placeWithPush(layout, { ...start, w, h }, { dx: w - start.w, dy: h - start.h }, caps));
   };
 
   function remove(id) {
@@ -114,7 +118,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
   }
 
   function add(id) {
-    const rect = firstFit(layout, id, MIN_SIZE[id]);
+    const rect = firstFit(layout, id, MIN_SIZE[id], caps);
     if (!rect) return false;
     layout = [...layout, rect];
     render();
@@ -146,7 +150,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
     // wrapped the tray to 5 rows and squeezed the grid preview above it.
     let anyBlocked = false;
     const chip = (id) => {
-      const fits = firstFit(layout, id, MIN_SIZE[id]) !== null;
+      const fits = firstFit(layout, id, MIN_SIZE[id], caps) !== null;
       if (!fits) anyBlocked = true;
       const [mw, mh] = MIN_SIZE[id];
       // Enabled chips are just the title; the min-size hint shows only on blocked
@@ -233,7 +237,7 @@ export function openEditMode(cfg, { root, onDone, onCancel, cellSize } = {}) {
       if (key === lastKey) return;
       lastKey = key;
       const dir = { dx: target.x - start.x + (target.w - start.w), dy: target.y - start.y + (target.h - start.h) };
-      const preview = placeWithPush(startLayout, target, dir);
+      const preview = placeWithPush(startLayout, target, dir, caps);
       if (preview) {
         lastValid = preview;
         previewPositions(preview, id);

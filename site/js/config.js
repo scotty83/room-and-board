@@ -7,7 +7,7 @@
 // the default location moved to ZIP 10001. v1 configs migrate automatically.
 // `widgets` survives as a derived convenience array (layout ids, in order).
 
-import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout } from './layout.js';
+import { DEFAULT_LAYOUT, normalizeLayout, migrateWidgetsToLayout, contentMaxH } from './layout.js';
 import { TFL_TUBE_IDS, TFL_LINE_IDS } from './tfl-lines.js';
 import { CHART_TOPIC_SLUGS } from './widgets/chart-topics.js';
 import { DEFAULT_SCHEDULE } from './modes.js';
@@ -164,13 +164,20 @@ export function normalizeConfig(raw) {
       ? raw.layout.map((r) => ({ id: r.id, x: r.x * 2, y: r.y * 2, w: r.w * 2, h: r.h * 2 }))
       : raw.layout
     : null;
+  // Content-aware height caps from the RAW lists (validation only ever drops
+  // entries, so a raw overcount can only make a cap more permissive); absent
+  // lists fall back to the defaults the normalized config will carry.
+  const contentCaps = contentMaxH({
+    worldclock: { cities: Array.isArray(raw.worldclock?.cities) && raw.worldclock.cities.length ? raw.worldclock.cities : DEFAULT_CONFIG.worldclock.cities },
+    markets: { symbols: Array.isArray(raw.markets?.symbols) && raw.markets.symbols.length ? raw.markets.symbols : DEFAULT_CONFIG.markets.symbols },
+  });
   let layout =
     // An explicitly-present layout (even empty — the user removed every widget)
     // is honored; only a truly ABSENT layout falls back to the legacy widgets
     // list or the default. Previously `[]` failed the length check and silently
     // resurrected the stale widgets list at scrambled default positions.
     Array.isArray(rawLayout)
-      ? normalizeLayout(rawLayout)
+      ? normalizeLayout(rawLayout, contentCaps)
       : Array.isArray(raw.widgets)
         ? migrateWidgetsToLayout(raw.widgets)
         : [...DEFAULT_LAYOUT];

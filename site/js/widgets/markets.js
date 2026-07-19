@@ -81,7 +81,7 @@ export function render(el, vm, cfg) {
   // the same column tracks — otherwise the auto-sized delta column would shift
   // each row's sparkline independently (594.83 vs 0.01 wide deltas).
   el.innerHTML = shown.length
-    ? '<div class="indexes">' + shown
+    ? `<div class="indexes" style="--n:${shown.length}">` + shown
         .map((ix) => {
           const up = ix.change >= 0;
           return `<div class="index">

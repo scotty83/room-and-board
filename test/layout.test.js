@@ -10,6 +10,7 @@ import {
   normalizeLayout,
   migrateWidgetsToLayout,
   placeWithPush,
+  contentMaxH,
 } from '../site/js/layout.js';
 
 const area = (r) => r.w * r.h;
@@ -50,6 +51,33 @@ describe('clampRect', () => {
     expect(clampRect({ id: 'services', x: 0, y: 0, w: 5, h: 3 })).toEqual({ id: 'services', x: 0, y: 0, w: 3, h: 3 });
     expect(canPlace([], { id: 'subway', x: 0, y: 0, w: 4, h: 4 })).toBe(false);
     expect(canPlace([], { id: 'services', x: 0, y: 0, w: 3, h: 3 })).toBe(true);
+  });
+});
+
+describe('contentMaxH (content-aware height caps)', () => {
+  const cfgWith = (cities, symbols) => ({
+    worldclock: { cities: Array.from({ length: cities }, (_, i) => ({ label: `C${i}`, zone: 'Asia/Tokyo' })) },
+    markets: { symbols: Array.from({ length: symbols }, (_, i) => `T${i}`) },
+  });
+  it('caps at the smallest height whose capacity fits the followed list', () => {
+    expect(contentMaxH(cfgWith(5, 3))).toEqual({ worldclock: 3, markets: 3 });
+    expect(contentMaxH(cfgWith(6, 5))).toEqual({ worldclock: 4, markets: 4 });
+    expect(contentMaxH(cfgWith(10, 7))).toEqual({ worldclock: 5, markets: 6 });
+  });
+  it('markets never caps below h=3 — the shallow tier drops sparklines', () => {
+    expect(contentMaxH(cfgWith(5, 1)).markets).toBe(3);
+  });
+  it('empty cfg yields no caps (static bounds apply)', () => {
+    expect(contentMaxH({})).toEqual({});
+    expect(contentMaxH(undefined)).toEqual({});
+  });
+  it('clampRect/canPlace honor the caps; omitting them keeps the old bounds', () => {
+    const caps = contentMaxH(cfgWith(5, 3));
+    expect(clampRect({ id: 'worldclock', x: 0, y: 0, w: 3, h: 5 }, caps).h).toBe(3);
+    expect(clampRect({ id: 'worldclock', x: 0, y: 0, w: 3, h: 5 }).h).toBe(5);
+    expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 3, h: 4 }, caps)).toBe(false);
+    expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 3, h: 3 }, caps)).toBe(true);
+    expect(canPlace([], { id: 'markets', x: 0, y: 0, w: 3, h: 4 })).toBe(true);
   });
 });
 

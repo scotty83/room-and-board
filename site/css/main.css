@@ -1172,7 +1172,9 @@ body.theme-momentum .rows--pill .row--tap.is-selected {
    full three-line teams (name+record / matchup / Last) without clipping any
    data — worst-case 3 rows measured 233px in a 234px body before this, too
    tight for the board's taller CiscoSansTT metrics. ~9px/row of headroom. */
-.card--sports.t-m .card__body { gap: 8px; }
+/* (t-m body gap removed: it outranked the elastic row-gap clamp above and
+   froze My Teams at 8px gaps — the clamp's 10px floor still fits 3 worst-case
+   rows at 3x3.) */
 .card--sports.t-m .team { min-height: 0; gap: 12px; }
 .card--sports.t-m .team__info { line-height: 1.2; }
 .card--sports.t-m .team__name { font-size: 20px; }

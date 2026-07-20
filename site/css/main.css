@@ -473,8 +473,11 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);
 }
-/* Ambient mode: the FABs align with the info strip sitting at the bottom. */
+/* Ambient mode: the FABs align with the info strip sitting at the bottom, and
+   the Edit-layout pencil hides — there's no dashboard to arrange, so only the
+   settings gear shows. */
 body.mode-ambient .gear { bottom: 7px; }
+body.mode-ambient .gear--edit { display: none; }
 
 /* ---------- settings overlay ---------- */
 .settings {

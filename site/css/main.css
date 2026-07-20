@@ -646,7 +646,9 @@ body.mode-ambient .gear { bottom: 7px; }
 .row--nav { border: none; cursor: pointer; width: 100%; max-width: 860px; color: var(--ink); font-size: 23px; text-align: left; }
 .row--nav:active { outline: 2px solid var(--accent); }
 .row__label--dim { color: var(--ink-dim); }
-.row__value { margin-left: auto; font-weight: 600; display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+/* Explicit size so a plain .row value matches a .row--nav value (which
+   inherited 23px from the button) — pairs with the 24px .row__label. */
+.row__value { margin-left: auto; font-size: 24px; font-weight: 600; display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
 .row__chev { color: var(--ink-faint); font-size: 22px; }
 .row .btn--ghost { min-width: 0; min-height: 48px; } /* compact in-row action (Remove) */
 .settings__pane .row--nav + .btn--ghost { margin-top: 10px; } /* Display's Remove-name breathes below its row */

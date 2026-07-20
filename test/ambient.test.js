@@ -150,17 +150,24 @@ describe('stripData', () => {
 describe('stripHtml', () => {
   const now = new Date('2026-07-03T21:30:00');
   it('always renders the clock, and temp/transit only when present', () => {
-    const bare = stripHtml({ temp: null, transit: [] }, now);
+    const bare = stripHtml({ temp: null, cond: null, transit: [] }, now);
     expect(bare).toContain('strip__time');
     expect(bare).toContain('9:30 PM');
-    expect(bare).not.toContain('strip__temp');
-    const full = stripHtml({ temp: 84, transit: [{ label: 'LIRR · Mineola', min: 8 }] }, now);
+    expect(bare).not.toContain('strip__wx');
+    const full = stripHtml({ temp: 84, cond: 'Clear', transit: [{ label: 'LIRR · Mineola', min: 8 }] }, now);
     expect(full).toContain('84°');
+    expect(full).toContain('Clear'); // conditions, not just temp
     expect(full).toContain('LIRR · Mineola');
     expect(full).toContain('<b>8 min</b>');
   });
+  it('omits the time under a clock-face screensaver (no duplication)', () => {
+    const noTime = stripHtml({ temp: 72, cond: 'Clear', transit: [] }, now, { showTime: false });
+    expect(noTime).not.toContain('strip__time');
+    expect(noTime).toContain('72°'); // weather still shows
+    expect(noTime).toContain('Clear');
+  });
   it('escapes upstream label text', () => {
-    const out = stripHtml({ temp: null, transit: [{ label: 'NJT · <img src=x onerror=1>', min: 3 }] }, now);
+    const out = stripHtml({ temp: null, cond: null, transit: [{ label: 'NJT · <img src=x onerror=1>', min: 3 }] }, now);
     expect(out).not.toContain('<img');
     expect(out).toContain('&#60;img');
   });
@@ -278,6 +285,12 @@ describe('ambientSource', () => {
 });
 
 describe('stripData temperature units', () => {
+  it('carries the weather condition alongside the temp', () => {
+    const caches = { weather: { now: { temp: 84, label: 'Mostly clear' } } };
+    expect(stripData(caches, { widgets: ['weather'] }).cond).toBe('Mostly clear');
+    expect(stripData({}, { widgets: [] }).cond).toBeNull(); // no weather -> no cond
+  });
+
   it('converts the strip temp to the configured unit', () => {
     const caches = { weather: { now: { temp: 84 } } };
     expect(stripData(caches, { widgets: ['weather'], loc: { units: 'C' } }).temp).toBe(29);

@@ -406,13 +406,14 @@ html, body {
   /* Original ~70px translucent info band at bottom:0, so its bottom edge meets
      the RoomOS bar (which sits just below the viewport). Not stretched. */
   position: absolute; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; gap: 36px;
+  display: flex; align-items: center; justify-content: center; gap: 36px;
   padding: 18px 48px;
   background: rgba(0, 0, 0, 0.65);
   font-size: 24px;
 }
 .strip__time { font-weight: 700; font-size: 28px; font-variant-numeric: tabular-nums; }
-.strip__temp { color: var(--accent); font-weight: 600; }
+.strip__wx { color: var(--ink-mid); font-variant-numeric: tabular-nums; }
+.strip__wx b { color: var(--ink); font-weight: 600; }
 .strip__transit { color: var(--ink-dim); }
 .strip__transit b { color: var(--ink); font-variant-numeric: tabular-nums; }
 body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }

@@ -11,6 +11,7 @@ export function stripData(caches, cfg) {
   const rawF = enabled.has('weather') && caches.weather ? caches.weather.now?.temp ?? null : null;
   const temp = rawF === null ? null
     : (cfg.loc?.units === 'C' ? Math.round((rawF - 32) * 5 / 9) : rawF);
+  const cond = temp === null ? null : (caches.weather.now?.label ?? null);
   const transit = [];
 
   if (enabled.has('lirr') && caches.lirr) {
@@ -25,14 +26,16 @@ export function stripData(caches, cfg) {
     const t = caches.njt.trains?.[0];
     if (t) transit.push({ label: `NJT · ${t.dest}${t.track ? ` · Tk ${t.track}` : ''}`, min: t.min });
   }
-  return { temp, transit };
+  return { temp, cond, transit };
 }
 
 // Strip markup shared by ambient mode (#strip) and the art viewer's overlay.
-export function stripHtml(data, now) {
+// showTime is suppressed under a clock-face screensaver — the clock already
+// IS the time, so repeating it in the strip is pure duplication.
+export function stripHtml(data, now, { showTime = true } = {}) {
   return `
-    <span class="strip__time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
-    ${data.temp !== null ? `<span class="strip__temp">${data.temp}°</span>` : ''}
+    ${showTime ? `<span class="strip__time">${now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>` : ''}
+    ${data.temp !== null ? `<span class="strip__wx"><b>${data.temp}°</b>${data.cond ? ` ${escapeHtml(data.cond)}` : ''}</span>` : ''}
     ${data.transit
       .map((t) => `<span class="strip__transit">${escapeHtml(t.label)} <b>${t.min} min</b></span>`)
       .join('')}`;

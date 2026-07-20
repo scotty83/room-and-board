@@ -1123,7 +1123,8 @@ async function openSsPreview(source) {
   const stripPart = state.cfg.screensaver?.strip === false ? '' : (() => {
     const caches = {};
     for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
-    return `<div class="strip">${stripHtml(stripData(caches, state.cfg), new Date())}</div>`;
+    const showTime = !['clock', 'worldclocks', 'clockrow'].includes(source);
+    return `<div class="strip">${stripHtml(stripData(caches, state.cfg), new Date(), { showTime })}</div>`;
   })();
   const hint = stripPart + '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
   try {

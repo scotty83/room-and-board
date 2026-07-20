@@ -176,7 +176,10 @@ function renderStrip() {
         cfg,
       )
     : stripData(caches, cfg);
-  $('#strip').innerHTML = stripHtml(data, new Date());
+  // The clock-face screensavers already show the time large; drop it from the
+  // strip so it isn't printed twice.
+  const showTime = !CLOCK_SOURCES.has(ambientSource(cfg));
+  $('#strip').innerHTML = stripHtml(data, new Date(), { showTime });
 }
 
 async function startSlideshow() {

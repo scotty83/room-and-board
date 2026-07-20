@@ -152,8 +152,15 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
     next.setAttribute('data-active', '');
     layers[active].removeAttribute('data-active');
     active = 1 - active;
-    caption.innerHTML = `<span class="slide-caption__title">${escapeHtml(item.title)}</span>
-      <span class="slide-caption__meta">${captionMeta(item)}</span>`;
+    // Only emit the pieces that exist — a titleless photo (common for GDrive
+    // folders) leaves the caption element empty, which `:empty` hides so the
+    // padded background box never shows as a stray grey rectangle.
+    const meta = captionMeta(item);
+    const parts = [];
+    if (item.title) parts.push(`<span class="slide-caption__title">${escapeHtml(item.title)}</span>`);
+    if (meta) parts.push(`<span class="slide-caption__meta">${meta}</span>`);
+    parts.push(captionDesc(item));
+    caption.innerHTML = parts.filter(Boolean).join('');
   }
 
   function preload(item, done) {

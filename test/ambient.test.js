@@ -34,6 +34,20 @@ describe('createSlideshow', () => {
     vi.unstubAllGlobals();
   });
 
+  it('leaves the caption empty for a titleless photo (no stray grey box)', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(
+      [{ img: 'x.jpg', title: '', ar: 1.5 }], // GDrive-style: no title, no artist
+      host,
+      { intervalMs: 1000, random: () => 0 },
+    );
+    show.start();
+    await vi.advanceTimersByTimeAsync(0);
+    const cap = host.querySelector('.slide-caption');
+    expect(cap.children.length).toBe(0); // no empty spans -> :empty CSS hides it
+    expect(cap.textContent).toBe('');
+  });
+
   it('preloads, alternates two layers and wraps with reshuffle', async () => {
     const host = document.createElement('div');
     const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0.4 });

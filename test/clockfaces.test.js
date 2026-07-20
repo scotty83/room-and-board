@@ -72,8 +72,22 @@ describe('clockFaceHtml', () => {
     const many = { worldclock: { cities: zones.map((z, i) => ({ label: `C${i}`, zone: z })) } };
     const html = clockFaceHtml('worldclocks', many, T, NY); // NY listed -> home, no injected Local
     expect((html.match(/cf-dial__svg/g) || []).length).toBe(10); // all ten, not capped at five
-    expect(html).toContain('--dial:200px'); // scaled for the large grid
+    expect(html).toContain('--dial:245px'); // scaled to fit five per row
     expect(html).toContain('cf-dial--home');
+    expect((html.match(/cf-drow/g) || []).length).toBe(2); // two symmetric rows of five
+  });
+
+  it('worldclocks: balances into symmetric rows with the extra on top', () => {
+    // 9 dials -> 5 on top, 4 below. NY is listed so no Local injection.
+    const zones = ['Pacific/Honolulu', 'America/Los_Angeles', 'America/Denver', 'America/New_York',
+      'America/Sao_Paulo', 'Europe/London', 'Africa/Nairobi', 'Asia/Kolkata', 'Asia/Tokyo'];
+    const nine = { worldclock: { cities: zones.map((z, i) => ({ label: `C${i}`, zone: z })) } };
+    const html = clockFaceHtml('worldclocks', nine, T, NY);
+    expect((html.match(/cf-dial__svg/g) || []).length).toBe(9);
+    const rows = html.split('cf-drow').slice(1);
+    expect(rows.length).toBe(2);
+    expect((rows[0].match(/cf-dial__svg/g) || []).length).toBe(5); // top: 5
+    expect((rows[1].match(/cf-dial__svg/g) || []).length).toBe(4); // bottom: 4
   });
 
   it('worldclocks: caps at ten dials, dropping the farthest city when Local is injected', () => {

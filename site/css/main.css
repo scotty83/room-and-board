@@ -1169,8 +1169,8 @@ body.mode-ambient .gear { bottom: 7px; }
 .cf-ampm { font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', sans-serif; font-weight: 300; font-size: 64px; color: var(--ink-dim); }
 .cf-time--row + .cf-date { margin-top: 2px; }
 .cf-date { font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', sans-serif; font-weight: 300; font-size: 44px; color: var(--ink-mid); margin-top: 8px; }
-.cf-dials { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
-  column-gap: var(--dgap, 110px); row-gap: 46px; max-width: 1780px; margin: 0 auto; }
+.cf-dials { display: flex; flex-direction: column; align-items: center; row-gap: 44px; }
+.cf-drow { display: flex; justify-content: center; align-items: flex-start; column-gap: var(--dgap, 110px); }
 .cf-dial { display: flex; flex-direction: column; align-items: center; gap: 18px; }
 .cf-dial__svg { width: var(--dial, 330px); height: var(--dial, 330px); }
 .cf-dial__name { font-weight: 300; font-size: 34px; color: rgba(255, 255, 255, 0.72); }
@@ -1178,7 +1178,8 @@ body.mode-ambient .gear { bottom: 7px; }
 .cf-dial--home .cf-dial__name { color: var(--ink); }
 .cf-dial__time { font-weight: 300; font-size: 26px; color: var(--ink-dim); margin-top: 4px; font-variant-numeric: tabular-nums; }
 .cf-dial__sub { color: var(--ink-faint); }
-.cf-cities { display: flex; flex-wrap: wrap; justify-content: center; column-gap: 72px; row-gap: 30px; margin-top: 84px; max-width: 1780px; }
+.cf-cities { display: flex; flex-direction: column; align-items: center; row-gap: 30px; margin-top: 84px; }
+.cf-crow { display: flex; justify-content: center; column-gap: 72px; }
 .cf-city { text-align: center; }
 .cf-city__name { font-weight: 300; font-size: 26px; color: var(--ink-dim); }
 .cf-city__time { font-weight: 300; font-size: 44px; margin-top: 6px; color: rgba(255, 255, 255, 0.85); font-variant-numeric: tabular-nums; }

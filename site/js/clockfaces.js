@@ -55,13 +55,21 @@ function worldCities(cfg, now, localZone) {
     .slice(0, MAX_DIALS);
 }
 
-// Dial diameter + column gap shrink as the grid grows so up to ten dials wrap
-// into two clean rows (five per row) instead of overflowing 1920px.
-function gridScale(n) {
-  if (n <= 4) return { dial: 330, gap: 110 };
-  if (n <= 6) return { dial: 280, gap: 80 };
-  if (n <= 8) return { dial: 235, gap: 64 };
-  return { dial: 200, gap: 52 };
+// Split n items into balanced rows so a wrapped grid is symmetric: one row up
+// to `solo`, otherwise two rows with the extra on TOP for odd counts
+// (9 -> [5,4], 7 -> [4,3], 10 -> [5,5]).
+function planRows(n, solo) {
+  if (n <= solo) return [n];
+  const top = Math.ceil(n / 2);
+  return [top, n - top];
+}
+
+// Dial diameter + column gap keyed to the BUSIEST row, so rows stay a
+// consistent size and up to five dials fit a 1920px row.
+function gridScale(perRow) {
+  if (perRow <= 3) return { dial: 330, gap: 104 };
+  if (perRow <= 4) return { dial: 285, gap: 78 };
+  return { dial: 245, gap: 60 };
 }
 
 // Minimal analog dial, no second hand. Night dials dim their ink and drop the
@@ -117,8 +125,9 @@ export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZo
   if (source === 'worldclocks') {
     const local = zoneParts(now, localZone);
     const list = worldCities(cfg, now, localZone);
-    const { dial, gap } = gridScale(list.length);
-    const dials = list.map(({ label, zone, home }) => {
+    const rows = planRows(list.length, 5);
+    const { dial, gap } = gridScale(Math.max(...rows));
+    const dialCell = ({ label, zone, home }) => {
       const t = zoneParts(now, zone);
       const night = isNight(t.h);
       return `<div class="cf-dial ${night ? 'cf-dial--night' : ''}${home ? ' cf-dial--home' : ''}">
@@ -126,28 +135,40 @@ export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZo
         <div class="cf-dial__name">${escapeHtml(label)}</div>
         <div class="cf-dial__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}${t.day !== local.day ? `<span class="cf-dial__sub"> ${dayDiff(t.day, local.day)}d</span>` : ''}</div>
       </div>`;
+    };
+    let i = 0;
+    const rowsHtml = rows.map((count) => {
+      const cells = list.slice(i, i + count).map(dialCell).join('');
+      i += count;
+      return `<div class="cf-drow">${cells}</div>`;
     }).join('');
-    return `<div class="cf cf--world"><div class="cf-dials" style="--dial:${dial}px;--dgap:${gap}px">${dials}</div></div>`;
+    return `<div class="cf cf--world"><div class="cf-dials" style="--dial:${dial}px;--dgap:${gap}px">${rowsHtml}</div></div>`;
   }
   if (source === 'clockrow') {
     const local = zoneParts(now, localZone);
     // The hero IS local time, so the row skips local-zone cities and runs
     // west→east like the dials.
-    const row = cities(cfg)
+    const list = cities(cfg)
       .filter((c) => c.zone !== localZone)
       .map((c) => ({ ...c, off: zoneOffsetMin(now, c.zone) }))
       .sort((a, b) => a.off - b.off)
-      .slice(0, 9) // hero is local; up to 9 other cities, wrapping
-      .map(({ label, zone }) => {
-        const t = zoneParts(now, zone);
-        const night = isNight(t.h);
-        return `<div class="cf-city ${night ? 'cf-city--night' : ''}">
-          <div class="cf-city__name">${escapeHtml(label)}</div>
-          <div class="cf-city__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}</div>
-          ${t.day !== local.day ? `<div class="cf-city__sub">${dayDiff(t.day, local.day)} day</div>` : ''}
-        </div>`;
-      }).join('');
-    return `<div class="cf cf--row">${heroHtml(now, cfg, 'cf-time--row')}<div class="cf-cities">${row}</div></div>`;
+      .slice(0, 9); // hero is local; up to 9 other cities
+    const cityCell = ({ label, zone }) => {
+      const t = zoneParts(now, zone);
+      const night = isNight(t.h);
+      return `<div class="cf-city ${night ? 'cf-city--night' : ''}">
+        <div class="cf-city__name">${escapeHtml(label)}</div>
+        <div class="cf-city__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}</div>
+        ${t.day !== local.day ? `<div class="cf-city__sub">${dayDiff(t.day, local.day)} day</div>` : ''}
+      </div>`;
+    };
+    let j = 0;
+    const rowsHtml = planRows(list.length, 5).map((count) => {
+      const cells = list.slice(j, j + count).map(cityCell).join('');
+      j += count;
+      return `<div class="cf-crow">${cells}</div>`;
+    }).join('');
+    return `<div class="cf cf--row">${heroHtml(now, cfg, 'cf-time--row')}<div class="cf-cities">${rowsHtml}</div></div>`;
   }
   // 'clock' — the digital hero (also the universal fallback face).
   return `<div class="cf">${heroHtml(now, cfg, '')}</div>`;

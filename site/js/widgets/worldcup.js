@@ -64,9 +64,13 @@ function matchRow(m, nowMs) {
   </div>${m.note ? `<div class="wc-match__note">${escapeHtml(m.note)}</div>` : ''}`;
 }
 
+// Inline SVG flag: renders instantly with no emoji/font dependency (RoomOS
+// WebEngine on Linux shows regional-indicator flag emoji as letter pairs).
+const SPAIN_FLAG = '<svg class="flag-inline" viewBox="0 0 3 2" role="img" aria-label="Spain"><rect width="3" height="2" fill="#AA151B"/><rect y="0.5" width="3" height="1" fill="#F1BF00"/></svg>';
+
 export function render(el, vm, _cfg) {
   if (isRetired('worldcup')) {
-    el.innerHTML = editPrompt('The World Cup has concluded.');
+    el.innerHTML = editPrompt(`The World Cup has concluded. Congratulations Spain! ${SPAIN_FLAG}`);
     return;
   }
   const [w, h] = cardSize(el, [4, 4]);

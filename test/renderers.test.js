@@ -148,18 +148,20 @@ describe('worldcup render (pre-conclusion, pinned clock)', () => {
   });
 });
 
-describe('worldcup retirement (post Jul 27 2026, pinned clock)', () => {
+describe('worldcup retirement (post Jul 20 2026, pinned clock)', () => {
   beforeAll(() => vi.useFakeTimers({ now: Date.UTC(2026, 7, 1) }));
   afterAll(() => vi.useRealTimers());
 
-  it('renders the tap-to-swap prompt with the pencil glyph', () => {
+  it('renders the tap-to-swap prompt with the Spain flag + pencil glyph', () => {
     const host = el();
     worldcup.render(host, DEMO_VMS.worldcup, CFG);
     const prompt = host.querySelector('[data-edit]');
     expect(prompt).toBeTruthy();
     expect(host.textContent).toContain('The World Cup has concluded');
+    expect(host.textContent).toContain('Congratulations Spain!');
     expect(host.textContent).toContain('replace this card');
-    expect(prompt.querySelector('svg')).toBeTruthy(); // pencil glyph present
+    expect(prompt.querySelector('.flag-inline')).toBeTruthy(); // inline Spain flag
+    expect(prompt.querySelectorAll('svg').length).toBeGreaterThanOrEqual(2); // flag + pencil
   });
 
   it('fetchData goes quiet instead of hitting ESPN', async () => {

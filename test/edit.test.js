@@ -3,7 +3,7 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { openEditMode } from '../site/js/edit.js';
-import { WIDGET_IDS } from '../site/js/config.js';
+import { WIDGET_IDS, isRetired } from '../site/js/config.js';
 
 const CFG = {
   layout: [
@@ -39,7 +39,7 @@ describe('openEditMode', () => {
     openEditMode({ layout: [{ id: 'weather', x: 0, y: 0, w: 6, h: 4 }], nerdMode: true }, { root, cellSize: { w: 100, h: 100 } });
     const chips = [...root.querySelectorAll('.edit-tray [data-add]')];
     expect(chips.map((b) => b.dataset.add).sort()).toEqual(
-      WIDGET_IDS.filter((id) => id !== 'weather').sort(),
+      WIDGET_IDS.filter((id) => id !== 'weather' && !isRetired(id)).sort(), // retired ids leave the tray
     );
     for (const chip of chips) expect(chip.textContent).not.toContain('undefined');
     const block = root.querySelector('.edit-block__title');

@@ -173,7 +173,8 @@ describe('connectBridge', () => {
 
 // Every widget id must have a label in BOTH settings surfaces — a missing
 // entry renders literal "undefined" in the Widgets and Diagnostics menus.
-import { WIDGET_IDS as ALL_IDS } from '../site/js/config.js';
+import { WIDGET_IDS as ALL_IDS, isRetired } from '../site/js/config.js';
+const LIVE_IDS = ALL_IDS.filter((id) => !isRetired(id)); // retired ids drop from unplaced pickers
 import { WIDGET_LABELS as BOARD_LABELS } from '../site/js/settings/settings.js';
 
 describe('widget label coverage', () => {
@@ -233,7 +234,7 @@ describe('widgetChecksHtml (setup picker)', () => {
     for (const label of ['Commute', 'Weather & Air', 'Markets & Sports', 'News & Social', 'Ambient', 'Daily Extras']) {
       expect(html).toContain(`<h3 class="wpick__title">${label}</h3>`);
     }
-    expect((html.match(/data-w="/g) || []).length).toBe(ALL_IDS.length); // 21 checkboxes
+    expect((html.match(/data-w="/g) || []).length).toBe(LIVE_IDS.length); // one per non-retired widget
     // placed widgets are checked
     expect(html).toMatch(/data-w="subway"[^>]*checked/);
     expect(html).toMatch(/data-w="photos"[^>]*checked/);
@@ -254,7 +255,7 @@ describe('widgetGroupsHtml', () => {
       expect(html).toContain(`<h3 class="wgroup__title">${label}</h3>`);
     }
     // one toggle per WIDGET_ID (21)
-    expect((html.match(/data-toggle="/g) || []).length).toBe(ALL_IDS.length);
+    expect((html.match(/data-toggle="/g) || []).length).toBe(LIVE_IDS.length);
     // weather is placed → its toggle is on
     expect(html).toMatch(/data-toggle="weather"[^>]*aria-checked="true"/);
     // subway is not placed → not on

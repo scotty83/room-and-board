@@ -87,6 +87,8 @@ html, body {
    elastic body rules). The via-phrase never breaks across lines. */
 .empty { color: var(--ink-faint); font-size: 22px; margin: auto; text-align: center; padding: 0 12px; }
 .empty__via { white-space: nowrap; }
+/* Small inline flag glyph (e.g. the World Cup retirement message). */
+.flag-inline { display: inline-block; width: 1.1em; height: 0.73em; vertical-align: -0.1em; border-radius: 2px; margin-left: 2px; }
 
 /* ---------- world clock ---------- */
 /* 35px rows (capacity constant 45 = row + gap): five zones fit a 3-tall card.

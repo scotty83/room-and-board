@@ -398,9 +398,9 @@ describe('nerd mode (ADVANCED_WIDGETS gate)', () => {
 });
 
 describe('widget retirement (RETIRED_AFTER)', () => {
-  it('worldcup retires after Jul 27 2026, never before; other ids never', () => {
-    expect(isRetired('worldcup', Date.UTC(2026, 6, 19))).toBe(false); // final day
-    expect(isRetired('worldcup', Date.UTC(2026, 6, 27))).toBe(false); // results linger
+  it('worldcup retires as of Jul 20 2026, not on the Jul 19 final day; other ids never', () => {
+    expect(isRetired('worldcup', Date.UTC(2026, 6, 19))).toBe(false); // final day, still live
+    expect(isRetired('worldcup', Date.UTC(2026, 6, 20, 12))).toBe(true); // retired the next day
     expect(isRetired('worldcup', Date.UTC(2026, 7, 1))).toBe(true);
     expect(isRetired('weather', Date.UTC(2030, 0, 1))).toBe(false);
     expect(isRetired('nonexistent', Date.UTC(2030, 0, 1))).toBe(false);

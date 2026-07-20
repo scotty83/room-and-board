@@ -506,9 +506,9 @@ export function normalizeGdrivePhotos(raw, rawPhotos) {
 // can't collide with a full-config code (those are pure base64url).
 // Event widgets with a hard end date. After the date the card renders a
 // tap-to-swap prompt (never auto-removed from anyone's layout) and the id
-// drops out of every add picker. WC2026 final is Jul 19; results linger
-// through Jul 27 so the ending can be enjoyed.
-export const RETIRED_AFTER = Object.freeze({ worldcup: Date.UTC(2026, 6, 28) });
+// drops out of every add picker. WC2026 final was Jul 19 (Spain won); the
+// card retires as of Jul 20.
+export const RETIRED_AFTER = Object.freeze({ worldcup: Date.UTC(2026, 6, 20) });
 export const isRetired = (id, nowMs = Date.now()) => (RETIRED_AFTER[id] ?? Infinity) < nowMs;
 
 // Staged rollout: ids listed here surface only on staging hosts (beta.

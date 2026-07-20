@@ -1160,7 +1160,7 @@ async function renderScreensaver() {
   ];
   pane().innerHTML = `
     <h2 class="pane__title">Screensaver</h2>
-    <p class="pane__hint">What fills the screen when the board is idle. It shows only when Display
+    <p class="pane__hint">The screensaver only shows when Display
       mode is <b>Always screensaver</b>, or <b>Scheduled</b> outside the dashboard windows
       (Settings → Display). To have no screensaver, set Display to <b>Always dashboard</b>.</p>
     <div class="rows">${OPTIONS.map(([id, label, note]) => `
@@ -1177,13 +1177,13 @@ async function renderScreensaver() {
         </button>
         <span class="row__label">Hour markers</span>
       </div>` : ''}`).join('')}</div>
-    <div class="row row--control">
+    <div class="row row--control ss-striprow">
       <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
         <span class="toggle__knob"></span>
       </button>
       <span class="row__label">Show the info strip (weather + next trains) along the bottom</span>
     </div>
-    <p class="pane__hint">No source needs its widget on the dashboard. If a photo source loses its album, the board falls back to the Art slideshow — the screen never goes empty. Press Save to apply.</p>`;
+    <p class="pane__hint">If a photo source loses its album, the board falls back to the Art slideshow, so the screen never goes empty. Press Save to apply.</p>`;
   pane().querySelectorAll('[data-ss-src]').forEach((row) =>
     row.addEventListener('click', () => {
       state.cfg.screensaver.source = row.dataset.ssSrc;

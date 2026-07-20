@@ -629,6 +629,7 @@ body.mode-ambient .gear--edit { display: none; }
 .ss-opt .row--pill.is-selected { outline: none; background: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95); }
 .ss-prev { flex: none; min-height: 64px; padding: 0 26px; }
 .ss-suboption { margin-left: 26px; } /* nests the Hour-markers toggle under the World clocks option */
+.ss-striprow { margin-top: 22px; } /* breathing room between the source list and the info-strip toggle */
 
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;

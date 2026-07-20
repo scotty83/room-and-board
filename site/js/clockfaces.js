@@ -72,28 +72,34 @@ function gridScale(perRow) {
   return { dial: 245, gap: 60 };
 }
 
-// Minimal analog dial, no second hand. Night dials dim their ink and drop the
-// face tint so daylight is readable across a world grid at a glance.
-export function dialSvg(h, m, { night = false } = {}) {
-  const ink = night ? 0.38 : 0.92;
-  const ring = night ? 0.1 : 0.16;
-  let dots = '';
-  for (let i = 0; i < 12; i++) {
-    const a = (i * 30 * Math.PI) / 180;
-    const cardinal = i % 3 === 0;
-    const r = cardinal ? 3.4 : 2.6;
-    const op = cardinal ? (night ? 0.35 : 0.8) : (night ? 0.22 : 0.5);
-    dots += `<circle cx="${(50 + 41 * Math.sin(a)).toFixed(2)}" cy="${(50 - 41 * Math.cos(a)).toFixed(2)}" r="${r}" fill="rgba(255,255,255,${op})"/>`;
-  }
+// Analog dial from the 2026-07 signage handoff (options 2a/2b): opaque tapered
+// hands (no overlap-layering), no second hand (minute-aligned, calm for
+// signage). showMarkers=true is 2a (twelve dot markers); false is 2b
+// (markerless). Night dials dim the hands/ring so a world grid reads daylight
+// at a glance. 200-unit viewBox lifted verbatim from the prototype.
+export function dialSvg(h, m, { night = false, showMarkers = true } = {}) {
+  // Day: the handoff's exact hexes (2a #ececec / #242424 / #4c4c4c, 2b
+  // #f2f2f2 / #2c2c2c). Night: dimmed toward the old --ink-dim look.
+  const hand = night ? '#5c5c5c' : showMarkers ? '#ececec' : '#f2f2f2';
+  const ring = night ? '#191919' : showMarkers ? '#242424' : '#2c2c2c';
+  const markerFill = night ? '#2e2e2e' : '#4c4c4c';
+  const hourPts = showMarkers ? '96.4,108 103.6,108 101.8,52 98.2,52' : '95.5,106 104.5,106 102,48 98,48';
+  const minPts = showMarkers ? '97.2,110 102.8,110 101.4,30 98.6,30' : '96.5,106 103.5,106 101.5,24 98.5,24';
+  const hub = showMarkers ? 5 : 6;
   const ha = (h % 12) * 30 + m * 0.5;
   const ma = m * 6;
-  return `<svg class="cf-dial__svg" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,${ring})" stroke-width="1.1"/>
-    ${night ? '' : '<circle cx="50" cy="50" r="46" fill="rgba(255,255,255,0.028)"/>'}${dots}
-    <line x1="50" y1="50" x2="50" y2="27" stroke="rgba(255,255,255,${ink})" stroke-width="5.5" stroke-linecap="round" transform="rotate(${ha} 50 50)"/>
-    <line x1="50" y1="50" x2="50" y2="16" stroke="rgba(255,255,255,${ink})" stroke-width="3.4" stroke-linecap="round" transform="rotate(${ma} 50 50)"/>
-    <circle cx="50" cy="50" r="3.2" fill="rgba(255,255,255,${ink})"/>
-    <circle cx="50" cy="50" r="1.4" fill="#000"/>
+  let markers = '';
+  if (showMarkers) {
+    for (let i = 0; i < 12; i++) {
+      markers += `<circle cx="100" cy="22" r="3.2" fill="${markerFill}" transform="rotate(${i * 30} 100 100)"/>`;
+    }
+  }
+  return `<svg class="cf-dial__svg" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="90" fill="none" stroke="${ring}" stroke-width="1.5"/>
+    ${markers}
+    <polygon points="${hourPts}" fill="${hand}" transform="rotate(${ha} 100 100)"/>
+    <polygon points="${minPts}" fill="${hand}" transform="rotate(${ma} 100 100)"/>
+    <circle cx="100" cy="100" r="${hub}" fill="${hand}"/>
   </svg>`;
 }
 
@@ -127,11 +133,12 @@ export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZo
     const list = worldCities(cfg, now, localZone);
     const rows = planRows(list.length, 5);
     const { dial, gap } = gridScale(Math.max(...rows));
+    const showMarkers = cfg?.screensaver?.markers !== false; // 2a dots by default; false = 2b markerless
     const dialCell = ({ label, zone, home }) => {
       const t = zoneParts(now, zone);
       const night = isNight(t.h);
       return `<div class="cf-dial ${night ? 'cf-dial--night' : ''}${home ? ' cf-dial--home' : ''}">
-        ${dialSvg(t.h, t.m, { night })}
+        ${dialSvg(t.h, t.m, { night, showMarkers })}
         <div class="cf-dial__name">${escapeHtml(label)}</div>
         <div class="cf-dial__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}${t.day !== local.day ? `<span class="cf-dial__sub"> ${dayDiff(t.day, local.day)}d</span>` : ''}</div>
       </div>`;

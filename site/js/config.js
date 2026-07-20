@@ -122,7 +122,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   // gdrivephotos (slideshows), clock | worldclocks | clockrow (clock faces,
   // A/C/D from the 2026-07-19 design review), or off. strip = the bottom
   // weather/transit info band.
-  screensaver: Object.freeze({ source: 'art', strip: true }),
+  screensaver: Object.freeze({ source: 'art', strip: true, markers: true }),
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
@@ -207,13 +207,15 @@ export function normalizeConfig(raw) {
   // default (art slideshow) with the info strip on.
   const screensaver = (() => {
     const s = raw.screensaver;
-    if (s && SCREENSAVER_SOURCES.includes(s.source)) return { source: s.source, strip: s.strip !== false };
-    if (raw.photos?.screensaver === true && photos.album) return { source: 'photos', strip: true };
-    if (raw.gdrivephotos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true };
+    // markers = the World-clocks hour-dot toggle (2a dots on / 2b off), default on.
+    const markers = raw.screensaver?.markers !== false;
+    if (s && SCREENSAVER_SOURCES.includes(s.source)) return { source: s.source, strip: s.strip !== false, markers };
+    if (raw.photos?.screensaver === true && photos.album) return { source: 'photos', strip: true, markers };
+    if (raw.gdrivephotos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers };
     // Legacy single-source Drive block: {photos:{source:'gdrive',screensaver}}
     // migrated its album into gdrivephotos above — carry the choice with it.
-    if (raw.photos?.source === 'gdrive' && raw.photos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true };
-    return { source: 'art', strip: true };
+    if (raw.photos?.source === 'gdrive' && raw.photos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers };
+    return { source: 'art', strip: true, markers };
   })();
 
   return {

@@ -321,7 +321,7 @@ describe('photos config (iCloud + GDrive widgets)', () => {
       photos: { album: 'B1m5fk75vLWwX', screensaver: true },
       gdrivephotos: { album: GDRIVE_ID, screensaver: true },
     });
-    expect(both.screensaver).toEqual({ source: 'photos', strip: true }); // iCloud wins the legacy tie
+    expect(both.screensaver).toEqual({ source: 'photos', strip: true, markers: true }); // iCloud wins the legacy tie
     expect(both.photos.screensaver).toBeUndefined(); // booleans retired from the blocks
     const gd = normalizeConfig({ gdrivephotos: { album: GDRIVE_ID, screensaver: true } });
     expect(gd.screensaver.source).toBe('gdrivephotos');
@@ -330,12 +330,13 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   });
 
   it('screensaver block: validates source, defaults, and wire round-trip', async () => {
-    expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true });
+    expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true, markers: true });
     expect(normalizeConfig({ screensaver: { source: 'nope' } }).screensaver.source).toBe('art');
     expect(normalizeConfig({ screensaver: { source: 'off' } }).screensaver.source).toBe('art'); // Off retired -> default
-    expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false });
-    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false } })));
-    expect(rt.screensaver).toEqual({ source: 'clock', strip: false });
+    expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false, markers: true });
+    expect(normalizeConfig({ screensaver: { source: 'worldclocks', markers: false } }).screensaver.markers).toBe(false);
+    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false, markers: false } })));
+    expect(rt.screensaver).toEqual({ source: 'clock', strip: false, markers: false });
   });
   it('migrates the legacy single-source shape', () => {
     // Legacy iCloud: album stays on photos, gdrivephotos empty.

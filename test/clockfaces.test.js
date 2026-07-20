@@ -97,10 +97,28 @@ describe('clockFaceHtml', () => {
     expect(html).toContain('>Local<');
   });
 
-  it('dialSvg has no second hand and dims at night', () => {
+  it('dialSvg: two opaque polygon hands, no second hand, dims at night', () => {
     const day = dialSvg(10, 9);
-    expect((day.match(/<line /g) || []).length).toBe(2); // hour + minute only
-    expect(dialSvg(23, 30, { night: true })).toContain('0.38'); // night ink
+    expect((day.match(/<polygon /g) || []).length).toBe(2); // hour + minute, no second hand
+    expect(day).not.toContain('<line'); // opaque tapered polygons, not stroked lines
+    expect(day).toContain('#ececec'); // 2a day hand colour
+    expect(dialSvg(23, 30, { night: true })).toContain('#5c5c5c'); // night hands dimmed
+  });
+
+  it('dialSvg: showMarkers toggles the twelve dot markers (2a) vs markerless (2b)', () => {
+    const dots = dialSvg(10, 9, { showMarkers: true });
+    expect((dots.match(/#4c4c4c/g) || []).length).toBe(12); // twelve hour dots (2a)
+    expect(dots).toContain('#ececec'); // 2a hand colour
+    const bare = dialSvg(10, 9, { showMarkers: false });
+    expect(bare).not.toContain('#4c4c4c'); // no markers (2b)
+    expect(bare).toContain('#f2f2f2'); // 2b hand colour
+  });
+
+  it('worldclocks: threads the markers config to the dials', () => {
+    const on = clockFaceHtml('worldclocks', { ...cfg, screensaver: { source: 'worldclocks', markers: true } }, T, NY);
+    expect(on).toContain('#4c4c4c'); // markers present
+    const off = clockFaceHtml('worldclocks', { ...cfg, screensaver: { source: 'worldclocks', markers: false } }, T, NY);
+    expect(off).not.toContain('#4c4c4c'); // markerless
   });
 
   it('CLOCK_SOURCES matches the shipped faces', () => {

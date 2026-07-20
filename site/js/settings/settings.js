@@ -1169,7 +1169,14 @@ async function renderScreensaver() {
           <span class="row__label">${label}${note ? ` <small>· ${note}</small>` : ''}</span>
         </div>
         <button class="btn btn--ghost ss-prev" data-ss-prev="${id}">Preview</button>
-      </div>`).join('')}</div>
+      </div>
+      ${id === 'worldclocks' && ss.source === 'worldclocks' ? `
+      <div class="row row--control ss-suboption">
+        <button class="toggle ${ss.markers ? 'is-on' : ''}" data-ss-markers role="switch" aria-checked="${ss.markers}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">Hour markers</span>
+      </div>` : ''}`).join('')}</div>
     <div class="row row--control">
       <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
         <span class="toggle__knob"></span>
@@ -1186,6 +1193,10 @@ async function renderScreensaver() {
     btn.addEventListener('click', () => openSsPreview(btn.dataset.ssPrev)));
   pane().querySelector('[data-ss-strip]').addEventListener('click', () => {
     state.cfg.screensaver.strip = !state.cfg.screensaver.strip;
+    renderScreensaver();
+  });
+  pane().querySelector('[data-ss-markers]')?.addEventListener('click', () => {
+    state.cfg.screensaver.markers = !state.cfg.screensaver.markers;
     renderScreensaver();
   });
 }

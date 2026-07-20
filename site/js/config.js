@@ -156,7 +156,7 @@ function normalizeLoc(rawLoc) {
   };
 }
 
-export const SCREENSAVER_SOURCES = Object.freeze(['off', 'art', 'photos', 'gdrivephotos', 'clock', 'worldclocks', 'clockrow']);
+export const SCREENSAVER_SOURCES = Object.freeze(['art', 'photos', 'gdrivephotos', 'clock', 'worldclocks', 'clockrow']);
 
 export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {

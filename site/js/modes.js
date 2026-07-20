@@ -29,7 +29,7 @@ export function fmtHM(min) {
 // goes blank. Clock faces need no data at all and pass through as-is.
 export function ambientSource(cfg) {
   const want = cfg.screensaver?.source ?? 'art';
-  if (want === 'off') return null;
+  if (want === 'off') return null; // legacy/defensive: the picker no longer offers Off (set Display to Always dashboard instead)
   if (want === 'photos' && cfg.photos?.album) return 'photos';
   if (want === 'gdrivephotos' && cfg.gdrivephotos?.album) return 'gdrivephotos';
   if (want === 'photos' || want === 'gdrivephotos' || want === 'art') return 'art';

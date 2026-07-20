@@ -332,6 +332,7 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   it('screensaver block: validates source, defaults, and wire round-trip', async () => {
     expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true });
     expect(normalizeConfig({ screensaver: { source: 'nope' } }).screensaver.source).toBe('art');
+    expect(normalizeConfig({ screensaver: { source: 'off' } }).screensaver.source).toBe('art'); // Off retired -> default
     expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false });
     const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false } })));
     expect(rt.screensaver).toEqual({ source: 'clock', strip: false });

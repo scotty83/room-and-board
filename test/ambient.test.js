@@ -259,7 +259,7 @@ describe('ambientSource', () => {
   it('follows the dedicated screensaver picker', () => {
     expect(ambientSource({ widgets: ['art'], screensaver: ss('art') })).toBe('art');
     expect(ambientSource({ widgets: ['photos'], photos: { album: 'B1m5fk75vLWwX' }, screensaver: ss('photos') })).toBe('photos');
-    expect(ambientSource({ widgets: [], screensaver: ss('off') })).toBe(null);
+    expect(ambientSource({ widgets: [], screensaver: ss('off') })).toBe(null); // defensive guard (picker no longer offers Off)
     expect(ambientSource({ widgets: [], screensaver: ss('clock') })).toBe('clock');
     expect(ambientSource({ widgets: [], screensaver: ss('worldclocks') })).toBe('worldclocks');
     expect(ambientSource({ widgets: [], screensaver: ss('clockrow') })).toBe('clockrow');

@@ -612,6 +612,14 @@ body.mode-ambient .gear { bottom: 7px; }
   border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95);
 }
 
+/* Screensaver options: a selectable pill + a Preview button OUTSIDE the pill,
+   so the button sits on the dark page and never clashes with the pill's
+   white selected fill. */
+.ss-opt { display: flex; align-items: center; gap: 12px; }
+.ss-opt .row--pill { flex: 1; background: none; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 999px; }
+.ss-opt .row--pill.is-selected { outline: none; background: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3); color: rgba(0, 0, 0, 0.95); }
+.ss-prev { flex: none; min-height: 64px; padding: 0 26px; }
+
 .iconbtn {
   width: 56px; height: 56px; border-radius: 12px; border: none; cursor: pointer;
   background: var(--bg-card-2); color: var(--ink); font-size: 26px;

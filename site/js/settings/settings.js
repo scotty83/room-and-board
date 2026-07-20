@@ -1156,18 +1156,19 @@ async function renderScreensaver() {
     ['clock', 'Big clock', ''],
     ['worldclocks', 'World clocks', 'analog dials, one per World Clock city'],
     ['clockrow', 'Clock + world times', ''],
-    ['off', 'Off', 'the dashboard stays up when idle'],
   ];
   pane().innerHTML = `
     <h2 class="pane__title">Screensaver</h2>
     <p class="pane__hint">What fills the screen when the board is idle. It shows only when Display
       mode is <b>Always screensaver</b>, or <b>Scheduled</b> outside the dashboard windows
-      (set both under Settings → Display).</p>
-    <div class="rows rows--pill">${OPTIONS.map(([id, label, note]) => `
-      <div class="row row--tap ${ss.source === id ? 'is-selected' : ''}" data-ss-src="${id}" role="button" tabindex="0">
-        <span class="row__label">${label}${note ? ` <small>· ${note}</small>` : ''}</span>
+      (Settings → Display). To have no screensaver, set Display to <b>Always dashboard</b>.</p>
+    <div class="rows">${OPTIONS.map(([id, label, note]) => `
+      <div class="ss-opt">
+        <div class="row row--tap row--pill ${ss.source === id ? 'is-selected' : ''}" data-ss-src="${id}" role="button" tabindex="0">
+          <span class="row__label">${label}${note ? ` <small>· ${note}</small>` : ''}</span>
+        </div>
+        <button class="btn btn--ghost ss-prev" data-ss-prev="${id}">Preview</button>
       </div>`).join('')}</div>
-    ${ss.source === 'off' ? '' : `<div class="btnrow"><button class="btn" data-ss-preview>Preview screensaver</button></div>`}
     <div class="row row--control">
       <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
         <span class="toggle__knob"></span>
@@ -1180,8 +1181,8 @@ async function renderScreensaver() {
       state.cfg.screensaver.source = row.dataset.ssSrc;
       renderScreensaver();
     }));
-  pane().querySelector('[data-ss-preview]')?.addEventListener('click', () =>
-    openSsPreview(state.cfg.screensaver.source));
+  pane().querySelectorAll('[data-ss-prev]').forEach((btn) =>
+    btn.addEventListener('click', () => openSsPreview(btn.dataset.ssPrev)));
   pane().querySelector('[data-ss-strip]').addEventListener('click', () => {
     state.cfg.screensaver.strip = !state.cfg.screensaver.strip;
     renderScreensaver();

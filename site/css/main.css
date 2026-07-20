@@ -1162,6 +1162,7 @@ body.mode-ambient .gear { bottom: 7px; }
 .cf-dial__svg { width: 330px; height: 330px; }
 .cf-dial__name { font-weight: 300; font-size: 34px; color: rgba(255, 255, 255, 0.72); }
 .cf-dial--night .cf-dial__name { color: var(--ink-dim); }
+.cf-dial--home .cf-dial__name { color: var(--ink); }
 .cf-dial__time { font-weight: 300; font-size: 26px; color: var(--ink-dim); margin-top: 4px; font-variant-numeric: tabular-nums; }
 .cf-dial__sub { color: var(--ink-faint); }
 .cf-cities { display: flex; gap: 90px; margin-top: 96px; }

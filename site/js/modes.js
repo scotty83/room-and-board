@@ -23,20 +23,16 @@ export function fmtHM(min) {
 }
 
 // Which source drives ambient/screensaver, from the dedicated cfg.screensaver
-// picker. Slideshow sources degrade gracefully: a photo source whose album is
-// gone falls back to art (if any ambient widget is placed), and art without
-// any ambient widget falls back to the big clock — a screensaver can always
-// render. Clock faces need no widgets or data, so they pass through as-is.
+// picker. No source requires its widget on the DASHBOARD: art fetches its
+// manifest directly and photo sources need only their album. A photo source
+// whose album is gone falls back to the art slideshow, so the screen never
+// goes blank. Clock faces need no data at all and pass through as-is.
 export function ambientSource(cfg) {
-  const has = new Set(cfg.widgets ?? []);
   const want = cfg.screensaver?.source ?? 'art';
   if (want === 'off') return null;
-  if (want === 'photos' && has.has('photos') && cfg.photos?.album) return 'photos';
-  if (want === 'gdrivephotos' && has.has('gdrivephotos') && cfg.gdrivephotos?.album) return 'gdrivephotos';
-  if (want === 'art' || want === 'photos' || want === 'gdrivephotos') {
-    if (has.has('art') || has.has('photos') || has.has('gdrivephotos')) return 'art';
-    return 'clock';
-  }
+  if (want === 'photos' && cfg.photos?.album) return 'photos';
+  if (want === 'gdrivephotos' && cfg.gdrivephotos?.album) return 'gdrivephotos';
+  if (want === 'photos' || want === 'gdrivephotos' || want === 'art') return 'art';
   return want; // clock | worldclocks | clockrow
 }
 

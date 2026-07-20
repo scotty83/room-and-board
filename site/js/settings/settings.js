@@ -55,6 +55,7 @@ import { PATH_STATIONS, PATH_DIRS } from '../widgets/path.js';
 import { BSKY_API } from '../widgets/posts.js';
 import { OFFICES, zoneLabel, zonesByRegion } from '../widgets/worldclock.js';
 import { symbolKnown } from '../widgets/markets.js';
+import { stripData, stripHtml } from '../ambient.js';
 
 
 let state = null; // { cfg, root, section, stack }
@@ -1117,7 +1118,14 @@ async function openSsPreview(source) {
   ov.innerHTML = '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
   ov.addEventListener('click', () => ov.remove());
   document.body.appendChild(ov);
-  const hint = '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
+  // Faithful preview: include the info strip exactly as ambient renders it
+  // (from the live widget caches) whenever the toggle is on.
+  const stripPart = state.cfg.screensaver?.strip === false ? '' : (() => {
+    const caches = {};
+    for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
+    return `<div class="strip">${stripHtml(stripData(caches, state.cfg), new Date())}</div>`;
+  })();
+  const hint = stripPart + '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
   try {
     if (source === 'clock' || source === 'worldclocks' || source === 'clockrow') {
       const { clockFaceHtml } = await import('../clockfaces.js');
@@ -1141,10 +1149,8 @@ async function openSsPreview(source) {
 
 async function renderScreensaver() {
   const ss = state.cfg.screensaver;
-  const placed = new Set(state.cfg.layout.map((r) => r.id));
-  const anyAmbient = placed.has('art') || placed.has('photos') || placed.has('gdrivephotos');
   const OPTIONS = [
-    ['art', 'Art slideshow', anyAmbient ? '' : 'needs the Art or a photo widget on the dashboard'],
+    ['art', 'Art slideshow', ''],
     ['photos', 'iCloud Photos', state.cfg.photos.album ? '' : 'no album connected yet'],
     ['gdrivephotos', 'GDrive Photos', state.cfg.gdrivephotos.album ? '' : 'no folder connected yet'],
     ['clock', 'Big clock', ''],
@@ -1160,25 +1166,22 @@ async function renderScreensaver() {
     <div class="rows rows--pill">${OPTIONS.map(([id, label, note]) => `
       <div class="row row--tap ${ss.source === id ? 'is-selected' : ''}" data-ss-src="${id}" role="button" tabindex="0">
         <span class="row__label">${label}${note ? ` <small>· ${note}</small>` : ''}</span>
-        ${id === 'off' ? '' : `<button class="btn btn--ghost" data-ss-prev="${id}">Preview</button>`}
       </div>`).join('')}</div>
+    ${ss.source === 'off' ? '' : `<div class="btnrow"><button class="btn" data-ss-preview>Preview screensaver</button></div>`}
     <div class="row row--control">
       <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
         <span class="toggle__knob"></span>
       </button>
       <span class="row__label">Show the info strip (weather + next trains) along the bottom</span>
     </div>
-    <p class="pane__hint">If a photo source loses its album, the board falls back to Art, then to the Big clock — the screen never goes empty. Press Save to apply.</p>`;
+    <p class="pane__hint">No source needs its widget on the dashboard. If a photo source loses its album, the board falls back to the Art slideshow — the screen never goes empty. Press Save to apply.</p>`;
   pane().querySelectorAll('[data-ss-src]').forEach((row) =>
     row.addEventListener('click', () => {
       state.cfg.screensaver.source = row.dataset.ssSrc;
       renderScreensaver();
     }));
-  pane().querySelectorAll('[data-ss-prev]').forEach((btn) =>
-    btn.addEventListener('click', (ev) => {
-      ev.stopPropagation(); // the row behind it selects; Preview only previews
-      openSsPreview(btn.dataset.ssPrev);
-    }));
+  pane().querySelector('[data-ss-preview]')?.addEventListener('click', () =>
+    openSsPreview(state.cfg.screensaver.source));
   pane().querySelector('[data-ss-strip]').addEventListener('click', () => {
     state.cfg.screensaver.strip = !state.cfg.screensaver.strip;
     renderScreensaver();

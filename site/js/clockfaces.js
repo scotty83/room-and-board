@@ -25,6 +25,33 @@ const fmtTime = (h, m, clock24) => {
 const ampm = (h) => (h < 12 ? 'AM' : 'PM');
 const isNight = (h) => h < 6 || h >= 18;
 
+// Current UTC offset of a zone in minutes (DST-correct for `now`), for
+// chronological west→east ordering of the world faces.
+function zoneOffsetMin(now, zone) {
+  const z = zoneParts(now, zone);
+  const u = zoneParts(now, 'UTC');
+  const dayShift = z.day === u.day ? 0 : (z.day - u.day === 1 || u.day - z.day > 20 ? 1 : -1);
+  return dayShift * 1440 + (z.h * 60 + z.m) - (u.h * 60 + u.m);
+}
+
+const localZoneName = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// World-face city list: always includes local time (Sean's rule — people omit
+// their own city from the widget list to avoid seeing it twice on the
+// dashboard). If a listed city IS the local zone it becomes the home entry
+// (keeping the user's label); otherwise a 'Local' entry joins. Sorted
+// west→east by current offset, capped at five.
+function worldCities(cfg, now, localZone) {
+  const list = cities(cfg).map((c) => ({ ...c }));
+  const home = list.find((c) => c.zone === localZone);
+  if (home) home.home = true;
+  const all = home ? list : [{ label: 'Local', zone: localZone, home: true }, ...list];
+  return all
+    .map((c) => ({ ...c, off: zoneOffsetMin(now, c.zone) }))
+    .sort((a, b) => a.off - b.off)
+    .slice(0, 5);
+}
+
 // Minimal analog dial, no second hand. Night dials dim their ink and drop the
 // face tint so daylight is readable across a world grid at a glance.
 export function dialSvg(h, m, { night = false } = {}) {
@@ -74,13 +101,13 @@ const heroHtml = (now, cfg, sizeClass) => {
     <div class="cf-date">${escapeHtml(dateLine(now))}</div>`;
 };
 
-export function clockFaceHtml(source, cfg, now = new Date()) {
+export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZoneName()) {
   if (source === 'worldclocks') {
-    const local = zoneParts(now);
-    const dials = cities(cfg).map(({ label, zone }) => {
+    const local = zoneParts(now, localZone);
+    const dials = worldCities(cfg, now, localZone).map(({ label, zone, home }) => {
       const t = zoneParts(now, zone);
       const night = isNight(t.h);
-      return `<div class="cf-dial ${night ? 'cf-dial--night' : ''}">
+      return `<div class="cf-dial ${night ? 'cf-dial--night' : ''}${home ? ' cf-dial--home' : ''}">
         ${dialSvg(t.h, t.m, { night })}
         <div class="cf-dial__name">${escapeHtml(label)}</div>
         <div class="cf-dial__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}${t.day !== local.day ? `<span class="cf-dial__sub"> ${dayDiff(t.day, local.day)}d</span>` : ''}</div>
@@ -89,16 +116,23 @@ export function clockFaceHtml(source, cfg, now = new Date()) {
     return `<div class="cf cf--world"><div class="cf-dials">${dials}</div></div>`;
   }
   if (source === 'clockrow') {
-    const local = zoneParts(now);
-    const row = cities(cfg).map(({ label, zone }) => {
-      const t = zoneParts(now, zone);
-      const night = isNight(t.h);
-      return `<div class="cf-city ${night ? 'cf-city--night' : ''}">
-        <div class="cf-city__name">${escapeHtml(label)}</div>
-        <div class="cf-city__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}</div>
-        ${t.day !== local.day ? `<div class="cf-city__sub">${dayDiff(t.day, local.day)} day</div>` : ''}
-      </div>`;
-    }).join('');
+    const local = zoneParts(now, localZone);
+    // The hero IS local time, so the row skips local-zone cities and runs
+    // west→east like the dials.
+    const row = cities(cfg)
+      .filter((c) => c.zone !== localZone)
+      .map((c) => ({ ...c, off: zoneOffsetMin(now, c.zone) }))
+      .sort((a, b) => a.off - b.off)
+      .slice(0, 5)
+      .map(({ label, zone }) => {
+        const t = zoneParts(now, zone);
+        const night = isNight(t.h);
+        return `<div class="cf-city ${night ? 'cf-city--night' : ''}">
+          <div class="cf-city__name">${escapeHtml(label)}</div>
+          <div class="cf-city__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}</div>
+          ${t.day !== local.day ? `<div class="cf-city__sub">${dayDiff(t.day, local.day)} day</div>` : ''}
+        </div>`;
+      }).join('');
     return `<div class="cf cf--row">${heroHtml(now, cfg, 'cf-time--row')}<div class="cf-cities">${row}</div></div>`;
   }
   // 'clock' — the digital hero (also the universal fallback face).

@@ -15,6 +15,8 @@ const cfg = {
 };
 // 16:09 UTC on Jul 19 2026 = 12:09 PM New York, 5:09 PM London, 12:09 AM Jul 20 Hong Kong.
 const T = new Date(Date.UTC(2026, 6, 19, 16, 9));
+// Explicit local zone pins world-face output regardless of the machine/CI TZ.
+const NY = 'America/New_York';
 
 describe('clockFaceHtml', () => {
   it('clock: hero time + date structure', () => {
@@ -28,8 +30,8 @@ describe('clockFaceHtml', () => {
     expect(clockFaceHtml('clock', { ...cfg, clock24: true }, T)).not.toContain('cf-ampm');
   });
 
-  it('worldclocks: one dial per city, night dimming, day marker', () => {
-    const html = clockFaceHtml('worldclocks', cfg, T);
+  it('worldclocks: one dial per city, chronological, night dimming, day marker', () => {
+    const html = clockFaceHtml('worldclocks', cfg, T, NY);
     expect((html.match(/cf-dial__svg/g) || []).length).toBe(3);
     expect(html).toContain('New York');
     expect(html).toContain('12:09 PM'); // NY
@@ -37,18 +39,38 @@ describe('clockFaceHtml', () => {
     expect(html).toContain('12:09 AM'); // Hong Kong, past midnight
     expect(html).toContain('cf-dial--night'); // HK dial dimmed
     expect(html).toContain('+1d'); // HK is tomorrow relative to local
+    // West → east: NY before London before Hong Kong.
+    expect(html.indexOf('New York')).toBeLessThan(html.indexOf('London'));
+    expect(html.indexOf('London')).toBeLessThan(html.indexOf('Hong Kong'));
+    // Local zone matches a listed city: it becomes home, no extra Local dial.
+    expect(html).toContain('cf-dial--home');
+    expect(html).not.toContain('>Local<');
   });
 
-  it('clockrow: hero + city row, honors 24h clock', () => {
-    const html = clockFaceHtml('clockrow', { ...cfg, clock24: true }, T);
+  it('worldclocks: injects a Local dial when no listed city is the local zone', () => {
+    const away = { ...cfg, worldclock: { cities: cfg.worldclock.cities.slice(1) } }; // London + HK only
+    const html = clockFaceHtml('worldclocks', away, T, NY);
+    expect((html.match(/cf-dial__svg/g) || []).length).toBe(3); // Local + 2 cities
+    expect(html).toContain('>Local<');
+    expect(html.indexOf('>Local<')).toBeLessThan(html.indexOf('London')); // sorted west of London
+  });
+
+  it('clockrow: hero + city row, local-zone city excluded, honors 24h clock', () => {
+    const html = clockFaceHtml('clockrow', { ...cfg, clock24: true }, T, NY);
     expect(html).toContain('cf-cities');
     expect(html).toContain('17:09'); // London, 24h
     expect(html).not.toContain('PM');
+    // The hero IS local time — New York must not repeat in the row.
+    const row = html.slice(html.indexOf('cf-cities'));
+    expect(row).not.toContain('New York');
+    expect(row.indexOf('London')).toBeLessThan(row.indexOf('Hong Kong')); // west → east
   });
 
-  it('caps the world grid at five cities', () => {
+  it('caps the world grid at five dials including the injected Local', () => {
     const many = { worldclock: { cities: Array.from({ length: 8 }, (_, i) => ({ label: `C${i}`, zone: 'Europe/London' })) } };
-    expect((clockFaceHtml('worldclocks', many, T).match(/cf-dial__svg/g) || []).length).toBe(5);
+    const html = clockFaceHtml('worldclocks', many, T, NY);
+    expect((html.match(/cf-dial__svg/g) || []).length).toBe(5);
+    expect(html).toContain('>Local<');
   });
 
   it('dialSvg has no second hand and dims at night', () => {

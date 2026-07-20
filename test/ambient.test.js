@@ -265,10 +265,15 @@ describe('ambientSource', () => {
     expect(ambientSource({ widgets: [], screensaver: ss('clockrow') })).toBe('clockrow');
   });
 
-  it('degrades: broken photo source -> art if any ambient widget -> big clock', () => {
-    expect(ambientSource({ widgets: ['art', 'photos'], photos: { album: '' }, screensaver: ss('photos') })).toBe('art');
-    expect(ambientSource({ widgets: [], photos: { album: '' }, screensaver: ss('photos') })).toBe('clock');
-    expect(ambientSource({ widgets: [], screensaver: ss('art') })).toBe('clock');
+  it('no source requires its widget on the dashboard', () => {
+    // art fetches its manifest directly; photo sources need only their album.
+    expect(ambientSource({ widgets: [], screensaver: ss('art') })).toBe('art');
+    expect(ambientSource({ widgets: [], photos: { album: 'B1m5fk75vLWwX' }, screensaver: ss('photos') })).toBe('photos');
+  });
+
+  it('degrades a broken photo source to the art slideshow', () => {
+    expect(ambientSource({ widgets: [], photos: { album: '' }, screensaver: ss('photos') })).toBe('art');
+    expect(ambientSource({ widgets: [], gdrivephotos: { album: '' }, screensaver: ss('gdrivephotos') })).toBe('art');
   });
 });
 

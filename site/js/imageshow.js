@@ -34,8 +34,9 @@ let userStepped = false; // guards against clobbering a swipe with deferred stat
 // Full-screen viewer: tap the dashboard card to open, tap anywhere to close,
 // swipe left/right to browse the supplied photo list.  Shows the ambient info
 // strip so the clock stays visible.  Stays up indefinitely (mode changes don't
-// touch it).
-export function openImageViewer(current, cfg, { list = [], caption = true } = {}) {
+// touch it).  strip:false suppresses the info band — used by the chart viewer,
+// where the band would cover chart content and the view is short-lived anyway.
+export function openImageViewer(current, cfg, { list = [], caption = true, strip = true } = {}) {
   // Reset session state synchronously.
   ++viewerGen;
   userStepped = false;
@@ -72,16 +73,19 @@ export function openImageViewer(current, cfg, { list = [], caption = true } = {}
       <span class="slide-caption__meta">${captionMeta(current)}</span>
       ${captionDesc(current)}
     </div>` : ''}
-    <div class="strip"></div>`;
-  const strip = viewer.querySelector('.strip');
-  const refreshStrip = () => {
-    const caches = {};
-    for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
-    strip.innerHTML = stripHtml(stripData(caches, cfg ?? { widgets: [] }), new Date());
-  };
-  refreshStrip();
+    ${strip ? '<div class="strip"></div>' : ''}`;
+  const stripEl = viewer.querySelector('.strip');
   clearInterval(stripTimer);
-  stripTimer = setInterval(refreshStrip, 30 * 1000);
+  stripTimer = null;
+  if (stripEl) {
+    const refreshStrip = () => {
+      const caches = {};
+      for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
+      stripEl.innerHTML = stripHtml(stripData(caches, cfg ?? { widgets: [] }), new Date());
+    };
+    refreshStrip();
+    stripTimer = setInterval(refreshStrip, 30 * 1000);
+  }
   // Seed the session list synchronously — no fetch here; callers pass the list.
   viewerList = Array.isArray(list) ? list : [];
   viewerIndex = viewerList.findIndex((a) => a.img === current.img);

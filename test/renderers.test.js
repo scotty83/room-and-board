@@ -464,6 +464,21 @@ describe('art viewer strip + swipes', () => {
     expect(viewer.hidden).toBe(true);
   });
 
+  it('chart viewer (strip:false) opens with no info strip', async () => {
+    document.querySelector('#art-viewer')?.remove();
+    const { openImageViewer } = await import('../site/js/imageshow.js');
+    openImageViewer(
+      { img: 'https://x.test/chart.png', title: 'Chart of the Day', artist: 'Statista' },
+      CFG,
+      { list: [], caption: false, strip: false },
+    );
+    const viewer = document.querySelector('#art-viewer');
+    expect(viewer.hidden).toBe(false);
+    expect(viewer.querySelector('.art-viewer__img').getAttribute('src')).toBe('https://x.test/chart.png');
+    expect(viewer.querySelector('.strip')).toBeNull(); // no info band over the chart
+    viewer.remove();
+  });
+
   it('viewer swipes to the next and previous artwork', async () => {
     const list = [
       DEMO_VMS.art,

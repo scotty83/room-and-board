@@ -52,8 +52,10 @@ export function render(el, vm, cfg) {
     </figure>`;
   el.querySelector('.artwork').addEventListener('click', () =>
     // No caption: Statista bakes the title/source into the infographic, so the
-    // overlay would just repeat it and cover part of the image.
-    openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [], caption: false }));
+    // overlay would just repeat it and cover part of the image.  No info strip
+    // either: there's no room to place it without covering chart content, and a
+    // full-screen chart is a quick glance, not a lingering screensaver.
+    openImageViewer({ img: c.url, title: c.title, artist: 'Statista', desc: c.desc }, cfg, { list: [], caption: false, strip: false }));
 }
 
 // Deterministic rotation slot: which of the selected topics to show right now.

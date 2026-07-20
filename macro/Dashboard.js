@@ -3,8 +3,8 @@
   *
   *
   * Date Created:            July 17, 2026
-  * Revised:                 July 18, 2026
-  * Version:                 1.1.0
+  * Revised:                 July 20, 2026
+  * Version:                 1.2.0
   *
   * Description:             Self-contained signage provisioning + Control
   *                          Panel button for the Room & Board dashboard.
@@ -97,9 +97,11 @@ async function ensureConfig(node, label, value) {
   * are included so a hand-uploaded copy of this macro survives reboots.
   * The default URL opens the Room & Board welcome screen, so an untouched
   * install still lands somewhere useful.
+  * @roomosxapi [xConfiguration Standby Delay](https://roomos.cisco.com/xapi/Config.Standby.Delay/)
   * @roomosxapi [xConfiguration Standby Signage Url](https://roomos.cisco.com/xapi/Config.Standby.Signage.Url/)
   * @roomosxapi [xConfiguration Standby Signage Mode](https://roomos.cisco.com/xapi/Config.Standby.Signage.Mode/)
   * @roomosxapi [xConfiguration Standby Signage InteractionMode](https://roomos.cisco.com/xapi/Config.Standby.Signage.InteractionMode/)
+  * @roomosxapi [xConfiguration Standby Signage Audio](https://roomos.cisco.com/xapi/Config.Standby.Signage.Audio/)
   * @roomosxapi [xConfiguration WebEngine Mode](https://roomos.cisco.com/xapi/Config.WebEngine.Mode/)
   * @roomosxapi [xConfiguration Macros AutoStart](https://roomos.cisco.com/xapi/Config.Macros.AutoStart/)
   */
@@ -107,8 +109,16 @@ async function configureSignage() {
   await ensureConfig(xapi.Config.Macros.Mode, 'Macros Mode', 'On');
   await ensureConfig(xapi.Config.Macros.AutoStart, 'Macros AutoStart', 'On');
   await ensureConfig(xapi.Config.WebEngine.Mode, 'WebEngine Mode', 'On');
+  // Hold off full standby for the maximum 8 hours (value is in minutes) so the
+  // signage stays up through the working day instead of sleeping after the
+  // default short idle timeout. Integer config, so pass a Number for a clean
+  // idempotent compare against the value get() returns.
+  await ensureConfig(xapi.Config.Standby.Delay, 'Standby Delay', 480);
   await ensureConfig(xapi.Config.Standby.Signage.Mode, 'Standby Signage Mode', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.InteractionMode, 'Standby Signage InteractionMode', 'Interactive');
+  // Let the signage web content play sound (e.g. the Live Video widget when a
+  // viewer opens it full-screen); RoomOS mutes signage audio by default.
+  await ensureConfig(xapi.Config.Standby.Signage.Audio, 'Standby Signage Audio', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.Url, 'Standby Signage Url', SIGNAGE_URL);
 }
 

@@ -32,12 +32,12 @@
 /* The hidden attribute must always win, even over rules that set display. */
 [hidden] { display: none !important; }
 
-/* RoomOS draws a "Tap here to start" bar BELOW our web viewport in signage
-   mode (the viewport bottom == the bar's top edge), so an element at bottom:0
-   sits right on the bar. --safe-bottom is a comfortable clearance that
-   dashboard/settings content keeps from that bottom edge; the ambient info
-   band instead hugs the very bottom (bottom:0) so it meets the bar. Tunable. */
-:root { --safe-bottom: 84px; }
+/* RoomOS draws a "Tap here to start" bar that OVERLAYS the bottom --roomos-bar
+   px of our web viewport in signage mode (board-verified: a FAB at bottom:14px
+   was ~45% covered), so anything at bottom:0 is cropped by it. --safe-bottom is
+   the comfortable clearance dashboard/settings content keeps; the ambient info
+   strip + gear sit at --roomos-bar (its top edge) so they clear the bar too. */
+:root { --safe-bottom: 84px; --roomos-bar: 40px; }
 
 html, body {
   width: 1920px;
@@ -405,9 +405,12 @@ html, body {
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .slide-caption__desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; font-size: 22px; line-height: 1.35; color: var(--ink-dim); max-width: 70ch; }
 .strip {
-  /* Original ~70px translucent info band at bottom:0, so its bottom edge meets
-     the RoomOS bar (which sits just below the viewport). Not stretched. */
-  position: absolute; left: 0; right: 0; bottom: 0;
+  /* Translucent info band. Its bottom edge sits at the top of the RoomOS
+     "Tap to start" bar (which OVERLAYS the bottom --roomos-bar px of the
+     viewport, board-verified), so the strip content clears the bar instead of
+     being cropped by it. Full-screen everywhere it's used (ambient, art
+     viewer, screensaver preview), so the same clearance applies. */
+  position: absolute; left: 0; right: 0; bottom: var(--roomos-bar);
   display: flex; align-items: center; justify-content: center; gap: 36px;
   padding: 18px 48px;
   background: rgba(0, 0, 0, 0.65);
@@ -473,10 +476,10 @@ body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
   font-size: 26px; border: none; cursor: pointer;
   background: rgba(255, 255, 255, 0.08); color: var(--ink-dim);
 }
-/* Ambient mode: the FABs align with the info strip sitting at the bottom, and
-   the Edit-layout pencil hides — there's no dashboard to arrange, so only the
-   settings gear shows. */
-body.mode-ambient .gear { bottom: 7px; }
+/* Ambient mode keeps the settings gear at its default bottom:44px (clears the
+   RoomOS bar, sits on the lifted info strip); the earlier bottom:7px put it
+   inside the bar's overlaid zone and cropped it. The Edit-layout pencil hides:
+   there's no dashboard to arrange, so only the settings gear shows. */
 body.mode-ambient .gear--edit { display: none; }
 
 /* ---------- settings overlay ---------- */

@@ -40,7 +40,10 @@ const localZoneName = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 // their own city from the widget list to avoid seeing it twice on the
 // dashboard). If a listed city IS the local zone it becomes the home entry
 // (keeping the user's label); otherwise a 'Local' entry joins. Sorted
-// west→east by current offset, capped at five.
+// west→east by current offset, capped at MAX_DIALS (so a full 10-city list
+// with no local city drops its easternmost to make room for Local).
+const MAX_DIALS = 10;
+
 function worldCities(cfg, now, localZone) {
   const list = cities(cfg).map((c) => ({ ...c }));
   const home = list.find((c) => c.zone === localZone);
@@ -49,7 +52,16 @@ function worldCities(cfg, now, localZone) {
   return all
     .map((c) => ({ ...c, off: zoneOffsetMin(now, c.zone) }))
     .sort((a, b) => a.off - b.off)
-    .slice(0, 5);
+    .slice(0, MAX_DIALS);
+}
+
+// Dial diameter + column gap shrink as the grid grows so up to ten dials wrap
+// into two clean rows (five per row) instead of overflowing 1920px.
+function gridScale(n) {
+  if (n <= 4) return { dial: 330, gap: 110 };
+  if (n <= 6) return { dial: 280, gap: 80 };
+  if (n <= 8) return { dial: 235, gap: 64 };
+  return { dial: 200, gap: 52 };
 }
 
 // Minimal analog dial, no second hand. Night dials dim their ink and drop the
@@ -82,7 +94,7 @@ const dateLine = (now) =>
 
 // Up to five cities from the World Clock config (its own defaults when the
 // widget was never configured — the faces must not require it to be placed).
-const cities = (cfg) => (cfg?.worldclock?.cities ?? []).slice(0, 5);
+const cities = (cfg) => (cfg?.worldclock?.cities ?? []).slice(0, 10);
 
 // '+1d' when the city's calendar day is ahead of local, '-1d' behind —
 // month-wrap safe (local 31st vs city 1st is +1d, not -30d).
@@ -104,7 +116,9 @@ const heroHtml = (now, cfg, sizeClass) => {
 export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZoneName()) {
   if (source === 'worldclocks') {
     const local = zoneParts(now, localZone);
-    const dials = worldCities(cfg, now, localZone).map(({ label, zone, home }) => {
+    const list = worldCities(cfg, now, localZone);
+    const { dial, gap } = gridScale(list.length);
+    const dials = list.map(({ label, zone, home }) => {
       const t = zoneParts(now, zone);
       const night = isNight(t.h);
       return `<div class="cf-dial ${night ? 'cf-dial--night' : ''}${home ? ' cf-dial--home' : ''}">
@@ -113,7 +127,7 @@ export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZo
         <div class="cf-dial__time">${fmtTime(t.h, t.m, cfg?.clock24)}${cfg?.clock24 ? '' : ` ${ampm(t.h)}`}${t.day !== local.day ? `<span class="cf-dial__sub"> ${dayDiff(t.day, local.day)}d</span>` : ''}</div>
       </div>`;
     }).join('');
-    return `<div class="cf cf--world"><div class="cf-dials">${dials}</div></div>`;
+    return `<div class="cf cf--world"><div class="cf-dials" style="--dial:${dial}px;--dgap:${gap}px">${dials}</div></div>`;
   }
   if (source === 'clockrow') {
     const local = zoneParts(now, localZone);
@@ -123,7 +137,7 @@ export function clockFaceHtml(source, cfg, now = new Date(), localZone = localZo
       .filter((c) => c.zone !== localZone)
       .map((c) => ({ ...c, off: zoneOffsetMin(now, c.zone) }))
       .sort((a, b) => a.off - b.off)
-      .slice(0, 5)
+      .slice(0, 9) // hero is local; up to 9 other cities, wrapping
       .map(({ label, zone }) => {
         const t = zoneParts(now, zone);
         const night = isNight(t.h);

@@ -48,6 +48,21 @@ import xapi from 'xapi';
  */
 const SIGNAGE_URL = 'https://roomboard.app';
 
+/*
+ * Overridable defaults — safe to edit for your room. Everything else init()
+ * configures is required for signage to work and is left alone.
+ */
+
+// Minutes of inactivity before the board sleeps to full standby (screen off).
+// Higher keeps the signage up longer through the day; 480 (8 hours) is the most
+// RoomOS allows. Range: 1-480.
+const STANDBY_DELAY_MINUTES = 480;
+
+// Whether signage web content may play sound — e.g. the Live Video widget when a
+// viewer opens it full-screen. 'On' allows audio, 'Off' keeps the board silent.
+// RoomOS defaults this to 'Off'.
+const SIGNAGE_AUDIO = 'On';
+
 const PANEL_ID = 'dashboard';
 
 // Base64-encoded PNG for the button icon.
@@ -109,16 +124,13 @@ async function configureSignage() {
   await ensureConfig(xapi.Config.Macros.Mode, 'Macros Mode', 'On');
   await ensureConfig(xapi.Config.Macros.AutoStart, 'Macros AutoStart', 'On');
   await ensureConfig(xapi.Config.WebEngine.Mode, 'WebEngine Mode', 'On');
-  // Hold off full standby for the maximum 8 hours (value is in minutes) so the
-  // signage stays up through the working day instead of sleeping after the
-  // default short idle timeout. Integer config, so pass a Number for a clean
-  // idempotent compare against the value get() returns.
-  await ensureConfig(xapi.Config.Standby.Delay, 'Standby Delay', 480);
+  // User-overridable defaults (see the top of the file). Delay is coerced to a
+  // Number so a value typed with quotes still compares cleanly against the
+  // integer get() returns.
+  await ensureConfig(xapi.Config.Standby.Delay, 'Standby Delay', Number(STANDBY_DELAY_MINUTES));
   await ensureConfig(xapi.Config.Standby.Signage.Mode, 'Standby Signage Mode', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.InteractionMode, 'Standby Signage InteractionMode', 'Interactive');
-  // Let the signage web content play sound (e.g. the Live Video widget when a
-  // viewer opens it full-screen); RoomOS mutes signage audio by default.
-  await ensureConfig(xapi.Config.Standby.Signage.Audio, 'Standby Signage Audio', 'On');
+  await ensureConfig(xapi.Config.Standby.Signage.Audio, 'Standby Signage Audio', SIGNAGE_AUDIO);
   await ensureConfig(xapi.Config.Standby.Signage.Url, 'Standby Signage Url', SIGNAGE_URL);
 }
 

@@ -1167,12 +1167,20 @@ body.mode-ambient .gear--edit { display: none; }
 /* Screensaver preview overlay (Settings → Screensaver → Preview): sits above
    the settings UI; any tap closes it. */
 .ss-preview { position: fixed; inset: 0; z-index: 60; background: #000; }
+/* Preview clock face reserves the same bottom space as ambient (bar always,
+   strip when shown) so a two-row grid doesn't collide with the strip. */
+.ss-preview .cf { bottom: calc(var(--roomos-bar) + 8px); }
+.ss-preview.has-strip .cf { bottom: 124px; }
 .ss-preview__img { width: 100%; height: 100%; object-fit: cover; }
 /* Above the info strip band (~64px) so the two don't overlap. */
 .ss-preview__hint { position: absolute; bottom: 92px; left: 0; right: 0; text-align: center; font-size: 20px; color: var(--ink-dim); z-index: 1; }
 
 /* ---------- clock-face screensavers (Screensaver page: clock / worldclocks / clockrow) ---------- */
-.clockface { position: absolute; inset: 0; }
+/* The clock content centers within .clockface, which reserves the bottom for
+   the RoomOS bar (always) and the info strip (when shown) so a wrapped two-row
+   world-clock grid centers ABOVE the strip instead of colliding with it. */
+.clockface { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--roomos-bar) + 8px); }
+body.has-strip .clockface { bottom: 124px; }
 .cf { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .cf-time {
   display: flex; align-items: baseline; gap: 28px;

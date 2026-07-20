@@ -212,6 +212,10 @@ function applyMode() {
   const src = ambientSource(cfg);
   const ambient = mode === 'ambient' && src !== null;
   document.body.classList.toggle('mode-ambient', ambient);
+  // Clock faces reserve extra bottom space when the info strip is showing, so a
+  // wrapped (two-row) world-clock grid centers above the strip instead of
+  // colliding with it.
+  document.body.classList.toggle('has-strip', ambient && cfg.screensaver?.strip !== false);
   $('#ambient').hidden = !ambient;
   $('#grid').hidden = ambient;
   if (ambient) {

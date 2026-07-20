@@ -1126,6 +1126,9 @@ async function openSsPreview(source) {
     const showTime = !['clock', 'worldclocks', 'clockrow'].includes(source);
     return `<div class="strip">${stripHtml(stripData(caches, state.cfg), new Date(), { showTime })}</div>`;
   })();
+  // Mirrors ambient's has-strip: reserves the strip's space so a two-row clock
+  // grid centers above it in the preview too.
+  if (stripPart) ov.classList.add('has-strip');
   const hint = stripPart + '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
   try {
     if (source === 'clock' || source === 'worldclocks' || source === 'clockrow') {

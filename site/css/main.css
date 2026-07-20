@@ -409,13 +409,16 @@ html, body {
   display: flex; align-items: center; justify-content: center; gap: 36px;
   padding: 18px 48px;
   background: rgba(0, 0, 0, 0.65);
-  font-size: 24px;
+  /* Same thin Cisco Light face as the clock faces; hierarchy is carried by
+     colour (--ink vs --ink-dim), not weight, so it stays light like the dials. */
+  font-family: 'CiscoSansTT Light', 'CiscoSansTT', 'Cisco SansTT', sans-serif;
+  font-weight: 300; color: var(--ink-dim); font-size: 24px;
 }
-.strip__time { font-weight: 700; font-size: 28px; font-variant-numeric: tabular-nums; }
+.strip__time { font-size: 28px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .strip__wx { color: var(--ink-mid); font-variant-numeric: tabular-nums; }
-.strip__wx b { color: var(--ink); font-weight: 600; }
+.strip__wx b { color: var(--ink); font-weight: 300; }
 .strip__transit { color: var(--ink-dim); }
-.strip__transit b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.strip__transit b { color: var(--ink); font-weight: 300; font-variant-numeric: tabular-nums; }
 body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- welcome ---------- */

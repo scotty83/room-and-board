@@ -301,14 +301,14 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   const GDRIVE_ID = '1RHow60mcBwzMturimQSbziK3hqCvP2lz';
   it('defaults both blocks empty and sanitizes each', () => {
     const d = normalizeConfig({});
-    expect(d.photos).toEqual({ album: '', screensaver: false, every: 30 });
-    expect(d.gdrivephotos).toEqual({ album: '', screensaver: false, every: 30 });
+    expect(d.photos).toEqual({ album: '', every: 30 });
+    expect(d.gdrivephotos).toEqual({ album: '', every: 30 });
     const cfg = normalizeConfig({
-      photos: { album: 'B1m5fk75vLWwX', screensaver: true, every: 15 },
-      gdrivephotos: { album: GDRIVE_ID, screensaver: false, every: 60 },
+      photos: { album: 'B1m5fk75vLWwX', every: 15 },
+      gdrivephotos: { album: GDRIVE_ID, every: 60 },
     });
-    expect(cfg.photos).toEqual({ album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
-    expect(cfg.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: false, every: 60 });
+    expect(cfg.photos).toEqual({ album: 'B1m5fk75vLWwX', every: 15 });
+    expect(cfg.gdrivephotos).toEqual({ album: GDRIVE_ID, every: 60 });
     // Cross-shaped albums are rejected by the other block's rule.
     expect(normalizeConfig({ photos: { album: GDRIVE_ID } }).photos.album).toBe(''); // not an iCloud token
     expect(normalizeConfig({ gdrivephotos: { album: 'nope!' } }).gdrivephotos.album).toBe('');
@@ -316,18 +316,30 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(normalizeConfig({ photos: { every: 0 } }).photos.every).toBe(1);
     expect(normalizeConfig({ gdrivephotos: { every: 999 } }).gdrivephotos.every).toBe(360);
   });
-  it('makes the screensaver exclusive across the two photo widgets', () => {
-    const cfg = normalizeConfig({
+  it('migrates legacy per-widget screensaver booleans to cfg.screensaver', () => {
+    const both = normalizeConfig({
       photos: { album: 'B1m5fk75vLWwX', screensaver: true },
       gdrivephotos: { album: GDRIVE_ID, screensaver: true },
     });
-    expect(cfg.photos.screensaver).toBe(true);
-    expect(cfg.gdrivephotos.screensaver).toBe(false); // iCloud wins the tie
+    expect(both.screensaver).toEqual({ source: 'photos', strip: true }); // iCloud wins the legacy tie
+    expect(both.photos.screensaver).toBeUndefined(); // booleans retired from the blocks
+    const gd = normalizeConfig({ gdrivephotos: { album: GDRIVE_ID, screensaver: true } });
+    expect(gd.screensaver.source).toBe('gdrivephotos');
+    const legacyDrive = normalizeConfig({ photos: { source: 'gdrive', album: GDRIVE_ID, screensaver: true } });
+    expect(legacyDrive.screensaver.source).toBe('gdrivephotos'); // single-source-era Drive config
+  });
+
+  it('screensaver block: validates source, defaults, and wire round-trip', async () => {
+    expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true });
+    expect(normalizeConfig({ screensaver: { source: 'nope' } }).screensaver.source).toBe('art');
+    expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false });
+    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false } })));
+    expect(rt.screensaver).toEqual({ source: 'clock', strip: false });
   });
   it('migrates the legacy single-source shape', () => {
     // Legacy iCloud: album stays on photos, gdrivephotos empty.
     const ic = normalizeConfig({ photos: { source: 'icloud', album: 'B1m5fk75vLWwX', screensaver: true, every: 15 } });
-    expect(ic.photos).toEqual({ album: 'B1m5fk75vLWwX', screensaver: true, every: 15 });
+    expect(ic.photos).toEqual({ album: 'B1m5fk75vLWwX', every: 15 });
     expect(ic.gdrivephotos.album).toBe('');
     // Legacy Drive: album + screensaver move to gdrivephotos; photos empties;
     // a placed `photos` layout entry re-homes to `gdrivephotos`.
@@ -335,8 +347,9 @@ describe('photos config (iCloud + GDrive widgets)', () => {
       layout: [{ id: 'photos', x: 0, y: 0, w: 2, h: 2 }],
       photos: { source: 'gdrive', album: GDRIVE_ID, screensaver: true, every: 60 },
     });
-    expect(gd.photos).toEqual({ album: '', screensaver: false, every: 60 });
-    expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, screensaver: true, every: 60 });
+    expect(gd.photos).toEqual({ album: '', every: 60 });
+    expect(gd.gdrivephotos).toEqual({ album: GDRIVE_ID, every: 60 });
+    expect(gd.screensaver.source).toBe('gdrivephotos'); // choice migrated with the album
     expect(gd.layout.map((r) => r.id)).toContain('gdrivephotos');
     expect(gd.layout.map((r) => r.id)).not.toContain('photos');
   });

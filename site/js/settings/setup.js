@@ -663,24 +663,15 @@ const renderGdrivePhotos = () => renderPhotoField('gdrive');
 
 // One setup-form photo field, keyed by source. iCloud → cfg.photos, Drive →
 // cfg.gdrivephotos; the two widgets are independent, so /setup can configure
-// either or both. Screensaver is exclusive: turning one on clears the other's.
+// either or both. Which source drives the screensaver is a board-side setting
+// (Settings → Screensaver) — /setup no longer carries it.
 function renderPhotoField(src) {
   const gd = src === 'gdrive';
   const key = gd ? 'gdrivephotos' : 'photos';
-  const otherKey = gd ? 'photos' : 'gdrivephotos';
   const pre = gd ? 'gdrivephotos' : 'photos';
-  $(`#${pre}-ss`).checked = cfg[key].screensaver;
   $(`#${pre}-every`).value = String(cfg[key].every);
   $(`#${pre}-album`).value = cfg[key].album;
   $(`#${pre}-every`).addEventListener('change', (e) => (cfg[key].every = Number(e.target.value)));
-  $(`#${pre}-ss`).addEventListener('change', (e) => {
-    cfg[key].screensaver = e.target.checked;
-    if (e.target.checked && cfg[otherKey].screensaver) {
-      cfg[otherKey].screensaver = false; // screensaver is exclusive across the photo widgets
-      const other = $(`#${otherKey}-ss`);
-      if (other) other.checked = false;
-    }
-  });
   $(`#${pre}-add`).addEventListener('click', async () => {
     const id = gd ? parseDriveFolder($(`#${pre}-album`).value) : parseAlbumToken($(`#${pre}-album`).value);
     const status = $(`#${pre}-status`);

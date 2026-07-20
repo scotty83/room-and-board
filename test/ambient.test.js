@@ -254,11 +254,21 @@ describe('photos screensaver cold-boot — manifest resolution', () => {
 });
 
 describe('ambientSource', () => {
-  it('picks photos only when enabled + screensaver on + configured', () => {
-    expect(ambientSource({ widgets: ['art'], photos: { screensaver: false, album: '' } })).toBe('art');
-    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe('photos');
-    expect(ambientSource({ widgets: ['photos'], photos: { screensaver: false, album: 'B1m5fk75vLWwX' } })).toBe('art');
-    expect(ambientSource({ widgets: [], photos: { screensaver: true, album: 'B1m5fk75vLWwX' } })).toBe(null);
+  const ss = (source) => ({ source, strip: true });
+
+  it('follows the dedicated screensaver picker', () => {
+    expect(ambientSource({ widgets: ['art'], screensaver: ss('art') })).toBe('art');
+    expect(ambientSource({ widgets: ['photos'], photos: { album: 'B1m5fk75vLWwX' }, screensaver: ss('photos') })).toBe('photos');
+    expect(ambientSource({ widgets: [], screensaver: ss('off') })).toBe(null);
+    expect(ambientSource({ widgets: [], screensaver: ss('clock') })).toBe('clock');
+    expect(ambientSource({ widgets: [], screensaver: ss('worldclocks') })).toBe('worldclocks');
+    expect(ambientSource({ widgets: [], screensaver: ss('clockrow') })).toBe('clockrow');
+  });
+
+  it('degrades: broken photo source -> art if any ambient widget -> big clock', () => {
+    expect(ambientSource({ widgets: ['art', 'photos'], photos: { album: '' }, screensaver: ss('photos') })).toBe('art');
+    expect(ambientSource({ widgets: [], photos: { album: '' }, screensaver: ss('photos') })).toBe('clock');
+    expect(ambientSource({ widgets: [], screensaver: ss('art') })).toBe('clock');
   });
 });
 

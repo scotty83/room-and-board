@@ -179,18 +179,15 @@ remove like any other.
 - **World Clock** — up to 10 cities in order of their current time, with a
   next-day marker. *Configure:* Settings → World Clock (offices or any zone).
 - **Art** — a rotating public-domain artwork (Met / Art Institute of Chicago /
-  Cleveland); tap it for full screen, and swipe there to browse. Also powers the
-  ambient screensaver. *Configure:* Settings → Art (rotation interval; optional
-  collections). Whether the board shows the dashboard or ambient art is set
-  under **Settings → Display**: *Always dashboard*, *Always art*, or
-  **Scheduled** — the dashboard shows during your own daily time windows (up to
-  four, 15-minute steps) and art shows the rest of the time.
+  Cleveland); tap it for full screen, and swipe there to browse. Also the
+  default screensaver source. *Configure:* Settings → Art (rotation interval;
+  optional collections).
 - **iCloud Photos** / **GDrive Photos** — rotating photo slideshows from an
   iCloud **Shared Album** and/or a **public Google Drive folder**. They're two
-  independent widgets — add either or both, each with its own album, rotation
-  interval, and screensaver option (on the dashboard both cards are titled
-  simply "Photos"); tap for full screen, swipe to browse. Either one — never
-  both — can replace Art as the ambient screensaver. *Configure:* from your
+  independent widgets — add either or both, each with its own album and
+  rotation interval (on the dashboard both cards are titled simply "Photos");
+  tap for full screen, swipe to browse. Either can drive the screensaver via
+  **Settings → Screensaver**. *Configure:* from your
   phone at **`/photo-setup`** (each widget's Settings pane shows a QR straight
   to it): the page walks through creating the shared album/folder, checks your
   link against the live feed, and mints a short board code — one code covers
@@ -353,6 +350,22 @@ device's cached copy) and paste it again; the board picks it up at its next
 reload (hourly version check, nightly 4 AM, or a power cycle). The exported
 URL deliberately contains only `#cfg=` — never the `auth` credentials a
 macro-managed board's URL carries.
+
+### Screensaver
+
+**Settings → Screensaver** picks what fills the screen when the board is idle:
+the **Art slideshow**, either **photo widget's album**, one of three clock
+faces — **Big clock** (a giant digital time + date), **World clocks** (an
+analog dial per World Clock city, night cities dimmed), **Clock + world
+times** (digital hero with a city row) — or **Off**. Every option has a
+full-screen **Preview** (tap anywhere to exit). A toggle controls the bottom
+info strip (weather + next trains). The screensaver only appears when Display
+mode is *Always screensaver*, or *Scheduled* outside the dashboard windows
+(both under Settings → Display) — the dashboard shows during your daily time
+windows (up to four, 15-minute steps) and the screensaver the rest of the
+time. If a photo source loses its album the board falls back to Art, then to
+the Big clock, so the screen never goes blank. Clocks repaint once per
+minute, aligned to the minute boundary.
 
 ### Arranging the dashboard
 

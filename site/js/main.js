@@ -14,6 +14,7 @@ import { createSlideshow, swipeAction } from './imageshow.js';
 import { startBeacon } from './fleet.js';
 import { DEMO_VMS } from '../demo/fixtures.js';
 import { initTextViewer } from './textviewer.js';
+import { startClockFace, CLOCK_SOURCES } from './clockfaces.js';
 import { icon } from './icons.js';
 
 import * as clock from './widgets/clock.js';
@@ -67,6 +68,7 @@ let cfg = null;
 // wedged, so it must not trigger a reload loop.
 let lastRender = Date.now();
 let slideshow = null;
+let clockface = null; // minute-tick clock screensaver engine (clockfaces.js)
 let slideshowStarting = false; // guards the await gap in startSlideshow
 const cancels = [];
 
@@ -165,6 +167,7 @@ function renderStrip() {
   // The strip only shows in ambient mode; skip the cache reads + DOM rebuild
   // on the 30 s schedule while the dashboard grid is up.
   if (!DEMO && !document.body.classList.contains('mode-ambient')) return;
+  if (cfg?.screensaver?.strip === false) return; // Screensaver page turned the band off
   const caches = {};
   for (const id of ['weather', 'lirr', 'mnr', 'njt']) caches[id] = loadCache(id)?.data;
   const data = DEMO
@@ -203,16 +206,27 @@ async function startSlideshow() {
 function applyMode() {
   const forced = params.get('mode');
   const mode = forced === 'ambient' || forced === 'dashboard' ? forced : resolveMode(cfg, new Date());
-  const ambient = mode === 'ambient' && ambientSource(cfg) !== null;
+  const src = ambientSource(cfg);
+  const ambient = mode === 'ambient' && src !== null;
   document.body.classList.toggle('mode-ambient', ambient);
   $('#ambient').hidden = !ambient;
   $('#grid').hidden = ambient;
   if (ambient) {
-    startSlideshow();
+    const isClock = CLOCK_SOURCES.has(src);
+    $('#slideshow').hidden = isClock;
+    $('#clockface').hidden = !isClock;
+    $('#strip').hidden = cfg.screensaver?.strip === false;
+    if (isClock) {
+      if (slideshow) { slideshow.stop(); slideshow = null; }
+      clockface ??= startClockFace($('#clockface'), src, cfg);
+    } else {
+      if (clockface) { clockface.stop(); clockface = null; }
+      startSlideshow();
+    }
     renderStrip();
-  } else if (slideshow) {
-    slideshow.stop();
-    slideshow = null;
+  } else {
+    if (slideshow) { slideshow.stop(); slideshow = null; }
+    if (clockface) { clockface.stop(); clockface = null; }
   }
 }
 

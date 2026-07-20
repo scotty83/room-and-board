@@ -113,11 +113,16 @@ export const DEFAULT_CONFIG = Object.freeze({
   art: Object.freeze({ every: 30, cats: Object.freeze([]) }), // rotation minutes; [] = all categories
   // Two independent photo widgets share this render but keep separate config:
   // photos = iCloud shared-album token, gdrivephotos = Drive folder id. album =
-  // the source's id, every = rotation minutes, screensaver = drive ambient (at
-  // most ONE of art/photos/gdrivephotos owns the screensaver — normalizeConfig
-  // enforces it). Legacy single-source {source, album} migrates in normalizeConfig.
-  photos: Object.freeze({ album: '', screensaver: false, every: 30 }),
-  gdrivephotos: Object.freeze({ album: '', screensaver: false, every: 30 }),
+  // the source's id, every = rotation minutes. Which source drives the
+  // full-screen screensaver lives in cfg.screensaver (dedicated Settings page);
+  // the legacy per-widget screensaver booleans migrate there in normalizeConfig.
+  photos: Object.freeze({ album: '', every: 30 }),
+  gdrivephotos: Object.freeze({ album: '', every: 30 }),
+  // Screensaver: what fills the screen in ambient mode. source: art | photos |
+  // gdrivephotos (slideshows), clock | worldclocks | clockrow (clock faces,
+  // A/C/D from the 2026-07-19 design review), or off. strip = the bottom
+  // weather/transit info band.
+  screensaver: Object.freeze({ source: 'art', strip: true }),
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
@@ -150,6 +155,8 @@ function normalizeLoc(rawLoc) {
     units: rawLoc.units === 'C' ? 'C' : 'F',
   };
 }
+
+export const SCREENSAVER_SOURCES = Object.freeze(['off', 'art', 'photos', 'gdrivephotos', 'clock', 'worldclocks', 'clockrow']);
 
 export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
@@ -194,9 +201,20 @@ export function normalizeConfig(raw) {
   }
   const photos = normalizePhotos(raw.photos);
   const gdrivephotos = normalizeGdrivePhotos(raw.gdrivephotos, raw.photos);
-  // Screensaver is exclusive across Art + both photo widgets ("never together").
-  // iCloud wins a double-set deterministically; the UI enforces single-select.
-  if (photos.screensaver && gdrivephotos.screensaver) gdrivephotos.screensaver = false;
+  // Screensaver: prefer the dedicated block; otherwise migrate the legacy
+  // per-widget booleans (pre-2026-07-19 configs) — iCloud wins a double-set,
+  // matching the old exclusivity tie-break. Falls back to the historical
+  // default (art slideshow) with the info strip on.
+  const screensaver = (() => {
+    const s = raw.screensaver;
+    if (s && SCREENSAVER_SOURCES.includes(s.source)) return { source: s.source, strip: s.strip !== false };
+    if (raw.photos?.screensaver === true && photos.album) return { source: 'photos', strip: true };
+    if (raw.gdrivephotos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true };
+    // Legacy single-source Drive block: {photos:{source:'gdrive',screensaver}}
+    // migrated its album into gdrivephotos above — carry the choice with it.
+    if (raw.photos?.source === 'gdrive' && raw.photos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true };
+    return { source: 'art', strip: true };
+  })();
 
   return {
     v: 3,
@@ -361,6 +379,7 @@ export function normalizeConfig(raw) {
       cats: strList(raw.art?.cats, 6).filter((c) => ART_CATS.some(([id]) => id === c)),
     },
     photos,
+    screensaver,
     gdrivephotos,
     worldclock: {
       cities: (() => {
@@ -432,6 +451,7 @@ export async function encodeConfig(cfg) {
   if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
   if (wire.iptv && isDefault(wire.iptv, DEFAULT_CONFIG.iptv)) delete wire.iptv; // unconfigured → off the wire
   if (wire.nerdMode === false) delete wire.nerdMode;
+  if (wire.screensaver && isDefault(wire.screensaver, DEFAULT_CONFIG.screensaver)) delete wire.screensaver;
   const bytes = new TextEncoder().encode(JSON.stringify(wire));
   return bytesToBase64url(await pipe(bytes, new CompressionStream('deflate-raw')));
 }
@@ -462,7 +482,6 @@ export function normalizePhotos(raw) {
   const tok = legacyDrive ? '' : p.album;
   return {
     album: isIcloudToken(tok) ? tok : '',
-    screensaver: p.screensaver === true && !legacyDrive,
     every: photoEvery(p),
   };
 }
@@ -473,7 +492,6 @@ export function normalizeGdrivePhotos(raw, rawPhotos) {
   const p = raw ?? (rawPhotos?.source === 'gdrive' ? rawPhotos : {});
   return {
     album: isDriveFolder(p.album) ? p.album : '',
-    screensaver: p.screensaver === true,
     every: photoEvery(p),
   };
 }

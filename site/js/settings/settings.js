@@ -187,6 +187,7 @@ async function saveAndClose() {
 export const NAV_MODEL = [
   { type: 'item', id: 'display', label: 'Display' },
   { type: 'item', id: 'widgets', label: 'Widgets' },
+  { type: 'item', id: 'screensaver', label: 'Screensaver' },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'item', id: 'worldclock', label: 'World Clock' },
   { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'iCloud Photos'], ['gdrivephotos', 'GDrive Photos']] },
@@ -263,7 +264,7 @@ function pane() {
 const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
-  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart, iptv: renderIptv,
+  news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart, iptv: renderIptv, screensaver: renderScreensaver,
   art: renderArt, photos: renderPhotos, gdrivephotos: renderGdrivePhotos, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
@@ -425,16 +426,13 @@ function renderPhotoPane(src) {
   // The album is built and validated on the phone (/photo-setup) — the board
   // only takes the short code it mints. No paste/type path here: clipboard is
   // unreliable on the device and Drive ids aren't OSK-typeable anyway.
-  // Screensaver + rotation only appear once an album is connected (an
-  // unconfigured pane keeps a single next step: scan, get a code, enter it).
+  // Rotation controls only appear once an album is connected (an unconfigured
+  // pane keeps a single next step: scan, get a code, enter it). Which source
+  // drives the full-screen view lives on the Screensaver page now.
   const configured = p.album
     ? `<div class="rows">
         <div class="row"><span class="row__label">${gd ? 'Folder' : 'Album'} connected</span>
           <button class="btn btn--ghost" data-clear-album>Remove</button></div>
-        <div class="row">
-          <button class="toggle ${p.screensaver ? 'is-on' : ''}" data-ss role="switch" aria-checked="${p.screensaver}"><span class="toggle__knob"></span></button>
-          <span class="row__label">Use these photos as the screensaver (replaces Art)</span>
-        </div>
       </div>
       <p class="pane__label">Rotation</p>
       <p class="pane__hint">Applies to the slideshow and the dashboard card.</p>
@@ -483,12 +481,6 @@ function renderPhotoPane(src) {
       btn.textContent = 'Remove';
       btn.classList.remove('btn--armed');
     }, 4000);
-  });
-  pane().querySelector('[data-ss]')?.addEventListener('click', () => {
-    const on = !state.cfg[cfgKey].screensaver;
-    state.cfg[cfgKey].screensaver = on;
-    if (on) state.cfg[otherKey].screensaver = false; // screensaver is exclusive across Art + both photo widgets
-    rerender();
   });
   pane().querySelectorAll('[data-every]').forEach((btn) =>
     btn.addEventListener('click', () => {
@@ -1114,6 +1106,82 @@ async function renderChart() {
   pane().querySelector('[data-chart-politics]').addEventListener('click', () => {
     state.cfg.chart.excludePolitics = !state.cfg.chart.excludePolitics;
     renderChart();
+  });
+}
+
+// Full-screen preview of a screensaver source; any tap exits. Clock faces
+// render instantly (pure); art/photos show one image from their source.
+async function openSsPreview(source) {
+  const ov = document.createElement('div');
+  ov.className = 'ss-preview';
+  ov.innerHTML = '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
+  ov.addEventListener('click', () => ov.remove());
+  document.body.appendChild(ov);
+  const hint = '<div class="ss-preview__hint">Tap anywhere to exit the preview</div>';
+  try {
+    if (source === 'clock' || source === 'worldclocks' || source === 'clockrow') {
+      const { clockFaceHtml } = await import('../clockfaces.js');
+      ov.innerHTML = clockFaceHtml(source, state.cfg) + hint;
+    } else if (source === 'art') {
+      const man = await fetchJSON('data/art-manifest.json');
+      const p = man[Math.floor(Math.random() * man.length)];
+      ov.innerHTML = `<img class="ss-preview__img" src="${escapeHtml(p.img)}" alt="">` + hint;
+    } else {
+      const block = state.cfg[source];
+      const path = source === 'photos' ? '/icloud/album?token=' : '/gdrive/album?folder=';
+      const digest = await fetchJSON(`${WORKER_URL}${path}${encodeURIComponent(block.album)}`);
+      const p = digest.photos?.[0];
+      if (!p) throw new Error('no photos');
+      ov.innerHTML = `<img class="ss-preview__img" src="${escapeHtml(p.url)}" alt="">` + hint;
+    }
+  } catch {
+    ov.innerHTML = '<div class="ss-preview__hint">Preview unavailable right now. Tap to close.</div>';
+  }
+}
+
+async function renderScreensaver() {
+  const ss = state.cfg.screensaver;
+  const placed = new Set(state.cfg.layout.map((r) => r.id));
+  const anyAmbient = placed.has('art') || placed.has('photos') || placed.has('gdrivephotos');
+  const OPTIONS = [
+    ['art', 'Art slideshow', anyAmbient ? '' : 'needs the Art or a photo widget on the dashboard'],
+    ['photos', 'iCloud Photos', state.cfg.photos.album ? '' : 'no album connected yet'],
+    ['gdrivephotos', 'GDrive Photos', state.cfg.gdrivephotos.album ? '' : 'no folder connected yet'],
+    ['clock', 'Big clock', ''],
+    ['worldclocks', 'World clocks', 'analog dials, one per World Clock city'],
+    ['clockrow', 'Clock + world times', ''],
+    ['off', 'Off', 'the dashboard stays up when idle'],
+  ];
+  pane().innerHTML = `
+    <h2 class="pane__title">Screensaver</h2>
+    <p class="pane__hint">What fills the screen when the board is idle. It shows only when Display
+      mode is <b>Always screensaver</b>, or <b>Scheduled</b> outside the dashboard windows
+      (set both under Settings → Display).</p>
+    <div class="rows rows--pill">${OPTIONS.map(([id, label, note]) => `
+      <div class="row row--tap ${ss.source === id ? 'is-selected' : ''}" data-ss-src="${id}" role="button" tabindex="0">
+        <span class="row__label">${label}${note ? ` <small>· ${note}</small>` : ''}</span>
+        ${id === 'off' ? '' : `<button class="btn btn--ghost" data-ss-prev="${id}">Preview</button>`}
+      </div>`).join('')}</div>
+    <div class="row row--control">
+      <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
+        <span class="toggle__knob"></span>
+      </button>
+      <span class="row__label">Show the info strip (weather + next trains) along the bottom</span>
+    </div>
+    <p class="pane__hint">If a photo source loses its album, the board falls back to Art, then to the Big clock — the screen never goes empty. Press Save to apply.</p>`;
+  pane().querySelectorAll('[data-ss-src]').forEach((row) =>
+    row.addEventListener('click', () => {
+      state.cfg.screensaver.source = row.dataset.ssSrc;
+      renderScreensaver();
+    }));
+  pane().querySelectorAll('[data-ss-prev]').forEach((btn) =>
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation(); // the row behind it selects; Preview only previews
+      openSsPreview(btn.dataset.ssPrev);
+    }));
+  pane().querySelector('[data-ss-strip]').addEventListener('click', () => {
+    state.cfg.screensaver.strip = !state.cfg.screensaver.strip;
+    renderScreensaver();
   });
 }
 

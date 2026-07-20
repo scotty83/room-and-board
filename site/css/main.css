@@ -410,8 +410,10 @@ html, body {
   /* Translucent info band. Its bottom edge sits at the top of the RoomOS
      "Tap to start" bar (which OVERLAYS the bottom --roomos-bar px of the
      viewport, board-verified), so the strip content clears the bar instead of
-     being cropped by it. Full-screen everywhere it's used (ambient, art
-     viewer, screensaver preview), so the same clearance applies. */
+     being cropped by it. This clearance is for the IDLE contexts where that bar
+     is shown: the ambient screensaver and its settings preview. The art viewer
+     is the exception (overridden below) — it's opened by an active tap, so the
+     idle bar isn't present and the strip sits flush at the bottom. */
   position: absolute; left: 0; right: 0; bottom: var(--roomos-bar);
   display: flex; align-items: center; justify-content: center; gap: 36px;
   padding: 18px 48px;
@@ -426,6 +428,11 @@ html, body {
 .strip__wx b { color: var(--ink); font-weight: 300; }
 .strip__transit { color: var(--ink-dim); }
 .strip__transit b { color: var(--ink); font-weight: 300; font-variant-numeric: tabular-nums; }
+/* Full-screen image viewer (tap a photo from the dashboard). No idle RoomOS bar
+   here — the board is being actively touched — so the strip drops to the very
+   bottom, letting the slide caption (bottom: 82px) sit just above it as designed
+   rather than colliding with a strip lifted --roomos-bar px off the floor. */
+.art-viewer .strip { bottom: 0; }
 body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- welcome ---------- */

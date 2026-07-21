@@ -9,6 +9,7 @@ import { CURATED_SOURCES } from '../config.js';
 const src = CURATED_SOURCES.landscapes;
 const widget = createPhotoWidget({
   id: 'landscapes',
+  cfgKey: 'landscapes', // reads cfg.landscapes.every for the user rotation setting
   endpoint: '/gdrive/album?folder=',
   curated: { title: 'Landscapes', folder: src.folder, every: src.every },
 });

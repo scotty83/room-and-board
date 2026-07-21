@@ -193,7 +193,7 @@ export const NAV_MODEL = [
   { type: 'item', id: 'screensaver', label: 'Screensaver' },
   { type: 'item', id: 'weather', label: 'Weather' },
   { type: 'item', id: 'worldclock', label: 'World Clock' },
-  { type: 'group', label: 'Images', items: [['art', 'Art'], ['photos', 'iCloud Photos'], ['gdrivephotos', 'GDrive Photos']] },
+  { type: 'group', label: 'Images', items: [['art', 'Art'], ['landscapes', 'Landscapes'], ['photos', 'iCloud Photos'], ['gdrivephotos', 'GDrive Photos']] },
   { type: 'group', label: 'Commute', items: [
     ['subway', 'Subway'], ['lirr', 'LIRR'], ['mnr', 'Metro-North'], ['njt', 'NJ Transit'], ['amtrak', 'Amtrak'],
     ['path', 'PATH'], ['ferry', 'NYC Ferry'], ['bus', 'Express Bus'], ['citibike', 'Citi Bike'], ['tfl', 'TfL Status'] ] },
@@ -268,7 +268,7 @@ const SECTION_RENDERERS = {
   widgets: renderWidgets, subway: renderSubway, lirr: renderLirr, mnr: renderMnr, njt: renderNjt, amtrak: renderAmtrak,
   path: renderPath, ferry: renderFerry, bus: renderBus, citibike: renderCitibike, tfl: renderTfl, markets: renderMarkets, marketsnews: renderMarketsNews, sports: renderSports,
   news: renderNews, substack: renderSubstack, bsky: renderBsky, worldclock: renderWorldclock, services: renderServices, chart: renderChart, iptv: renderIptv, screensaver: renderScreensaver,
-  art: renderArt, photos: renderPhotos, gdrivephotos: renderGdrivePhotos, weather: renderWeather, display: renderDisplay,
+  art: renderArt, photos: renderPhotos, gdrivephotos: renderGdrivePhotos, landscapes: renderLandscapes, weather: renderWeather, display: renderDisplay,
   code: renderCode, diag: renderDiag,
 };
 export const SECTION_IDS = Object.keys(SECTION_RENDERERS);
@@ -371,7 +371,7 @@ function renderArt() {
   pane().innerHTML = `
     <h2 class="pane__title">Art</h2>
     <p class="pane__label">Rotation</p>
-    <p class="pane__hint">Applies to the slideshow and the dashboard card.</p>
+    <p class="pane__hint">Applies to the screensaver and the dashboard card.</p>
     <div class="segmented" role="group" aria-label="How often the artwork changes">${ART_INTERVALS.map(
       (m) => `<button class="seg ${state.cfg.art.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
     ).join('')}</div>
@@ -396,6 +396,25 @@ function renderArt() {
     btn.addEventListener('click', () => {
       state.cfg.art.cats = toggleIn(state.cfg.art.cats, btn.dataset.cat);
       renderArt();
+    }),
+  );
+}
+
+// Landscapes is a curated source (fixed folder, no album to connect), so its
+// only setting is rotation — shared by the dashboard card and the screensaver.
+function renderLandscapes() {
+  pane().innerHTML = `
+    <h2 class="pane__title">Landscapes</h2>
+    <p class="pane__label">Rotation</p>
+    <p class="pane__hint">Applies to the screensaver and the dashboard card.</p>
+    <div class="segmented" role="group" aria-label="How often the landscape changes">${ART_INTERVALS.map(
+      (m) => `<button class="seg ${state.cfg.landscapes.every === m ? 'is-active' : ''}" data-every="${m}">${intervalLabel(m)}</button>`,
+    ).join('')}</div>
+    <p class="pane__hint">A curated set of landscape photos — no setup needed. Pick it as a screensaver in Settings → Screensaver.</p>`;
+  pane().querySelectorAll('[data-every]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      state.cfg.landscapes.every = Number(btn.dataset.every);
+      renderLandscapes();
     }),
   );
 }

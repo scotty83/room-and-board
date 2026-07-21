@@ -116,7 +116,7 @@ function step(viewer, dir) {
 
 // Ambient slideshow engine: two stacked layers, crossfade via [data-active].
 // deps.now/random are injectable for tests.
-export function createSlideshow(manifest, host, { intervalMs = 75000, random = Math.random } = {}) {
+export function createSlideshow(manifest, host, { intervalMs = 75000, random = Math.random, fit = 'contain' } = {}) {
   let order = shuffle([...manifest.keys()], random);
   let pos = 0;
   let timer = null;
@@ -149,10 +149,12 @@ export function createSlideshow(manifest, host, { intervalMs = 75000, random = M
   function show(item) {
     const next = layers[1 - active];
     next.style.backgroundImage = `url("${item.img}")`;
-    // Always letterbox on black — matches the full-screen viewer's
-    // object-fit:contain, so a work looks the same in ambient and when tapped
-    // into, and the full canvas is never cropped.
-    next.style.backgroundSize = 'contain';
+    // Fit mode. 'contain' letterboxes on black — art and personal photos are
+    // never cropped and look the same in ambient as when tapped into (the
+    // full-screen viewer is object-fit:contain too). 'cover' fills the viewport
+    // and crops, for curated photo sources (e.g. Landscapes) that are meant to
+    // fill the screen edge-to-edge.
+    next.style.backgroundSize = fit;
     next.setAttribute('data-active', '');
     layers[active].removeAttribute('data-active');
     active = 1 - active;

@@ -337,6 +337,11 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     // Backdrop: opt-in boolean, default off, valid on any source (only rendered under clocks).
     expect(normalizeConfig({ screensaver: { source: 'clock', backdrop: true } }).screensaver.backdrop).toBe(true);
     expect(normalizeConfig({ screensaver: { source: 'clock' } }).screensaver.backdrop).toBe(false);
+    // Landscapes rotation: user-adjustable minutes, default 30, clamped, wire round-trips.
+    expect(normalizeConfig({}).landscapes).toEqual({ every: 30 });
+    expect(normalizeConfig({ landscapes: { every: 60 } }).landscapes.every).toBe(60);
+    const rtl = await decodeConfig(await encodeConfig(normalizeConfig({ landscapes: { every: 120 } })));
+    expect(rtl.landscapes.every).toBe(120);
     expect(normalizeConfig({ screensaver: { source: 'worldclocks', markers: false } }).screensaver.markers).toBe(false);
     const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false, markers: false, backdrop: true } })));
     expect(rt.screensaver).toEqual({ source: 'clock', strip: false, markers: false, backdrop: true });

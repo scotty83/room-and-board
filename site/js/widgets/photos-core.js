@@ -44,8 +44,10 @@ export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest
         : setupPrompt(id, emptyAction, emptyDest);
       return;
     }
-    // Rotate deterministically on the interval bucket, like Art.
-    const everyMs = (curated ? curated.every : (cfg?.[cfgKey]?.every ?? 30)) * 60 * 1000;
+    // Rotate deterministically on the interval bucket, like Art. Curated widgets
+    // honour the user's rotation (cfg[cfgKey].every) when they have a settings
+    // pane, else fall back to the curated default.
+    const everyMs = (curated ? (cfg?.[cfgKey]?.every ?? curated.every) : (cfg?.[cfgKey]?.every ?? 30)) * 60 * 1000;
     const idx = Math.floor(Date.now() / everyMs) % sessionList.length;
     const p = sessionList[idx];
     el.innerHTML = `

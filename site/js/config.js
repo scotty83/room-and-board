@@ -118,6 +118,9 @@ export const DEFAULT_CONFIG = Object.freeze({
   // the legacy per-widget screensaver booleans migrate there in normalizeConfig.
   photos: Object.freeze({ album: '', every: 30 }),
   gdrivephotos: Object.freeze({ album: '', every: 30 }),
+  // Curated Landscapes source: no album (folder is baked into CURATED_SOURCES);
+  // only the rotation minutes are user-adjustable (Settings → Landscapes).
+  landscapes: Object.freeze({ every: 30 }),
   // Screensaver: what fills the screen in ambient mode. source: art | photos |
   // gdrivephotos (slideshows), clock | worldclocks | clockrow (clock faces,
   // A/C/D from the 2026-07-19 design review), or off. strip = the bottom
@@ -402,6 +405,7 @@ export function normalizeConfig(raw) {
     photos,
     screensaver,
     gdrivephotos,
+    landscapes: { every: photoEvery(raw.landscapes) },
     worldclock: {
       cities: (() => {
         const seen = new Set();
@@ -470,6 +474,7 @@ export async function encodeConfig(cfg) {
   if (wire.clock24 === DEFAULT_CONFIG.clock24) delete wire.clock24; // default 12h → off the wire
   if (wire.photos && isDefault(wire.photos, DEFAULT_CONFIG.photos)) delete wire.photos; // unconfigured → re-derives on decode
   if (wire.gdrivephotos && isDefault(wire.gdrivephotos, DEFAULT_CONFIG.gdrivephotos)) delete wire.gdrivephotos;
+  if (wire.landscapes && isDefault(wire.landscapes, DEFAULT_CONFIG.landscapes)) delete wire.landscapes; // default rotation → re-derives on decode
   if (wire.iptv && isDefault(wire.iptv, DEFAULT_CONFIG.iptv)) delete wire.iptv; // unconfigured → off the wire
   if (wire.nerdMode === false) delete wire.nerdMode;
   if (wire.screensaver && isDefault(wire.screensaver, DEFAULT_CONFIG.screensaver)) delete wire.screensaver;

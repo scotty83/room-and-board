@@ -202,13 +202,16 @@ async function startSlideshow() {
     else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
     if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
     // Each ambient source owns its interval: the chosen photo widget's every for
-    // its slideshow, the curated source's own every, art.every for art (art's
-    // setting used to leak into photos).
+    // its slideshow, the curated source's user rotation (its own default), art's
+    // every for art (art's setting used to leak into photos).
     const everyMin = (src === 'photos' ? cfg.photos?.every
       : src === 'gdrivephotos' ? cfg.gdrivephotos?.every
-      : CURATED_SOURCES[src] ? CURATED_SOURCES[src].every
+      : CURATED_SOURCES[src] ? (cfg[src]?.every ?? CURATED_SOURCES[src].every)
       : cfg.art?.every) ?? 30;
-    slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000 });
+    // Curated photo sources (Landscapes) fill the screen; art/personal photos
+    // letterbox to never crop the canvas.
+    const fit = CURATED_SOURCES[src] ? 'cover' : 'contain';
+    slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000, fit });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }
   finally { slideshowStarting = false; }

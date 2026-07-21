@@ -53,7 +53,7 @@ import * as chart from './widgets/chart.js';
 import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
-import { fetchCuratedManifest, fetchDailyBackdrop } from './curated.js';
+import { fetchCuratedManifest, fetchBackdropList, backdropDayIndex } from './curated.js';
 
 const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, landscapes, services, apod, chart, citibike, tfl, f1, golf, tennis, iptv];
 for (const m of MODULES) registerWidget(m);
@@ -73,6 +73,8 @@ let slideshow = null;
 let clockface = null; // minute-tick clock screensaver engine (clockfaces.js)
 let slideshowStarting = false; // guards the await gap in startSlideshow
 let backdropGen = 0; // guards the await gap in applyBackdrop (mode can flip mid-fetch)
+let backdropList = []; // full curated backdrop set, for swipe-to-next
+let backdropIndex = 0; // which backdrop is showing (starts at the daily pick)
 const cancels = [];
 
 function cardFor(mod, rect) {
@@ -217,21 +219,39 @@ async function startSlideshow() {
   finally { slideshowStarting = false; }
 }
 
+// Paints the current backdrop image into #backdrop.
+function showBackdrop() {
+  const el = $('#backdrop');
+  el.style.backgroundImage = `url("${backdropList[backdropIndex].img}")`;
+  el.hidden = false;
+}
+
+// Swipe ahead of schedule: step to the next/prev backdrop. No-ops unless a clock
+// backdrop is currently showing, so it's safe to wire to the whole ambient area.
+function stepBackdrop(dir) {
+  if (backdropList.length < 2 || $('#backdrop').hidden) return;
+  backdropIndex = (backdropIndex + dir + backdropList.length) % backdropList.length;
+  showBackdrop();
+}
+
 // Shows/hides the daily photo behind a clock face. Async (folder fetch), so a
-// generation guard drops a stale result if the mode flips mid-fetch. body's
+// generation guard drops a stale result if the mode flips mid-fetch. Loads the
+// full set (for swipe-to-next) and opens on the day's deterministic pick. body's
 // .ss-backdrop class drives the clock's legibility treatment (text-shadow +
 // dial discs); a failed/empty fetch falls back to the plain dark background.
 async function applyBackdrop(on) {
   const el = $('#backdrop');
   const gen = ++backdropGen;
-  if (!on) { el.hidden = true; el.style.backgroundImage = ''; document.body.classList.remove('ss-backdrop'); return; }
+  if (!on) { el.hidden = true; el.style.backgroundImage = ''; document.body.classList.remove('ss-backdrop'); backdropList = []; return; }
+  if (backdropList.length) { document.body.classList.add('ss-backdrop'); showBackdrop(); return; } // already loaded; keep the shown image
   try {
-    const url = await fetchDailyBackdrop(net);
+    const list = await fetchBackdropList(net);
     if (gen !== backdropGen) return; // mode changed while fetching — abandon
-    if (!url) { el.hidden = true; document.body.classList.remove('ss-backdrop'); return; }
-    el.style.backgroundImage = `url("${url}")`;
-    el.hidden = false;
+    if (!list.length) { el.hidden = true; document.body.classList.remove('ss-backdrop'); return; }
+    backdropList = list;
+    backdropIndex = backdropDayIndex(new Date(), list.length);
     document.body.classList.add('ss-backdrop');
+    showBackdrop();
   } catch (err) {
     if (gen !== backdropGen) return;
     console.error('[signage] backdrop unavailable', err);
@@ -453,6 +473,24 @@ async function boot() {
   host.addEventListener('pointerup', (e) => {
     const action = swipeAction(e.clientX - downX, e.clientY - downY);
     if (action === 'next' || action === 'prev') slideshow?.step(action === 'next' ? 1 : -1);
+  });
+}
+
+// Clock-backdrop swipe: over a clock face the photo slideshow is hidden, so a
+// parallel handler on the ambient container steps the backdrop ahead of the
+// daily schedule. stepBackdrop no-ops unless a backdrop is actually showing, so
+// this is inert during photo slideshows (which keep their own handler above).
+{
+  const host = $('#ambient');
+  let downX = 0;
+  let downY = 0;
+  host.addEventListener('pointerdown', (e) => {
+    downX = e.clientX;
+    downY = e.clientY;
+  });
+  host.addEventListener('pointerup', (e) => {
+    const action = swipeAction(e.clientX - downX, e.clientY - downY);
+    if (action === 'next' || action === 'prev') stepBackdrop(action === 'next' ? 1 : -1);
   });
 }
 

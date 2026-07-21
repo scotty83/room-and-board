@@ -22,12 +22,21 @@ export async function fetchCuratedManifest(id, net) {
   return fetchFolderPhotos(src.folder, net);
 }
 
-// Today's clock-backdrop image URL, or '' if the folder is empty/unreachable.
-// Deterministic daily rotation keyed to the LOCAL day, so the image is stable
-// through the day and flips at local midnight.
-export async function fetchDailyBackdrop(net, now = new Date()) {
-  const list = await fetchFolderPhotos(CLOCK_BACKDROP_FOLDER, net);
-  if (!list.length) return '';
+// Full curated clock-backdrop list (for swipe-to-next); [] if empty/unreachable.
+export function fetchBackdropList(net) {
+  return fetchFolderPhotos(CLOCK_BACKDROP_FOLDER, net);
+}
+
+// Deterministic daily index into a list of length len, keyed to the LOCAL day so
+// the default image is stable through the day and flips at local midnight.
+export function backdropDayIndex(now, len) {
+  if (!len) return 0;
   const localDay = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
-  return list[((localDay % list.length) + list.length) % list.length].img;
+  return ((localDay % len) + len) % len;
+}
+
+// Today's clock-backdrop image URL, or '' if the folder is empty/unreachable.
+export async function fetchDailyBackdrop(net, now = new Date()) {
+  const list = await fetchBackdropList(net);
+  return list.length ? list[backdropDayIndex(now, list.length)].img : '';
 }

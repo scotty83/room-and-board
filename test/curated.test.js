@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { fetchCuratedManifest, fetchDailyBackdrop } from '../site/js/curated.js';
+import { fetchCuratedManifest, fetchDailyBackdrop, fetchBackdropList, backdropDayIndex } from '../site/js/curated.js';
 import { CURATED_SOURCES, SCREENSAVER_SOURCES, CLOCK_BACKDROP_FOLDER } from '../site/js/config.js';
 
 describe('curated screensaver sources', () => {
@@ -63,5 +63,19 @@ describe('clock backdrop (daily rotation)', () => {
     const spy = { fetchJSON: async (u) => { url = u; return { photos: [] }; } };
     expect(await fetchDailyBackdrop(spy, new Date('2026-07-21T09:00:00'))).toBe('');
     expect(url).toContain(`folder=${CLOCK_BACKDROP_FOLDER}`);
+  });
+
+  it('backdropDayIndex is deterministic within a day, wraps the list, and guards empty', () => {
+    const idx = backdropDayIndex(new Date('2026-07-21T09:00:00'), 5);
+    expect(idx).toBe(backdropDayIndex(new Date('2026-07-21T20:00:00'), 5)); // stable within the day
+    expect(idx).toBeGreaterThanOrEqual(0);
+    expect(idx).toBeLessThan(5);
+    expect(backdropDayIndex(new Date('2026-07-21T09:00:00'), 0)).toBe(0); // empty-folder guard
+  });
+
+  it('fetchBackdropList returns the full folder (the swipe set)', async () => {
+    const list = await fetchBackdropList(net);
+    expect(list).toHaveLength(3);
+    expect(list[0].img).toBe('https://x.test/0.jpg');
   });
 });

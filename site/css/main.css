@@ -1234,6 +1234,9 @@ body.has-strip .clockface { bottom: 124px; }
   animation: backdrop-in 900ms ease-out both; /* calm fade-in on show */
 }
 .backdrop::after { content: ''; position: absolute; inset: 0; background: var(--ss-scrim); }
+/* Let a touch swipe reach the pointer handlers (step to the next backdrop) instead
+   of being claimed by the browser's pan gesture — same trick as .slideshow. */
+body.ss-backdrop .clockface, body.ss-backdrop .backdrop { touch-action: none; }
 @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .backdrop { animation: none; } }
 

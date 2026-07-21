@@ -1,6 +1,6 @@
-// Device back-channel. parseFragment extracts what the SignageManager macro
-// injects into the signage URL: the vault's encoded config and temporary
-// credentials for the device's own WebSocket xAPI.
+// Device back-channel. parseFragment pulls what a signage URL's fragment can
+// carry beyond the encoded config: temporary credentials for the device's own
+// WebSocket xAPI, used by the Live Video phone-to-board setup.
 
 function b64urlToString(str) {
   const b64 = str.replaceAll('-', '+').replaceAll('_', '/');

@@ -43,8 +43,8 @@ import xapi from 'xapi';
  * with your board's URL from /setup -> "Get signage URL" (it carries the
  * display's configuration in the #cfg fragment).
  *
- * NOTE: do not install SignageManager on a board this macro manages — the
- * two both own Standby Signage Url and will fight over it.
+ * NOTE: don't run a second signage macro that also sets Standby Signage Url
+ * alongside this one — they will fight over the value.
  */
 const SIGNAGE_URL = 'https://roomboard.app';
 
@@ -106,10 +106,9 @@ async function ensureConfig(node, label, value) {
 }
 
 /**
-  * Applies every device setting interactive web signage needs. Mirrors the
-  * settings the networked provisioning path uses, minus the vault/bridge
-  * pieces this standalone macro deliberately omits. Macros Mode/AutoStart
-  * are included so a hand-uploaded copy of this macro survives reboots.
+  * Applies every device setting interactive web signage needs. Macros
+  * Mode/AutoStart are included so a hand-uploaded copy of this macro survives
+  * reboots.
   * The default URL opens the Room & Board welcome screen, so an untouched
   * install still lands somewhere useful.
   * @roomosxapi [xConfiguration Standby Delay](https://roomos.cisco.com/xapi/Config.Standby.Delay/)

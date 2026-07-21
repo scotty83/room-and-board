@@ -52,7 +52,7 @@ with its ambient info band.*
 │ /fleet           anonymous usage ping → Analytics Engine     │
 └──────────────────────────────────────────────────────────────┘
 ┌─ Each Board Pro ─────────────────────────────────────────────┐
-│ SignageManager macro + Signage_Storage vault (inactive macro)│
+│ Dashboard macro (paste-and-go) configures + shows signage    │
 │ localStorage (signage profile) = primary store               │
 │ URL fragment: #cfg=<config>&auth=<bridge creds>              │
 └──────────────────────────────────────────────────────────────┘
@@ -65,9 +65,9 @@ with its ambient info band.*
   digests, PATH, ferry, bus, Citi Bike, TfL, sports, news, Substack, photo
   albums, cloud-service status, NASA photo, the Statista chart) rides the
   Worker's Cache-API layer.
-- Config is deflate+base64url JSON (~200 chars). localStorage is primary;
-  every save is mirrored to the macro vault over the device's own WebSocket
-  xAPI, and the macro re-seeds the page through the URL fragment after a wipe.
+- Config is deflate+base64url JSON (~200 chars). localStorage is the primary
+  store; the same string also rides the signage URL's `#cfg=` fragment, so a
+  board re-seeds its configuration from the URL after a web-storage wipe.
 
 ## Widgets
 
@@ -312,18 +312,20 @@ would take the whole dashboard down in a desktop preview.)
 
 ### 3. Boards
 
-```bash
-cp deploy/devices.example.csv deploy/devices.csv   # one host per line
-DEVICE_USER=admin DEVICE_PASS=... SITE_URL=https://your-site.pages.dev \
-  node deploy/provision.js --dry-run                # inspect
-DEVICE_USER=admin DEVICE_PASS=... SITE_URL=https://your-site.pages.dev \
-  node deploy/provision.js
-```
+Install the signage macro on each touch board:
 
-Per board this enables the web engine, interactive signage, the device-cert
-WebSocket path, and installs + activates the SignageManager macro. Pilot on
-one board first. Recommended extras per Cisco guidance: configure
-`Time OfficeHours` so signage runs ≤ 12 h/day.
+1. On the board (or Control Hub → Macro Editor) open **Settings → Macros**.
+2. Create a macro, paste in `macro/Dashboard.js`, **Save**, and enable it.
+3. On load it self-configures the device (WebEngine, interactive signage, macro
+   autostart, standby delay/audio) and adds a **Dashboard** button to the
+   Control Panel that drops the board into the signage view.
+
+The overridable defaults sit at the top of the file: the signage URL plus
+`STANDBY_DELAY_MINUTES` and `SIGNAGE_AUDIO`. Leave the URL on
+`https://roomboard.app` for the welcome screen, or paste a board's own URL from
+`/setup` → "Get signage URL" to load a saved configuration. Pilot on one board
+first. Recommended extra per Cisco guidance: configure `Time OfficeHours` so
+signage runs ≤ 12 h/day.
 
 ### 4. Non-touch devices (Room series driving a TV)
 
@@ -341,8 +343,8 @@ xConfiguration Standby Signage InteractionMode: NonInteractive
 xConfiguration Standby Signage Url: <the generated URL>
 ```
 
-**Do not install the SignageManager macro on these devices** — its startup
-composes the signage URL from its own (empty) vault and would overwrite the
+**Do not install the Dashboard signage macro on these devices** — its startup
+sets `Standby Signage Url` to its own configured URL and would overwrite the
 one you pasted. Here the URL itself is the persistence: it survives reboots,
 upgrades, and web-storage wipes by definition. To change the config later,
 regenerate the URL (it carries a fresh timestamp, so it always wins over the
@@ -515,8 +517,7 @@ GitHub's *Report a vulnerability* rather than a public issue.
 ```
 site/       static app (no framework, no bundler; ES modules)
 worker/     Cloudflare Worker (code exchange + cached upstream digests)
-macro/      SignageManager RoomOS macro (vault + bridge + signage URL)
-deploy/     provision.js fleet setup over jsxapi
+macro/      Dashboard RoomOS macro (paste-and-go device setup + signage)
 tools/      data builders (stations, art manifest, fixtures)
 test/       vitest suites (+ worker pool project in worker/vitest.config.js)
 ```

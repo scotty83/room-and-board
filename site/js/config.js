@@ -122,7 +122,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   // gdrivephotos (slideshows), clock | worldclocks | clockrow (clock faces,
   // A/C/D from the 2026-07-19 design review), or off. strip = the bottom
   // weather/transit info band.
-  screensaver: Object.freeze({ source: 'art', strip: true, markers: true }),
+  screensaver: Object.freeze({ source: 'art', strip: true, markers: true, backdrop: false }),
   mode: 'dashboard',
   schedule: Object.freeze(DEFAULT_SCHEDULE.map((w) => Object.freeze({ ...w }))),
   beacon: true, // anonymous hourly usage ping (see fleet.js); Diagnostics toggle
@@ -169,6 +169,11 @@ export const CURATED_SOURCES = Object.freeze({
 export const SCREENSAVER_SOURCES = Object.freeze([
   'art', 'photos', 'gdrivephotos', ...Object.keys(CURATED_SOURCES), 'clock', 'worldclocks', 'clockrow',
 ]);
+
+// Curated folder of photos shown behind the clock-face screensavers when the
+// "Backdrop image" toggle is on. Public/link-shared like CURATED_SOURCES; the
+// board picks one image per day (deterministic daily rotation).
+export const CLOCK_BACKDROP_FOLDER = '164wx5qOAP1SKukb3F6Ro0AlRpbELsUC4';
 
 export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
@@ -221,13 +226,15 @@ export function normalizeConfig(raw) {
     const s = raw.screensaver;
     // markers = the World-clocks hour-dot toggle (2a dots on / 2b off), default on.
     const markers = raw.screensaver?.markers !== false;
-    if (s && SCREENSAVER_SOURCES.includes(s.source)) return { source: s.source, strip: s.strip !== false, markers };
-    if (raw.photos?.screensaver === true && photos.album) return { source: 'photos', strip: true, markers };
-    if (raw.gdrivephotos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers };
+    // backdrop = optional daily photo behind the clock faces, default off.
+    const backdrop = raw.screensaver?.backdrop === true;
+    if (s && SCREENSAVER_SOURCES.includes(s.source)) return { source: s.source, strip: s.strip !== false, markers, backdrop };
+    if (raw.photos?.screensaver === true && photos.album) return { source: 'photos', strip: true, markers, backdrop };
+    if (raw.gdrivephotos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers, backdrop };
     // Legacy single-source Drive block: {photos:{source:'gdrive',screensaver}}
     // migrated its album into gdrivephotos above — carry the choice with it.
-    if (raw.photos?.source === 'gdrive' && raw.photos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers };
-    return { source: 'art', strip: true, markers };
+    if (raw.photos?.source === 'gdrive' && raw.photos?.screensaver === true && gdrivephotos.album) return { source: 'gdrivephotos', strip: true, markers, backdrop };
+    return { source: 'art', strip: true, markers, backdrop };
   })();
 
   return {

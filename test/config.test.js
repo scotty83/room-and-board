@@ -321,7 +321,7 @@ describe('photos config (iCloud + GDrive widgets)', () => {
       photos: { album: 'B1m5fk75vLWwX', screensaver: true },
       gdrivephotos: { album: GDRIVE_ID, screensaver: true },
     });
-    expect(both.screensaver).toEqual({ source: 'photos', strip: true, markers: true }); // iCloud wins the legacy tie
+    expect(both.screensaver).toEqual({ source: 'photos', strip: true, markers: true, backdrop: false }); // iCloud wins the legacy tie
     expect(both.photos.screensaver).toBeUndefined(); // booleans retired from the blocks
     const gd = normalizeConfig({ gdrivephotos: { album: GDRIVE_ID, screensaver: true } });
     expect(gd.screensaver.source).toBe('gdrivephotos');
@@ -330,13 +330,16 @@ describe('photos config (iCloud + GDrive widgets)', () => {
   });
 
   it('screensaver block: validates source, defaults, and wire round-trip', async () => {
-    expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true, markers: true });
+    expect(normalizeConfig({}).screensaver).toEqual({ source: 'art', strip: true, markers: true, backdrop: false });
     expect(normalizeConfig({ screensaver: { source: 'nope' } }).screensaver.source).toBe('art');
     expect(normalizeConfig({ screensaver: { source: 'off' } }).screensaver.source).toBe('art'); // Off retired -> default
-    expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false, markers: true });
+    expect(normalizeConfig({ screensaver: { source: 'worldclocks', strip: false } }).screensaver).toEqual({ source: 'worldclocks', strip: false, markers: true, backdrop: false });
+    // Backdrop: opt-in boolean, default off, valid on any source (only rendered under clocks).
+    expect(normalizeConfig({ screensaver: { source: 'clock', backdrop: true } }).screensaver.backdrop).toBe(true);
+    expect(normalizeConfig({ screensaver: { source: 'clock' } }).screensaver.backdrop).toBe(false);
     expect(normalizeConfig({ screensaver: { source: 'worldclocks', markers: false } }).screensaver.markers).toBe(false);
-    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false, markers: false } })));
-    expect(rt.screensaver).toEqual({ source: 'clock', strip: false, markers: false });
+    const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false, markers: false, backdrop: true } })));
+    expect(rt.screensaver).toEqual({ source: 'clock', strip: false, markers: false, backdrop: true });
     // Curated built-in source (e.g. Landscapes) is a valid, persistable choice —
     // no album needed since its folder is baked into CURATED_SOURCES.
     expect(normalizeConfig({ screensaver: { source: 'landscapes' } }).screensaver.source).toBe('landscapes');

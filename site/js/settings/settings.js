@@ -5,6 +5,7 @@
 import { isLaunched, isAdvancedHidden, isAddable, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES, CURATED_SOURCES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
+import { fetchDailyBackdrop } from '../curated.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
 import { WORKER_URL } from '../env.js';
 import { escapeHtml } from '../util.js';
@@ -1134,6 +1135,10 @@ async function openSsPreview(source) {
   try {
     if (source === 'clock' || source === 'worldclocks' || source === 'clockrow') {
       const { clockFaceHtml } = await import('../clockfaces.js');
+      if (state.cfg.screensaver.backdrop) {
+        const url = await fetchDailyBackdrop({ fetchJSON });
+        if (url) { ov.style.backgroundImage = `url("${url}")`; ov.classList.add('ss-backdrop'); }
+      }
       ov.innerHTML = clockFaceHtml(source, state.cfg) + hint;
     } else if (source === 'art') {
       const man = await fetchJSON('data/art-manifest.json');
@@ -1160,6 +1165,7 @@ async function openSsPreview(source) {
 
 async function renderScreensaver() {
   const ss = state.cfg.screensaver;
+  const CLOCK_IDS = ['clock', 'worldclocks', 'clockrow'];
   const OPTIONS = [
     ['art', 'Art slideshow', ''],
     ...Object.entries(CURATED_SOURCES).map(([id, s]) => [id, s.label, 'curated slideshow']),
@@ -1181,12 +1187,18 @@ async function renderScreensaver() {
         </div>
         <button class="btn btn--ghost ss-prev" data-ss-prev="${id}">Preview</button>
       </div>
-      ${id === 'worldclocks' && ss.source === 'worldclocks' ? `
-      <div class="row row--control ss-suboption">
+      ${CLOCK_IDS.includes(id) && ss.source === id ? `
+      ${id === 'worldclocks' ? `<div class="row row--control ss-suboption">
         <button class="toggle ${ss.markers ? 'is-on' : ''}" data-ss-markers role="switch" aria-checked="${ss.markers}">
           <span class="toggle__knob"></span>
         </button>
         <span class="row__label">Hour markers</span>
+      </div>` : ''}
+      <div class="row row--control ss-suboption">
+        <button class="toggle ${ss.backdrop ? 'is-on' : ''}" data-ss-backdrop role="switch" aria-checked="${ss.backdrop}">
+          <span class="toggle__knob"></span>
+        </button>
+        <span class="row__label">Backdrop image <small>· a daily photo behind the clock</small></span>
       </div>` : ''}`).join('')}</div>
     <div class="row row--control ss-striprow">
       <button class="toggle ${ss.strip ? 'is-on' : ''}" data-ss-strip role="switch" aria-checked="${ss.strip}">
@@ -1204,6 +1216,10 @@ async function renderScreensaver() {
     btn.addEventListener('click', () => openSsPreview(btn.dataset.ssPrev)));
   pane().querySelector('[data-ss-strip]').addEventListener('click', () => {
     state.cfg.screensaver.strip = !state.cfg.screensaver.strip;
+    renderScreensaver();
+  });
+  pane().querySelector('[data-ss-backdrop]')?.addEventListener('click', () => {
+    state.cfg.screensaver.backdrop = !state.cfg.screensaver.backdrop;
     renderScreensaver();
   });
   pane().querySelector('[data-ss-markers]')?.addEventListener('click', () => {

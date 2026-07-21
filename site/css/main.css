@@ -1216,6 +1216,47 @@ body.has-strip .clockface { bottom: 124px; }
 .cf-city--night .cf-city__time { color: rgba(255, 255, 255, 0.45); }
 .cf-city__sub { font-weight: 300; font-size: 20px; color: var(--ink-dim); margin-top: 2px; }
 
+/* ---------- clock-face photo backdrop (opt-in) ---------- */
+/* An optional daily photo behind the clock screensavers. #backdrop sits below
+   #clockface in the ambient stack. The scrim keeps the light clock elements
+   legible over arbitrary photos: a soft central vignette (darker where the clock
+   sits) over a light uniform tint, so the clock reads while the photo still
+   breathes at the edges. No blur/backdrop-filter — gen1 Board Pro animates only
+   transform/opacity, and a flat scrim is both cheaper and more reliable.
+   --ss-scrim is the single knob to dial the darkness up/down. */
+:root {
+  --ss-scrim: radial-gradient(ellipse 72% 66% at 50% 48%, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 78%), rgba(13, 17, 23, 0.40);
+}
+.backdrop {
+  position: absolute; inset: 0;
+  background-color: var(--bg); /* fallback before the image loads / if it fails */
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  animation: backdrop-in 900ms ease-out both; /* calm fade-in on show */
+}
+.backdrop::after { content: ''; position: absolute; inset: 0; background: var(--ss-scrim); }
+@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .backdrop { animation: none; } }
+
+/* Legibility lift when a backdrop is on: a soft dark text-shadow on the digital
+   text (cheap; the info strip uses the same trick) and a subtle dark disc behind
+   each analog dial so it reads as a watch face over the photo. Same treatment in
+   the settings preview (.ss-preview.ss-backdrop) so the preview is faithful. */
+body.ss-backdrop :is(.cf-time, .cf-date, .cf-ampm, .cf-dial__name, .cf-dial__time,
+  .cf-dial__sub, .cf-city__name, .cf-city__time, .cf-city__sub),
+.ss-preview.ss-backdrop :is(.cf-time, .cf-date, .cf-ampm, .cf-dial__name, .cf-dial__time,
+  .cf-dial__sub, .cf-city__name, .cf-city__time, .cf-city__sub) {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+body.ss-backdrop .cf-dial__svg, .ss-preview.ss-backdrop .cf-dial__svg {
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(13, 17, 23, 0.66), rgba(13, 17, 23, 0.42) 72%, rgba(13, 17, 23, 0) 100%);
+}
+
+/* Settings preview: mirror the backdrop scrim so a clock preview shows what the
+   real screensaver will look like with the photo behind it. */
+.ss-preview.ss-backdrop { background-size: cover; background-position: center; }
+.ss-preview.ss-backdrop::before { content: ''; position: absolute; inset: 0; background: var(--ss-scrim); }
+
 /* ---------- live video (iptv) ---------- */
 .card--iptv .card__body { display: flex; }
 .iptv { flex: 1; min-height: 0; display: flex; }

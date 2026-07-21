@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { fetchCuratedManifest } from '../site/js/curated.js';
-import { CURATED_SOURCES, SCREENSAVER_SOURCES } from '../site/js/config.js';
+import { fetchCuratedManifest, fetchDailyBackdrop } from '../site/js/curated.js';
+import { CURATED_SOURCES, SCREENSAVER_SOURCES, CLOCK_BACKDROP_FOLDER } from '../site/js/config.js';
 
 describe('curated screensaver sources', () => {
   it('registers every curated source as a selectable screensaver source', () => {
@@ -39,5 +39,29 @@ describe('curated screensaver sources', () => {
     const net = { fetchJSON: async () => { called = true; return {}; } };
     expect(await fetchCuratedManifest('nope', net)).toEqual([]);
     expect(called).toBe(false);
+  });
+});
+
+describe('clock backdrop (daily rotation)', () => {
+  const net = { fetchJSON: async () => ({ photos: [
+    { url: 'https://x.test/0.jpg', ar: 1.5, caption: '', date: '' },
+    { url: 'https://x.test/1.jpg', ar: 1.5, caption: '', date: '' },
+    { url: 'https://x.test/2.jpg', ar: 1.5, caption: '', date: '' },
+  ] }) };
+
+  it('picks one image per local day, stable within the day and advancing across days', async () => {
+    const morning = await fetchDailyBackdrop(net, new Date('2026-07-21T09:00:00'));
+    const evening = await fetchDailyBackdrop(net, new Date('2026-07-21T22:00:00'));
+    const nextDay = await fetchDailyBackdrop(net, new Date('2026-07-22T09:00:00'));
+    expect(morning).toBe(evening);        // stable through the day
+    expect(morning).toMatch(/^https:\/\/x\.test\/\d\.jpg$/);
+    expect(nextDay).not.toBe(morning);     // rotated to the next image
+  });
+
+  it('hits CLOCK_BACKDROP_FOLDER and returns "" for an empty/unreachable folder', async () => {
+    let url = '';
+    const spy = { fetchJSON: async (u) => { url = u; return { photos: [] }; } };
+    expect(await fetchDailyBackdrop(spy, new Date('2026-07-21T09:00:00'))).toBe('');
+    expect(url).toContain(`folder=${CLOCK_BACKDROP_FOLDER}`);
   });
 });

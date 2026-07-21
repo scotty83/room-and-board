@@ -53,7 +53,7 @@ import * as chart from './widgets/chart.js';
 import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
-import { fetchCuratedManifest } from './curated.js';
+import { fetchCuratedManifest, fetchDailyBackdrop } from './curated.js';
 
 const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, landscapes, services, apod, chart, citibike, tfl, f1, golf, tennis, iptv];
 for (const m of MODULES) registerWidget(m);
@@ -72,6 +72,7 @@ let lastRender = Date.now();
 let slideshow = null;
 let clockface = null; // minute-tick clock screensaver engine (clockfaces.js)
 let slideshowStarting = false; // guards the await gap in startSlideshow
+let backdropGen = 0; // guards the await gap in applyBackdrop (mode can flip mid-fetch)
 const cancels = [];
 
 function cardFor(mod, rect) {
@@ -213,6 +214,29 @@ async function startSlideshow() {
   finally { slideshowStarting = false; }
 }
 
+// Shows/hides the daily photo behind a clock face. Async (folder fetch), so a
+// generation guard drops a stale result if the mode flips mid-fetch. body's
+// .ss-backdrop class drives the clock's legibility treatment (text-shadow +
+// dial discs); a failed/empty fetch falls back to the plain dark background.
+async function applyBackdrop(on) {
+  const el = $('#backdrop');
+  const gen = ++backdropGen;
+  if (!on) { el.hidden = true; el.style.backgroundImage = ''; document.body.classList.remove('ss-backdrop'); return; }
+  try {
+    const url = await fetchDailyBackdrop(net);
+    if (gen !== backdropGen) return; // mode changed while fetching — abandon
+    if (!url) { el.hidden = true; document.body.classList.remove('ss-backdrop'); return; }
+    el.style.backgroundImage = `url("${url}")`;
+    el.hidden = false;
+    document.body.classList.add('ss-backdrop');
+  } catch (err) {
+    if (gen !== backdropGen) return;
+    console.error('[signage] backdrop unavailable', err);
+    el.hidden = true;
+    document.body.classList.remove('ss-backdrop');
+  }
+}
+
 function applyMode() {
   const forced = params.get('mode');
   const mode = forced === 'ambient' || forced === 'dashboard' ? forced : resolveMode(cfg, new Date());
@@ -233,14 +257,17 @@ function applyMode() {
     if (isClock) {
       if (slideshow) { slideshow.stop(); slideshow = null; }
       clockface ??= startClockFace($('#clockface'), src, cfg);
+      applyBackdrop(cfg.screensaver?.backdrop === true);
     } else {
       if (clockface) { clockface.stop(); clockface = null; }
+      applyBackdrop(false); // photo slideshows own the full screen themselves
       startSlideshow();
     }
     renderStrip();
   } else {
     if (slideshow) { slideshow.stop(); slideshow = null; }
     if (clockface) { clockface.stop(); clockface = null; }
+    applyBackdrop(false);
   }
 }
 

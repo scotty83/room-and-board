@@ -8,11 +8,26 @@
 
 import { WORKER_URL } from './env.js';
 import { mapPhotos } from './widgets/photos-core.js';
-import { CURATED_SOURCES } from './config.js';
+import { CURATED_SOURCES, CLOCK_BACKDROP_FOLDER } from './config.js';
+
+// Enumerate a public Drive folder into a slideshow-shaped list ({img, ar, ...}).
+export async function fetchFolderPhotos(folder, net) {
+  const digest = await net.fetchJSON(`${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(folder)}`);
+  return mapPhotos(digest).photos ?? [];
+}
 
 export async function fetchCuratedManifest(id, net) {
   const src = CURATED_SOURCES[id];
   if (!src) return [];
-  const digest = await net.fetchJSON(`${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(src.folder)}`);
-  return mapPhotos(digest).photos ?? [];
+  return fetchFolderPhotos(src.folder, net);
+}
+
+// Today's clock-backdrop image URL, or '' if the folder is empty/unreachable.
+// Deterministic daily rotation keyed to the LOCAL day, so the image is stable
+// through the day and flips at local midnight.
+export async function fetchDailyBackdrop(net, now = new Date()) {
+  const list = await fetchFolderPhotos(CLOCK_BACKDROP_FOLDER, net);
+  if (!list.length) return '';
+  const localDay = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
+  return list[((localDay % list.length) + list.length) % list.length].img;
 }

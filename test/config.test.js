@@ -337,6 +337,11 @@ describe('photos config (iCloud + GDrive widgets)', () => {
     expect(normalizeConfig({ screensaver: { source: 'worldclocks', markers: false } }).screensaver.markers).toBe(false);
     const rt = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'clock', strip: false, markers: false } })));
     expect(rt.screensaver).toEqual({ source: 'clock', strip: false, markers: false });
+    // Curated built-in source (e.g. Landscapes) is a valid, persistable choice —
+    // no album needed since its folder is baked into CURATED_SOURCES.
+    expect(normalizeConfig({ screensaver: { source: 'landscapes' } }).screensaver.source).toBe('landscapes');
+    const rtc = await decodeConfig(await encodeConfig(normalizeConfig({ screensaver: { source: 'landscapes' } })));
+    expect(rtc.screensaver.source).toBe('landscapes');
   });
   it('migrates the legacy single-source shape', () => {
     // Legacy iCloud: album stays on photos, gdrivephotos empty.

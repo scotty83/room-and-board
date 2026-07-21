@@ -1,6 +1,6 @@
 // Boot and runtime orchestration for the signage dashboard.
 
-import { normalizeConfig, decodeConfig } from './config.js';
+import { normalizeConfig, decodeConfig, CURATED_SOURCES } from './config.js';
 import { loadConfig, saveConfig, loadCache, saveCache } from './store.js';
 import { fetchJSON, fetchBuffer, fetchText } from './net.js';
 import { fmtClock } from './util.js';
@@ -52,6 +52,7 @@ import * as chart from './widgets/chart.js';
 import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
+import { fetchCuratedManifest } from './curated.js';
 
 const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, services, apod, chart, citibike, tfl, f1, golf, tennis, iptv];
 for (const m of MODULES) registerWidget(m);
@@ -195,11 +196,16 @@ async function startSlideshow() {
     if (DEMO) manifest = [DEMO_VMS.art];
     else if (src === 'photos') manifest = await resolvePhotosManifest(cfg, net, photos);
     else if (src === 'gdrivephotos') manifest = await resolvePhotosManifest(cfg, net, gdrivephotos);
+    else if (CURATED_SOURCES[src]) manifest = await fetchCuratedManifest(src, net);
     else manifest = art.filterByCats(await fetchJSON('data/art-manifest.json'), cfg.art?.cats);
     if (!manifest.length) return; // don't lock an empty slideshow; retry next applyMode
     // Each ambient source owns its interval: the chosen photo widget's every for
-    // its slideshow, art.every for art (art's setting used to leak into photos).
-    const everyMin = (src === 'photos' ? cfg.photos?.every : src === 'gdrivephotos' ? cfg.gdrivephotos?.every : cfg.art?.every) ?? 30;
+    // its slideshow, the curated source's own every, art.every for art (art's
+    // setting used to leak into photos).
+    const everyMin = (src === 'photos' ? cfg.photos?.every
+      : src === 'gdrivephotos' ? cfg.gdrivephotos?.every
+      : CURATED_SOURCES[src] ? CURATED_SOURCES[src].every
+      : cfg.art?.every) ?? 30;
     slideshow = createSlideshow(manifest, $('#slideshow'), { intervalMs: everyMin * 60 * 1000 });
     slideshow.start();
   } catch (err) { console.error('[signage] slideshow unavailable', err); }

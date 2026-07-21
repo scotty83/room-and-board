@@ -2,7 +2,7 @@
 // sections; every control is a ≥56px touch target; no typing anywhere
 // (setup codes use the on-page keypad, names come from the companion page).
 
-import { isLaunched, isAdvancedHidden, isAddable, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES } from '../config.js';
+import { isLaunched, isAdvancedHidden, isAddable, normalizeConfig, encodeConfig, decodeCode, WIDGET_IDS, WIDGET_GROUPS, ART_CATS, NJT_LINES, CURATED_SOURCES } from '../config.js';
 import { saveConfig, loadCache } from '../store.js';
 import { fetchJSON } from '../net.js';
 import { TFL_LINES, TFL_MODES } from '../tfl-lines.js';
@@ -1138,6 +1138,12 @@ async function openSsPreview(source) {
       const man = await fetchJSON('data/art-manifest.json');
       const p = man[Math.floor(Math.random() * man.length)];
       ov.innerHTML = `<img class="ss-preview__img" src="${escapeHtml(p.img)}" alt="">` + hint;
+    } else if (CURATED_SOURCES[source]) {
+      const digest = await fetchJSON(`${WORKER_URL}/gdrive/album?folder=${encodeURIComponent(CURATED_SOURCES[source].folder)}`);
+      const list = digest.photos ?? [];
+      const p = list[Math.floor(Math.random() * list.length)];
+      if (!p) throw new Error('no photos');
+      ov.innerHTML = `<img class="ss-preview__img" src="${escapeHtml(p.url)}" alt="">` + hint;
     } else {
       const block = state.cfg[source];
       const path = source === 'photos' ? '/icloud/album?token=' : '/gdrive/album?folder=';
@@ -1157,6 +1163,7 @@ async function renderScreensaver() {
     ['art', 'Art slideshow', ''],
     ['photos', 'iCloud Photos', state.cfg.photos.album ? '' : 'no album connected yet'],
     ['gdrivephotos', 'GDrive Photos', state.cfg.gdrivephotos.album ? '' : 'no folder connected yet'],
+    ...Object.entries(CURATED_SOURCES).map(([id, s]) => [id, s.label, 'curated slideshow']),
     ['clock', 'Big clock', ''],
     ['worldclocks', 'World clocks', 'analog dials, one per World Clock city'],
     ['clockrow', 'Clock + world times', ''],

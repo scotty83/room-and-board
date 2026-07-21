@@ -156,7 +156,19 @@ function normalizeLoc(rawLoc) {
   };
 }
 
-export const SCREENSAVER_SOURCES = Object.freeze(['art', 'photos', 'gdrivephotos', 'clock', 'worldclocks', 'clockrow']);
+// Built-in curated screensaver photo sources: hand-curated images living in a
+// public Google Drive folder, served through the worker's /gdrive/album route
+// (the same path as the user-configurable GDrive photo source). Folder IDs are
+// public — the folders are link-shared; only the worker's GDRIVE_KEY is secret.
+// Add a category here and it becomes a selectable screensaver source everywhere
+// (settings picker, preview, ambient slideshow) with no other wiring.
+export const CURATED_SOURCES = Object.freeze({
+  landscapes: Object.freeze({ label: 'Landscapes', folder: '1RHow60mcBwzMturimQSbziK3hqCvP2lz', every: 30 }),
+});
+
+export const SCREENSAVER_SOURCES = Object.freeze([
+  'art', 'photos', 'gdrivephotos', ...Object.keys(CURATED_SOURCES), 'clock', 'worldclocks', 'clockrow',
+]);
 
 export function normalizeConfig(raw) {
   if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {

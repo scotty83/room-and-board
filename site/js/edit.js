@@ -37,6 +37,7 @@ const TITLES = {
   markets: 'Markets',
   marketsnews: 'Markets News',
   art: 'Art',
+  landscapes: 'Landscapes',
   photos: 'iCloud Photos',
   gdrivephotos: 'GDrive Photos',
   history: 'History',

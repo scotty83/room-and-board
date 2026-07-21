@@ -30,6 +30,7 @@ export const WIDGET_LABELS = {
   art: 'Art slideshow',
   photos: 'iCloud Photos',
   gdrivephotos: 'GDrive Photos',
+  landscapes: 'Landscapes',
   services: 'Cloud Services',
   apod: 'NASA Daily Photo',
   chart: 'Chart of the Day',

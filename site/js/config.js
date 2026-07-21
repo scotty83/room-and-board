@@ -19,7 +19,7 @@ export const ART_CATS = [
 ];
 
 export const WIDGET_IDS = [
-  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'gdrivephotos', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1', 'golf', 'tennis', 'iptv',
+  'weather', 'subway', 'lirr', 'mnr', 'njt', 'amtrak', 'path', 'ferry', 'bus', 'citibike', 'tfl', 'art', 'photos', 'gdrivephotos', 'landscapes', 'apod', 'history', 'aqi', 'quote', 'wotd', 'markets', 'marketsnews', 'worldclock', 'sports', 'worldcup', 'news', 'substack', 'bsky', 'services', 'chart', 'f1', 'golf', 'tennis', 'iptv',
 ];
 
 // Display grouping for the widget pickers (board Settings and phone /setup).
@@ -31,7 +31,7 @@ export const WIDGET_GROUPS = [
   { label: 'Weather & Air', ids: ['weather', 'aqi'] },
   { label: 'Markets & Sports', ids: ['markets', 'marketsnews', 'sports', 'worldcup', 'f1', 'golf', 'tennis'] },
   { label: 'News & Social', ids: ['news', 'substack', 'bsky'] },
-  { label: 'Ambient', ids: ['art', 'photos', 'gdrivephotos', 'apod', 'iptv', 'worldclock'] },
+  { label: 'Ambient', ids: ['art', 'landscapes', 'photos', 'gdrivephotos', 'apod', 'iptv', 'worldclock'] },
   { label: 'Daily Extras', ids: ['history', 'quote', 'wotd', 'services', 'chart'] },
 ];
 

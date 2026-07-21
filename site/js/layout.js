@@ -30,6 +30,7 @@ export const MIN_SIZE = {
   quote: [2, 2],
   wotd: [2, 3], // canonical shape; 3x2 also legal via MIN_ALTS
   art: [2, 2],
+  landscapes: [2, 2],
   photos: [2, 2],
   gdrivephotos: [2, 2],
   apod: [3, 3],

@@ -18,9 +18,13 @@ export function mapPhotos(digest) {
 //   cfgKey   — config block with this widget's { album, every } (photos | gdrivephotos)
 //   endpoint — worker album path incl. its query key, e.g. '/icloud/album?token='
 //   emptyAction/emptyDest — the unconfigured tap-prompt pieces (setupPrompt)
-// title is always "Photos" so the dashboard card stays clean; the descriptive
-// picker/edit label ("iCloud Photos" / "GDrive Photos") lives in WIDGET_LABELS.
-export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest }) {
+//   curated  — optional { title, folder, every } for a built-in curated source
+//              (e.g. Landscapes): a fixed folder needing no user setup, so it
+//              ignores cfgKey and shows a neutral empty state, not a setup prompt.
+// title is "Photos" for the user photo widgets so the dashboard card stays clean
+// (their descriptive picker/edit label lives in WIDGET_LABELS); a curated widget
+// carries its own title (e.g. "Landscapes").
+export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest, curated }) {
   let sessionList = []; // most recent fetch, for the viewer to browse
 
   // refreshMs is the render cadence, not the photo-change rate: like Art, the
@@ -28,16 +32,20 @@ export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest
   // cfg[cfgKey].every bucket flips (the worker caches the album digest, so the
   // frequent fetch is an edge-cache hit and re-setting the same <img> URL is a
   // browser-cache hit).
-  const meta = { id, title: 'Photos', refreshMs: 60 * 1000 };
+  const meta = { id, title: curated?.title ?? 'Photos', refreshMs: 60 * 1000 };
 
   function render(el, vm, cfg) {
     sessionList = vm.photos ?? [];
     if (!sessionList.length) {
-      el.innerHTML = setupPrompt(id, emptyAction, emptyDest);
+      // Curated sources have nothing for the user to set up, so a setup prompt
+      // would be wrong — show a neutral placeholder instead.
+      el.innerHTML = curated
+        ? `<div class="empty">${escapeHtml(curated.title)} unavailable right now.</div>`
+        : setupPrompt(id, emptyAction, emptyDest);
       return;
     }
-    // Rotate deterministically on the user's interval bucket, like Art.
-    const everyMs = (cfg?.[cfgKey]?.every ?? 30) * 60 * 1000;
+    // Rotate deterministically on the interval bucket, like Art.
+    const everyMs = (curated ? curated.every : (cfg?.[cfgKey]?.every ?? 30)) * 60 * 1000;
     const idx = Math.floor(Date.now() / everyMs) % sessionList.length;
     const p = sessionList[idx];
     el.innerHTML = `
@@ -52,7 +60,7 @@ export function createPhotoWidget({ id, cfgKey, endpoint, emptyAction, emptyDest
   const photoManifest = () => sessionList;
 
   async function fetchData(cfg, net) {
-    const album = cfg?.[cfgKey]?.album;
+    const album = curated ? curated.folder : cfg?.[cfgKey]?.album;
     if (!album) return { photos: [] };
     return mapPhotos(await net.fetchJSON(`${WORKER_URL}${endpoint}${encodeURIComponent(album)}`));
   }

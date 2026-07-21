@@ -24,6 +24,8 @@ import * as quote from '../site/js/widgets/quote.js';
 import * as markets from '../site/js/widgets/markets.js';
 import * as worldclock from '../site/js/widgets/worldclock.js';
 import * as photos from '../site/js/widgets/photos.js';
+import * as landscapes from '../site/js/widgets/landscapes.js';
+import { CURATED_SOURCES } from '../site/js/config.js';
 import * as marketsnews from '../site/js/widgets/marketsnews.js';
 import * as services from '../site/js/widgets/services.js';
 import * as apod from '../site/js/widgets/apod.js';
@@ -448,6 +450,30 @@ describe('art full-screen viewer', () => {
     expect(viewer.textContent).toContain('Wheat Fields');
     viewer.click();
     expect(viewer.hidden).toBe(true);
+  });
+});
+
+describe('landscapes widget (curated GDrive source)', () => {
+  it('carries its own title and fetches the curated folder', async () => {
+    expect(landscapes.meta.id).toBe('landscapes');
+    expect(landscapes.meta.title).toBe('Landscapes');
+    let url = '';
+    const vm = await landscapes.fetchData(CFG, { fetchJSON: async (u) => {
+      url = u;
+      return { photos: [{ url: 'https://x.test/l.jpg', ar: 1.6, caption: '', date: '2026-07-20' }] };
+    } });
+    expect(url).toContain(`/gdrive/album?folder=${CURATED_SOURCES.landscapes.folder}`);
+    expect(vm.photos[0].img).toBe('https://x.test/l.jpg');
+  });
+
+  it('renders a photo card that opens the full-screen viewer', () => {
+    document.querySelector('#art-viewer')?.remove();
+    const host = el();
+    landscapes.render(host, { photos: [{ img: 'https://x.test/l.jpg', ar: 1.6, title: '', date: '2026-07-20' }] }, CFG);
+    expect(host.querySelector('.artwork__img').getAttribute('src')).toBe('https://x.test/l.jpg');
+    host.querySelector('.artwork').click();
+    expect(document.querySelector('#art-viewer')).not.toBeNull();
+    document.querySelector('#art-viewer').remove();
   });
 });
 

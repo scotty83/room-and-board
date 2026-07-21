@@ -28,6 +28,7 @@ export const WIDGET_LABELS = {
   art: 'Art slideshow',
   photos: 'iCloud Photos',
   gdrivephotos: 'GDrive Photos',
+  landscapes: 'Landscapes',
   history: 'This Day in History',
   aqi: 'Air & Sky',
   quote: 'Quote of the Day',
@@ -1161,9 +1162,9 @@ async function renderScreensaver() {
   const ss = state.cfg.screensaver;
   const OPTIONS = [
     ['art', 'Art slideshow', ''],
+    ...Object.entries(CURATED_SOURCES).map(([id, s]) => [id, s.label, 'curated slideshow']),
     ['photos', 'iCloud Photos', state.cfg.photos.album ? '' : 'no album connected yet'],
     ['gdrivephotos', 'GDrive Photos', state.cfg.gdrivephotos.album ? '' : 'no folder connected yet'],
-    ...Object.entries(CURATED_SOURCES).map(([id, s]) => [id, s.label, 'curated slideshow']),
     ['clock', 'Big clock', ''],
     ['worldclocks', 'World clocks', 'analog dials, one per World Clock city'],
     ['clockrow', 'Clock + world times', ''],

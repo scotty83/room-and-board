@@ -78,4 +78,16 @@ describe('clock backdrop (daily rotation)', () => {
     expect(list).toHaveLength(3);
     expect(list[0].img).toBe('https://x.test/0.jpg');
   });
+
+  it('degrades to []/"" when the worker is unreachable (documented contract)', async () => {
+    const down = { fetchJSON: async () => { throw new Error('worker down'); } };
+    expect(await fetchBackdropList(down)).toEqual([]); // preview shows the plain clock
+    expect(await fetchDailyBackdrop(down)).toBe('');
+  });
+
+  it('advances the index across local midnight (day rollover)', async () => {
+    const before = backdropDayIndex(new Date('2026-07-21T23:59:00'), 12);
+    const after = backdropDayIndex(new Date('2026-07-22T00:01:00'), 12);
+    expect(after).toBe((before + 1) % 12);
+  });
 });

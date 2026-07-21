@@ -374,9 +374,9 @@ minute, aligned to the minute boundary.
 Tap the ✎ pencil button: the 12×8 grid appears — drag widgets to move them
 (colliders are pushed aside live), drag the corner handle to resize (snaps to
 cells, per-widget minimums), ✕ removes, and the bottom tray re-adds anything
-removed. Invalid drops flash red and snap back. Done saves (localStorage +
-macro vault); Cancel discards. Layouts live in config v3; v1/v2 configs
-migrate automatically on first load.
+removed. Invalid drops flash red and snap back. Done saves (localStorage);
+Cancel discards. Layouts live in config v3; v1/v2 configs migrate
+automatically on first load.
 
 Widget notes: **LIRR** (Penn Station, Grand Central, or both) / **Metro-North**
 (Grand Central) are departure boards with a required stops-at-station filter
@@ -411,14 +411,22 @@ all surfaces.
 3. Later edits: directly on the touch screen, or gear → Setup code →
    **Show QR** to pull the current config back to a phone.
 
-### Disaster drill (verifies the vault)
+### Disaster drill (verifies URL-carried config)
+
+For boards whose signage URL carries the configuration — the macro's
+`SIGNAGE_URL` replaced with a board URL from `/setup` → **Get signage URL**,
+or a non-touch device configured the same way:
 
 ```
 xCommand WebEngine DeleteStorage Type: Signage
 ```
 
-then put the board in standby and wake it: the macro re-seeds the config via
-the URL fragment and the dashboard returns configured.
+then put the board in standby and wake it: the page re-seeds the config from
+the URL's `#cfg` fragment and the dashboard returns configured.
+
+**Setup-code boards** (macro left on the default URL) keep their config only
+in web storage — there `DeleteStorage` erases it and the board returns to the
+welcome screen; re-enter a setup code to restore.
 
 ## Data sources & care
 

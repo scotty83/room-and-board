@@ -85,6 +85,15 @@ describe('createSlideshow', () => {
     expect(sizes.sort()).toEqual(['1.3:contain', '1.78:contain', '2.4:contain']);
   });
 
+  it('fit: "cover" fills the viewport (curated sources like Landscapes)', async () => {
+    const host = document.createElement('div');
+    const show = createSlideshow(MANIFEST, host, { intervalMs: 1000, random: () => 0, fit: 'cover' });
+    show.start();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(host.querySelector('.slide[data-active]').style.backgroundSize).toBe('cover');
+    show.stop();
+  });
+
   it('does nothing with an empty manifest', async () => {
     const host = document.createElement('div');
     const show = createSlideshow([], host, { intervalMs: 1000 });

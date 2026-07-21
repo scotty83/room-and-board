@@ -3,16 +3,17 @@
   *
   *
   * Date Created:            July 17, 2026
-  * Revised:                 July 20, 2026
-  * Version:                 1.2.0
+  * Revised:                 July 21, 2026
+  * Version:                 1.2.1
   *
   * Description:             Self-contained signage provisioning + Control
   *                          Panel button for the Room & Board dashboard.
   *                          init() configures the device for interactive
   *                          web signage (WebEngine, Standby Signage mode/
-  *                          interaction/URL, macro autostart) and deploys a
-  *                          "Dashboard" Action Button that drops the device
-  *                          into half-wake, where the signage displays.
+  *                          interaction/URL/audio, standby delay, macro
+  *                          autostart) and deploys a "Dashboard" Action
+  *                          Button that drops the device into half-wake,
+  *                          where the signage displays.
   *                          Standalone: no storage/vault macro, no bridge
   *                          account — the URL carries the board's config.
   *
@@ -123,13 +124,19 @@ async function configureSignage() {
   await ensureConfig(xapi.Config.Macros.Mode, 'Macros Mode', 'On');
   await ensureConfig(xapi.Config.Macros.AutoStart, 'Macros AutoStart', 'On');
   await ensureConfig(xapi.Config.WebEngine.Mode, 'WebEngine Mode', 'On');
-  // User-overridable defaults (see the top of the file). Delay is coerced to a
-  // Number so a value typed with quotes still compares cleanly against the
-  // integer get() returns.
-  await ensureConfig(xapi.Config.Standby.Delay, 'Standby Delay', Number(STANDBY_DELAY_MINUTES));
+  // User-overridable defaults (see the top of the file), normalized so a bad
+  // edit can never abort provisioning before the signage URL is set: the device
+  // REJECTS out-of-valuespace writes (Delay is an integer 1..480; Audio is
+  // exactly 'On'/'Off'), and an aborted run here would leave a fresh board with
+  // no signage at all. Clamp/normalize instead, and log when we had to.
+  const delay = Math.min(480, Math.max(1, Number(STANDBY_DELAY_MINUTES) || 480));
+  if (delay !== Number(STANDBY_DELAY_MINUTES)) console.warn(`[Dashboard] STANDBY_DELAY_MINUTES '${STANDBY_DELAY_MINUTES}' out of range 1-480 — using ${delay}`);
+  const audio = /^on$/i.test(String(SIGNAGE_AUDIO).trim()) ? 'On' : 'Off';
+  if (audio !== SIGNAGE_AUDIO) console.warn(`[Dashboard] SIGNAGE_AUDIO '${SIGNAGE_AUDIO}' normalized to '${audio}'`);
+  await ensureConfig(xapi.Config.Standby.Delay, 'Standby Delay', delay);
   await ensureConfig(xapi.Config.Standby.Signage.Mode, 'Standby Signage Mode', 'On');
   await ensureConfig(xapi.Config.Standby.Signage.InteractionMode, 'Standby Signage InteractionMode', 'Interactive');
-  await ensureConfig(xapi.Config.Standby.Signage.Audio, 'Standby Signage Audio', SIGNAGE_AUDIO);
+  await ensureConfig(xapi.Config.Standby.Signage.Audio, 'Standby Signage Audio', audio);
   await ensureConfig(xapi.Config.Standby.Signage.Url, 'Standby Signage Url', SIGNAGE_URL);
 }
 

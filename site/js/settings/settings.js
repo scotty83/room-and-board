@@ -1156,7 +1156,8 @@ async function openSsPreview(source) {
       const { clockFaceHtml } = await import('../clockfaces.js');
       if (state.cfg.screensaver.backdrop) {
         const url = await fetchDailyBackdrop({ fetchJSON });
-        if (url) { ov.style.backgroundImage = `url("${url}")`; ov.classList.add('ss-backdrop'); }
+        // Escape quotes/backslashes so an external URL can't break out of url("...").
+        if (url) { ov.style.backgroundImage = `url("${String(url).replaceAll('\\', '%5C').replaceAll('"', '%22')}")`; ov.classList.add('ss-backdrop'); }
       }
       ov.innerHTML = clockFaceHtml(source, state.cfg) + hint;
     } else if (source === 'art') {
@@ -1803,7 +1804,7 @@ function renderDiag() {
     <h2 class="pane__title">Diagnostics</h2>
     <div class="kv-grid">
       <span>Config source</span><b>${window.__signage?.source ?? '—'}</b>
-      <span>Vault sync</span><b>${window.__signage?.vault ?? 'not connected'}</b>
+      <span>Device link</span><b>${window.__signage?.vault ?? 'not connected'}</b>
       ${rows.join('')}
       <span>User agent</span><b class="kv__small">${escapeHtml(navigator.userAgent)}</b>
       <span>Cisco fonts</span><b>${escapeHtml(probeCiscoFonts())}</b>
@@ -1829,10 +1830,10 @@ function renderDiag() {
     </div>
     <p class="pane__label">Storage</p>
     <div class="btnrow">
-      <button class="btn" data-clear>Clear web storage (test vault recovery)</button>
+      <button class="btn" data-clear>Clear web storage (test recovery)</button>
       <button class="btn" data-reset>Reset this display</button>
     </div>
-    <p class="pane__hint">Clear wipes this page's saved data; on a board with the macro, your setup should return by itself within seconds. Reset also erases the macro vault and returns to the welcome screen.</p>`;
+    <p class="pane__hint">Clear wipes this page's saved data. If the board's signage URL carries its configuration (the #cfg fragment from "Get signage URL"), the setup returns by itself after the reload; on a setup-code board, re-enter a setup code to restore. Reset returns this display to the welcome screen.</p>`;
   pane().querySelector('[data-beacon]').addEventListener('click', () => {
     state.cfg.beacon = !state.cfg.beacon;
     renderDiag();
@@ -1864,6 +1865,8 @@ function renderDiag() {
   });
   confirmThen(pane().querySelector('[data-reset]'), async () => {
     try {
+      // Legacy: boards provisioned with the retired SignageManager macro keep a
+      // device-side vault; ask it to clear too so the reset really sticks there.
       await window.__signage?.bridge?.sendReset();
     } catch {
       // no bridge: local reset only

@@ -53,7 +53,7 @@ import * as chart from './widgets/chart.js';
 import * as citibike from './widgets/citibike.js';
 import * as tfl from './widgets/tfl.js';
 import { resolvePhotosManifest } from './photos-manifest.js';
-import { fetchCuratedManifest, fetchBackdropList, backdropDayIndex } from './curated.js';
+import { fetchCuratedManifest, fetchBackdropList, backdropDayIndex, localDayNumber } from './curated.js';
 
 const MODULES = [weather, subway, lirr, mnr, njt, amtrak, pathw, ferry, bus, art, history, aqi, quote, wotd, markets, marketsnews, worldclock, sports, worldcup, news, substack, bsky, photos, gdrivephotos, landscapes, services, apod, chart, citibike, tfl, f1, golf, tennis, iptv];
 for (const m of MODULES) registerWidget(m);
@@ -75,6 +75,7 @@ let slideshowStarting = false; // guards the await gap in startSlideshow
 let backdropGen = 0; // guards the await gap in applyBackdrop (mode can flip mid-fetch)
 let backdropList = []; // full curated backdrop set, for swipe-to-next
 let backdropIndex = 0; // which backdrop is showing (starts at the daily pick)
+let backdropDay = 0; // local day the index was computed for (rollover detection)
 const cancels = [];
 
 function cardFor(mod, rect) {
@@ -219,19 +220,28 @@ async function startSlideshow() {
   finally { slideshowStarting = false; }
 }
 
+// CSS url() escaping for externally-sourced image URLs: quotes and backslashes
+// would otherwise terminate the url string (style-injection surface).
+const cssUrl = (u) => `url("${String(u).replaceAll('\\', '%5C').replaceAll('"', '%22')}")`;
+
 // Paints the current backdrop image into #backdrop.
 function showBackdrop() {
   const el = $('#backdrop');
-  el.style.backgroundImage = `url("${backdropList[backdropIndex].img}")`;
+  el.style.backgroundImage = cssUrl(backdropList[backdropIndex].img);
   el.hidden = false;
 }
 
 // Swipe ahead of schedule: step to the next/prev backdrop. No-ops unless a clock
 // backdrop is currently showing, so it's safe to wire to the whole ambient area.
+// Preload before swapping (the slideshow's step() pattern) so the swipe never
+// flashes the fallback background while the next image streams in.
 function stepBackdrop(dir) {
   if (backdropList.length < 2 || $('#backdrop').hidden) return;
   backdropIndex = (backdropIndex + dir + backdropList.length) % backdropList.length;
-  showBackdrop();
+  const img = new Image();
+  img.onload = showBackdrop;
+  img.onerror = showBackdrop; // show anyway; the <div> bg will retry like slides do
+  img.src = backdropList[backdropIndex].img;
 }
 
 // Shows/hides the daily photo behind a clock face. Async (folder fetch), so a
@@ -243,12 +253,26 @@ async function applyBackdrop(on) {
   const el = $('#backdrop');
   const gen = ++backdropGen;
   if (!on) { el.hidden = true; el.style.backgroundImage = ''; document.body.classList.remove('ss-backdrop'); backdropList = []; return; }
-  if (backdropList.length) { document.body.classList.add('ss-backdrop'); showBackdrop(); return; } // already loaded; keep the shown image
+  if (backdropList.length) {
+    // Already loaded; keep the shown image — EXCEPT across local midnight.
+    // Screensaver stretches span midnight (scheduled boards are ambient all
+    // night), so the daily rotation must advance here, not only on a reload.
+    // A new day also supersedes yesterday's manual swipe.
+    const day = localDayNumber(new Date());
+    if (day !== backdropDay) {
+      backdropDay = day;
+      backdropIndex = backdropDayIndex(new Date(), backdropList.length);
+    }
+    document.body.classList.add('ss-backdrop');
+    showBackdrop();
+    return;
+  }
   try {
     const list = await fetchBackdropList(net);
     if (gen !== backdropGen) return; // mode changed while fetching — abandon
     if (!list.length) { el.hidden = true; document.body.classList.remove('ss-backdrop'); return; }
     backdropList = list;
+    backdropDay = localDayNumber(new Date());
     backdropIndex = backdropDayIndex(new Date(), list.length);
     document.body.classList.add('ss-backdrop');
     showBackdrop();

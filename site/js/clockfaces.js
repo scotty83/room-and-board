@@ -79,10 +79,13 @@ function gridScale(perRow) {
 // at a glance. 200-unit viewBox lifted verbatim from the prototype.
 export function dialSvg(h, m, { night = false, showMarkers = true } = {}) {
   // Day: the handoff's exact hexes (2a #ececec / #242424 / #4c4c4c, 2b
-  // #f2f2f2 / #2c2c2c). Night: dimmed toward the old --ink-dim look.
-  const hand = night ? '#5c5c5c' : showMarkers ? '#ececec' : '#f2f2f2';
-  const ring = night ? '#191919' : showMarkers ? '#242424' : '#2c2c2c';
-  const markerFill = night ? '#2e2e2e' : '#4c4c4c';
+  // #f2f2f2 / #2c2c2c). Night: a LIMITED dim — still a clear "it's night there"
+  // cue, but the hands stay legible (the old #5c5c5c nearly vanished, especially
+  // over a photo backdrop). The city name/time below dim separately in CSS and
+  // are intentionally left alone.
+  const hand = night ? '#8c8c8c' : showMarkers ? '#ececec' : '#f2f2f2';
+  const ring = night ? '#262626' : showMarkers ? '#242424' : '#2c2c2c';
+  const markerFill = night ? '#3c3c3c' : '#4c4c4c';
   const hourPts = showMarkers ? '96.4,108 103.6,108 101.8,52 98.2,52' : '95.5,106 104.5,106 102,48 98,48';
   const minPts = showMarkers ? '97.2,110 102.8,110 101.4,30 98.6,30' : '96.5,106 103.5,106 101.5,24 98.5,24';
   const hub = showMarkers ? 5 : 6;

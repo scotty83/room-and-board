@@ -102,7 +102,9 @@ describe('clockFaceHtml', () => {
     expect((day.match(/<polygon /g) || []).length).toBe(2); // hour + minute, no second hand
     expect(day).not.toContain('<line'); // opaque tapered polygons, not stroked lines
     expect(day).toContain('#ececec'); // 2a day hand colour
-    expect(dialSvg(23, 30, { night: true })).toContain('#5c5c5c'); // night hands dimmed
+    const night = dialSvg(23, 30, { night: true });
+    expect(night).toContain('#8c8c8c'); // night hands dimmed, but a LIMITED dim (still legible)
+    expect(night).not.toContain('#ececec'); // and clearly dimmer than the day hand
   });
 
   it('dialSvg: showMarkers toggles the twelve dot markers (2a) vs markerless (2b)', () => {

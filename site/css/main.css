@@ -407,13 +407,12 @@ html, body {
 .slide-caption__meta { font-size: 21px; color: var(--ink-dim); }
 .slide-caption__desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px; font-size: 22px; line-height: 1.35; color: var(--ink-dim); max-width: 70ch; }
 .strip {
-  /* Translucent info band. Its bottom edge sits at the top of the RoomOS
-     "Tap to start" bar (which OVERLAYS the bottom --roomos-bar px of the
-     viewport, board-verified), so the strip content clears the bar instead of
-     being cropped by it. This clearance is for the IDLE contexts where that bar
-     is shown: the ambient screensaver and its settings preview. The art viewer
-     is the exception (overridden below) — it's opened by an active tap, so the
-     idle bar isn't present and the strip sits flush at the bottom. */
+  /* Translucent info band. This lift clears the RoomOS "Tap to start" bar in the
+     IDLE ambient screensaver, where the bar overlays the bottom --roomos-bar px
+     of the content (board-verified). The full-screen ACTIVE overlays — the art
+     viewer and the settings preview (both opened by a tap) — are the exceptions
+     (overridden below): there the bar doesn't reduce into the content, so a lift
+     just leaves a doubled dark gap above the bar; the strip sits flush instead. */
   position: absolute; left: 0; right: 0; bottom: var(--roomos-bar);
   display: flex; align-items: center; justify-content: center; gap: 36px;
   padding: 18px 48px;
@@ -428,11 +427,12 @@ html, body {
 .strip__wx b { color: var(--ink); font-weight: 300; }
 .strip__transit { color: var(--ink-dim); }
 .strip__transit b { color: var(--ink); font-weight: 300; font-variant-numeric: tabular-nums; }
-/* Full-screen image viewer (tap a photo from the dashboard). No idle RoomOS bar
-   here — the board is being actively touched — so the strip drops to the very
-   bottom, letting the slide caption (bottom: 82px) sit just above it as designed
-   rather than colliding with a strip lifted --roomos-bar px off the floor. */
-.art-viewer .strip { bottom: 0; }
+/* Full-screen active overlays (image viewer opened from the dashboard; the
+   screensaver settings preview). No idle RoomOS bar reduces into these, so the
+   strip drops to the very bottom — a lift here just floats it a --roomos-bar gap
+   above the bottom (the "double safe zone"). In the viewer this also lets the
+   slide caption (bottom: 82px) sit just above the strip as designed. */
+.art-viewer .strip, .ss-preview .strip { bottom: 0; }
 body.mode-ambient .topbar, body.mode-ambient #grid { visibility: hidden; }
 
 /* ---------- welcome ---------- */

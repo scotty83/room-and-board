@@ -1,2767 +1,389 @@
 [
- {
-  "w": "ephemeral",
-  "pr": "ih-FEM-er-ul",
-  "pos": "adjective",
-  "def": "Lasting for a very short time.",
-  "ex": "The cherry blossoms were ephemeral, gone within a week."
- },
- {
-  "w": "sanguine",
-  "pr": "SANG-gwin",
-  "pos": "adjective",
-  "def": "Cheerfully optimistic, especially in a difficult situation.",
-  "ex": "She stayed sanguine about the team's chances despite the losing streak."
- },
- {
-  "w": "mellifluous",
-  "pr": "muh-LIF-loo-us",
-  "pos": "adjective",
-  "def": "Sweetly smooth and musical to hear.",
-  "ex": "The announcer's mellifluous voice made even the weather report soothing."
- },
- {
-  "w": "equanimity",
-  "pr": "ek-wuh-NIM-ih-tee",
-  "pos": "noun",
-  "def": "Calmness and composure, especially under stress.",
-  "ex": "He accepted the flight delay with surprising equanimity."
- },
- {
-  "w": "serendipity",
-  "pr": "sair-un-DIP-ih-tee",
-  "pos": "noun",
-  "def": "The luck of finding something good without looking for it.",
-  "ex": "Meeting her future business partner at the bus stop was pure serendipity."
- },
- {
-  "w": "ebullient",
-  "pr": "ih-BUL-yunt",
-  "pos": "adjective",
-  "def": "Overflowing with enthusiasm and high spirits.",
-  "ex": "The ebullient crowd cheered every point, even the easy ones."
- },
- {
-  "w": "halcyon",
-  "pr": "HAL-see-un",
-  "pos": "adjective",
-  "def": "Calm, peaceful, and happy, often said of a fondly remembered past.",
-  "ex": "They reminisced about the halcyon summers at the lake house."
- },
- {
-  "w": "ineffable",
-  "pr": "in-EF-uh-bul",
-  "pos": "adjective",
-  "def": "Too great or extreme to be expressed in words.",
-  "ex": "Standing under the northern lights, she felt an ineffable joy."
- },
- {
-  "w": "luminous",
-  "pr": "LOO-mih-nus",
-  "pos": "adjective",
-  "def": "Giving off light; bright or glowing.",
-  "ex": "Fireflies made the garden luminous after dusk."
- },
- {
-  "w": "quintessential",
-  "pr": "kwin-tuh-SEN-shul",
-  "pos": "adjective",
-  "def": "Representing the most perfect example of a quality or type.",
-  "ex": "The corner diner is the quintessential small-town gathering place."
- },
- {
-  "w": "ethereal",
-  "pr": "ih-THEER-ee-ul",
-  "pos": "adjective",
-  "def": "Extremely delicate and light, as if not of this world.",
-  "ex": "Morning fog gave the valley an ethereal glow."
- },
- {
-  "w": "sonorous",
-  "pr": "suh-NOR-us",
-  "pos": "adjective",
-  "def": "Deep, full, and rich in sound.",
-  "ex": "The judge's sonorous voice quieted the courtroom."
- },
- {
-  "w": "resplendent",
-  "pr": "rih-SPLEN-dent",
-  "pos": "adjective",
-  "def": "Dazzlingly impressive in appearance.",
-  "ex": "The maples were resplendent in October reds and golds."
- },
- {
-  "w": "incandescent",
-  "pr": "in-kun-DES-unt",
-  "pos": "adjective",
-  "def": "Glowing with intense light, heat, or emotion.",
-  "ex": "Her incandescent performance earned a standing ovation."
- },
- {
-  "w": "evanescent",
-  "pr": "ev-uh-NES-unt",
-  "pos": "adjective",
-  "def": "Quickly fading from sight, memory, or existence.",
-  "ex": "The rainbow was evanescent, gone before he found his camera."
- },
- {
-  "w": "gossamer",
-  "pr": "GAHS-uh-mer",
-  "pos": "adjective",
-  "def": "Extremely light, thin, and delicate.",
-  "ex": "Gossamer threads of spider silk stretched across the trail."
- },
- {
-  "w": "lissome",
-  "pr": "LIS-um",
-  "pos": "adjective",
-  "def": "Slim, graceful, and flexible in movement.",
-  "ex": "The lissome dancer seemed to float across the stage."
- },
- {
-  "w": "languid",
-  "pr": "LANG-gwid",
-  "pos": "adjective",
-  "def": "Pleasantly slow and relaxed, with little energy.",
-  "ex": "They spent a languid afternoon drifting on the pond."
- },
- {
-  "w": "pellucid",
-  "pr": "puh-LOO-sid",
-  "pos": "adjective",
-  "def": "Perfectly clear, whether in water, light, or meaning.",
-  "ex": "Her pellucid explanation made the tax rules finally make sense."
- },
- {
-  "w": "redolent",
-  "pr": "RED-uh-lent",
-  "pos": "adjective",
-  "def": "Strongly smelling of something, or strongly reminiscent of it.",
-  "ex": "The kitchen was redolent of cinnamon and baked apples."
- },
- {
-  "w": "sublime",
-  "pr": "suh-BLYME",
-  "pos": "adjective",
-  "def": "So beautiful or grand that it inspires awe.",
-  "ex": "The view from the summit was nothing short of sublime."
- },
- {
-  "w": "verdant",
-  "pr": "VUR-dunt",
-  "pos": "adjective",
-  "def": "Green with lush, growing plants.",
-  "ex": "Spring rains left the hills verdant and soft."
- },
- {
-  "w": "wistful",
-  "pr": "WIST-ful",
-  "pos": "adjective",
-  "def": "Full of gentle longing or nostalgic sadness.",
-  "ex": "He gave the old ballpark a wistful last look before it closed."
- },
- {
-  "w": "zephyr",
-  "pr": "ZEF-er",
-  "pos": "noun",
-  "def": "A soft, gentle breeze.",
-  "ex": "A zephyr off the water stirred the porch chimes."
- },
- {
-  "w": "aplomb",
-  "pr": "uh-PLAHM",
-  "pos": "noun",
-  "def": "Confident composure, especially in a tricky situation.",
-  "ex": "She fielded the hostile questions with total aplomb."
- },
- {
-  "w": "beguile",
-  "pr": "bih-GYLE",
-  "pos": "verb",
-  "def": "To charm someone, sometimes in a deceptive way.",
-  "ex": "The old sailor beguiled the kids with tales of distant ports."
- },
- {
-  "w": "bucolic",
-  "pr": "byoo-KAH-lik",
-  "pos": "adjective",
-  "def": "Relating to pleasant, peaceful country life.",
-  "ex": "They traded the city for a bucolic farmhouse upstate."
- },
- {
-  "w": "cerulean",
-  "pr": "suh-ROO-lee-un",
-  "pos": "adjective",
-  "def": "Deep sky blue in color.",
-  "ex": "The kayaks drifted across cerulean water."
- },
- {
-  "w": "demure",
-  "pr": "dih-MYOOR",
-  "pos": "adjective",
-  "def": "Reserved, modest, and quiet in manner.",
-  "ex": "Her demure smile gave away nothing at the negotiating table."
- },
- {
-  "w": "diaphanous",
-  "pr": "dy-AF-uh-nus",
-  "pos": "adjective",
-  "def": "So light and fine that it is nearly transparent.",
-  "ex": "Diaphanous curtains let the morning light pour in."
- },
- {
-  "w": "effervescent",
-  "pr": "ef-er-VES-unt",
-  "pos": "adjective",
-  "def": "Bubbly and lively in personality, or fizzy like a fresh soda.",
-  "ex": "Her effervescent energy carried the whole meeting."
- },
- {
-  "w": "eloquent",
-  "pr": "EL-uh-kwent",
-  "pos": "adjective",
-  "def": "Fluent and persuasive in speech or writing.",
-  "ex": "His eloquent toast left half the wedding in tears."
- },
- {
-  "w": "enigmatic",
-  "pr": "en-ig-MAT-ik",
-  "pos": "adjective",
-  "def": "Mysterious and difficult to interpret.",
-  "ex": "She answered with an enigmatic smile and changed the subject."
- },
- {
-  "w": "epiphany",
-  "pr": "ih-PIF-uh-nee",
-  "pos": "noun",
-  "def": "A sudden flash of insight or realization.",
-  "ex": "Halfway through the hike, he had an epiphany about the job offer."
- },
- {
-  "w": "felicity",
-  "pr": "fih-LIS-ih-tee",
-  "pos": "noun",
-  "def": "Great happiness, or a pleasing knack for apt expression.",
-  "ex": "The letter was written with warmth and unusual felicity."
- },
- {
-  "w": "mercurial",
-  "pr": "mur-KYUR-ee-ul",
-  "pos": "adjective",
-  "def": "Prone to sudden and unpredictable changes of mood.",
-  "ex": "Sailors respect the lake's mercurial weather."
- },
- {
-  "w": "gravitas",
-  "pr": "GRAV-ih-tahs",
-  "pos": "noun",
-  "def": "Seriousness and dignity in manner.",
-  "ex": "The new moderator brought instant gravitas to the debates."
- },
- {
-  "w": "idyllic",
-  "pr": "eye-DIL-ik",
-  "pos": "adjective",
-  "def": "Extremely peaceful, happy, and picturesque.",
-  "ex": "The cottage sat in an idyllic meadow beside a stream."
- },
- {
-  "w": "immaculate",
-  "pr": "ih-MAK-yuh-lit",
-  "pos": "adjective",
-  "def": "Perfectly clean or completely free of flaws.",
-  "ex": "He keeps the workshop immaculate, every tool in its place."
- },
- {
-  "w": "incisive",
-  "pr": "in-SY-siv",
-  "pos": "adjective",
-  "def": "Impressively sharp, clear, and direct in thought or expression.",
-  "ex": "Her incisive questions cut straight to the budget problem."
- },
- {
-  "w": "inexorable",
-  "pr": "in-EK-ser-uh-bul",
-  "pos": "adjective",
-  "def": "Impossible to stop or persuade; relentless.",
-  "ex": "The tide's inexorable rise erased their sandcastle."
- },
- {
-  "w": "insouciant",
-  "pr": "in-SOO-see-unt",
-  "pos": "adjective",
-  "def": "Cheerfully unconcerned; carefree.",
-  "ex": "He strolled into the exam with an insouciant grin."
- },
- {
-  "w": "iridescent",
-  "pr": "ihr-ih-DES-unt",
-  "pos": "adjective",
-  "def": "Shimmering with colors that change as the angle shifts.",
-  "ex": "The hummingbird's iridescent throat flashed ruby in the sun."
- },
- {
-  "w": "labyrinthine",
-  "pr": "lab-uh-RIN-thin",
-  "pos": "adjective",
-  "def": "Twisting and complicated, like a maze.",
-  "ex": "They got lost in the museum's labyrinthine basement halls."
- },
- {
-  "w": "lambent",
-  "pr": "LAM-bent",
-  "pos": "adjective",
-  "def": "Glowing or flickering softly over a surface.",
-  "ex": "Lambent candlelight played across the old map."
- },
- {
-  "w": "limpid",
-  "pr": "LIM-pid",
-  "pos": "adjective",
-  "def": "Completely clear and transparent.",
-  "ex": "Trout hung motionless in the limpid stream."
- },
- {
-  "w": "lithe",
-  "pr": "LYTHE",
-  "pos": "adjective",
-  "def": "Moving with easy, graceful flexibility.",
-  "ex": "The cat made a lithe leap onto the fence rail."
- },
- {
-  "w": "lucid",
-  "pr": "LOO-sid",
-  "pos": "adjective",
-  "def": "Easy to understand, or thinking clearly.",
-  "ex": "The manual's lucid diagrams saved them an hour of guessing."
- },
- {
-  "w": "magnanimous",
-  "pr": "mag-NAN-ih-mus",
-  "pos": "adjective",
-  "def": "Generous and forgiving, especially toward a rival.",
-  "ex": "The champion was magnanimous in victory, praising her opponent."
- },
- {
-  "w": "mirth",
-  "pr": "MURTH",
-  "pos": "noun",
-  "def": "Lighthearted amusement and laughter.",
-  "ex": "The blooper reel filled the room with mirth."
- },
- {
-  "w": "nebulous",
-  "pr": "NEB-yuh-lus",
-  "pos": "adjective",
-  "def": "Hazy, vague, or poorly defined.",
-  "ex": "The plan was still too nebulous to present to the board."
- },
- {
-  "w": "opulent",
-  "pr": "AHP-yuh-lent",
-  "pos": "adjective",
-  "def": "Richly luxurious and lavish.",
-  "ex": "The hotel lobby was opulent, all marble and gold leaf."
- },
- {
-  "w": "panacea",
-  "pr": "pan-uh-SEE-uh",
-  "pos": "noun",
-  "def": "A supposed cure for every problem or disease.",
-  "ex": "New software is not a panacea for a broken process."
- },
- {
-  "w": "penumbra",
-  "pr": "pih-NUM-bruh",
-  "pos": "noun",
-  "def": "The soft partial shadow around the edge of a full shadow.",
-  "ex": "During the eclipse, the town sat in the moon's penumbra."
- },
- {
-  "w": "perspicacious",
-  "pr": "pur-spih-KAY-shus",
-  "pos": "adjective",
-  "def": "Quick to notice and understand things; keenly perceptive.",
-  "ex": "A perspicacious editor caught the flaw in the argument."
- },
- {
-  "w": "plaintive",
-  "pr": "PLAYN-tiv",
-  "pos": "adjective",
-  "def": "Sounding sad and mournful.",
-  "ex": "A plaintive train whistle carried across the valley."
- },
- {
-  "w": "poignant",
-  "pr": "POYN-yunt",
-  "pos": "adjective",
-  "def": "Deeply touching in a way that stirs sadness or regret.",
-  "ex": "The last voicemail from her grandfather was almost too poignant to play."
- },
- {
-  "w": "pristine",
-  "pr": "prih-STEEN",
-  "pos": "adjective",
-  "def": "In perfect, unspoiled condition.",
-  "ex": "Fresh snow left the trail pristine and silent."
- },
- {
-  "w": "quiescent",
-  "pr": "kwy-ES-unt",
-  "pos": "adjective",
-  "def": "Quiet, still, and inactive for the time being.",
-  "ex": "The volcano has been quiescent for three centuries."
- },
- {
-  "w": "rhapsody",
-  "pr": "RAP-suh-dee",
-  "pos": "noun",
-  "def": "An expression of wild enthusiasm, or a free-flowing piece of music.",
-  "ex": "His review was a rhapsody about the chef's tasting menu."
- },
- {
-  "w": "sagacious",
-  "pr": "suh-GAY-shus",
-  "pos": "adjective",
-  "def": "Wise and shrewd in judgment.",
-  "ex": "The sagacious old farmer sold before the land prices fell."
- },
- {
-  "w": "scintillating",
-  "pr": "SIN-tih-lay-ting",
-  "pos": "adjective",
-  "def": "Sparkling with wit, energy, or light.",
-  "ex": "The dinner party turned on her scintillating conversation."
- },
- {
-  "w": "serene",
-  "pr": "suh-REEN",
-  "pos": "adjective",
-  "def": "Calm, peaceful, and untroubled.",
-  "ex": "The lake was serene at dawn, without a single ripple."
- },
- {
-  "w": "solace",
-  "pr": "SAHL-is",
-  "pos": "noun",
-  "def": "Comfort in a time of sadness or distress.",
-  "ex": "After the loss, she found solace in long morning walks."
- },
- {
-  "w": "soliloquy",
-  "pr": "suh-LIL-uh-kwee",
-  "pos": "noun",
-  "def": "A speech in which a character speaks thoughts aloud while alone.",
-  "ex": "He rehearsed the famous soliloquy in the empty theater."
- },
- {
-  "w": "splendor",
-  "pr": "SPLEN-der",
-  "pos": "noun",
-  "def": "Magnificent and impressive beauty.",
-  "ex": "The canyon revealed its full splendor at sunset."
- },
- {
-  "w": "surreptitious",
-  "pr": "sur-up-TISH-us",
-  "pos": "adjective",
-  "def": "Done secretly to avoid being noticed.",
-  "ex": "He took a surreptitious glance at his watch during the speech."
- },
- {
-  "w": "svelte",
-  "pr": "SVELT",
-  "pos": "adjective",
-  "def": "Slender and graceful in build or line.",
-  "ex": "The new sedan has a svelte profile."
- },
- {
-  "w": "sylvan",
-  "pr": "SIL-vun",
-  "pos": "adjective",
-  "def": "Relating to woods and forest.",
-  "ex": "The cabin sat in a sylvan hollow of birch and pine."
- },
- {
-  "w": "tremulous",
-  "pr": "TREM-yuh-lus",
-  "pos": "adjective",
-  "def": "Shaking or quivering slightly, often from nerves.",
-  "ex": "In a tremulous voice, she began her first courtroom argument."
- },
- {
-  "w": "undulate",
-  "pr": "UN-juh-layt",
-  "pos": "verb",
-  "def": "To move in smooth, wavelike motions.",
-  "ex": "Heat made the horizon undulate above the asphalt."
- },
- {
-  "w": "venerable",
-  "pr": "VEN-er-uh-bul",
-  "pos": "adjective",
-  "def": "Deserving deep respect because of age, wisdom, or character.",
-  "ex": "The venerable oak has shaded the square for two hundred years."
- },
- {
-  "w": "vivacious",
-  "pr": "vih-VAY-shus",
-  "pos": "adjective",
-  "def": "Attractively lively and animated.",
-  "ex": "Their vivacious tour guide made even the bus ride fun."
- },
- {
-  "w": "winsome",
-  "pr": "WIN-sum",
-  "pos": "adjective",
-  "def": "Appealing in a fresh, innocent, charming way.",
-  "ex": "The puppy's winsome tilt of the head won everyone over."
- },
- {
-  "w": "ardor",
-  "pr": "AR-der",
-  "pos": "noun",
-  "def": "Intense enthusiasm or passion.",
-  "ex": "She tackled the restoration project with undimmed ardor."
- },
- {
-  "w": "assiduous",
-  "pr": "uh-SIJ-oo-us",
-  "pos": "adjective",
-  "def": "Showing great care and persistent effort.",
-  "ex": "His assiduous note-taking preserved the project's whole history."
- },
- {
-  "w": "beatific",
-  "pr": "bee-uh-TIF-ik",
-  "pos": "adjective",
-  "def": "Showing blissful, serene happiness.",
-  "ex": "The baby wore a beatific smile in her sleep."
- },
- {
-  "w": "blithe",
-  "pr": "BLYTHE",
-  "pos": "adjective",
-  "def": "Carefree and lighthearted, sometimes to the point of not caring.",
-  "ex": "He gave a blithe shrug at the forecast and left the umbrella home."
- },
- {
-  "w": "burgeon",
-  "pr": "BUR-jun",
-  "pos": "verb",
-  "def": "To grow or expand rapidly.",
-  "ex": "Food trucks began to burgeon along the waterfront."
- },
- {
-  "w": "cadence",
-  "pr": "KAY-dens",
-  "pos": "noun",
-  "def": "The rhythmic rise and fall of sound or movement.",
-  "ex": "The rowers found their cadence and the boat surged."
- },
- {
-  "w": "celestial",
-  "pr": "suh-LES-chul",
-  "pos": "adjective",
-  "def": "Relating to the sky or the heavens.",
-  "ex": "The planetarium mapped the month's celestial events."
- },
- {
-  "w": "clemency",
-  "pr": "KLEM-un-see",
-  "pos": "noun",
-  "def": "Mercy shown toward someone who could be punished.",
-  "ex": "The governor granted clemency after new evidence surfaced."
- },
- {
-  "w": "crescendo",
-  "pr": "kruh-SHEN-doh",
-  "pos": "noun",
-  "def": "A gradual build to a peak of loudness or intensity.",
-  "ex": "The applause rose in a crescendo as the curtain fell."
- },
- {
-  "w": "dulcet",
-  "pr": "DUL-sit",
-  "pos": "adjective",
-  "def": "Sweet and soothing to hear.",
-  "ex": "The dulcet hum of a cello drifted from the practice room."
- },
- {
-  "w": "euphoria",
-  "pr": "yoo-FOR-ee-uh",
-  "pos": "noun",
-  "def": "A feeling of intense happiness and excitement.",
-  "ex": "Crossing the finish line brought a rush of euphoria."
- },
- {
-  "w": "evocative",
-  "pr": "ih-VAHK-uh-tiv",
-  "pos": "adjective",
-  "def": "Bringing strong memories, feelings, or images to mind.",
-  "ex": "The evocative smell of chalk took him back to third grade."
- },
- {
-  "w": "exquisite",
-  "pr": "ik-SKWIZ-it",
-  "pos": "adjective",
-  "def": "Extremely beautiful, delicate, or finely made.",
-  "ex": "The watchmaker showed us an exquisite hand-engraved dial."
- },
- {
-  "w": "fervor",
-  "pr": "FUR-ver",
-  "pos": "noun",
-  "def": "Intense and passionate feeling.",
-  "ex": "The fans sang with a fervor that shook the stands."
- },
- {
-  "w": "filigree",
-  "pr": "FIL-ih-gree",
-  "pos": "noun",
-  "def": "Delicate ornamental work of fine twisted threads, often in metal.",
-  "ex": "Silver filigree framed the tiny portrait."
- },
- {
-  "w": "finesse",
-  "pr": "fih-NES",
-  "pos": "noun",
-  "def": "Skillful, delicate handling of a situation.",
-  "ex": "She defused the customer complaint with real finesse."
- },
- {
-  "w": "gloaming",
-  "pr": "GLOH-ming",
-  "pos": "noun",
-  "def": "The time of soft fading light just after sunset; twilight.",
-  "ex": "Deer stepped into the meadow in the gloaming."
- },
- {
-  "w": "harbinger",
-  "pr": "HAR-bin-jer",
-  "pos": "noun",
-  "def": "A sign that something is about to happen.",
-  "ex": "The first robin is a harbinger of spring."
- },
- {
-  "w": "hallowed",
-  "pr": "HAL-ohd",
-  "pos": "adjective",
-  "def": "Deeply respected and treated as sacred.",
-  "ex": "The old stadium is hallowed ground for local fans."
- },
- {
-  "w": "lament",
-  "pr": "luh-MENT",
-  "pos": "verb",
-  "def": "To express deep sorrow or regret about something.",
-  "ex": "Fans still lament the trade that sent their star away."
- },
- {
-  "w": "levity",
-  "pr": "LEV-ih-tee",
-  "pos": "noun",
-  "def": "Lighthearted humor, especially in a serious setting.",
-  "ex": "A little levity helped the team through the long night shift."
- },
- {
-  "w": "lilt",
-  "pr": "LILT",
-  "pos": "noun",
-  "def": "A pleasant, gently rising and falling rhythm in a voice or tune.",
-  "ex": "You could hear the lilt of her accent over the phone."
- },
- {
-  "w": "meander",
-  "pr": "mee-AN-der",
-  "pos": "verb",
-  "def": "To wander slowly along a winding course.",
-  "ex": "The river meanders through three counties before the sea."
- },
- {
-  "w": "myriad",
-  "pr": "MIHR-ee-ud",
-  "pos": "noun",
-  "def": "A countless or extremely great number.",
-  "ex": "A myriad of stars appeared once the campfire died."
- },
- {
-  "w": "nadir",
-  "pr": "NAY-der",
-  "pos": "noun",
-  "def": "The lowest point of something.",
-  "ex": "The team hit its nadir with a ten-game losing streak."
- },
- {
-  "w": "nascent",
-  "pr": "NAY-sunt",
-  "pos": "adjective",
-  "def": "Just beginning to exist or develop.",
-  "ex": "Her nascent bakery already has a line out the door."
- },
- {
-  "w": "nocturne",
-  "pr": "NAHK-turn",
-  "pos": "noun",
-  "def": "A dreamy musical piece suited to the night.",
-  "ex": "He ended the recital with a quiet nocturne."
- },
- {
-  "w": "numinous",
-  "pr": "NOO-mih-nus",
-  "pos": "adjective",
-  "def": "Having a mysterious, spiritual, or awe-inspiring quality.",
-  "ex": "The redwood grove had a numinous stillness."
- },
- {
-  "w": "opalescent",
-  "pr": "oh-puh-LES-unt",
-  "pos": "adjective",
-  "def": "Showing a milky shimmer of shifting rainbow colors.",
-  "ex": "The shell's opalescent lining caught the light."
- },
- {
-  "w": "paean",
-  "pr": "PEE-un",
-  "pos": "noun",
-  "def": "A song or expression of enthusiastic praise.",
-  "ex": "The article was a paean to the city's night nurses."
- },
- {
-  "w": "patina",
-  "pr": "puh-TEE-nuh",
-  "pos": "noun",
-  "def": "A surface sheen or film that develops with age and use.",
-  "ex": "The copper roof wears a soft green patina."
- },
- {
-  "w": "pensive",
-  "pr": "PEN-siv",
-  "pos": "adjective",
-  "def": "Quietly thoughtful, often with a touch of sadness.",
-  "ex": "He grew pensive as the old photos scrolled past."
- },
- {
-  "w": "perennial",
-  "pr": "puh-REN-ee-ul",
-  "pos": "adjective",
-  "def": "Lasting or returning year after year.",
-  "ex": "Parking is the perennial complaint at town meetings."
- },
- {
-  "w": "placid",
-  "pr": "PLAS-id",
-  "pos": "adjective",
-  "def": "Calm and not easily upset or excited.",
-  "ex": "The placid mare is the one they give to first-time riders."
- },
- {
-  "w": "plangent",
-  "pr": "PLAN-jent",
-  "pos": "adjective",
-  "def": "Loud, reverberating, and often mournful in sound.",
-  "ex": "Plangent church bells rolled over the harbor."
- },
- {
-  "w": "plenitude",
-  "pr": "PLEN-ih-tood",
-  "pos": "noun",
-  "def": "An abundant, full supply.",
-  "ex": "The market offered a plenitude of late-summer peaches."
- },
- {
-  "w": "rapture",
-  "pr": "RAP-cher",
-  "pos": "noun",
-  "def": "A feeling of overwhelming joy or delight.",
-  "ex": "The kids watched the fireworks in silent rapture."
- },
- {
-  "w": "rarefied",
-  "pr": "RAIR-uh-fyde",
-  "pos": "adjective",
-  "def": "Understood or appreciated by only a select few; lofty and exclusive.",
-  "ex": "She moved easily in the rarefied world of rare-book auctions."
- },
- {
-  "w": "requiem",
-  "pr": "REK-wee-um",
-  "pos": "noun",
-  "def": "A musical composition or ceremony honoring the dead.",
-  "ex": "The orchestra performed a requiem for the fallen firefighters."
- },
- {
-  "w": "reverie",
-  "pr": "REV-er-ee",
-  "pos": "noun",
-  "def": "A pleasant state of daydreaming.",
-  "ex": "The doorbell snapped him out of his reverie."
- },
- {
-  "w": "rueful",
-  "pr": "ROO-ful",
-  "pos": "adjective",
-  "def": "Showing regret, often mixed with wry humor.",
-  "ex": "With a rueful laugh, he admitted the shortcut had cost them an hour."
- },
- {
-  "w": "seraphic",
-  "pr": "suh-RAF-ik",
-  "pos": "adjective",
-  "def": "Angelically pure, serene, or blissful.",
-  "ex": "The choirboys wore seraphic expressions and hid frogs in their pockets."
- },
- {
-  "w": "sibilant",
-  "pr": "SIB-ih-lunt",
-  "pos": "adjective",
-  "def": "Making a soft hissing sound.",
-  "ex": "The sibilant whisper of the tide filled the dark beach."
- },
- {
-  "w": "sinuous",
-  "pr": "SIN-yoo-us",
-  "pos": "adjective",
-  "def": "Curving gracefully with many turns.",
-  "ex": "The road makes a sinuous climb through the vineyards."
- },
- {
-  "w": "somber",
-  "pr": "SAHM-ber",
-  "pos": "adjective",
-  "def": "Dark, gloomy, or gravely serious in tone.",
-  "ex": "The locker room was somber after the season-ending loss."
- },
- {
-  "w": "suffuse",
-  "pr": "suh-FYOOZ",
-  "pos": "verb",
-  "def": "To spread gradually throughout something.",
-  "ex": "Rose light began to suffuse the eastern sky."
- },
- {
-  "w": "sumptuous",
-  "pr": "SUMP-choo-us",
-  "pos": "adjective",
-  "def": "Splendidly luxurious, especially in food or furnishings.",
-  "ex": "The inn laid out a sumptuous harvest dinner."
- },
- {
-  "w": "tempest",
-  "pr": "TEM-pist",
-  "pos": "noun",
-  "def": "A violent storm, or a violent uproar.",
-  "ex": "The little sloop rode out the tempest behind the breakwater."
- },
- {
-  "w": "vestige",
-  "pr": "VES-tij",
-  "pos": "noun",
-  "def": "A small remaining trace of something that is gone.",
-  "ex": "A stone chimney is the last vestige of the old homestead."
- },
- {
-  "w": "vignette",
-  "pr": "vin-YET",
-  "pos": "noun",
-  "def": "A brief, vivid scene or sketch in words or pictures.",
-  "ex": "Each chapter opens with a vignette of small-town life."
- },
- {
-  "w": "wanderlust",
-  "pr": "WAHN-der-lust",
-  "pos": "noun",
-  "def": "A strong desire to travel and roam.",
-  "ex": "A shoebox of old maps reawakened her wanderlust."
- },
- {
-  "w": "wane",
-  "pr": "WAYN",
-  "pos": "verb",
-  "def": "To decrease gradually in size, strength, or intensity.",
-  "ex": "His interest in the gadget began to wane by February."
- },
- {
-  "w": "zenith",
-  "pr": "ZEE-nith",
-  "pos": "noun",
-  "def": "The highest point or peak of something.",
-  "ex": "The band reached its zenith with the third album."
- },
- {
-  "w": "elegy",
-  "pr": "EL-uh-jee",
-  "pos": "noun",
-  "def": "A poem or song of sorrow, especially for someone who has died.",
-  "ex": "She read an elegy at the memorial for the lost sailors."
- },
- {
-  "w": "ember",
-  "pr": "EM-ber",
-  "pos": "noun",
-  "def": "A small glowing piece of coal or wood in a dying fire.",
-  "ex": "One ember still pulsed under the gray ash."
- },
- {
-  "w": "petrichor",
-  "pr": "PET-rih-kor",
-  "pos": "noun",
-  "def": "The pleasant, earthy smell that follows rain on dry ground.",
-  "ex": "The first storm of the season filled the street with petrichor."
- },
- {
-  "w": "defenestrate",
-  "pr": "dee-FEN-ih-strayt",
-  "pos": "verb",
-  "def": "To throw someone or something out of a window.",
-  "ex": "The prank war escalated until someone defenestrated a beanbag chair."
- },
- {
-  "w": "ultracrepidarian",
-  "pr": "ul-truh-krep-ih-DAIR-ee-un",
-  "pos": "noun",
-  "def": "A person who offers opinions on subjects beyond their knowledge.",
-  "ex": "The comment section is a parade of confident ultracrepidarians."
- },
- {
-  "w": "borborygmus",
-  "pr": "bor-buh-RIG-mus",
-  "pos": "noun",
-  "def": "A rumbling sound made by gas moving through the intestines.",
-  "ex": "A loud borborygmus broke the silence of the exam room."
- },
- {
-  "w": "apricity",
-  "pr": "uh-PRIS-ih-tee",
-  "pos": "noun",
-  "def": "The warmth of the sun on a cold winter day.",
-  "ex": "They ate lunch on the south steps, savoring the January apricity."
- },
- {
-  "w": "absquatulate",
-  "pr": "ab-SKWAH-chuh-layt",
-  "pos": "verb",
-  "def": "To leave abruptly or make off, often to avoid something.",
-  "ex": "The raccoon absquatulated with an entire bag of marshmallows."
- },
- {
-  "w": "blatherskite",
-  "pr": "BLATH-er-skyte",
-  "pos": "noun",
-  "def": "A person who talks at great length without saying much.",
-  "ex": "The budget meeting ran long thanks to one tireless blatherskite."
- },
- {
-  "w": "bloviate",
-  "pr": "BLOH-vee-ayt",
-  "pos": "verb",
-  "def": "To speak at length in a pompous, windy way.",
-  "ex": "Hand him a microphone and he will bloviate until the chairs are stacked."
- },
- {
-  "w": "bumbershoot",
-  "pr": "BUM-ber-shoot",
-  "pos": "noun",
-  "def": "A playful word for an umbrella.",
-  "ex": "Grandpa never starts his walk without his trusty bumbershoot."
- },
- {
-  "w": "cachinnate",
-  "pr": "KAK-ih-nayt",
-  "pos": "verb",
-  "def": "To laugh loudly and immoderately.",
-  "ex": "One whispered joke made the back row cachinnate for a full minute."
- },
- {
-  "w": "collywobbles",
-  "pr": "KAH-lee-wah-bulz",
-  "pos": "noun",
-  "def": "A nervous, queasy feeling in the stomach.",
-  "ex": "She gets the collywobbles before every recital."
- },
- {
-  "w": "comeuppance",
-  "pr": "kum-UP-uns",
-  "pos": "noun",
-  "def": "A punishment or fate that someone thoroughly deserves.",
-  "ex": "The office lunch thief finally got his comeuppance."
- },
- {
-  "w": "curmudgeon",
-  "pr": "kur-MUJ-un",
-  "pos": "noun",
-  "def": "A gruff, ill-tempered person, often an older man.",
-  "ex": "The block's resident curmudgeon secretly feeds every stray cat."
- },
- {
-  "w": "donnybrook",
-  "pr": "DAHN-ee-brook",
-  "pos": "noun",
-  "def": "A wild brawl or uproarious argument.",
-  "ex": "The zoning hearing turned into a genuine donnybrook."
- },
- {
-  "w": "farrago",
-  "pr": "fuh-RAH-goh",
-  "pos": "noun",
-  "def": "A confused jumble or mixture.",
-  "ex": "The junk drawer is a farrago of cables, keys, and mystery parts."
- },
- {
-  "w": "flibbertigibbet",
-  "pr": "FLIB-er-tee-jib-it",
-  "pos": "noun",
-  "def": "A flighty, chattering, scatterbrained person.",
-  "ex": "Our tour guide was a charming flibbertigibbet who never finished a story."
- },
- {
-  "w": "flummox",
-  "pr": "FLUM-uks",
-  "pos": "verb",
-  "def": "To bewilder or confuse someone completely.",
-  "ex": "The new parking signs flummox even lifelong residents."
- },
- {
-  "w": "funambulist",
-  "pr": "fyoo-NAM-byuh-list",
-  "pos": "noun",
-  "def": "A tightrope walker.",
-  "ex": "The circus poster promised a funambulist crossing above the midway."
- },
- {
-  "w": "gallimaufry",
-  "pr": "gal-ih-MAW-free",
-  "pos": "noun",
-  "def": "A jumbled medley of many different things.",
-  "ex": "Dinner was a gallimaufry of leftovers that somehow worked."
- },
- {
-  "w": "gambol",
-  "pr": "GAM-bul",
-  "pos": "verb",
-  "def": "To run, skip, and jump about playfully.",
-  "ex": "Lambs gamboled across the wet spring pasture."
- },
- {
-  "w": "gobbledygook",
-  "pr": "GAH-bul-dee-gook",
-  "pos": "noun",
-  "def": "Language made meaningless by jargon and inflated words.",
-  "ex": "The warranty was ten pages of legal gobbledygook."
- },
- {
-  "w": "gongoozler",
-  "pr": "gahn-GOOZ-ler",
-  "pos": "noun",
-  "def": "A person who enjoys idly watching activity, especially on canals.",
-  "ex": "A row of gongoozlers watched the barge inch through the lock."
- },
- {
-  "w": "grawlix",
-  "pr": "GRAW-liks",
-  "pos": "noun",
-  "def": "The string of symbols that stands in for swearing in comic strips.",
-  "ex": "The final panel needed only a grawlix over the golfer's head."
- },
- {
-  "w": "hobbledehoy",
-  "pr": "HAH-bul-dee-hoy",
-  "pos": "noun",
-  "def": "An awkward, gangly youth.",
-  "ex": "Old photos show the mayor as a grinning hobbledehoy in overalls."
- },
- {
-  "w": "hootenanny",
-  "pr": "HOOT-nan-ee",
-  "pos": "noun",
-  "def": "An informal gathering with folk music, singing, and dancing.",
-  "ex": "The barn hosts a hootenanny on the last Friday of every month."
- },
- {
-  "w": "hornswoggle",
-  "pr": "HORN-swah-gul",
-  "pos": "verb",
-  "def": "To cheat or trick someone.",
-  "ex": "A slick salesman hornswoggled them into buying two vacuums."
- },
- {
-  "w": "humdinger",
-  "pr": "HUM-ding-er",
-  "pos": "noun",
-  "def": "Something striking or remarkable of its kind.",
-  "ex": "That ninth-inning comeback was a real humdinger."
- },
- {
-  "w": "interrobang",
-  "pr": "in-TAIR-uh-bang",
-  "pos": "noun",
-  "def": "A punctuation mark combining a question mark and an exclamation point.",
-  "ex": "His reply deserved an interrobang, not a mere period."
- },
- {
-  "w": "jackanapes",
-  "pr": "JAK-uh-nayps",
-  "pos": "noun",
-  "def": "An impudent, mischievous person.",
-  "ex": "Some jackanapes swapped every family photo for a llama picture."
- },
- {
-  "w": "kerfuffle",
-  "pr": "kur-FUF-ul",
-  "pos": "noun",
-  "def": "A commotion or fuss, especially over something minor.",
-  "ex": "There was a brief kerfuffle over the last parking spot."
- },
- {
-  "w": "lagniappe",
-  "pr": "LAN-yap",
-  "pos": "noun",
-  "def": "A small unexpected gift added in with a purchase.",
-  "ex": "The baker slipped in a thirteenth cookie as a lagniappe."
- },
- {
-  "w": "lollygag",
-  "pr": "LAH-lee-gag",
-  "pos": "verb",
-  "def": "To dawdle or waste time aimlessly.",
-  "ex": "Quit lollygagging or we will miss the ferry."
- },
- {
-  "w": "lickspittle",
-  "pr": "LIK-spit-ul",
-  "pos": "noun",
-  "def": "A person who flatters the powerful to win favor.",
-  "ex": "The new director wanted honest advisors, not lickspittles."
- },
- {
-  "w": "limerence",
-  "pr": "LIM-er-uns",
-  "pos": "noun",
-  "def": "A state of involuntary, all-consuming romantic infatuation.",
-  "ex": "Their first months together passed in a giddy blur of limerence."
- },
- {
-  "w": "logorrhea",
-  "pr": "law-guh-REE-uh",
-  "pos": "noun",
-  "def": "Excessive, unstoppable talkativeness.",
-  "ex": "Espresso triggers his logorrhea, so the office switched to decaf."
- },
- {
-  "w": "malarkey",
-  "pr": "muh-LAR-kee",
-  "pos": "noun",
-  "def": "Insincere or foolish talk.",
-  "ex": "She waved off the salesman's malarkey and read the fine print."
- },
- {
-  "w": "mondegreen",
-  "pr": "MAHN-dih-green",
-  "pos": "noun",
-  "def": "A misheard lyric or phrase that creates a new meaning.",
-  "ex": "Her favorite mondegreen turned the hymn into a request for waffles."
- },
- {
-  "w": "nincompoop",
-  "pr": "NIN-kum-poop",
-  "pos": "noun",
-  "def": "A silly or foolish person.",
-  "ex": "Only a nincompoop mails the keys along with the sold car."
- },
- {
-  "w": "omphaloskepsis",
-  "pr": "ahm-fuh-loh-SKEP-sis",
-  "pos": "noun",
-  "def": "Contemplation of one's own navel, or idle self-absorbed musing.",
-  "ex": "The offsite promised strategy but delivered omphaloskepsis."
- },
- {
-  "w": "pandiculation",
-  "pr": "pan-dik-yuh-LAY-shun",
-  "pos": "noun",
-  "def": "The full-body stretch and yawn made on waking.",
-  "ex": "The cat's grand pandiculation ended in a flop off the sofa."
- },
- {
-  "w": "pareidolia",
-  "pr": "pair-eye-DOH-lee-uh",
-  "pos": "noun",
-  "def": "The tendency to see familiar shapes, such as faces, in random patterns.",
-  "ex": "Pareidolia turns every knotted pine plank into a startled face."
- },
- {
-  "w": "peccadillo",
-  "pr": "pek-uh-DIL-oh",
-  "pos": "noun",
-  "def": "A small, easily forgiven fault or offense.",
-  "ex": "Stealing fries off her plate is his one peccadillo."
- },
- {
-  "w": "persiflage",
-  "pr": "PUR-sih-flahzh",
-  "pos": "noun",
-  "def": "Light, good-natured teasing banter.",
-  "ex": "Their pregame persiflage is half the fun of the broadcast."
- },
- {
-  "w": "pettifogger",
-  "pr": "PET-ee-fah-ger",
-  "pos": "noun",
-  "def": "A quibbler over petty details, especially in legal matters.",
-  "ex": "Every homeowners association has one relentless pettifogger."
- },
- {
-  "w": "philtrum",
-  "pr": "FIL-trum",
-  "pos": "noun",
-  "def": "The vertical groove between the nose and the upper lip.",
-  "ex": "The makeup artist shaded the actor's philtrum to age him."
- },
- {
-  "w": "phosphene",
-  "pr": "FAHS-feen",
-  "pos": "noun",
-  "def": "A ring or spot of light produced by pressure on the closed eye.",
-  "ex": "Rubbing his eyes set off a small fireworks show of phosphenes."
- },
- {
-  "w": "pilcrow",
-  "pr": "PIL-kroh",
-  "pos": "noun",
-  "def": "The paragraph symbol that resembles a backward letter P.",
-  "ex": "Turning on hidden formatting filled the screen with pilcrows."
- },
- {
-  "w": "poppycock",
-  "pr": "PAH-pee-kahk",
-  "pos": "noun",
-  "def": "Complete nonsense.",
-  "ex": "She declared the haunted lighthouse story pure poppycock."
- },
- {
-  "w": "portmanteau",
-  "pr": "port-MAN-toh",
-  "pos": "noun",
-  "def": "A word blending the sounds and meanings of two other words.",
-  "ex": "The menu leans hard on brunch, that sturdy old portmanteau."
- },
- {
-  "w": "prestidigitation",
-  "pr": "pres-tih-dij-ih-TAY-shun",
-  "pos": "noun",
-  "def": "Skillful sleight of hand, as in magic tricks.",
-  "ex": "A little prestidigitation made the coin vanish behind her ear."
- },
- {
-  "w": "rambunctious",
-  "pr": "ram-BUNGK-shus",
-  "pos": "adjective",
-  "def": "Uncontrollably exuberant and noisy.",
-  "ex": "A rambunctious litter of puppies took over the waiting room."
- },
- {
-  "w": "rapscallion",
-  "pr": "rap-SKAL-yun",
-  "pos": "noun",
-  "def": "A mischievous, rascally person.",
-  "ex": "Some rapscallion has been reprogramming the office thermostat."
- },
- {
-  "w": "razzmatazz",
-  "pr": "RAZ-muh-taz",
-  "pos": "noun",
-  "def": "Showy, noisy activity designed to impress.",
-  "ex": "The launch event was all razzmatazz and no shipping date."
- },
- {
-  "w": "rigmarole",
-  "pr": "RIG-muh-rohl",
-  "pos": "noun",
-  "def": "A long, complicated, tiresome procedure.",
-  "ex": "Renewing the permit involved the usual rigmarole of forms."
- },
- {
-  "w": "sesquipedalian",
-  "pr": "ses-kwih-puh-DAYL-yun",
-  "pos": "adjective",
-  "def": "Given to using long words.",
-  "ex": "His sesquipedalian emails send the interns to a dictionary."
- },
- {
-  "w": "shenanigans",
-  "pr": "shuh-NAN-ih-gunz",
-  "pos": "noun",
-  "def": "Playful mischief, or slightly dishonest maneuvering.",
-  "ex": "The counselors braced for shenanigans on the cabin's last night."
- },
- {
-  "w": "skulduggery",
-  "pr": "skul-DUG-er-ee",
-  "pos": "noun",
-  "def": "Underhanded, sneaky behavior or trickery.",
-  "ex": "The race for club treasurer was decided by outright skulduggery."
- },
- {
-  "w": "slugabed",
-  "pr": "SLUG-uh-bed",
-  "pos": "noun",
-  "def": "A person who lazily stays in bed long after waking.",
-  "ex": "The family slugabed shocked everyone by joining the sunrise hike."
- },
- {
-  "w": "snollygoster",
-  "pr": "SNAH-lee-gah-ster",
-  "pos": "noun",
-  "def": "A shrewd person guided by personal gain rather than principle.",
-  "ex": "Voters finally tired of the charming old snollygoster."
- },
- {
-  "w": "sockdolager",
-  "pr": "sahk-DAH-luh-jer",
-  "pos": "noun",
-  "def": "A decisive blow or a conclusive, forceful answer.",
-  "ex": "Her closing line was a sockdolager that ended the debate."
- },
- {
-  "w": "sternutation",
-  "pr": "stur-nyuh-TAY-shun",
-  "pos": "noun",
-  "def": "The act of sneezing.",
-  "ex": "Ragweed season fills the office with polite sternutation."
- },
- {
-  "w": "susurrus",
-  "pr": "soo-SUR-us",
-  "pos": "noun",
-  "def": "A soft whispering or rustling sound.",
-  "ex": "A susurrus of wind moved through the dry corn."
- },
- {
-  "w": "syzygy",
-  "pr": "SIZ-ih-jee",
-  "pos": "noun",
-  "def": "A straight-line alignment of three celestial bodies.",
-  "ex": "The eclipse depends on a perfect syzygy of sun, moon, and earth."
- },
- {
-  "w": "taradiddle",
-  "pr": "TAIR-uh-did-ul",
-  "pos": "noun",
-  "def": "A small fib, or pretentious nonsense.",
-  "ex": "His fishing stories are affectionate taradiddles, not lies exactly."
- },
- {
-  "w": "tatterdemalion",
-  "pr": "tat-er-dih-MAYL-yun",
-  "pos": "noun",
-  "def": "A person dressed in ragged, tattered clothing.",
-  "ex": "After the storm the scarecrow slumped like a tatterdemalion."
- },
- {
-  "w": "tintinnabulation",
-  "pr": "tin-tih-nab-yuh-LAY-shun",
-  "pos": "noun",
-  "def": "The lingering ringing or jingling of bells.",
-  "ex": "The shop door added its tintinnabulation to every arrival."
- },
- {
-  "w": "triskaidekaphobia",
-  "pr": "tris-ky-dek-uh-FOH-bee-uh",
-  "pos": "noun",
-  "def": "Fear of the number thirteen.",
-  "ex": "The hotel's missing thirteenth floor honors triskaidekaphobia."
- },
- {
-  "w": "troglodyte",
-  "pr": "TRAH-gluh-dyte",
-  "pos": "noun",
-  "def": "A cave dweller, or a person seen as hopelessly out of touch.",
-  "ex": "He happily becomes a troglodyte during playoff season."
- },
- {
-  "w": "vamoose",
-  "pr": "va-MOOS",
-  "pos": "verb",
-  "def": "To depart quickly.",
-  "ex": "When the sprinklers hissed on, the picnickers vamoosed."
- },
- {
-  "w": "vexillology",
-  "pr": "vek-sih-LAH-luh-jee",
-  "pos": "noun",
-  "def": "The study of flags.",
-  "ex": "Her vexillology hobby began with one odd flag at a yard sale."
- },
- {
-  "w": "widdershins",
-  "pr": "WID-er-shinz",
-  "pos": "adverb",
-  "def": "In a counterclockwise or contrary direction.",
-  "ex": "Superstitious hikers refuse to circle the chapel widdershins."
- },
- {
-  "w": "whippersnapper",
-  "pr": "WIP-er-snap-er",
-  "pos": "noun",
-  "def": "A young, inexperienced person considered overconfident.",
-  "ex": "The chess club's newest whippersnapper beat the champion twice."
- },
- {
-  "w": "williwaw",
-  "pr": "WIL-ih-waw",
-  "pos": "noun",
-  "def": "A sudden violent gust of cold wind blowing down from mountains to the sea.",
-  "ex": "A williwaw knocked the drone straight into the fjord."
- },
- {
-  "w": "yawp",
-  "pr": "YAWP",
-  "pos": "verb",
-  "def": "To make a loud, raucous cry.",
-  "ex": "Gulls yawped over the returning fishing boats."
- },
- {
-  "w": "zeugma",
-  "pr": "ZOOG-muh",
-  "pos": "noun",
-  "def": "A figure of speech in which one word applies to two others in different senses.",
-  "ex": "She left in a huff and a taxi, which is a tidy zeugma."
- },
- {
-  "w": "quincunx",
-  "pr": "KWIN-kunks",
-  "pos": "noun",
-  "def": "An arrangement of five objects with one at each corner and one in the center.",
-  "ex": "The old orchard is planted in a tidy quincunx pattern."
- },
- {
-  "w": "gadabout",
-  "pr": "GAD-uh-bowt",
-  "pos": "noun",
-  "def": "A person who roams about in search of amusement.",
-  "ex": "Retirement turned him into a happy gadabout with a rail pass."
- },
- {
-  "w": "gewgaw",
-  "pr": "GYOO-gaw",
-  "pos": "noun",
-  "def": "A showy trinket of little value.",
-  "ex": "The mantel is crowded with vacation gewgaws."
- },
- {
-  "w": "gobsmacked",
-  "pr": "GAHB-smakt",
-  "pos": "adjective",
-  "def": "Utterly astonished.",
-  "ex": "She was gobsmacked to see her painting in the gallery window."
- },
- {
-  "w": "hullabaloo",
-  "pr": "HUL-uh-buh-loo",
-  "pos": "noun",
-  "def": "A noisy commotion or uproar.",
-  "ex": "The escaped parrot caused a hullabaloo in the food court."
- },
- {
-  "w": "knickknack",
-  "pr": "NIK-nak",
-  "pos": "noun",
-  "def": "A small ornament of little value, kept for display.",
-  "ex": "Every windowsill in the cottage holds a nautical knickknack."
- },
- {
-  "w": "moxie",
-  "pr": "MAHK-see",
-  "pos": "noun",
-  "def": "Courage, determination, and bold energy.",
-  "ex": "It took moxie to pitch the boss a new idea on her first day."
- },
- {
-  "w": "mugwump",
-  "pr": "MUG-wump",
-  "pos": "noun",
-  "def": "A person who remains independent or neutral, especially in politics.",
-  "ex": "He stays a proud mugwump through every election season."
- },
- {
-  "w": "noggin",
-  "pr": "NAH-gin",
-  "pos": "noun",
-  "def": "An informal word for a person's head.",
-  "ex": "Mind your noggin on that low doorway."
- },
- {
-  "w": "nonplussed",
-  "pr": "nahn-PLUST",
-  "pos": "adjective",
-  "def": "So surprised and confused that one is unsure how to react.",
-  "ex": "The volunteer stood nonplussed, holding the magician's dove."
- },
- {
-  "w": "palaver",
-  "pr": "puh-LAV-er",
-  "pos": "noun",
-  "def": "Prolonged, idle chatter or fuss.",
-  "ex": "After much palaver, the committee ordered the usual pizza."
- },
- {
-  "w": "ragamuffin",
-  "pr": "RAG-uh-muf-in",
-  "pos": "noun",
-  "def": "A person, typically a child, in ragged and dirty clothes.",
-  "ex": "Three muddy ragamuffins proudly returned the lost dog."
- },
- {
-  "w": "scuttlebutt",
-  "pr": "SKUT-ul-but",
-  "pos": "noun",
-  "def": "Rumor or gossip.",
-  "ex": "The scuttlebutt says the bakery is opening a second location."
- },
- {
-  "w": "skedaddle",
-  "pr": "skih-DAD-ul",
-  "pos": "verb",
-  "def": "To run away hurriedly.",
-  "ex": "The deer skedaddled the moment the porch light clicked on."
- },
- {
-  "w": "tomfoolery",
-  "pr": "tahm-FOO-luh-ree",
-  "pos": "noun",
-  "def": "Silly, playful behavior.",
-  "ex": "The lifeguard whistled at the usual poolside tomfoolery."
- },
- {
-  "w": "balderdash",
-  "pr": "BAWL-der-dash",
-  "pos": "noun",
-  "def": "Senseless or nonsensical talk.",
-  "ex": "He dismissed the tabloid story as complete balderdash."
- },
- {
-  "w": "bamboozle",
-  "pr": "bam-BOO-zul",
-  "pos": "verb",
-  "def": "To fool or cheat someone through trickery.",
-  "ex": "Do not let the free samples bamboozle you into the upsell."
- },
- {
-  "w": "bellwether",
-  "pr": "BEL-weth-er",
-  "pos": "noun",
-  "def": "Something that leads a trend or signals where things are heading.",
-  "ex": "The county is a bellwether that both campaigns watch closely."
- },
- {
-  "w": "bibliophile",
-  "pr": "BIB-lee-uh-fyle",
-  "pos": "noun",
-  "def": "A person who loves and collects books.",
-  "ex": "The estate sale drew every bibliophile within three towns."
- },
- {
-  "w": "blunderbuss",
-  "pr": "BLUN-der-bus",
-  "pos": "noun",
-  "def": "An old gun with a flared muzzle, or a clumsily unfocused approach.",
-  "ex": "The memo was a blunderbuss aimed at every department at once."
- },
- {
-  "w": "brouhaha",
-  "pr": "BROO-hah-hah",
-  "pos": "noun",
-  "def": "An overexcited public fuss or uproar.",
-  "ex": "The mascot redesign set off a weeklong brouhaha online."
- },
- {
-  "w": "cacophony",
-  "pr": "kuh-KAH-fuh-nee",
-  "pos": "noun",
-  "def": "A harsh, discordant mixture of sounds.",
-  "ex": "Rush hour builds a cacophony of horns below their window."
- },
- {
-  "w": "discombobulate",
-  "pr": "dis-kum-BAH-byuh-layt",
-  "pos": "verb",
-  "def": "To throw someone into a state of confusion.",
-  "ex": "Daylight saving time discombobulates the whole household."
- },
- {
-  "w": "dollop",
-  "pr": "DAH-lup",
-  "pos": "noun",
-  "def": "A soft mound or small serving of something.",
-  "ex": "She topped the cocoa with a dollop of whipped cream."
- },
- {
-  "w": "doohickey",
-  "pr": "DOO-hik-ee",
-  "pos": "noun",
-  "def": "A gadget or small object whose name escapes you.",
-  "ex": "Hand me that doohickey next to the socket wrenches."
- },
- {
-  "w": "dudgeon",
-  "pr": "DUJ-un",
-  "pos": "noun",
-  "def": "A state of deep, indignant resentment.",
-  "ex": "He left the meeting in high dudgeon over the seating chart."
- },
- {
-  "w": "festoon",
-  "pr": "fes-TOON",
-  "pos": "verb",
-  "def": "To adorn with chains, garlands, or draped decorations.",
-  "ex": "Volunteers festooned the gym with paper lanterns."
- },
- {
-  "w": "fisticuffs",
-  "pr": "FIS-tih-kufs",
-  "pos": "noun",
-  "def": "A fight with the bare fists.",
-  "ex": "The rivalry game nearly came to fisticuffs at center ice."
- },
- {
-  "w": "flotsam",
-  "pr": "FLAHT-sum",
-  "pos": "noun",
-  "def": "Floating wreckage or drifting odds and ends.",
-  "ex": "The tide line was strung with kelp and bright plastic flotsam."
- },
- {
-  "w": "foofaraw",
-  "pr": "FOO-fuh-raw",
-  "pos": "noun",
-  "def": "A great fuss over a trifle, or flashy frills.",
-  "ex": "All the foofaraw over the ribbon delayed the actual opening."
- },
- {
-  "w": "fusty",
-  "pr": "FUS-tee",
-  "pos": "adjective",
-  "def": "Smelling stale and damp, or stubbornly old-fashioned.",
-  "ex": "They aired out the fusty cabin all afternoon."
- },
- {
-  "w": "galumph",
-  "pr": "guh-LUMF",
-  "pos": "verb",
-  "def": "To move along heavily and clumsily.",
-  "ex": "The puppy galumphed down the hall with one stolen slipper."
- },
- {
-  "w": "gallivant",
-  "pr": "GAL-ih-vant",
-  "pos": "verb",
-  "def": "To roam from place to place seeking fun.",
-  "ex": "They spent June gallivanting along the coast highway."
- },
- {
-  "w": "guffaw",
-  "pr": "guh-FAW",
-  "pos": "noun",
-  "def": "A loud, hearty burst of laughter.",
-  "ex": "His guffaw carried clear across the quiet library."
- },
- {
-  "w": "hinterland",
-  "pr": "HIN-ter-land",
-  "pos": "noun",
-  "def": "The remote inland region away from cities and coasts.",
-  "ex": "The new rail line opens the hinterland to weekend hikers."
- },
- {
-  "w": "hobnob",
-  "pr": "HAHB-nahb",
-  "pos": "verb",
-  "def": "To socialize familiarly, especially with the influential.",
-  "ex": "Interns rarely hobnob with partners outside the holiday party."
- },
- {
-  "w": "hoodwink",
-  "pr": "HUUD-wingk",
-  "pos": "verb",
-  "def": "To deceive or trick someone.",
-  "ex": "The forged tickets hoodwinked even the veteran ushers."
- },
- {
-  "w": "hubbub",
-  "pr": "HUB-ub",
-  "pos": "noun",
-  "def": "A confused din of voices and activity.",
-  "ex": "She found a quiet corner above the hubbub of the market."
- },
- {
-  "w": "ignoramus",
-  "pr": "ig-nuh-RAY-mus",
-  "pos": "noun",
-  "def": "An utterly uninformed or ignorant person.",
-  "ex": "He felt like an ignoramus at his first wine tasting."
- },
- {
-  "w": "imbroglio",
-  "pr": "im-BROHL-yoh",
-  "pos": "noun",
-  "def": "A confused, embarrassing, and complicated entanglement.",
-  "ex": "The double-booked banquet hall created a lively imbroglio."
- },
- {
-  "w": "jamboree",
-  "pr": "jam-buh-REE",
-  "pos": "noun",
-  "def": "A large, festive celebration or gathering.",
-  "ex": "The fire department hosts a pancake jamboree every spring."
- },
- {
-  "w": "juggernaut",
-  "pr": "JUG-er-nawt",
-  "pos": "noun",
-  "def": "A massive force that crushes whatever is in its path.",
-  "ex": "The little startup grew into a retail juggernaut in five years."
- },
- {
-  "w": "kibitz",
-  "pr": "KIB-its",
-  "pos": "verb",
-  "def": "To look on and offer unwanted advice, especially at a game.",
-  "ex": "Retirees gather in the park to play chess and kibitz."
- },
- {
-  "w": "kowtow",
-  "pr": "KOW-tow",
-  "pos": "verb",
-  "def": "To be excessively eager to please someone in authority.",
-  "ex": "She refused to kowtow to the loudest investor in the room."
- },
- {
-  "w": "malapropism",
-  "pr": "MAL-uh-prah-piz-um",
-  "pos": "noun",
-  "def": "A comic mix-up of similar-sounding words.",
-  "ex": "Calling it a vast suppository of knowledge was his finest malapropism."
- },
- {
-  "w": "pandemonium",
-  "pr": "pan-duh-MOH-nee-um",
-  "pos": "noun",
-  "def": "Wild uproar and chaos.",
-  "ex": "Pandemonium broke out when the winning shot dropped at the buzzer."
- },
- {
-  "w": "persnickety",
-  "pr": "per-SNIK-ih-tee",
-  "pos": "adjective",
-  "def": "Fussy about small details and hard to please.",
-  "ex": "The persnickety inspector measured every railing twice."
- },
- {
-  "w": "popinjay",
-  "pr": "PAH-pin-jay",
-  "pos": "noun",
-  "def": "A vain, conceited person given to empty chatter.",
-  "ex": "The gala attracted one popinjay in a sequined tuxedo."
- },
- {
-  "w": "quagmire",
-  "pr": "KWAG-myre",
-  "pos": "noun",
-  "def": "Soft boggy ground, or a situation that is hard to escape.",
-  "ex": "The permit process became a quagmire that swallowed the summer."
- },
- {
-  "w": "rumpus",
-  "pr": "RUM-pus",
-  "pos": "noun",
-  "def": "A noisy disturbance or commotion.",
-  "ex": "A rumpus in the henhouse woke the whole farm."
- },
- {
-  "w": "scalawag",
-  "pr": "SKAL-ih-wag",
-  "pos": "noun",
-  "def": "A playful rascal or scamp.",
-  "ex": "That scalawag hid all the left shoes before school."
- },
- {
-  "w": "schadenfreude",
-  "pr": "SHAH-dun-froy-duh",
-  "pos": "noun",
-  "def": "Pleasure taken in another person's misfortune.",
-  "ex": "He felt a guilty flicker of schadenfreude when the rival fumbled."
- },
- {
-  "w": "scrimshaw",
-  "pr": "SKRIM-shaw",
-  "pos": "noun",
-  "def": "Intricate carvings on ivory or bone, traditionally made by sailors.",
-  "ex": "The maritime museum displays scrimshaw etched on long voyages."
- },
- {
-  "w": "shindig",
-  "pr": "SHIN-dig",
-  "pos": "noun",
-  "def": "A large, lively party.",
-  "ex": "The barn shindig lasted until the fiddler's strings gave out."
- },
- {
-  "w": "smorgasbord",
-  "pr": "SMOR-gus-bord",
-  "pos": "noun",
-  "def": "A wide and varied assortment, especially of food.",
-  "ex": "The festival is a smorgasbord of dumplings from ten countries."
- },
- {
-  "w": "cattywampus",
-  "pr": "KAT-ee-wahm-pus",
-  "pos": "adjective",
-  "def": "Askew, crooked, or arranged diagonally.",
-  "ex": "The picture frames hung cattywampus after the movers left."
- },
- {
-  "w": "copacetic",
-  "pr": "koh-puh-SET-ik",
-  "pos": "adjective",
-  "def": "Completely satisfactory; in fine order.",
-  "ex": "After the apology, everything between them was copacetic."
- },
- {
-  "w": "hoopla",
-  "pr": "HOOP-lah",
-  "pos": "noun",
-  "def": "Excited commotion or extravagant publicity.",
-  "ex": "Despite the hoopla, the sequel opened quietly."
- },
- {
-  "w": "finagle",
-  "pr": "fih-NAY-gul",
-  "pos": "verb",
-  "def": "To obtain something by cleverness or trickery.",
-  "ex": "He finagled two backstage passes from a friend of a friend."
- },
- {
-  "w": "mollycoddle",
-  "pr": "MAH-lee-kah-dul",
-  "pos": "verb",
-  "def": "To pamper and overprotect someone.",
-  "ex": "The coach refuses to mollycoddle his star players."
- },
- {
-  "w": "wheedle",
-  "pr": "WEE-dul",
-  "pos": "verb",
-  "def": "To coax someone with flattery or gentle pleading.",
-  "ex": "The kids wheedled an extra hour of cartoons from the sitter."
- },
- {
-  "w": "succinct",
-  "pr": "suk-SINGKT",
-  "pos": "adjective",
-  "def": "Expressed clearly in few words.",
-  "ex": "Keep the status update succinct: three bullets, tops."
- },
- {
-  "w": "candor",
-  "pr": "KAN-der",
-  "pos": "noun",
-  "def": "Honest, open sincerity in speech.",
-  "ex": "She appreciated the doctor's candor about the recovery time."
- },
- {
-  "w": "pragmatic",
-  "pr": "prag-MAT-ik",
-  "pos": "adjective",
-  "def": "Dealing with things in a practical, realistic way.",
-  "ex": "A pragmatic fix now beats a perfect fix next quarter."
- },
- {
-  "w": "tenacious",
-  "pr": "tuh-NAY-shus",
-  "pos": "adjective",
-  "def": "Holding on firmly; refusing to give up.",
-  "ex": "The tenacious reporter followed the story for two years."
- },
- {
-  "w": "articulate",
-  "pr": "ar-TIK-yuh-lit",
-  "pos": "adjective",
-  "def": "Able to express ideas clearly and effectively.",
-  "ex": "The most articulate student summarized the debate in one minute."
- },
- {
-  "w": "resilient",
-  "pr": "rih-ZIL-yent",
-  "pos": "adjective",
-  "def": "Able to recover quickly from setbacks.",
-  "ex": "The resilient town rebuilt its pier within a year of the storm."
- },
- {
-  "w": "meticulous",
-  "pr": "muh-TIK-yuh-lus",
-  "pos": "adjective",
-  "def": "Extremely careful and precise about details.",
-  "ex": "Her meticulous records made the audit painless."
- },
- {
-  "w": "diligent",
-  "pr": "DIL-ih-jent",
-  "pos": "adjective",
-  "def": "Working with steady, careful effort.",
-  "ex": "A diligent apprentice, he swept the shop before anyone asked."
- },
- {
-  "w": "astute",
-  "pr": "uh-STOOT",
-  "pos": "adjective",
-  "def": "Sharply perceptive and shrewd in judgment.",
-  "ex": "An astute buyer noticed the flood marks behind the paint."
- },
- {
-  "w": "prudent",
-  "pr": "PROO-dent",
-  "pos": "adjective",
-  "def": "Careful and sensible about the future.",
-  "ex": "It was prudent to book the earlier flight before the storm."
- },
- {
-  "w": "frugal",
-  "pr": "FROO-gul",
-  "pos": "adjective",
-  "def": "Careful and sparing with money or resources.",
-  "ex": "Their frugal habits paid off the mortgage seven years early."
- },
- {
-  "w": "adept",
-  "pr": "uh-DEPT",
-  "pos": "adjective",
-  "def": "Highly skilled at something.",
-  "ex": "She is adept at calming nervous first-time patients."
- },
- {
-  "w": "concise",
-  "pr": "kun-SYSE",
-  "pos": "adjective",
-  "def": "Giving much information in few words.",
-  "ex": "The best cover letters are concise and specific."
- },
- {
-  "w": "empathy",
-  "pr": "EM-puh-thee",
-  "pos": "noun",
-  "def": "The ability to understand and share another person's feelings.",
-  "ex": "Good nurses pair clinical skill with genuine empathy."
- },
- {
-  "w": "integrity",
-  "pr": "in-TEG-rih-tee",
-  "pos": "noun",
-  "def": "The quality of being honest and morally consistent.",
-  "ex": "Voters valued her integrity more than her speeches."
- },
- {
-  "w": "savvy",
-  "pr": "SAV-ee",
-  "pos": "noun",
-  "def": "Practical know-how and shrewd judgment.",
-  "ex": "Her marketing savvy doubled the food truck's lunch line."
- },
- {
-  "w": "robust",
-  "pr": "roh-BUST",
-  "pos": "adjective",
-  "def": "Strong, healthy, and able to withstand stress.",
-  "ex": "The bridge design proved robust through three floods."
- },
- {
-  "w": "versatile",
-  "pr": "VUR-suh-tul",
-  "pos": "adjective",
-  "def": "Able to adapt to many different uses or roles.",
-  "ex": "A cast-iron skillet is the most versatile pan in the kitchen."
- },
- {
-  "w": "feasible",
-  "pr": "FEE-zuh-bul",
-  "pos": "adjective",
-  "def": "Possible to do with the means available.",
-  "ex": "Solar panels for the barn roof are finally feasible this year."
- },
- {
-  "w": "viable",
-  "pr": "VY-uh-bul",
-  "pos": "adjective",
-  "def": "Capable of working or surviving successfully.",
-  "ex": "The co-op proved a viable model for the small grocery."
- },
- {
-  "w": "cogent",
-  "pr": "KOH-jent",
-  "pos": "adjective",
-  "def": "Clear, logical, and convincing.",
-  "ex": "Her cogent argument won over the skeptical board."
- },
- {
-  "w": "coherent",
-  "pr": "koh-HEER-ent",
-  "pos": "adjective",
-  "def": "Logical, consistent, and clearly connected.",
-  "ex": "After coffee, his notes finally formed a coherent plan."
- },
- {
-  "w": "candid",
-  "pr": "KAN-did",
-  "pos": "adjective",
-  "def": "Truthful and straightforward, even when awkward.",
-  "ex": "Be candid with the contractor about your budget."
- },
- {
-  "w": "gregarious",
-  "pr": "grih-GAIR-ee-us",
-  "pos": "adjective",
-  "def": "Fond of company; sociable.",
-  "ex": "Their gregarious host introduced every guest to three others."
- },
- {
-  "w": "amiable",
-  "pr": "AY-mee-uh-bul",
-  "pos": "adjective",
-  "def": "Friendly and pleasant in manner.",
-  "ex": "The amiable barista knows half the town by name."
- },
- {
-  "w": "affable",
-  "pr": "AF-uh-bul",
-  "pos": "adjective",
-  "def": "Easy to talk to; warm and friendly.",
-  "ex": "An affable mechanic explained the repair without jargon."
- },
- {
-  "w": "genial",
-  "pr": "JEE-nee-ul",
-  "pos": "adjective",
-  "def": "Cheerful, friendly, and warm.",
-  "ex": "The genial innkeeper waved from the porch every morning."
- },
- {
-  "w": "cordial",
-  "pr": "KOR-jul",
-  "pos": "adjective",
-  "def": "Warm and polite, though not necessarily close.",
-  "ex": "The rivals kept their handshake cordial for the cameras."
- },
- {
-  "w": "earnest",
-  "pr": "UR-nist",
-  "pos": "adjective",
-  "def": "Serious and sincere in intention.",
-  "ex": "His earnest apology mended the friendship."
- },
- {
-  "w": "steadfast",
-  "pr": "STED-fast",
-  "pos": "adjective",
-  "def": "Firmly loyal and unwavering.",
-  "ex": "She remained steadfast through the company's leanest year."
- },
- {
-  "w": "resolute",
-  "pr": "REZ-uh-loot",
-  "pos": "adjective",
-  "def": "Firmly determined and unwavering.",
-  "ex": "The climbers stayed resolute despite the closing weather."
- },
- {
-  "w": "judicious",
-  "pr": "joo-DISH-us",
-  "pos": "adjective",
-  "def": "Showing good judgment and sensible care.",
-  "ex": "A judicious edit cut the report from forty pages to nine."
- },
- {
-  "w": "discerning",
-  "pr": "dih-SUR-ning",
-  "pos": "adjective",
-  "def": "Showing sharp, refined judgment and taste.",
-  "ex": "The shop caters to discerning coffee drinkers."
- },
- {
-  "w": "shrewd",
-  "pr": "SHROOD",
-  "pos": "adjective",
-  "def": "Sharp-witted and clever in practical matters.",
-  "ex": "A shrewd trade brought the team two future draft picks."
- },
- {
-  "w": "tactful",
-  "pr": "TAKT-ful",
-  "pos": "adjective",
-  "def": "Careful not to offend when handling delicate matters.",
-  "ex": "Her tactful reminder saved him from an embarrassing slide."
- },
- {
-  "w": "diplomatic",
-  "pr": "dip-luh-MAT-ik",
-  "pos": "adjective",
-  "def": "Skilled at handling people without causing offense.",
-  "ex": "A diplomatic answer kept both grandmothers happy."
- },
- {
-  "w": "gracious",
-  "pr": "GRAY-shus",
-  "pos": "adjective",
-  "def": "Courteous, kind, and pleasant, especially to guests.",
-  "ex": "The losing captain gave a gracious speech at midfield."
- },
- {
-  "w": "altruistic",
-  "pr": "al-troo-IS-tik",
-  "pos": "adjective",
-  "def": "Selflessly concerned for the well-being of others.",
-  "ex": "An altruistic stranger paid for the stalled family's repairs."
- },
- {
-  "w": "conscientious",
-  "pr": "kahn-shee-EN-shus",
-  "pos": "adjective",
-  "def": "Careful to do one's work thoroughly and well.",
-  "ex": "A conscientious proofreader caught the price error in time."
- },
- {
-  "w": "equitable",
-  "pr": "EK-wih-tuh-bul",
-  "pos": "adjective",
-  "def": "Fair and impartial to everyone involved.",
-  "ex": "The siblings reached an equitable split of the chores."
- },
- {
-  "w": "fastidious",
-  "pr": "fas-TID-ee-us",
-  "pos": "adjective",
-  "def": "Very attentive to detail and hard to please.",
-  "ex": "The fastidious tailor adjusted the hem three times before smiling."
- },
- {
-  "w": "forthright",
-  "pr": "FORTH-ryte",
-  "pos": "adjective",
-  "def": "Direct and outspoken in an honest way.",
-  "ex": "Be forthright about the car's history and it will still sell."
- },
- {
-  "w": "galvanize",
-  "pr": "GAL-vuh-nyze",
-  "pos": "verb",
-  "def": "To shock or excite people into action.",
-  "ex": "The close vote galvanized neighbors to organize a recount."
- },
- {
-  "w": "bolster",
-  "pr": "BOHL-ster",
-  "pos": "verb",
-  "def": "To support or strengthen something.",
-  "ex": "Fresh testimonials bolstered the bakery's expansion pitch."
- },
- {
-  "w": "foster",
-  "pr": "FAW-ster",
-  "pos": "verb",
-  "def": "To encourage the growth or development of something.",
-  "ex": "The garden club fosters friendships across generations."
- },
- {
-  "w": "garner",
-  "pr": "GAR-ner",
-  "pos": "verb",
-  "def": "To gather or earn something, such as support or praise.",
-  "ex": "The documentary garnered awards on three continents."
- },
- {
-  "w": "glean",
-  "pr": "GLEEN",
-  "pos": "verb",
-  "def": "To gather information or leftovers bit by bit.",
-  "ex": "She gleaned the recipe from three faded index cards."
- },
- {
-  "w": "hone",
-  "pr": "HOHN",
-  "pos": "verb",
-  "def": "To sharpen or refine a skill over time.",
-  "ex": "He honed his knife skills during a summer at the deli."
- },
- {
-  "w": "mitigate",
-  "pr": "MIT-ih-gayt",
-  "pos": "verb",
-  "def": "To make something less severe or harmful.",
-  "ex": "Sandbags mitigated the damage from the overnight flood."
- },
- {
-  "w": "distill",
-  "pr": "dih-STIL",
-  "pos": "verb",
-  "def": "To reduce something to its essential parts.",
-  "ex": "She distilled two years of research into a single page."
- },
- {
-  "w": "emulate",
-  "pr": "EM-yuh-layt",
-  "pos": "verb",
-  "def": "To try to match or surpass someone by imitation.",
-  "ex": "Young skaters emulate her signature landing."
- },
- {
-  "w": "exemplify",
-  "pr": "ig-ZEM-plih-fy",
-  "pos": "verb",
-  "def": "To be a perfect example of something.",
-  "ex": "A single well-run branch can exemplify what small grants do."
- },
- {
-  "w": "facilitate",
-  "pr": "fuh-SIL-ih-tayt",
-  "pos": "verb",
-  "def": "To make a process easier or smoother.",
-  "ex": "The new ramp facilitates deliveries to the loading dock."
- },
- {
-  "w": "alleviate",
-  "pr": "uh-LEE-vee-ayt",
-  "pos": "verb",
-  "def": "To ease pain or reduce a problem's severity.",
-  "ex": "The bypass road alleviated downtown traffic within weeks."
- },
- {
-  "w": "ameliorate",
-  "pr": "uh-MEEL-yuh-rayt",
-  "pos": "verb",
-  "def": "To make a bad situation better.",
-  "ex": "Better lighting ameliorated the stairwell's safety problems."
- },
- {
-  "w": "augment",
-  "pr": "awg-MENT",
-  "pos": "verb",
-  "def": "To increase or add to something.",
-  "ex": "She augments her salary with weekend pottery sales."
- },
- {
-  "w": "curtail",
-  "pr": "kur-TAYL",
-  "pos": "verb",
-  "def": "To cut something short or reduce it.",
-  "ex": "The city curtailed watering hours during the drought."
- },
- {
-  "w": "expedite",
-  "pr": "EK-spih-dyte",
-  "pos": "verb",
-  "def": "To speed up a process.",
-  "ex": "Paying the extra fee expedites the passport by two weeks."
- },
- {
-  "w": "fortify",
-  "pr": "FOR-tih-fy",
-  "pos": "verb",
-  "def": "To strengthen against attack or stress.",
-  "ex": "Eat a hot breakfast to fortify yourself for the long shift."
- },
- {
-  "w": "harness",
-  "pr": "HAR-nis",
-  "pos": "verb",
-  "def": "To capture and put something to productive use.",
-  "ex": "The mill harnessed the river long before electricity arrived."
- },
- {
-  "w": "improvise",
-  "pr": "IM-pruh-vyze",
-  "pos": "verb",
-  "def": "To create or perform something without preparation.",
-  "ex": "When the projector died, she improvised the talk on a whiteboard."
- },
- {
-  "w": "invigorate",
-  "pr": "in-VIG-uh-rayt",
-  "pos": "verb",
-  "def": "To fill with energy and life.",
-  "ex": "The cold morning swim invigorated even the skeptics."
- },
- {
-  "w": "kindle",
-  "pr": "KIN-dul",
-  "pos": "verb",
-  "def": "To light a fire, or to stir up a feeling.",
-  "ex": "A traveling exhibit kindled her interest in mapmaking."
- },
- {
-  "w": "muster",
-  "pr": "MUS-ter",
-  "pos": "verb",
-  "def": "To gather up strength, courage, or people.",
-  "ex": "He mustered the nerve to sing the first verse alone."
- },
- {
-  "w": "persevere",
-  "pr": "pur-suh-VEER",
-  "pos": "verb",
-  "def": "To keep trying despite difficulty.",
-  "ex": "She persevered through four drafts before the acceptance letter."
- },
- {
-  "w": "ponder",
-  "pr": "PAHN-der",
-  "pos": "verb",
-  "def": "To think about something carefully.",
-  "ex": "He pondered the offer over a long weekend."
- },
- {
-  "w": "refine",
-  "pr": "rih-FYNE",
-  "pos": "verb",
-  "def": "To improve something with small careful changes.",
-  "ex": "The chef refined the sauce until the recipe fit on a notecard."
- },
- {
-  "w": "rejuvenate",
-  "pr": "rih-JOO-vuh-nayt",
-  "pos": "verb",
-  "def": "To make someone or something feel fresh and young again.",
-  "ex": "A week off the grid rejuvenated the whole family."
- },
- {
-  "w": "revitalize",
-  "pr": "ree-VY-tuh-lyze",
-  "pos": "verb",
-  "def": "To bring new life and energy to something.",
-  "ex": "The night market revitalized the sleepy block."
- },
- {
-  "w": "scrutinize",
-  "pr": "SKROO-tih-nyze",
-  "pos": "verb",
-  "def": "To examine something very closely.",
-  "ex": "Inspectors scrutinized every weld on the new span."
- },
- {
-  "w": "streamline",
-  "pr": "STREEM-lyne",
-  "pos": "verb",
-  "def": "To make a process simpler and more efficient.",
-  "ex": "One shared form streamlined the whole intake process."
- },
- {
-  "w": "synthesize",
-  "pr": "SIN-thuh-syze",
-  "pos": "verb",
-  "def": "To combine parts into a coherent whole.",
-  "ex": "The report synthesizes interviews from all five precincts."
- },
- {
-  "w": "underscore",
-  "pr": "un-der-SKOR",
-  "pos": "verb",
-  "def": "To emphasize the importance of something.",
-  "ex": "The outage underscored the need for a backup generator."
- },
- {
-  "w": "advocate",
-  "pr": "AD-vuh-kayt",
-  "pos": "verb",
-  "def": "To publicly support a cause or proposal.",
-  "ex": "Parents advocated for a crossing guard at the new school."
- },
- {
-  "w": "convey",
-  "pr": "kun-VAY",
-  "pos": "verb",
-  "def": "To communicate or transport something.",
-  "ex": "A single photograph conveyed the scale of the flood."
- },
- {
-  "w": "deft",
-  "pr": "DEFT",
-  "pos": "adjective",
-  "def": "Quick and skillful in movement or action.",
-  "ex": "With a deft flip, the cook plated the omelet."
- },
- {
-  "w": "brisk",
-  "pr": "BRISK",
-  "pos": "adjective",
-  "def": "Quick, energetic, and refreshing.",
-  "ex": "They set a brisk pace to beat the ferry schedule."
- },
- {
-  "w": "hardy",
-  "pr": "HAR-dee",
-  "pos": "adjective",
-  "def": "Tough enough to endure harsh conditions.",
-  "ex": "Only the hardy kale survived the early frost."
- },
- {
-  "w": "keen",
-  "pr": "KEEN",
-  "pos": "adjective",
-  "def": "Sharp, eager, or highly developed.",
-  "ex": "A keen eye spotted the misprint before the press run."
- },
- {
-  "w": "nimble",
-  "pr": "NIM-bul",
-  "pos": "adjective",
-  "def": "Quick and light in movement or thinking.",
-  "ex": "The nimble outfielder turned the gap shot into an out."
- },
- {
-  "w": "pithy",
-  "pr": "PITH-ee",
-  "pos": "adjective",
-  "def": "Brief, forceful, and full of meaning.",
-  "ex": "The coach's pithy mottoes end up on locker room walls."
- },
- {
-  "w": "punctual",
-  "pr": "PUNGK-choo-ul",
-  "pos": "adjective",
-  "def": "Arriving or happening exactly on time.",
-  "ex": "The punctual ferry has not missed a tide in years."
- },
- {
-  "w": "potent",
-  "pr": "POH-tent",
-  "pos": "adjective",
-  "def": "Having great power or effect.",
-  "ex": "Ginger tea is her potent remedy for long flights."
- },
- {
-  "w": "resourceful",
-  "pr": "rih-SORS-ful",
-  "pos": "adjective",
-  "def": "Clever at finding ways around difficulties.",
-  "ex": "A resourceful camper can fix almost anything with duct tape."
- },
- {
-  "w": "staunch",
-  "pr": "STAWNCH",
-  "pos": "adjective",
-  "def": "Loyal, committed, and dependable.",
-  "ex": "He remains a staunch supporter of the youth orchestra."
- },
- {
-  "w": "thrifty",
-  "pr": "THRIF-tee",
-  "pos": "adjective",
-  "def": "Careful with money; avoiding waste.",
-  "ex": "Thrifty shoppers hit the market in its final hour."
- },
- {
-  "w": "vigilant",
-  "pr": "VIJ-ih-lunt",
-  "pos": "adjective",
-  "def": "Alert and watchful for danger or trouble.",
-  "ex": "Vigilant lifeguards rotated posts every twenty minutes."
- },
- {
-  "w": "vibrant",
-  "pr": "VY-brunt",
-  "pos": "adjective",
-  "def": "Full of energy, life, or bright color.",
-  "ex": "The mural brought a vibrant burst of color to the underpass."
- },
- {
-  "w": "witty",
-  "pr": "WIT-ee",
-  "pos": "adjective",
-  "def": "Cleverly and quickly humorous.",
-  "ex": "Her witty captions doubled the newsletter's readership."
- },
- {
-  "w": "zealous",
-  "pr": "ZEL-us",
-  "pos": "adjective",
-  "def": "Filled with energetic, passionate devotion.",
-  "ex": "A zealous volunteer alphabetized the entire pantry."
- },
- {
-  "w": "acumen",
-  "pr": "AK-yuh-mun",
-  "pos": "noun",
-  "def": "Sharp, quick judgment, especially in business.",
-  "ex": "Her retail acumen turned the corner store around."
- },
- {
-  "w": "composure",
-  "pr": "kum-POH-zher",
-  "pos": "noun",
-  "def": "Calm self-control under pressure.",
-  "ex": "The pilot's composure reassured the anxious cabin."
- },
- {
-  "w": "decorum",
-  "pr": "dih-KOR-um",
-  "pos": "noun",
-  "def": "Proper, polite behavior suited to the occasion.",
-  "ex": "The moderator restored decorum after the shouting started."
- },
- {
-  "w": "discretion",
-  "pr": "dih-SKRESH-un",
-  "pos": "noun",
-  "def": "The good judgment to be careful about what one says or does.",
-  "ex": "The nanny is famous for her discretion about the household."
- },
- {
-  "w": "foresight",
-  "pr": "FOR-syte",
-  "pos": "noun",
-  "def": "The ability to anticipate future needs or events.",
-  "ex": "Buying the extra lot next door showed remarkable foresight."
- },
- {
-  "w": "fortitude",
-  "pr": "FOR-tih-tood",
-  "pos": "noun",
-  "def": "Courage and strength in facing pain or adversity.",
-  "ex": "It took fortitude to finish the marathon on a twisted ankle."
- },
- {
-  "w": "gist",
-  "pr": "JIST",
-  "pos": "noun",
-  "def": "The essential point or main idea.",
-  "ex": "Give me the gist of the meeting in two sentences."
- },
- {
-  "w": "grit",
-  "pr": "GRIT",
-  "pos": "noun",
-  "def": "Courage and persistence in the face of hardship.",
-  "ex": "It was grit, not luck, that got the farm through the drought."
- },
- {
-  "w": "gumption",
-  "pr": "GUMP-shun",
-  "pos": "noun",
-  "def": "Bold initiative and common sense.",
-  "ex": "It took gumption to open a bookstore in a streaming age."
- },
- {
-  "w": "hindsight",
-  "pr": "HYND-syte",
-  "pos": "noun",
-  "def": "Understanding of an event only after it has happened.",
-  "ex": "In hindsight, the shortcut through the marsh was a mistake."
- },
- {
-  "w": "ingenuity",
-  "pr": "in-juh-NOO-ih-tee",
-  "pos": "noun",
-  "def": "Cleverness and originality in solving problems.",
-  "ex": "Pure ingenuity kept the vintage tractor running."
- },
- {
-  "w": "knack",
-  "pr": "NAK",
-  "pos": "noun",
-  "def": "A natural talent for doing something easily.",
-  "ex": "She has a knack for untangling any knotted necklace."
- },
- {
-  "w": "mettle",
-  "pr": "MET-ul",
-  "pos": "noun",
-  "def": "Spirit and courage under pressure.",
-  "ex": "The rookie proved her mettle in the final period."
- },
- {
-  "w": "nuance",
-  "pr": "NOO-ahns",
-  "pos": "noun",
-  "def": "A subtle difference in meaning, tone, or feeling.",
-  "ex": "A good translator preserves every nuance of the joke."
- },
- {
-  "w": "panache",
-  "pr": "puh-NASH",
-  "pos": "noun",
-  "def": "Flamboyant confidence and style.",
-  "ex": "He flipped the pizza dough with genuine panache."
- },
- {
-  "w": "poise",
-  "pr": "POYZ",
-  "pos": "noun",
-  "def": "Graceful, composed self-assurance.",
-  "ex": "She answered the toughest question with practiced poise."
- },
- {
-  "w": "prowess",
-  "pr": "PROW-is",
-  "pos": "noun",
-  "def": "Exceptional skill or ability.",
-  "ex": "Her chess prowess was obvious by the third move."
- },
- {
-  "w": "rapport",
-  "pr": "ra-POR",
-  "pos": "noun",
-  "def": "A relationship of mutual trust and easy communication.",
-  "ex": "The tutor built rapport before touching the math."
- },
- {
-  "w": "resolve",
-  "pr": "rih-ZAHLV",
-  "pos": "noun",
-  "def": "Firm determination to follow through.",
-  "ex": "Every rejection letter only strengthened her resolve."
- },
- {
-  "w": "rigor",
-  "pr": "RIG-er",
-  "pos": "noun",
-  "def": "Strict thoroughness and exactness.",
-  "ex": "The lab is known for the rigor of its testing."
- },
- {
-  "w": "stamina",
-  "pr": "STAM-ih-nuh",
-  "pos": "noun",
-  "def": "The energy to sustain long physical or mental effort.",
-  "ex": "Touring musicians need stamina more than glamour."
- },
- {
-  "w": "verve",
-  "pr": "VURV",
-  "pos": "noun",
-  "def": "Lively energy and enthusiasm, especially in performance.",
-  "ex": "The cover band played with unexpected verve."
- },
- {
-  "w": "vigor",
-  "pr": "VIG-er",
-  "pos": "noun",
-  "def": "Physical strength and healthy energy.",
-  "ex": "Cool weather returned, and the roses grew back with vigor."
- },
- {
-  "w": "vim",
-  "pr": "VIM",
-  "pos": "noun",
-  "def": "Lively energy and enthusiasm.",
-  "ex": "Full of vim after vacation, she reorganized the entire archive."
- },
- {
-  "w": "zest",
-  "pr": "ZEST",
-  "pos": "noun",
-  "def": "Great enthusiasm and enjoyment.",
-  "ex": "His zest for birding is contagious on the morning walks."
- },
- {
-  "w": "wherewithal",
-  "pr": "WAIR-with-awl",
-  "pos": "noun",
-  "def": "The money or means needed to do something.",
-  "ex": "They finally had the wherewithal to fix the roof."
- },
- {
-  "w": "aptitude",
-  "pr": "AP-tih-tood",
-  "pos": "noun",
-  "def": "A natural ability to learn or do something.",
-  "ex": "She showed an early aptitude for engine repair."
- },
- {
-  "w": "brevity",
-  "pr": "BREV-ih-tee",
-  "pos": "noun",
-  "def": "Shortness and economy in speech or writing.",
-  "ex": "The award speech was memorable for its brevity."
- },
- {
-  "w": "clarity",
-  "pr": "KLAIR-ih-tee",
-  "pos": "noun",
-  "def": "The quality of being clear and easy to understand.",
-  "ex": "The diagram added instant clarity to the assembly steps."
- },
- {
-  "w": "initiative",
-  "pr": "ih-NISH-uh-tiv",
-  "pos": "noun",
-  "def": "The readiness to act first without being told.",
-  "ex": "He showed initiative by drafting the checklist nobody asked for."
- },
- {
-  "w": "candidly",
-  "pr": "KAN-did-lee",
-  "pos": "adverb",
-  "def": "In an honest and straightforward manner.",
-  "ex": "Candidly, the first draft needed a full rewrite."
- },
- {
-  "w": "verbatim",
-  "pr": "ver-BAY-tim",
-  "pos": "adverb",
-  "def": "Using exactly the same words; word for word.",
-  "ex": "She quoted the umpire verbatim, pause and all."
- },
- {
-  "w": "posthaste",
-  "pr": "pohst-HAYST",
-  "pos": "adverb",
-  "def": "As quickly as possible.",
-  "ex": "Send the signed contract back posthaste."
- },
- {
-  "w": "incognito",
-  "pr": "in-kahg-NEE-toh",
-  "pos": "adverb",
-  "def": "With one's identity concealed.",
-  "ex": "The famous chef dined incognito in a ball cap."
- },
- {
-  "w": "askew",
-  "pr": "uh-SKYOO",
-  "pos": "adverb",
-  "def": "Off to one side; not straight.",
-  "ex": "The welcome sign hung askew after the windstorm."
- },
- {
-  "w": "awry",
-  "pr": "uh-RY",
-  "pos": "adverb",
-  "def": "Away from the expected course; amiss.",
-  "ex": "The surprise party went awry when the guest of honor arrived early."
- },
- {
-  "w": "seldom",
-  "pr": "SEL-dum",
-  "pos": "adverb",
-  "def": "Not often; rarely.",
-  "ex": "The old lighthouse is seldom open to visitors."
- },
- {
-  "w": "akimbo",
-  "pr": "uh-KIM-boh",
-  "pos": "adverb",
-  "def": "With hands on hips and elbows turned outward.",
-  "ex": "She waited at the door, arms akimbo, as the excuses began."
- },
- {
-  "w": "huzzah",
-  "pr": "huh-ZAH",
-  "pos": "interjection",
-  "def": "A shout of joy, praise, or triumph.",
-  "ex": "The crowd let out a huzzah as the bridge lights came on."
- },
- {
-  "w": "eureka",
-  "pr": "yoo-REE-kuh",
-  "pos": "interjection",
-  "def": "A cry of triumph on discovering something.",
-  "ex": "Eureka, the missing bolt was in the vacuum bag all along."
- }
+{"w": "ephemeral", "pr": "ih-FEM-er-ul", "pos": "adjective", "def": "Lasting for a very short time.", "ex": "The cherry blossoms were ephemeral, gone within a week."},
+{"w": "sanguine", "pr": "SANG-gwin", "pos": "adjective", "def": "Cheerfully optimistic, especially in a difficult situation.", "ex": "She stayed sanguine about the team's chances despite the losing streak."},
+{"w": "mellifluous", "pr": "muh-LIF-loo-us", "pos": "adjective", "def": "Sweetly smooth and musical to hear.", "ex": "The announcer's mellifluous voice made even the weather report soothing."},
+{"w": "equanimity", "pr": "ek-wuh-NIM-ih-tee", "pos": "noun", "def": "Calmness and composure, especially under stress.", "ex": "He accepted the flight delay with surprising equanimity."},
+{"w": "serendipity", "pr": "sair-un-DIP-ih-tee", "pos": "noun", "def": "The luck of finding something good without looking for it.", "ex": "Meeting her future business partner at the bus stop was pure serendipity."},
+{"w": "ebullient", "pr": "ih-BUL-yunt", "pos": "adjective", "def": "Overflowing with enthusiasm and high spirits.", "ex": "The ebullient crowd cheered every point, even the easy ones."},
+{"w": "halcyon", "pr": "HAL-see-un", "pos": "adjective", "def": "Calm, peaceful, and happy, often said of a fondly remembered past.", "ex": "They reminisced about the halcyon summers at the lake house."},
+{"w": "ineffable", "pr": "in-EF-uh-bul", "pos": "adjective", "def": "Too great or extreme to be expressed in words.", "ex": "Standing under the northern lights, she felt an ineffable joy."},
+{"w": "luminous", "pr": "LOO-mih-nus", "pos": "adjective", "def": "Giving off light; bright or glowing.", "ex": "Fireflies made the garden luminous after dusk."},
+{"w": "quintessential", "pr": "kwin-tuh-SEN-shul", "pos": "adjective", "def": "Representing the most perfect example of a quality or type.", "ex": "The corner diner is the quintessential small-town gathering place."},
+{"w": "ethereal", "pr": "ih-THEER-ee-ul", "pos": "adjective", "def": "Extremely delicate and light, as if not of this world.", "ex": "Morning fog gave the valley an ethereal glow."},
+{"w": "sonorous", "pr": "suh-NOR-us", "pos": "adjective", "def": "Deep, full, and rich in sound.", "ex": "The judge's sonorous voice quieted the courtroom."},
+{"w": "resplendent", "pr": "rih-SPLEN-dent", "pos": "adjective", "def": "Dazzlingly impressive in appearance.", "ex": "The maples were resplendent in October reds and golds."},
+{"w": "incandescent", "pr": "in-kun-DES-unt", "pos": "adjective", "def": "Glowing with intense light, heat, or emotion.", "ex": "Her incandescent performance earned a standing ovation."},
+{"w": "evanescent", "pr": "ev-uh-NES-unt", "pos": "adjective", "def": "Quickly fading from sight, memory, or existence.", "ex": "The rainbow was evanescent, gone before he found his camera."},
+{"w": "gossamer", "pr": "GAHS-uh-mer", "pos": "adjective", "def": "Extremely light, thin, and delicate.", "ex": "Gossamer threads of spider silk stretched across the trail."},
+{"w": "languid", "pr": "LANG-gwid", "pos": "adjective", "def": "Pleasantly slow and relaxed, with little energy.", "ex": "They spent a languid afternoon drifting on the pond."},
+{"w": "pellucid", "pr": "puh-LOO-sid", "pos": "adjective", "def": "Perfectly clear, whether in water, light, or meaning.", "ex": "Her pellucid explanation made the tax rules finally make sense."},
+{"w": "redolent", "pr": "RED-uh-lent", "pos": "adjective", "def": "Strongly smelling of something, or strongly reminiscent of it.", "ex": "The kitchen was redolent of cinnamon and baked apples."},
+{"w": "sublime", "pr": "suh-BLYME", "pos": "adjective", "def": "So beautiful or grand that it inspires awe.", "ex": "The view from the summit was nothing short of sublime."},
+{"w": "verdant", "pr": "VUR-dunt", "pos": "adjective", "def": "Green with lush, growing plants.", "ex": "Spring rains left the hills verdant and soft."},
+{"w": "wistful", "pr": "WIST-ful", "pos": "adjective", "def": "Full of gentle longing or nostalgic sadness.", "ex": "He gave the old ballpark a wistful last look before it closed."},
+{"w": "zephyr", "pr": "ZEF-er", "pos": "noun", "def": "A soft, gentle breeze.", "ex": "A zephyr off the water stirred the porch chimes."},
+{"w": "aplomb", "pr": "uh-PLAHM", "pos": "noun", "def": "Confident composure, especially in a tricky situation.", "ex": "She fielded the hostile questions with total aplomb."},
+{"w": "beguile", "pr": "bih-GYLE", "pos": "verb", "def": "To charm someone, sometimes in a deceptive way.", "ex": "The old sailor beguiled the kids with tales of distant ports."},
+{"w": "bucolic", "pr": "byoo-KAH-lik", "pos": "adjective", "def": "Relating to pleasant, peaceful country life.", "ex": "They traded the city for a bucolic farmhouse upstate."},
+{"w": "demure", "pr": "dih-MYOOR", "pos": "adjective", "def": "Reserved, modest, and quiet in manner.", "ex": "Her demure smile gave away nothing at the negotiating table."},
+{"w": "diaphanous", "pr": "dy-AF-uh-nus", "pos": "adjective", "def": "So light and fine that it is nearly transparent.", "ex": "Diaphanous curtains let the morning light pour in."},
+{"w": "effervescent", "pr": "ef-er-VES-unt", "pos": "adjective", "def": "Bubbly and lively in personality, or fizzy like a fresh soda.", "ex": "Her effervescent energy carried the whole meeting."},
+{"w": "eloquent", "pr": "EL-uh-kwent", "pos": "adjective", "def": "Fluent and persuasive in speech or writing.", "ex": "His eloquent toast left half the wedding in tears."},
+{"w": "enigmatic", "pr": "en-ig-MAT-ik", "pos": "adjective", "def": "Mysterious and difficult to interpret.", "ex": "She answered with an enigmatic smile and changed the subject."},
+{"w": "epiphany", "pr": "ih-PIF-uh-nee", "pos": "noun", "def": "A sudden flash of insight or realization.", "ex": "Halfway through the hike, he had an epiphany about the job offer."},
+{"w": "felicity", "pr": "fih-LIS-ih-tee", "pos": "noun", "def": "Great happiness, or a pleasing knack for apt expression.", "ex": "The letter was written with warmth and unusual felicity."},
+{"w": "mercurial", "pr": "mur-KYUR-ee-ul", "pos": "adjective", "def": "Prone to sudden and unpredictable changes of mood.", "ex": "Sailors respect the lake's mercurial weather."},
+{"w": "gravitas", "pr": "GRAV-ih-tahs", "pos": "noun", "def": "Seriousness and dignity in manner.", "ex": "The new moderator brought instant gravitas to the debates."},
+{"w": "idyllic", "pr": "eye-DIL-ik", "pos": "adjective", "def": "Extremely peaceful, happy, and picturesque.", "ex": "The cottage sat in an idyllic meadow beside a stream."},
+{"w": "immaculate", "pr": "ih-MAK-yuh-lit", "pos": "adjective", "def": "Perfectly clean or completely free of flaws.", "ex": "He keeps the workshop immaculate, every tool in its place."},
+{"w": "incisive", "pr": "in-SY-siv", "pos": "adjective", "def": "Impressively sharp, clear, and direct in thought or expression.", "ex": "Her incisive questions cut straight to the budget problem."},
+{"w": "inexorable", "pr": "in-EK-ser-uh-bul", "pos": "adjective", "def": "Impossible to stop or persuade; relentless.", "ex": "The tide's inexorable rise erased their sandcastle."},
+{"w": "insouciant", "pr": "in-SOO-see-unt", "pos": "adjective", "def": "Cheerfully unconcerned; carefree.", "ex": "He strolled into the exam with an insouciant grin."},
+{"w": "iridescent", "pr": "ihr-ih-DES-unt", "pos": "adjective", "def": "Shimmering with colors that change as the angle shifts.", "ex": "The hummingbird's iridescent throat flashed ruby in the sun."},
+{"w": "labyrinthine", "pr": "lab-uh-RIN-thin", "pos": "adjective", "def": "Twisting and complicated, like a maze.", "ex": "They got lost in the museum's labyrinthine basement halls."},
+{"w": "lambent", "pr": "LAM-bent", "pos": "adjective", "def": "Glowing or flickering softly over a surface.", "ex": "Lambent candlelight played across the old map."},
+{"w": "limpid", "pr": "LIM-pid", "pos": "adjective", "def": "Completely clear and transparent.", "ex": "Trout hung motionless in the limpid stream."},
+{"w": "lithe", "pr": "LYTHE", "pos": "adjective", "def": "Moving with easy, graceful flexibility.", "ex": "The cat made a lithe leap onto the fence rail."},
+{"w": "lucid", "pr": "LOO-sid", "pos": "adjective", "def": "Easy to understand, or thinking clearly.", "ex": "The manual's lucid diagrams saved them an hour of guessing."},
+{"w": "magnanimous", "pr": "mag-NAN-ih-mus", "pos": "adjective", "def": "Generous and forgiving, especially toward a rival.", "ex": "The champion was magnanimous in victory, praising her opponent."},
+{"w": "nebulous", "pr": "NEB-yuh-lus", "pos": "adjective", "def": "Hazy, vague, or poorly defined.", "ex": "The plan was still too nebulous to present to the board."},
+{"w": "opulent", "pr": "AHP-yuh-lent", "pos": "adjective", "def": "Richly luxurious and lavish.", "ex": "The hotel lobby was opulent, all marble and gold leaf."},
+{"w": "panacea", "pr": "pan-uh-SEE-uh", "pos": "noun", "def": "A supposed cure for every problem or disease.", "ex": "New software is not a panacea for a broken process."},
+{"w": "penumbra", "pr": "pih-NUM-bruh", "pos": "noun", "def": "The soft partial shadow around the edge of a full shadow.", "ex": "During the eclipse, the town sat in the moon's penumbra."},
+{"w": "perspicacious", "pr": "pur-spih-KAY-shus", "pos": "adjective", "def": "Quick to notice and understand things; keenly perceptive.", "ex": "A perspicacious editor caught the flaw in the argument."},
+{"w": "plaintive", "pr": "PLAYN-tiv", "pos": "adjective", "def": "Sounding sad and mournful.", "ex": "A plaintive train whistle carried across the valley."},
+{"w": "poignant", "pr": "POYN-yunt", "pos": "adjective", "def": "Deeply touching in a way that stirs sadness or regret.", "ex": "The last voicemail from her grandfather was almost too poignant to play."},
+{"w": "pristine", "pr": "prih-STEEN", "pos": "adjective", "def": "In perfect, unspoiled condition.", "ex": "Fresh snow left the trail pristine and silent."},
+{"w": "quiescent", "pr": "kwy-ES-unt", "pos": "adjective", "def": "Quiet, still, and inactive for the time being.", "ex": "The volcano has been quiescent for three centuries."},
+{"w": "sagacious", "pr": "suh-GAY-shus", "pos": "adjective", "def": "Wise and shrewd in judgment.", "ex": "The sagacious old farmer sold before the land prices fell."},
+{"w": "scintillating", "pr": "SIN-tih-lay-ting", "pos": "adjective", "def": "Sparkling with wit, energy, or light.", "ex": "The dinner party turned on her scintillating conversation."},
+{"w": "serene", "pr": "suh-REEN", "pos": "adjective", "def": "Calm, peaceful, and untroubled.", "ex": "The lake was serene at dawn, without a single ripple."},
+{"w": "solace", "pr": "SAHL-is", "pos": "noun", "def": "Comfort in a time of sadness or distress.", "ex": "After the loss, she found solace in long morning walks."},
+{"w": "soliloquy", "pr": "suh-LIL-uh-kwee", "pos": "noun", "def": "A speech in which a character speaks thoughts aloud while alone.", "ex": "He rehearsed the famous soliloquy in the empty theater."},
+{"w": "surreptitious", "pr": "sur-up-TISH-us", "pos": "adjective", "def": "Done secretly to avoid being noticed.", "ex": "He took a surreptitious glance at his watch during the speech."},
+{"w": "sylvan", "pr": "SIL-vun", "pos": "adjective", "def": "Relating to woods and forest.", "ex": "The cabin sat in a sylvan hollow of birch and pine."},
+{"w": "venerable", "pr": "VEN-er-uh-bul", "pos": "adjective", "def": "Deserving deep respect because of age, wisdom, or character.", "ex": "The venerable oak has shaded the square for two hundred years."},
+{"w": "vivacious", "pr": "vih-VAY-shus", "pos": "adjective", "def": "Attractively lively and animated.", "ex": "Their vivacious tour guide made even the bus ride fun."},
+{"w": "winsome", "pr": "WIN-sum", "pos": "adjective", "def": "Appealing in a fresh, innocent, charming way.", "ex": "The puppy's winsome tilt of the head won everyone over."},
+{"w": "ardor", "pr": "AR-der", "pos": "noun", "def": "Intense enthusiasm or passion.", "ex": "She tackled the restoration project with undimmed ardor."},
+{"w": "assiduous", "pr": "uh-SIJ-oo-us", "pos": "adjective", "def": "Showing great care and persistent effort.", "ex": "His assiduous note-taking preserved the project's whole history."},
+{"w": "blithe", "pr": "BLYTHE", "pos": "adjective", "def": "Carefree and lighthearted, sometimes to the point of not caring.", "ex": "He gave a blithe shrug at the forecast and left the umbrella home."},
+{"w": "burgeon", "pr": "BUR-jun", "pos": "verb", "def": "To grow or expand rapidly.", "ex": "Food trucks began to burgeon along the waterfront."},
+{"w": "cadence", "pr": "KAY-dens", "pos": "noun", "def": "The rhythmic rise and fall of sound or movement.", "ex": "The rowers found their cadence and the boat surged."},
+{"w": "clemency", "pr": "KLEM-un-see", "pos": "noun", "def": "Mercy shown toward someone who could be punished.", "ex": "The governor granted clemency after new evidence surfaced."},
+{"w": "evocative", "pr": "ih-VAHK-uh-tiv", "pos": "adjective", "def": "Bringing strong memories, feelings, or images to mind.", "ex": "The evocative smell of chalk took him back to third grade."},
+{"w": "exquisite", "pr": "ik-SKWIZ-it", "pos": "adjective", "def": "Extremely beautiful, delicate, or finely made.", "ex": "The watchmaker showed us an exquisite hand-engraved dial."},
+{"w": "fervor", "pr": "FUR-ver", "pos": "noun", "def": "Intense and passionate feeling.", "ex": "The fans sang with a fervor that shook the stands."},
+{"w": "finesse", "pr": "fih-NES", "pos": "noun", "def": "Skillful, delicate handling of a situation.", "ex": "She defused the customer complaint with real finesse."},
+{"w": "gloaming", "pr": "GLOH-ming", "pos": "noun", "def": "The time of soft fading light just after sunset; twilight.", "ex": "Deer stepped into the meadow in the gloaming."},
+{"w": "harbinger", "pr": "HAR-bin-jer", "pos": "noun", "def": "A sign that something is about to happen.", "ex": "The first robin is a harbinger of spring."},
+{"w": "hallowed", "pr": "HAL-ohd", "pos": "adjective", "def": "Deeply respected and treated as sacred.", "ex": "The old stadium is hallowed ground for local fans."},
+{"w": "lament", "pr": "luh-MENT", "pos": "verb", "def": "To express deep sorrow or regret about something.", "ex": "Fans still lament the trade that sent their star away."},
+{"w": "levity", "pr": "LEV-ih-tee", "pos": "noun", "def": "Lighthearted humor, especially in a serious setting.", "ex": "A little levity helped the team through the long night shift."},
+{"w": "meander", "pr": "mee-AN-der", "pos": "verb", "def": "To wander slowly along a winding course.", "ex": "The river meanders through three counties before the sea."},
+{"w": "myriad", "pr": "MIHR-ee-ud", "pos": "noun", "def": "A countless or extremely great number.", "ex": "A myriad of stars appeared once the campfire died."},
+{"w": "nadir", "pr": "NAY-der", "pos": "noun", "def": "The lowest point of something.", "ex": "The team hit its nadir with a ten-game losing streak."},
+{"w": "nascent", "pr": "NAY-sunt", "pos": "adjective", "def": "Just beginning to exist or develop.", "ex": "Her nascent bakery already has a line out the door."},
+{"w": "numinous", "pr": "NOO-mih-nus", "pos": "adjective", "def": "Having a mysterious, spiritual, or awe-inspiring quality.", "ex": "The redwood grove had a numinous stillness."},
+{"w": "paean", "pr": "PEE-un", "pos": "noun", "def": "A song or expression of enthusiastic praise.", "ex": "The article was a paean to the city's night nurses."},
+{"w": "patina", "pr": "puh-TEE-nuh", "pos": "noun", "def": "A surface sheen or film that develops with age and use.", "ex": "The copper roof wears a soft green patina."},
+{"w": "pensive", "pr": "PEN-siv", "pos": "adjective", "def": "Quietly thoughtful, often with a touch of sadness.", "ex": "He grew pensive as the old photos scrolled past."},
+{"w": "perennial", "pr": "puh-REN-ee-ul", "pos": "adjective", "def": "Lasting or returning year after year.", "ex": "Parking is the perennial complaint at town meetings."},
+{"w": "placid", "pr": "PLAS-id", "pos": "adjective", "def": "Calm and not easily upset or excited.", "ex": "The placid mare is the one they give to first-time riders."},
+{"w": "plenitude", "pr": "PLEN-ih-tood", "pos": "noun", "def": "An abundant, full supply.", "ex": "The market offered a plenitude of late-summer peaches."},
+{"w": "rapture", "pr": "RAP-cher", "pos": "noun", "def": "A feeling of overwhelming joy or delight.", "ex": "The kids watched the fireworks in silent rapture."},
+{"w": "rarefied", "pr": "RAIR-uh-fyde", "pos": "adjective", "def": "Understood or appreciated by only a select few; lofty and exclusive.", "ex": "She moved easily in the rarefied world of rare-book auctions."},
+{"w": "requiem", "pr": "REK-wee-um", "pos": "noun", "def": "A musical composition or ceremony honoring the dead.", "ex": "The orchestra performed a requiem for the fallen firefighters."},
+{"w": "reverie", "pr": "REV-er-ee", "pos": "noun", "def": "A pleasant state of daydreaming.", "ex": "The doorbell snapped him out of his reverie."},
+{"w": "rueful", "pr": "ROO-ful", "pos": "adjective", "def": "Showing regret, often mixed with wry humor.", "ex": "With a rueful laugh, he admitted the shortcut had cost them an hour."},
+{"w": "sinuous", "pr": "SIN-yoo-us", "pos": "adjective", "def": "Curving gracefully with many turns.", "ex": "The road makes a sinuous climb through the vineyards."},
+{"w": "somber", "pr": "SAHM-ber", "pos": "adjective", "def": "Dark, gloomy, or gravely serious in tone.", "ex": "The locker room was somber after the season-ending loss."},
+{"w": "suffuse", "pr": "suh-FYOOZ", "pos": "verb", "def": "To spread gradually throughout something.", "ex": "Rose light began to suffuse the eastern sky."},
+{"w": "sumptuous", "pr": "SUMP-choo-us", "pos": "adjective", "def": "Splendidly luxurious, especially in food or furnishings.", "ex": "The inn laid out a sumptuous harvest dinner."},
+{"w": "tempest", "pr": "TEM-pist", "pos": "noun", "def": "A violent storm, or a violent uproar.", "ex": "The little sloop rode out the tempest behind the breakwater."},
+{"w": "vestige", "pr": "VES-tij", "pos": "noun", "def": "A small remaining trace of something that is gone.", "ex": "A stone chimney is the last vestige of the old homestead."},
+{"w": "vignette", "pr": "vin-YET", "pos": "noun", "def": "A brief, vivid scene or sketch in words or pictures.", "ex": "Each chapter opens with a vignette of small-town life."},
+{"w": "wanderlust", "pr": "WAHN-der-lust", "pos": "noun", "def": "A strong desire to travel and roam.", "ex": "A shoebox of old maps reawakened her wanderlust."},
+{"w": "wane", "pr": "WAYN", "pos": "verb", "def": "To decrease gradually in size, strength, or intensity.", "ex": "His interest in the gadget began to wane by February."},
+{"w": "zenith", "pr": "ZEE-nith", "pos": "noun", "def": "The highest point or peak of something.", "ex": "The band reached its zenith with the third album."},
+{"w": "elegy", "pr": "EL-uh-jee", "pos": "noun", "def": "A poem or song of sorrow, especially for someone who has died.", "ex": "She read an elegy at the memorial for the lost sailors."},
+{"w": "limerence", "pr": "LIM-er-uns", "pos": "noun", "def": "A state of involuntary, all-consuming romantic infatuation.", "ex": "Their first months together passed in a giddy blur of limerence."},
+{"w": "peccadillo", "pr": "pek-uh-DIL-oh", "pos": "noun", "def": "A small, easily forgiven fault or offense.", "ex": "Stealing fries off her plate is his one peccadillo."},
+{"w": "persiflage", "pr": "PUR-sih-flahzh", "pos": "noun", "def": "Light, good-natured teasing banter.", "ex": "Their pregame persiflage is half the fun of the broadcast."},
+{"w": "portmanteau", "pr": "port-MAN-toh", "pos": "noun", "def": "A word blending the sounds and meanings of two other words.", "ex": "The menu leans hard on brunch, that sturdy old portmanteau."},
+{"w": "susurrus", "pr": "soo-SUR-us", "pos": "noun", "def": "A soft whispering or rustling sound.", "ex": "A susurrus of wind moved through the dry corn."},
+{"w": "syzygy", "pr": "SIZ-ih-jee", "pos": "noun", "def": "A straight-line alignment of three celestial bodies.", "ex": "The eclipse depends on a perfect syzygy of sun, moon, and earth."},
+{"w": "nonplussed", "pr": "nahn-PLUST", "pos": "adjective", "def": "So surprised and confused that one is unsure how to react.", "ex": "The volunteer stood nonplussed, holding the magician's dove."},
+{"w": "bellwether", "pr": "BEL-weth-er", "pos": "noun", "def": "Something that leads a trend or signals where things are heading.", "ex": "The county is a bellwether that both campaigns watch closely."},
+{"w": "bibliophile", "pr": "BIB-lee-uh-fyle", "pos": "noun", "def": "A person who loves and collects books.", "ex": "The estate sale drew every bibliophile within three towns."},
+{"w": "cacophony", "pr": "kuh-KAH-fuh-nee", "pos": "noun", "def": "A harsh, discordant mixture of sounds.", "ex": "Rush hour builds a cacophony of horns below their window."},
+{"w": "hinterland", "pr": "HIN-ter-land", "pos": "noun", "def": "The remote inland region away from cities and coasts.", "ex": "The new rail line opens the hinterland to weekend hikers."},
+{"w": "imbroglio", "pr": "im-BROHL-yoh", "pos": "noun", "def": "A confused, embarrassing, and complicated entanglement.", "ex": "The double-booked banquet hall created a lively imbroglio."},
+{"w": "juggernaut", "pr": "JUG-er-nawt", "pos": "noun", "def": "A massive force that crushes whatever is in its path.", "ex": "The little startup grew into a retail juggernaut in five years."},
+{"w": "kowtow", "pr": "KOW-tow", "pos": "verb", "def": "To be excessively eager to please someone in authority.", "ex": "She refused to kowtow to the loudest investor in the room."},
+{"w": "malapropism", "pr": "MAL-uh-prah-piz-um", "pos": "noun", "def": "A comic mix-up of similar-sounding words.", "ex": "Calling it a vast suppository of knowledge was his finest malapropism."},
+{"w": "quagmire", "pr": "KWAG-myre", "pos": "noun", "def": "Soft boggy ground, or a situation that is hard to escape.", "ex": "The permit process became a quagmire that swallowed the summer."},
+{"w": "schadenfreude", "pr": "SHAH-dun-froy-duh", "pos": "noun", "def": "Pleasure taken in another person's misfortune.", "ex": "He felt a guilty flicker of schadenfreude when the rival fumbled."},
+{"w": "tenacious", "pr": "tuh-NAY-shus", "pos": "adjective", "def": "Holding on firmly; refusing to give up.", "ex": "The tenacious reporter followed the story for two years."},
+{"w": "articulate", "pr": "ar-TIK-yuh-lit", "pos": "adjective", "def": "Able to express ideas clearly and effectively.", "ex": "The most articulate student summarized the debate in one minute."},
+{"w": "astute", "pr": "uh-STOOT", "pos": "adjective", "def": "Sharply perceptive and shrewd in judgment.", "ex": "An astute buyer noticed the flood marks behind the paint."},
+{"w": "prudent", "pr": "PROO-dent", "pos": "adjective", "def": "Careful and sensible about the future.", "ex": "It was prudent to book the earlier flight before the storm."},
+{"w": "cogent", "pr": "KOH-jent", "pos": "adjective", "def": "Clear, logical, and convincing.", "ex": "Her cogent argument won over the skeptical board."},
+{"w": "gregarious", "pr": "grih-GAIR-ee-us", "pos": "adjective", "def": "Fond of company; sociable.", "ex": "Their gregarious host introduced every guest to three others."},
+{"w": "affable", "pr": "AF-uh-bul", "pos": "adjective", "def": "Easy to talk to; warm and friendly.", "ex": "An affable mechanic explained the repair without jargon."},
+{"w": "genial", "pr": "JEE-nee-ul", "pos": "adjective", "def": "Cheerful, friendly, and warm.", "ex": "The genial innkeeper waved from the porch every morning."},
+{"w": "steadfast", "pr": "STED-fast", "pos": "adjective", "def": "Firmly loyal and unwavering.", "ex": "She remained steadfast through the company's leanest year."},
+{"w": "judicious", "pr": "joo-DISH-us", "pos": "adjective", "def": "Showing good judgment and sensible care.", "ex": "A judicious edit cut the report from forty pages to nine."},
+{"w": "discerning", "pr": "dih-SUR-ning", "pos": "adjective", "def": "Showing sharp, refined judgment and taste.", "ex": "The shop caters to discerning coffee drinkers."},
+{"w": "shrewd", "pr": "SHROOD", "pos": "adjective", "def": "Sharp-witted and clever in practical matters.", "ex": "A shrewd trade brought the team two future draft picks."},
+{"w": "tactful", "pr": "TAKT-ful", "pos": "adjective", "def": "Careful not to offend when handling delicate matters.", "ex": "Her tactful reminder saved him from an embarrassing slide."},
+{"w": "diplomatic", "pr": "dip-luh-MAT-ik", "pos": "adjective", "def": "Skilled at handling people without causing offense.", "ex": "A diplomatic answer kept both grandmothers happy."},
+{"w": "altruistic", "pr": "al-troo-IS-tik", "pos": "adjective", "def": "Selflessly concerned for the well-being of others.", "ex": "An altruistic stranger paid for the stalled family's repairs."},
+{"w": "conscientious", "pr": "kahn-shee-EN-shus", "pos": "adjective", "def": "Careful to do one's work thoroughly and well.", "ex": "A conscientious proofreader caught the price error in time."},
+{"w": "equitable", "pr": "EK-wih-tuh-bul", "pos": "adjective", "def": "Fair and impartial to everyone involved.", "ex": "The siblings reached an equitable split of the chores."},
+{"w": "fastidious", "pr": "fas-TID-ee-us", "pos": "adjective", "def": "Very attentive to detail and hard to please.", "ex": "The fastidious tailor adjusted the hem three times before smiling."},
+{"w": "forthright", "pr": "FORTH-ryte", "pos": "adjective", "def": "Direct and outspoken in an honest way.", "ex": "Be forthright about the car's history and it will still sell."},
+{"w": "galvanize", "pr": "GAL-vuh-nyze", "pos": "verb", "def": "To shock or excite people into action.", "ex": "The close vote galvanized neighbors to organize a recount."},
+{"w": "bolster", "pr": "BOHL-ster", "pos": "verb", "def": "To support or strengthen something.", "ex": "Fresh testimonials bolstered the bakery's expansion pitch."},
+{"w": "glean", "pr": "GLEEN", "pos": "verb", "def": "To gather information or leftovers bit by bit.", "ex": "She gleaned the recipe from three faded index cards."},
+{"w": "mitigate", "pr": "MIT-ih-gayt", "pos": "verb", "def": "To make something less severe or harmful.", "ex": "Sandbags mitigated the damage from the overnight flood."},
+{"w": "distill", "pr": "dih-STIL", "pos": "verb", "def": "To reduce something to its essential parts.", "ex": "She distilled two years of research into a single page."},
+{"w": "emulate", "pr": "EM-yuh-layt", "pos": "verb", "def": "To try to match or surpass someone by imitation.", "ex": "Young skaters emulate her signature landing."},
+{"w": "exemplify", "pr": "ig-ZEM-plih-fy", "pos": "verb", "def": "To be a perfect example of something.", "ex": "A single well-run branch can exemplify what small grants do."},
+{"w": "facilitate", "pr": "fuh-SIL-ih-tayt", "pos": "verb", "def": "To make a process easier or smoother.", "ex": "The new ramp facilitates deliveries to the loading dock."},
+{"w": "ameliorate", "pr": "uh-MEEL-yuh-rayt", "pos": "verb", "def": "To make a bad situation better.", "ex": "Better lighting ameliorated the stairwell's safety problems."},
+{"w": "augment", "pr": "awg-MENT", "pos": "verb", "def": "To increase or add to something.", "ex": "She augments her salary with weekend pottery sales."},
+{"w": "curtail", "pr": "kur-TAYL", "pos": "verb", "def": "To cut something short or reduce it.", "ex": "The city curtailed watering hours during the drought."},
+{"w": "harness", "pr": "HAR-nis", "pos": "verb", "def": "To capture and put something to productive use.", "ex": "The mill harnessed the river long before electricity arrived."},
+{"w": "muster", "pr": "MUS-ter", "pos": "verb", "def": "To gather up strength, courage, or people.", "ex": "He mustered the nerve to sing the first verse alone."},
+{"w": "persevere", "pr": "pur-suh-VEER", "pos": "verb", "def": "To keep trying despite difficulty.", "ex": "She persevered through four drafts before the acceptance letter."},
+{"w": "ponder", "pr": "PAHN-der", "pos": "verb", "def": "To think about something carefully.", "ex": "He pondered the offer over a long weekend."},
+{"w": "refine", "pr": "rih-FYNE", "pos": "verb", "def": "To improve something with small careful changes.", "ex": "The chef refined the sauce until the recipe fit on a notecard."},
+{"w": "scrutinize", "pr": "SKROO-tih-nyze", "pos": "verb", "def": "To examine something very closely.", "ex": "Inspectors scrutinized every weld on the new span."},
+{"w": "synthesize", "pr": "SIN-thuh-syze", "pos": "verb", "def": "To combine parts into a coherent whole.", "ex": "The report synthesizes interviews from all five precincts."},
+{"w": "underscore", "pr": "un-der-SKOR", "pos": "verb", "def": "To emphasize the importance of something.", "ex": "The outage underscored the need for a backup generator."},
+{"w": "pithy", "pr": "PITH-ee", "pos": "adjective", "def": "Brief, forceful, and full of meaning.", "ex": "The coach's pithy mottoes end up on locker room walls."},
+{"w": "staunch", "pr": "STAWNCH", "pos": "adjective", "def": "Loyal, committed, and dependable.", "ex": "He remains a staunch supporter of the youth orchestra."},
+{"w": "vigilant", "pr": "VIJ-ih-lunt", "pos": "adjective", "def": "Alert and watchful for danger or trouble.", "ex": "Vigilant lifeguards rotated posts every twenty minutes."},
+{"w": "zealous", "pr": "ZEL-us", "pos": "adjective", "def": "Filled with energetic, passionate devotion.", "ex": "A zealous volunteer alphabetized the entire pantry."},
+{"w": "acumen", "pr": "AK-yuh-mun", "pos": "noun", "def": "Sharp, quick judgment, especially in business.", "ex": "Her retail acumen turned the corner store around."},
+{"w": "composure", "pr": "kum-POH-zher", "pos": "noun", "def": "Calm self-control under pressure.", "ex": "The pilot's composure reassured the anxious cabin."},
+{"w": "decorum", "pr": "dih-KOR-um", "pos": "noun", "def": "Proper, polite behavior suited to the occasion.", "ex": "The moderator restored decorum after the shouting started."},
+{"w": "discretion", "pr": "dih-SKRESH-un", "pos": "noun", "def": "The good judgment to be careful about what one says or does.", "ex": "The nanny is famous for her discretion about the household."},
+{"w": "foresight", "pr": "FOR-syte", "pos": "noun", "def": "The ability to anticipate future needs or events.", "ex": "Buying the extra lot next door showed remarkable foresight."},
+{"w": "fortitude", "pr": "FOR-tih-tood", "pos": "noun", "def": "Courage and strength in facing pain or adversity.", "ex": "It took fortitude to finish the marathon on a twisted ankle."},
+{"w": "ingenuity", "pr": "in-juh-NOO-ih-tee", "pos": "noun", "def": "Cleverness and originality in solving problems.", "ex": "Pure ingenuity kept the vintage tractor running."},
+{"w": "mettle", "pr": "MET-ul", "pos": "noun", "def": "Spirit and courage under pressure.", "ex": "The rookie proved her mettle in the final period."},
+{"w": "nuance", "pr": "NOO-ahns", "pos": "noun", "def": "A subtle difference in meaning, tone, or feeling.", "ex": "A good translator preserves every nuance of the joke."},
+{"w": "panache", "pr": "puh-NASH", "pos": "noun", "def": "Flamboyant confidence and style.", "ex": "He flipped the pizza dough with genuine panache."},
+{"w": "prowess", "pr": "PROW-is", "pos": "noun", "def": "Exceptional skill or ability.", "ex": "Her chess prowess was obvious by the third move."},
+{"w": "rapport", "pr": "ra-POR", "pos": "noun", "def": "A relationship of mutual trust and easy communication.", "ex": "The tutor built rapport before touching the math."},
+{"w": "rigor", "pr": "RIG-er", "pos": "noun", "def": "Strict thoroughness and exactness.", "ex": "The lab is known for the rigor of its testing."},
+{"w": "verve", "pr": "VURV", "pos": "noun", "def": "Lively energy and enthusiasm, especially in performance.", "ex": "The cover band played with unexpected verve."},
+{"w": "wherewithal", "pr": "WAIR-with-awl", "pos": "noun", "def": "The money or means needed to do something.", "ex": "They finally had the wherewithal to fix the roof."},
+{"w": "aptitude", "pr": "AP-tih-tood", "pos": "noun", "def": "A natural ability to learn or do something.", "ex": "She showed an early aptitude for engine repair."},
+{"w": "quixotic", "pr": "kwik-SOT-ik", "pos": "adjective", "def": "Idealistic and impractical, chasing lofty goals with little regard for feasibility.", "ex": "His quixotic plan to eliminate every meeting lasted exactly one week."},
+{"w": "laconic", "pr": "luh-KON-ik", "pos": "adjective", "def": "Using very few words; terse to the point of seeming curt.", "ex": "Her laconic reply, a single 'Noted,' ended the debate."},
+{"w": "taciturn", "pr": "TAS-ih-turn", "pos": "adjective", "def": "Habitually reserved and uncommunicative in speech.", "ex": "The taciturn analyst spoke rarely, but the room listened when he did."},
+{"w": "garrulous", "pr": "GAR-uh-lus", "pos": "adjective", "def": "Excessively talkative, especially about trivial matters.", "ex": "A garrulous colleague can turn a five-minute standup into an hour."},
+{"w": "phlegmatic", "pr": "fleg-MAT-ik", "pos": "adjective", "def": "Calm and unemotional in temperament; not easily excited to action.", "ex": "Her phlegmatic response to the outage kept the whole team steady."},
+{"w": "sardonic", "pr": "sar-DON-ik", "pos": "adjective", "def": "Grimly or cynically mocking; disdainfully humorous.", "ex": "He offered a sardonic 'Great, another reorg' and returned to his slides."},
+{"w": "obsequious", "pr": "uhb-SEE-kwee-us", "pos": "adjective", "def": "Excessively eager to please or obey; fawning.", "ex": "The obsequious vendor agreed with every point we made, which made us trust him less."},
+{"w": "perfunctory", "pr": "per-FUNK-tuh-ree", "pos": "adjective", "def": "Done merely as a duty, with minimal effort or interest.", "ex": "The review was perfunctory, a rubber stamp rather than real scrutiny."},
+{"w": "desultory", "pr": "DES-ul-tor-ee", "pos": "adjective", "def": "Lacking a plan or purpose; moving aimlessly from one thing to another.", "ex": "After lunch the discussion turned desultory, drifting without ever reaching a decision."},
+{"w": "salient", "pr": "SAY-lee-ent", "pos": "adjective", "def": "Most noticeable or important; standing out prominently.", "ex": "Please cut the deck to the three salient points before the board call."},
+{"w": "trenchant", "pr": "TREN-chunt", "pos": "adjective", "def": "Vigorous, sharp, and incisive in expression or analysis.", "ex": "Her trenchant critique exposed the flaw everyone else had missed."},
+{"w": "circumspect", "pr": "SUR-kum-spekt", "pos": "adjective", "def": "Cautious and prudent; considering all consequences before acting.", "ex": "Be circumspect about the forecast until legal has reviewed the numbers."},
+{"w": "prescient", "pr": "PRESH-ent", "pos": "adjective", "def": "Having foresight; seeming to know events before they happen.", "ex": "His prescient memo warned of the supply shortage months in advance."},
+{"w": "germane", "pr": "jur-MAYN", "pos": "adjective", "def": "Relevant and closely connected to the matter at hand.", "ex": "Let's keep the debate germane to the budget and table the rest."},
+{"w": "esoteric", "pr": "es-uh-TER-ik", "pos": "adjective", "def": "Understood by or intended for only a small, specialized group.", "ex": "The methodology was too esoteric for a general audience, so we simplified the appendix."},
+{"w": "quotidian", "pr": "kwoh-TID-ee-un", "pos": "adjective", "def": "Ordinary and everyday; commonplace.", "ex": "Automation freed the team from the quotidian tasks that ate their mornings."},
+{"w": "prosaic", "pr": "proh-ZAY-ik", "pos": "adjective", "def": "Dull and unimaginative; lacking poetic or distinctive quality.", "ex": "The rebrand promised revolution but delivered a prosaic new shade of blue."},
+{"w": "sanctimonious", "pr": "sank-tih-MOH-nee-us", "pos": "adjective", "def": "Making a show of being morally superior; self-righteous.", "ex": "His sanctimonious lecture on work ethic landed poorly with the overworked staff."},
+{"w": "pedantic", "pr": "puh-DAN-tik", "pos": "adjective", "def": "Overly concerned with minor details or formal rules; ostentatiously learned.", "ex": "I hate to be pedantic, but the correct term is 'quarter over quarter.'"},
+{"w": "erudite", "pr": "AIR-yoo-dite", "pos": "adjective", "def": "Having or showing deep, extensive learning; scholarly.", "ex": "Her erudite keynote wove economics, history, and design into one argument."},
+{"w": "urbane", "pr": "ur-BAYN", "pos": "adjective", "def": "Suave, refined, and courteous in manner, especially socially.", "ex": "The urbane new director could disarm a hostile room with a single remark."},
+{"w": "iconoclast", "pr": "eye-KON-uh-klast", "pos": "noun", "def": "A person who attacks cherished beliefs or established institutions.", "ex": "The founder built her reputation as an iconoclast who questioned every industry norm."},
+{"w": "ersatz", "pr": "AIR-sahts", "pos": "adjective", "def": "Being an inferior or artificial substitute for the real thing.", "ex": "The demo ran on ersatz data that looked convincing but proved nothing."},
+{"w": "apocryphal", "pr": "uh-POK-rih-ful", "pos": "adjective", "def": "Of doubtful authenticity, though widely circulated as true.", "ex": "That famous founding story is probably apocryphal, but it makes a great pitch."},
+{"w": "equivocate", "pr": "ih-KWIV-uh-kate", "pos": "verb", "def": "To use vague or ambiguous language to avoid committing to a position.", "ex": "Stop equivocating and tell the client whether we can hit the deadline."},
+{"w": "obfuscate", "pr": "OB-fus-kate", "pos": "verb", "def": "To deliberately make something unclear or difficult to understand.", "ex": "The footnotes seemed designed to obfuscate the actual cost of the deal."},
+{"w": "elucidate", "pr": "ih-LOO-sih-date", "pos": "verb", "def": "To make something clear; to explain thoroughly.", "ex": "Could you elucidate the assumptions behind this revenue projection?"},
+{"w": "ostensible", "pr": "oss-TEN-sih-bul", "pos": "adjective", "def": "Stated as true or apparent, though not necessarily so.", "ex": "The ostensible reason for the merger was scale; the real one was talent."},
+{"w": "tacit", "pr": "TAS-it", "pos": "adjective", "def": "Understood or implied without being stated openly.", "ex": "There was a tacit agreement that no one would reopen the pricing question."},
+{"w": "cogitate", "pr": "KOJ-ih-tate", "pos": "verb", "def": "To think deeply and carefully about something; to ponder.", "ex": "Give me the weekend to cogitate on the offer before we respond."},
+{"w": "inchoate", "pr": "in-KOH-it", "pos": "adjective", "def": "Just begun and not yet fully formed or developed.", "ex": "The strategy is still inchoate, more a set of instincts than a plan."},
+{"w": "recalcitrant", "pr": "rih-KAL-sih-trunt", "pos": "adjective", "def": "Stubbornly resistant to authority, control, or guidance.", "ex": "One recalcitrant stakeholder stalled the rollout for a full quarter."},
+{"w": "parsimonious", "pr": "par-sih-MOH-nee-us", "pos": "adjective", "def": "Extremely unwilling to spend money or resources; frugal to a fault.", "ex": "The parsimonious budget left no room for the training the team badly needed."},
+{"w": "truculent", "pr": "TRUK-yuh-lent", "pos": "adjective", "def": "Aggressively defiant; eager to argue or fight.", "ex": "His truculent tone in the review derailed an otherwise routine meeting."},
+{"w": "bellicose", "pr": "BEL-ih-kohs", "pos": "adjective", "def": "Inclined toward hostility; eager to provoke conflict.", "ex": "Her bellicose emails put the whole team on the defensive."},
+{"w": "pugnacious", "pr": "pug-NAY-shus", "pos": "adjective", "def": "Combative and quick to challenge or dispute.", "ex": "The pugnacious analyst contested every figure on the slide."},
+{"w": "cantankerous", "pr": "kan-TANK-er-us", "pos": "adjective", "def": "Bad-tempered, argumentative, and difficult to deal with.", "ex": "Our cantankerous auditor found fault with even the cleanest report."},
+{"w": "irascible", "pr": "ih-RASS-uh-bul", "pos": "adjective", "def": "Easily provoked to anger; quick-tempered.", "ex": "He grew irascible whenever the printer jammed before a deadline."},
+{"w": "petulant", "pr": "PET-yuh-lent", "pos": "adjective", "def": "Childishly sulky or irritable over small things.", "ex": "She sent a petulant reply after her idea was tabled."},
+{"w": "querulous", "pr": "KWER-yuh-lus", "pos": "adjective", "def": "Habitually complaining in a whining manner.", "ex": "His querulous remarks about the coffee wore on his colleagues."},
+{"w": "mendacious", "pr": "men-DAY-shus", "pos": "adjective", "def": "Given to lying; habitually dishonest.", "ex": "The mendacious vendor inflated every figure in his proposal."},
+{"w": "duplicitous", "pr": "doo-PLISS-ih-tus", "pos": "adjective", "def": "Deceitful; saying one thing while intending another.", "ex": "His duplicitous praise masked a bid for her account."},
+{"w": "disingenuous", "pr": "dis-in-JEN-yoo-us", "pos": "adjective", "def": "Insincere while pretending to be candid.", "ex": "It was disingenuous of him to claim he had no stake in the deal."},
+{"w": "wily", "pr": "WY-lee", "pos": "adjective", "def": "Cunning and clever at getting what one wants.", "ex": "The wily negotiator waited until the last hour to name her price."},
+{"w": "servile", "pr": "SUR-vyl", "pos": "adjective", "def": "Excessively willing to please or obey others.", "ex": "His servile agreement with the director impressed no one."},
+{"w": "unctuous", "pr": "UNK-choo-us", "pos": "adjective", "def": "Excessively flattering in an oily, insincere way.", "ex": "The unctuous salesman complimented everyone in the room."},
+{"w": "obdurate", "pr": "OB-dur-it", "pos": "adjective", "def": "Stubbornly refusing to change one's mind.", "ex": "She remained obdurate despite every counterargument offered."},
+{"w": "intransigent", "pr": "in-TRAN-sih-jent", "pos": "adjective", "def": "Unwilling to compromise or abandon a position.", "ex": "Both sides stayed intransigent, and talks collapsed by noon."},
+{"w": "capricious", "pr": "kuh-PREE-shus", "pos": "adjective", "def": "Given to sudden, unpredictable changes of mood or mind.", "ex": "His capricious priorities left the team unsure what mattered."},
+{"w": "imperturbable", "pr": "im-per-TUR-buh-bul", "pos": "adjective", "def": "Unable to be upset or agitated; calm under pressure.", "ex": "She stayed imperturbable as the projector failed mid-pitch."},
+{"w": "imperious", "pr": "im-PEER-ee-us", "pos": "adjective", "def": "Domineering and arrogant in manner.", "ex": "His imperious demands alienated the junior staff."},
+{"w": "supercilious", "pr": "soo-per-SIL-ee-us", "pos": "adjective", "def": "Behaving as though superior to others; haughtily disdainful.", "ex": "Her supercilious glance made the intern's question feel foolish."},
+{"w": "disdainful", "pr": "dis-DAYN-ful", "pos": "adjective", "def": "Showing contempt or scorn for others.", "ex": "He was disdainful of anyone who arrived a minute late."},
+{"w": "diffident", "pr": "DIF-ih-dent", "pos": "adjective", "def": "Modest and shy from a lack of self-confidence.", "ex": "Too diffident to speak up, she let the credit go to another."},
+{"w": "reticent", "pr": "RET-ih-sent", "pos": "adjective", "def": "Reserved and reluctant to reveal one's thoughts.", "ex": "He was reticent about his plans until the offer was signed."},
+{"w": "audacious", "pr": "aw-DAY-shus", "pos": "adjective", "def": "Boldly daring, sometimes to the point of recklessness.", "ex": "Her audacious pitch won over a skeptical board."},
+{"w": "intrepid", "pr": "in-TREP-id", "pos": "adjective", "def": "Fearless and undaunted in the face of difficulty.", "ex": "The intrepid founder entered a market everyone else avoided."},
+{"w": "indomitable", "pr": "in-DOM-ih-tuh-bul", "pos": "adjective", "def": "Impossible to subdue or discourage.", "ex": "Her indomitable resolve carried the project past every setback."},
+{"w": "stoic", "pr": "STOH-ik", "pos": "adjective", "def": "Enduring hardship without showing feelings or complaint.", "ex": "He remained stoic as the quarter's losses were announced."},
+{"w": "austere", "pr": "aw-STEER", "pos": "adjective", "def": "Severe or stern in manner and appearance.", "ex": "The austere chairman rarely offered a word of praise."},
+{"w": "dour", "pr": "DOWR", "pos": "adjective", "def": "Sternly gloomy and forbidding in manner.", "ex": "His dour expression suggested the numbers were bad."},
+{"w": "morose", "pr": "muh-ROHS", "pos": "adjective", "def": "Sullen, gloomy, and ill-humored.", "ex": "She turned morose after the account was reassigned."},
+{"w": "saturnine", "pr": "SAT-ur-nyn", "pos": "adjective", "def": "Gloomy, cold, and slow in temperament.", "ex": "His saturnine demeanor made small talk a chore."},
+{"w": "jovial", "pr": "JOH-vee-ul", "pos": "adjective", "def": "Cheerful and good-humored in company.", "ex": "Her jovial welcome put the nervous candidates at ease."},
+{"w": "munificent", "pr": "myoo-NIF-ih-sent", "pos": "adjective", "def": "Extremely generous in giving.", "ex": "His munificent bonus surprised the entire department."},
+{"w": "benevolent", "pr": "buh-NEV-uh-lent", "pos": "adjective", "def": "Kind, well-meaning, and inclined to do good.", "ex": "The benevolent mentor gave freely of her time and advice."},
+{"w": "avuncular", "pr": "uh-VUNK-yuh-lar", "pos": "adjective", "def": "Kindly and genial in the manner of an uncle.", "ex": "His avuncular guidance steadied the anxious new hires."},
+{"w": "congenial", "pr": "kun-JEEN-yul", "pos": "adjective", "def": "Pleasant, agreeable, and easy to get along with.", "ex": "The congenial host made the offsite feel effortless."},
+{"w": "stolid", "pr": "STOL-id", "pos": "adjective", "def": "Calm and dependable but showing little emotion.", "ex": "Our stolid controller never flinched during the audit."},
+{"w": "forbearing", "pr": "for-BAIR-ing", "pos": "adjective", "def": "Patient and restrained under provocation.", "ex": "She was forbearing with the client's endless revisions."},
+{"w": "vindictive", "pr": "vin-DIK-tiv", "pos": "adjective", "def": "Eager for revenge; unforgiving of a slight.", "ex": "His vindictive review seemed aimed at settling an old score."},
+{"w": "contrite", "pr": "kun-TRYT", "pos": "adjective", "def": "Feeling and showing sincere remorse for a wrong.", "ex": "She sent a contrite note after missing the client call."},
+{"w": "effusive", "pr": "ih-FYOO-siv", "pos": "adjective", "def": "Expressing feelings in an unrestrained, gushing way.", "ex": "His effusive thanks embarrassed the modest engineer."},
+{"w": "voluble", "pr": "VOL-yuh-bul", "pos": "adjective", "def": "Speaking readily and at great length; fluently talkative.", "ex": "The voluble consultant filled the hour with confident talk."},
+{"w": "loquacious", "pr": "loh-KWAY-shus", "pos": "adjective", "def": "Tending to talk a great deal; very talkative.", "ex": "Our loquacious host filled every silence at dinner."},
+{"w": "scrupulous", "pr": "SKROO-pyuh-lus", "pos": "adjective", "def": "Careful and precise in doing what is right.", "ex": "He was scrupulous about crediting every contributor by name."},
+{"w": "punctilious", "pr": "punk-TIL-ee-us", "pos": "adjective", "def": "Attentive to fine points of correct conduct or detail.", "ex": "She was punctilious about the order of names on the memo."},
+{"w": "brusque", "pr": "BRUSK", "pos": "adjective", "def": "Abrupt or curt in speech or manner.", "ex": "Her brusque reply left no room for follow-up questions."},
+{"w": "acerbic", "pr": "uh-SUR-bik", "pos": "adjective", "def": "Sharp and biting in tone or expression.", "ex": "His acerbic wit made the retrospective uncomfortably honest."},
+{"w": "caustic", "pr": "KAWS-tik", "pos": "adjective", "def": "Bitingly sarcastic or critical in remark.", "ex": "Her caustic feedback stung more than it needed to."},
+{"w": "volatile", "pr": "VOL-uh-tul", "pos": "adjective", "def": "Liable to sudden, unpredictable shifts of mood.", "ex": "His volatile temper made planning around him difficult."},
+{"w": "equable", "pr": "EK-wuh-bul", "pos": "adjective", "def": "Calm and even-tempered; not easily disturbed.", "ex": "Her equable manner steadied a jittery room."},
+{"w": "pertinacious", "pr": "pur-tih-NAY-shus", "pos": "adjective", "def": "Stubbornly persistent in holding to a purpose.", "ex": "His pertinacious follow-ups finally landed the meeting."},
+{"w": "fractious", "pr": "FRAK-shus", "pos": "adjective", "def": "Irritable and inclined to cause trouble or quarrel.", "ex": "The fractious committee argued over the smallest wording."},
+{"w": "peremptory", "pr": "puh-REMP-tuh-ree", "pos": "adjective", "def": "Insisting on obedience and allowing no refusal.", "ex": "His peremptory memo left no room to discuss the timeline."},
+{"w": "venal", "pr": "VEE-nul", "pos": "adjective", "def": "Open to bribery; motivated by corrupt gain.", "ex": "The venal official approved whichever bid paid the most."},
+{"w": "prevaricate", "pr": "prih-VAIR-ih-kayt", "pos": "verb", "def": "To speak evasively in order to avoid the truth.", "ex": "He prevaricated when asked who missed the deadline."},
+{"w": "dissemble", "pr": "dih-SEM-bul", "pos": "verb", "def": "To conceal one's true motives or feelings.", "ex": "She learned to dissemble her boredom in long reviews."},
+{"w": "cajole", "pr": "kuh-JOHL", "pos": "verb", "def": "To persuade someone gently through flattery or coaxing.", "ex": "He cajoled the team into staying an extra hour."},
+{"w": "placate", "pr": "PLAY-kayt", "pos": "verb", "def": "To soothe or pacify someone who is angry.", "ex": "She sent a small gesture to placate the irate client."},
+{"w": "vacillate", "pr": "VASS-ih-layt", "pos": "verb", "def": "To waver indecisively between choices or opinions.", "ex": "He vacillated for weeks before naming a successor."},
+{"w": "expound", "pr": "ex-POUND", "pos": "verb", "def": "To explain or set forth a subject in careful detail.", "ex": "She expounded her strategy at length before opening the floor to questions."},
+{"w": "expatiate", "pr": "ex-PAY-shee-ate", "pos": "verb", "def": "To speak or write at great length about a topic.", "ex": "He expatiated on the merger for twenty minutes without pausing for breath."},
+{"w": "explicate", "pr": "EX-pluh-kate", "pos": "verb", "def": "To analyze and develop an idea or text in fine detail.", "ex": "The memo explicated each clause of the contract for the junior associates."},
+{"w": "delineate", "pr": "dih-LIN-ee-ate", "pos": "verb", "def": "To describe or outline something with precision.", "ex": "The report clearly delineated the boundaries of each team's responsibility."},
+{"w": "extrapolate", "pr": "ex-TRAP-uh-late", "pos": "verb", "def": "To extend known information to infer something beyond it.", "ex": "We extrapolated next year's demand from three quarters of sales data."},
+{"w": "surmise", "pr": "sur-MYZE", "pos": "verb", "def": "To guess or conclude something from incomplete evidence.", "ex": "From her tone I surmised the client had already made up their mind."},
+{"w": "conjecture", "pr": "kun-JEK-cher", "pos": "noun", "def": "An opinion formed on incomplete or uncertain evidence.", "ex": "Absent hard data, his timeline was pure conjecture."},
+{"w": "posit", "pr": "PAH-zit", "pos": "verb", "def": "To put forward an idea as a basis for argument.", "ex": "The paper posits that remote teams collaborate best asynchronously."},
+{"w": "postulate", "pr": "PAHS-choo-late", "pos": "verb", "def": "To assume or assert something as true for the sake of reasoning.", "ex": "The model postulates that customers value speed over price."},
+{"w": "ruminate", "pr": "ROO-muh-nate", "pos": "verb", "def": "To think about something deeply and at length.", "ex": "He ruminated over the proposal all weekend before responding."},
+{"w": "discursive", "pr": "dis-KUR-siv", "pos": "adjective", "def": "Ranging widely from one topic to another; rambling.", "ex": "His discursive presentation touched everything but the point at hand."},
+{"w": "tangential", "pr": "tan-JEN-shul", "pos": "adjective", "def": "Only loosely related to the matter under discussion.", "ex": "She kept steering the meeting back from tangential asides."},
+{"w": "cursory", "pr": "KUR-suh-ree", "pos": "adjective", "def": "Hasty and lacking thoroughness or attention to detail.", "ex": "A cursory glance at the numbers missed the accounting error."},
+{"w": "didactic", "pr": "dy-DAK-tik", "pos": "adjective", "def": "Intended to instruct, sometimes in a heavy-handed way.", "ex": "The training deck felt didactic, lecturing rather than persuading."},
+{"w": "dogmatic", "pr": "dawg-MAT-ik", "pos": "adjective", "def": "Asserting opinions as unquestionable truths.", "ex": "He was too dogmatic about process to consider a better one."},
+{"w": "doctrinaire", "pr": "dok-truh-NAIR", "pos": "adjective", "def": "Rigidly applying a theory without regard to practicality.", "ex": "A doctrinaire approach to the rules cost us a good client."},
+{"w": "polemic", "pr": "puh-LEM-ik", "pos": "noun", "def": "A strong verbal or written attack on an opinion or position.", "ex": "His email read less like feedback than a polemic against the plan."},
+{"w": "tendentious", "pr": "ten-DEN-shus", "pos": "adjective", "def": "Biased toward a particular viewpoint, especially a controversial one.", "ex": "The report's tendentious framing favored one vendor from the start."},
+{"w": "sophistry", "pr": "SAH-fis-tree", "pos": "noun", "def": "Clever but deliberately deceptive reasoning.", "ex": "Their defense of the budget was sophistry dressed up as logic."},
+{"w": "casuistry", "pr": "KAZH-oo-is-tree", "pos": "noun", "def": "Overly subtle reasoning used to rationalize or mislead.", "ex": "He justified the expense with casuistry no one quite believed."},
+{"w": "specious", "pr": "SPEE-shus", "pos": "adjective", "def": "Superficially plausible but actually wrong or misleading.", "ex": "The pitch rested on a specious claim of guaranteed returns."},
+{"w": "spurious", "pr": "SPYOOR-ee-us", "pos": "adjective", "def": "False or fake despite an appearance of validity.", "ex": "The correlation turned out to be spurious once we controlled for size."},
+{"w": "fatuous", "pr": "FAT-choo-us", "pos": "adjective", "def": "Silly and pointless in a self-satisfied way.", "ex": "His fatuous grin did nothing to reassure the nervous investors."},
+{"w": "vacuous", "pr": "VAK-yoo-us", "pos": "adjective", "def": "Empty of meaning, thought, or substance.", "ex": "The mission statement was vacuous corporate filler."},
+{"w": "banal", "pr": "buh-NAL", "pos": "adjective", "def": "So ordinary as to be obvious and uninteresting.", "ex": "The keynote offered only banal advice everyone had heard before."},
+{"w": "insipid", "pr": "in-SIP-id", "pos": "adjective", "def": "Lacking flavor, vigor, or interest.", "ex": "The tagline was so insipid the team scrapped it entirely."},
+{"w": "jejune", "pr": "juh-JOON", "pos": "adjective", "def": "Naive, simplistic, or intellectually unsatisfying.", "ex": "His analysis struck the partners as jejune and underbaked."},
+{"w": "trite", "pr": "TRYTE", "pos": "adjective", "def": "Overused to the point of losing all originality.", "ex": "Avoid trite phrases like 'think outside the box' in the deck."},
+{"w": "hackneyed", "pr": "HAK-need", "pos": "adjective", "def": "Made stale through constant, unimaginative repetition.", "ex": "The slogan felt hackneyed the moment it launched."},
+{"w": "platitude", "pr": "PLAT-ih-tood", "pos": "noun", "def": "A flat, overused remark offered as if it were meaningful.", "ex": "The town hall was full of platitudes about synergy and growth."},
+{"w": "bromide", "pr": "BROH-mide", "pos": "noun", "def": "A trite, comforting remark that adds nothing new.", "ex": "'It is what it is' is the kind of bromide that ends conversations."},
+{"w": "aphorism", "pr": "AF-uh-riz-um", "pos": "noun", "def": "A concise statement expressing a general truth.", "ex": "She closed the memo with an aphorism about patience and progress."},
+{"w": "epigram", "pr": "EP-ih-gram", "pos": "noun", "def": "A witty, pointed remark expressed in few words.", "ex": "His epigram about deadlines got the biggest laugh of the retreat."},
+{"w": "adage", "pr": "AD-ij", "pos": "noun", "def": "A short, traditional saying that expresses a common truth.", "ex": "The old adage about measuring twice applied to our launch plan."},
+{"w": "axiom", "pr": "AK-see-um", "pos": "noun", "def": "A statement accepted as self-evidently true.", "ex": "Treating the customer well is an axiom of our sales culture."},
+{"w": "tautology", "pr": "taw-TAH-luh-jee", "pos": "noun", "def": "A statement that repeats an idea and says nothing new.", "ex": "'The plan will succeed if it works' is a tautology, not a strategy."},
+{"w": "verbose", "pr": "vur-BOHS", "pos": "adjective", "def": "Using more words than necessary to express an idea.", "ex": "The contract was so verbose no one read past page three."},
+{"w": "prolix", "pr": "PROH-liks", "pos": "adjective", "def": "Tediously long-winded in speech or writing.", "ex": "His prolix status updates buried the one fact that mattered."},
+{"w": "grandiloquent", "pr": "gran-DIL-uh-kwent", "pos": "adjective", "def": "Using pompous, inflated language to impress.", "ex": "The grandiloquent proposal promised to 'revolutionize' a spreadsheet."},
+{"w": "bombastic", "pr": "bom-BAS-tik", "pos": "adjective", "def": "High-sounding but with little real meaning.", "ex": "His bombastic launch email overpromised and underdelivered."},
+{"w": "turgid", "pr": "TUR-jid", "pos": "adjective", "def": "Pompous, overblown, and tedious in style.", "ex": "The turgid white paper needed half its words removed."},
+{"w": "gnomic", "pr": "NOH-mik", "pos": "adjective", "def": "Expressed in brief, puzzling, or aphoristic terms.", "ex": "The CEO's gnomic reply left everyone guessing at the decision."},
+{"w": "cryptic", "pr": "KRIP-tik", "pos": "adjective", "def": "Mysterious or obscure in meaning.", "ex": "His cryptic note said only 'proceed carefully' with no context."},
+{"w": "abstruse", "pr": "ab-STROOS", "pos": "adjective", "def": "Difficult to understand because of complexity.", "ex": "The pricing model was too abstruse to explain to the board."},
+{"w": "recondite", "pr": "REK-un-dite", "pos": "adjective", "def": "Dealing with obscure subject matter few understand.", "ex": "His recondite footnotes lost most of the audience."},
+{"w": "opaque", "pr": "oh-PAYK", "pos": "adjective", "def": "Hard to understand or see through in meaning.", "ex": "The vendor's fee structure was deliberately opaque."},
+{"w": "inscrutable", "pr": "in-SKROO-tuh-bul", "pos": "adjective", "def": "Impossible to interpret, understand, or read.", "ex": "Her inscrutable expression gave nothing away in the negotiation."},
+{"w": "equivocal", "pr": "ih-KWIV-uh-kul", "pos": "adjective", "def": "Open to more than one interpretation; deliberately vague.", "ex": "His equivocal answer avoided committing to any date."},
+{"w": "rhetorical", "pr": "ruh-TOR-ih-kul", "pos": "adjective", "def": "Relating to persuasive effect rather than literal meaning.", "ex": "His question was rhetorical; he had already decided."},
+{"w": "circumlocution", "pr": "sur-kum-loh-KYOO-shun", "pos": "noun", "def": "The use of many words to avoid saying something directly.", "ex": "After much circumlocution he finally admitted the deadline had slipped."},
+{"w": "euphemism", "pr": "YOO-fuh-miz-um", "pos": "noun", "def": "A mild word or phrase substituted for a harsher one.", "ex": "'Rightsizing' was the euphemism used for the layoffs."},
+{"w": "nuanced", "pr": "NOO-anst", "pos": "adjective", "def": "Marked by subtle distinctions or fine shades of meaning.", "ex": "Her nuanced read of the market impressed the whole committee."},
+{"w": "cerebral", "pr": "suh-REE-brul", "pos": "adjective", "def": "Intellectual rather than emotional or physical.", "ex": "His cerebral approach to sales won over the analysts, not the crowd."},
+{"w": "perspicuous", "pr": "pur-SPIK-yoo-us", "pos": "adjective", "def": "Clearly expressed and easy to understand.", "ex": "The perspicuous summary let newcomers grasp the project at once."},
+{"w": "apposite", "pr": "AP-uh-zit", "pos": "adjective", "def": "Strikingly appropriate and relevant to the matter at hand.", "ex": "She chose an apposite example that clinched the argument."},
+{"w": "protean", "pr": "PROH-tee-un", "pos": "adjective", "def": "Readily taking on different forms or roles; endlessly variable.", "ex": "Her protean skill set let her move from finance to product without missing a beat."},
+{"w": "mutable", "pr": "MYOO-tuh-bul", "pos": "adjective", "def": "Liable or able to change over time.", "ex": "Our roadmap is mutable, so treat this quarter's plan as a draft, not a contract."},
+{"w": "immutable", "pr": "ih-MYOO-tuh-bul", "pos": "adjective", "def": "Unchanging and not capable of being altered.", "ex": "The audit log is immutable, so nobody can quietly edit last month's numbers."},
+{"w": "ineluctable", "pr": "in-ih-LUK-tuh-bul", "pos": "adjective", "def": "Impossible to avoid or escape.", "ex": "Rising cloud costs felt ineluctable until we finally right-sized the servers."},
+{"w": "transient", "pr": "TRAN-shunt", "pos": "adjective", "def": "Lasting only a short time; impermanent.", "ex": "The outage was transient, and traffic recovered within a few minutes."},
+{"w": "transitory", "pr": "TRAN-sih-tor-ee", "pos": "adjective", "def": "Brief and passing rather than lasting.", "ex": "Treat this dip in signups as transitory until the data says otherwise."},
+{"w": "transcendent", "pr": "tran-SEN-dunt", "pos": "adjective", "def": "Surpassing ordinary limits; exceptionally great.", "ex": "The keynote was transcendent, reframing how the whole team thinks about design."},
+{"w": "empyrean", "pr": "em-py-REE-un", "pos": "adjective", "def": "Belonging to the highest heavens; sublimely elevated.", "ex": "Their brand aspires to an empyrean prestige that mass discounts would undercut."},
+{"w": "elysian", "pr": "ih-LIZH-un", "pos": "adjective", "def": "Blissful, delightful, and peaceful.", "ex": "After the launch shipped, the quiet week that followed felt almost elysian."},
+{"w": "arcadian", "pr": "ar-KAY-dee-un", "pos": "adjective", "def": "Idyllically simple, rural, and untroubled.", "ex": "The offsite venue had an arcadian calm that made the strategy session feel unhurried."},
+{"w": "pastoral", "pr": "PAS-tur-ul", "pos": "adjective", "def": "Of or evoking the peaceful simplicity of the countryside.", "ex": "They chose a pastoral retreat so the team could think away from city noise."},
+{"w": "luxuriant", "pr": "lug-ZHOOR-ee-unt", "pos": "adjective", "def": "Growing or produced in rich, lavish abundance.", "ex": "The report's luxuriant detail was impressive but slowed the decision to a crawl."},
+{"w": "spartan", "pr": "SPAR-tun", "pos": "adjective", "def": "Marked by strict simplicity and self-denial.", "ex": "The startup ran on a spartan budget, sharing one printer across three teams."},
+{"w": "ascetic", "pr": "uh-SET-ik", "pos": "adjective", "def": "Practicing severe self-discipline and abstaining from indulgence.", "ex": "His ascetic approach to meetings meant no slides, no snacks, and a hard stop."},
+{"w": "meager", "pr": "MEE-gur", "pos": "adjective", "def": "Lacking in quantity or quality; scanty.", "ex": "The meager turnout at the workshop told us the invite went out too late."},
+{"w": "paltry", "pr": "PAWL-tree", "pos": "adjective", "def": "Small or trivial to the point of being insignificant.", "ex": "A paltry two responses came back, so we can't draw any conclusions yet."},
+{"w": "copious", "pr": "KOH-pee-us", "pos": "adjective", "def": "Present in large or plentiful quantities.", "ex": "She took copious notes so nobody would have to reconstruct the decision later."},
+{"w": "plethora", "pr": "PLETH-uh-ruh", "pos": "noun", "def": "An excessive or overabundant amount of something.", "ex": "We have a plethora of dashboards but no single source of truth."},
+{"w": "surfeit", "pr": "SUR-fit", "pos": "noun", "def": "An excessive amount of something.", "ex": "A surfeit of options on the pricing page left new customers unsure what to pick."},
+{"w": "dearth", "pr": "DURTH", "pos": "noun", "def": "A scarcity or lack of something.", "ex": "There's a dearth of qualified reviewers, so approvals keep piling up."},
+{"w": "paucity", "pr": "PAW-sih-tee", "pos": "noun", "def": "The presence of something in unusually small amounts.", "ex": "The paucity of documentation made onboarding new engineers painfully slow."},
+{"w": "modicum", "pr": "MOD-ih-kum", "pos": "noun", "def": "A small or modest quantity of something.", "ex": "With a modicum of planning, the migration could have avoided the weekend scramble."},
+{"w": "apex", "pr": "AY-peks", "pos": "noun", "def": "The highest point or peak of something.", "ex": "Third quarter marked the apex of demand before the seasonal slowdown."},
+{"w": "apogee", "pr": "AP-uh-jee", "pos": "noun", "def": "The highest or culminating point of development.", "ex": "The product hit its apogee the year it won every industry award."},
+{"w": "acme", "pr": "AK-mee", "pos": "noun", "def": "The point at which something is at its very best.", "ex": "That campaign was the acme of the agency's creative output that decade."},
+{"w": "pinnacle", "pr": "PIN-uh-kul", "pos": "noun", "def": "The most successful or highest point of something.", "ex": "Closing the enterprise deal felt like the pinnacle of a long sales cycle."},
+{"w": "apotheosis", "pr": "uh-poth-ee-OH-sis", "pos": "noun", "def": "The highest or most perfect example of something.", "ex": "The flagship store is the apotheosis of everything the brand stands for."},
+{"w": "palliative", "pr": "PAL-ee-uh-tiv", "pos": "adjective", "def": "Relieving symptoms without addressing the underlying cause.", "ex": "Adding servers was a palliative fix; the real problem was the slow query."},
+{"w": "incipient", "pr": "in-SIP-ee-unt", "pos": "adjective", "def": "In an early stage; just beginning to appear.", "ex": "We caught the incipient churn early enough to win most of those accounts back."},
+{"w": "embryonic", "pr": "em-bree-ON-ik", "pos": "adjective", "def": "In a very early and undeveloped stage.", "ex": "The partnership is still embryonic, so let's not announce it publicly yet."},
+{"w": "fledgling", "pr": "FLEJ-ling", "pos": "adjective", "def": "New, inexperienced, and still developing.", "ex": "The fledgling analytics team is finding its footing after only two months."},
+{"w": "moribund", "pr": "MOR-ih-bund", "pos": "adjective", "def": "In decline and approaching an end.", "ex": "The moribund product line lost its last major customer this spring."},
+{"w": "obsolete", "pr": "ob-suh-LEET", "pos": "adjective", "def": "No longer in use or useful because something better exists.", "ex": "That reporting tool is obsolete now that the dashboard updates in real time."},
+{"w": "anachronism", "pr": "uh-NAK-ruh-niz-um", "pos": "noun", "def": "Something belonging to a period other than the one in which it exists.", "ex": "The fax machine in the corner is a charming anachronism nobody uses."},
+{"w": "relic", "pr": "REL-ik", "pos": "noun", "def": "Something surviving from an earlier time.", "ex": "That naming convention is a relic from a codebase we retired years ago."},
+{"w": "remnant", "pr": "REM-nunt", "pos": "noun", "def": "A small remaining part or trace of something larger.", "ex": "This config file is a remnant of the old system we can safely delete."},
+{"w": "veracity", "pr": "vuh-RAS-ih-tee", "pos": "noun", "def": "Conformity to truth; accuracy.", "ex": "We double-checked the veracity of the figures before sending them to the board."},
+{"w": "verisimilitude", "pr": "ver-ih-sih-MIL-ih-tood", "pos": "noun", "def": "The appearance of being true or real.", "ex": "The demo had enough verisimilitude that clients forgot the data was placeholder."},
+{"w": "probity", "pr": "PROH-bih-tee", "pos": "noun", "def": "Complete honesty and moral uprightness.", "ex": "Her probity is why we trust her to sign off on every expense report."},
+{"w": "rectitude", "pr": "REK-tih-tood", "pos": "noun", "def": "Morally correct behavior or thinking.", "ex": "The firm's reputation rests on the rectitude of its senior partners."},
+{"w": "turpitude", "pr": "TUR-pih-tood", "pos": "noun", "def": "Depraved or wicked conduct.", "ex": "The contract voids automatically in cases of proven financial turpitude."},
+{"w": "iniquity", "pr": "ih-NIK-wih-tee", "pos": "noun", "def": "Gross injustice or wickedness.", "ex": "The exposé detailed years of iniquity hidden in the vendor's books."},
+{"w": "philanthropic", "pr": "fil-un-THROP-ik", "pos": "adjective", "def": "Seeking to promote the welfare of others through generosity.", "ex": "The company's philanthropic arm funds coding classes across the district."},
+{"w": "beneficent", "pr": "buh-NEF-ih-sunt", "pos": "adjective", "def": "Doing or resulting in good; generous and kind.", "ex": "Her beneficent mentoring quietly launched half the leadership team's careers."},
+{"w": "largesse", "pr": "lar-ZHESS", "pos": "noun", "def": "Generosity in giving, especially of money or gifts.", "ex": "The founder's largesse funded every intern's relocation this summer."},
+{"w": "avarice", "pr": "AV-uh-ris", "pos": "noun", "def": "Extreme greed for wealth or material gain.", "ex": "Unchecked avarice at the top eventually eroded the whole team's trust."},
+{"w": "prodigal", "pr": "PROD-ih-gul", "pos": "adjective", "def": "Spending resources recklessly and wastefully.", "ex": "A prodigal marketing budget burned through the runway in half a year."},
+{"w": "profligate", "pr": "PROF-lih-git", "pos": "adjective", "def": "Recklessly extravagant and wasteful with resources.", "ex": "The profligate travel policy vanished the moment finance took a closer look."},
+{"w": "penurious", "pr": "puh-NOOR-ee-us", "pos": "adjective", "def": "Extremely frugal or unwilling to spend.", "ex": "Our penurious procurement team questions every license we try to renew."},
+{"w": "indigent", "pr": "IN-dih-junt", "pos": "adjective", "def": "Lacking the means to meet basic needs; poor.", "ex": "The nonprofit's grant helps indigent families cover childcare during training."},
+{"w": "affluent", "pr": "AF-loo-unt", "pos": "adjective", "def": "Having an abundance of wealth or resources.", "ex": "The new store targets an affluent clientele who value service over price."},
+{"w": "ostentatious", "pr": "os-ten-TAY-shus", "pos": "adjective", "def": "Designed to impress through showy display.", "ex": "The ostentatious launch party sent the wrong signal during a hiring freeze."},
+{"w": "ubiquitous", "pr": "yoo-BIK-wih-tus", "pos": "adjective", "def": "Present or found everywhere at once.", "ex": "Dashboards became ubiquitous once every team wanted its metrics on the wall."},
+{"w": "mutability", "pr": "myoo-tuh-BIL-ih-tee", "pos": "noun", "def": "The quality of being subject to change.", "ex": "The mutability of the requirements means we version every spec carefully."},
+{"w": "pervasive", "pr": "pur-VAY-siv", "pos": "adjective", "def": "Spreading widely throughout something.", "ex": "The pervasive habit of skipping standups slowly eroded the team's alignment."},
+{"w": "nugatory", "pr": "NOO-guh-tor-ee", "pos": "adjective", "def": "Of no real value or significance; trifling.", "ex": "The savings turned out to be nugatory once we factored in the migration cost."},
+{"w": "salubrious", "pr": "suh-LOO-bree-us", "pos": "adjective", "def": "Health-giving; conducive to wellbeing.", "ex": "The salubrious effect of a four-day week showed up in the next survey."},
+{"w": "quiescence", "pr": "kwee-ES-uns", "pos": "noun", "def": "A state of stillness, rest, or inactivity.", "ex": "The market's quiescence gave us a rare window to rebuild the platform."}
 ]

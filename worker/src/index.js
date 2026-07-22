@@ -198,7 +198,14 @@ async function fetchMarkets(symbols) {
   return { updatedAt: Math.floor(Date.now() / 1000), stale: false, indices, ...(partial && { partial: true }) };
 }
 
-export default {
+// In-process dispatcher for the health monitor. A Worker fetching its OWN
+// custom domain over the network loops (Cloudflare returns 522), so the health
+// checks reach the worker's own routes by calling this handler directly instead
+// of via fetch(). The hostname is arbitrary — only the path drives routing.
+const selfFetch = (env) => (routePath) =>
+  handlers.fetch(new Request('https://api.roomboard.app' + routePath), env);
+
+const handlers = {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -380,7 +387,7 @@ export default {
     // ALERT_WEBHOOK channel actually delivers — an unverified alert path is
     // worthless. No-ops (like any alert) when the secret is unset.
     if (path === '/health' && request.method === 'GET') {
-      const report = await runHealthChecks();
+      const report = await runHealthChecks(env, selfFetch(env));
       if (url.searchParams.get('test') === 'alert') {
         await notify(env, { at: report.at, results: [{ name: 'test', ok: false, detail: 'manual channel-wiring check — not a real outage' }] });
       }
@@ -396,7 +403,9 @@ export default {
   // even when a bad deploy breaks the routes — the scheduled handler is separate
   // from fetch — so it catches route regressions, not just upstream outages.
   async scheduled(event, env, ctx) {
-    const report = await runHealthChecks();
+    const report = await runHealthChecks(env, selfFetch(env));
     if (!report.ok) ctx.waitUntil(notify(env, report));
   },
 };
+
+export default handlers;

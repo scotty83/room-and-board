@@ -1,9 +1,14 @@
-// Health monitor. Probes the key public endpoints and validates the RESPONSE
-// CONTENT — not just up/down — so it catches the real failure mode: an upstream
-// that returns HTTP 200 with reshaped garbage (e.g. Yahoo changing its JSON).
-// Runs from the worker's scheduled() cron and on-demand via GET /health, and
-// posts to ALERT_WEBHOOK on failure. Self-hosters: change the URLs below (or
-// delete the [triggers] block in wrangler.toml to turn the monitor off).
+// Health monitor. Probes the key endpoints and validates the RESPONSE CONTENT —
+// not just up/down — so it catches the real failure mode: an upstream that
+// returns HTTP 200 with reshaped garbage (e.g. Yahoo changing its JSON). Runs
+// from the worker's scheduled() cron and on-demand via GET /health, and posts to
+// ALERT_WEBHOOK on failure.
+//
+// Checks with `path` are the worker's OWN routes: they run in-process via
+// selfFetch (a Worker fetching its own custom domain over the network loops →
+// Cloudflare 522). Checks with `url` are external and use plain fetch.
+// Self-hosters: change the hosts/paths (or delete the [triggers] block in
+// wrangler.toml to turn the cron off).
 
 export const CHECKS = [
   {
@@ -13,7 +18,7 @@ export const CHECKS = [
   },
   {
     name: 'markets', // Yahoo (unofficial) — the flakiest dependency
-    url: 'https://api.roomboard.app/markets',
+    path: '/markets',
     ok: (j) => Array.isArray(j.indices) && j.indices.length > 0 && Number.isFinite(j.indices[0].price),
   },
   {
@@ -23,22 +28,32 @@ export const CHECKS = [
   },
   {
     name: 'gdrive', // curated photos + backdrops; also proves GDRIVE_KEY works
-    url: 'https://api.roomboard.app/gdrive/album?folder=1RHow60mcBwzMturimQSbziK3hqCvP2lz',
+    path: '/gdrive/album?folder=1RHow60mcBwzMturimQSbziK3hqCvP2lz',
     ok: (j) => Array.isArray(j.photos) && j.photos.length > 0,
   },
   {
     name: 'amtrak', // one transit example; departures may be empty at night, so shape-only
-    url: 'https://api.roomboard.app/amtrak/departures',
+    path: '/amtrak/departures',
     ok: (j) => typeof j.station === 'string' && Array.isArray(j.departures),
   },
 ];
 
-async function probe(check, fetchImpl) {
+// Rejects with a TimeoutError if p doesn't settle in ms; clears the timer on
+// settle so it never dangles (matters for the in-process self checks, which
+// have no fetch AbortSignal of their own).
+function withTimeout(p, ms) {
+  let t;
+  const timer = new Promise((_, rej) => {
+    t = setTimeout(() => rej(Object.assign(new Error('timeout'), { name: 'TimeoutError' })), ms);
+  });
+  return Promise.race([p, timer]).finally(() => clearTimeout(t));
+}
+
+async function probe(check, selfFetch, extFetch) {
   try {
-    const res = await fetchImpl(check.url, {
-      signal: AbortSignal.timeout(12000),
-      headers: { 'cache-control': 'no-cache' }, // want live state, not a stale edge hit
-    });
+    const res = check.path
+      ? await withTimeout(selfFetch(check.path), 13000)
+      : await extFetch(check.url, { signal: AbortSignal.timeout(12000), headers: { 'cache-control': 'no-cache' } });
     if (!res.ok) return { name: check.name, ok: false, detail: `HTTP ${res.status}` };
     const body = await res.text();
     let json;
@@ -53,9 +68,10 @@ async function probe(check, fetchImpl) {
   }
 }
 
-// Runs every check concurrently. fetchImpl is injectable for tests.
-export async function runHealthChecks(fetchImpl = fetch) {
-  const results = await Promise.all(CHECKS.map((c) => probe(c, fetchImpl)));
+// Runs every check concurrently. selfFetch(path)→Response dispatches the worker's
+// own routes in-process; extFetch defaults to global fetch (injectable for tests).
+export async function runHealthChecks(env, selfFetch, extFetch = fetch) {
+  const results = await Promise.all(CHECKS.map((c) => probe(c, selfFetch, extFetch)));
   return { ok: results.every((r) => r.ok), at: new Date().toISOString(), results };
 }
 

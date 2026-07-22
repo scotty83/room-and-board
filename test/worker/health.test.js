@@ -56,28 +56,35 @@ describe('health CHECKS validators', () => {
 });
 
 describe('runHealthChecks', () => {
+  // One mock serves both the in-process self checks (called with a path) and the
+  // external checks (called with a URL) — it matches by URL/path substring.
+  const run = (overrides = {}) => {
+    const m = mockFetch(overrides);
+    return runHealthChecks({}, m, m);
+  };
+
   it('reports ok when every endpoint is healthy', async () => {
-    const report = await runHealthChecks(mockFetch());
+    const report = await run();
     expect(report.ok).toBe(true);
     expect(report.results).toHaveLength(CHECKS.length);
     expect(report.results.every((r) => r.ok)).toBe(true);
   });
   it('flags a non-200 with its status', async () => {
-    const report = await runHealthChecks(mockFetch({ '/markets': { status: 503 } }));
+    const report = await run({ '/markets': { status: 503 } });
     expect(report.ok).toBe(false);
     const markets = report.results.find((r) => r.name === 'markets');
     expect(markets).toMatchObject({ ok: false, detail: 'HTTP 503' });
   });
   it('flags an unparseable body', async () => {
-    const report = await runHealthChecks(mockFetch({ 'open-meteo': { body: '<html>down</html>' } }));
+    const report = await run({ 'open-meteo': { body: '<html>down</html>' } });
     expect(report.results.find((r) => r.name === 'weather')).toMatchObject({ ok: false, detail: 'unparseable response' });
   });
   it('flags a 200 with the wrong shape (the reshaped-JSON case)', async () => {
-    const report = await runHealthChecks(mockFetch({ '/markets': { body: JSON.stringify({ indices: [] }) } }));
+    const report = await run({ '/markets': { body: JSON.stringify({ indices: [] }) } });
     expect(report.results.find((r) => r.name === 'markets')).toMatchObject({ ok: false, detail: 'unexpected shape/content' });
   });
   it('flags a timeout by name', async () => {
-    const report = await runHealthChecks(mockFetch({ gdrive: { throw: 'TimeoutError' } }));
+    const report = await run({ gdrive: { throw: 'TimeoutError' } });
     expect(report.results.find((r) => r.name === 'gdrive')).toMatchObject({ ok: false, detail: 'timeout' });
   });
 });

@@ -375,6 +375,7 @@ html, body {
    The rule extends past the chart box (overflow:visible + y -5..33) so a big
    swing at the boundary can't swallow it, and it reads at board distance. */
 .spark { overflow: visible; }
+.spark path { stroke-linecap: round; stroke-linejoin: round; }
 .spark__up { stroke: var(--good); }
 .spark__down { stroke: var(--bad); }
 .spark__prev { stroke: var(--ink); }

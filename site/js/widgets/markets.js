@@ -44,6 +44,27 @@ export function yForValue(val, values, h = 28, pad = 2) {
   return pad + (1 - (val - min) / span) * (h - 2 * pad);
 }
 
+// Chaikin corner-cutting: rounds a polyline into a denser, curve-like one so the
+// sparkline reads smooth rather than angular. It stays inside the data's convex
+// hull (NO overshoot, so no phantom baseline crossings), preserves the exact
+// endpoints (the divider + baseline anchors), and remains a plain polyline — so
+// colorSplit still works. Two passes is enough to lose the polygon look.
+export function chaikin(pts, iterations = 2) {
+  let p = pts;
+  for (let it = 0; it < iterations && p.length >= 3; it++) {
+    const out = [p[0]];
+    for (let i = 0; i < p.length - 1; i++) {
+      const [x1, y1] = p[i];
+      const [x2, y2] = p[i + 1];
+      out.push([x1 + 0.25 * (x2 - x1), y1 + 0.25 * (y2 - y1)]);
+      out.push([x1 + 0.75 * (x2 - x1), y1 + 0.75 * (y2 - y1)]);
+    }
+    out.push(p[p.length - 1]);
+    p = out;
+  }
+  return p;
+}
+
 // Splits a polyline into GREEN (at/above the baseline) and RED (below) subpaths,
 // cutting each segment exactly where it crosses the baseline y. Pure geometry
 // with plain <path> data — deliberately NO SVG clip-paths, which the board's
@@ -91,14 +112,15 @@ function sparkSvg(ix) {
   // overnight move reads as part of today.
   const baseVal = two ? series[ix.split - 1] : ix.price - ix.change;
   const yBase = yForValue(baseVal, series);
-  const { up, down } = colorSplit(two ? pts.slice(ix.split - 1) : pts, yBase);
+  // Smooth each drawn segment (Chaikin) so the line curves instead of kinking.
+  const { up, down } = colorSplit(chaikin(two ? pts.slice(ix.split - 1) : pts), yBase);
   const today =
     (up ? `<path class="spark__up" d="${up}" fill="none" stroke-width="1.5"/>` : '') +
     (down ? `<path class="spark__down" d="${down}" fill="none" stroke-width="1.5"/>` : '');
   let extras = '';
   if (two) {
     const dx = sparkDividerX(series.length, ix.split).toFixed(1);
-    extras = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split))}" fill="none" stroke-width="1.5"/>` +
+    extras = `<path class="spark__prev" d="${toPath(chaikin(pts.slice(0, ix.split)))}" fill="none" stroke-width="1.5"/>` +
       `<line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
   }
   return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${extras}${today}</svg>`;

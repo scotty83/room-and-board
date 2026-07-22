@@ -39,7 +39,7 @@ import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, sparkDividerX, yForValue, colorSplit, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, yForValue, colorSplit, chaikin, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
@@ -647,6 +647,17 @@ describe('markets 2-day sparkline', () => {
     const above = colorSplit([[0, 2], [10, 4]], 10);
     expect(above.up).toBe('M0.0,2.0L10.0,4.0');
     expect(above.down).toBe('');
+  });
+
+  it('chaikin smooths a polyline, keeping endpoints and never overshooting', () => {
+    const raw = [[0, 0], [10, 20], [20, 0]];
+    const s = chaikin(raw, 2);
+    expect(s.length).toBeGreaterThan(raw.length); // denser (curve-like)
+    expect(s[0]).toEqual([0, 0]); // exact endpoints kept (divider/baseline anchors)
+    expect(s[s.length - 1]).toEqual([20, 0]);
+    const ys = s.map((p) => p[1]);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(20); // stays within the data — no phantom crossings
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(0);
   });
 });
 

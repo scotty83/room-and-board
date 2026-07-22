@@ -39,7 +39,7 @@ import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, sparkDividerX, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, yForValue, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
@@ -617,12 +617,26 @@ describe('markets 2-day sparkline', () => {
     };
     const wide = mk(4); // markets' max width — fixture carries spark2/split
     expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
-    expect(wide.querySelectorAll('.spark__prev').length).toBe(3); // dimmed yesterday segment
+    expect(wide.querySelectorAll('.spark__prev').length).toBe(3); // white yesterday segment
+    // Today is drawn twice (green above / red below the prior close) and masked.
+    expect(wide.querySelectorAll('.spark__up').length).toBe(3);
+    expect(wide.querySelectorAll('.spark__down').length).toBe(3);
+    expect(wide.querySelectorAll('.spark clipPath').length).toBe(6); // 2 masks per index
     wide.remove();
     const narrow = mk(3); // the 3-wide min → compact 1-day spark, no divider
     expect(narrow.querySelector('.spark__div')).toBeNull();
     expect(narrow.querySelector('.spark__prev')).toBeNull();
+    // Compact today is still baseline-coloured (green above / red below).
+    expect(narrow.querySelectorAll('.spark__up').length).toBe(3);
+    expect(narrow.querySelectorAll('.spark__down').length).toBe(3);
     narrow.remove();
+  });
+
+  it('yForValue maps a value to its plotted y within a series range', () => {
+    // value at the max sits at the top pad; at the min, the bottom pad.
+    expect(yForValue(10, [0, 10], 28, 2)).toBeCloseTo(2, 5);
+    expect(yForValue(0, [0, 10], 28, 2)).toBeCloseTo(26, 5);
+    expect(yForValue(5, [0, 10], 28, 2)).toBeCloseTo(14, 5); // midpoint
   });
 });
 

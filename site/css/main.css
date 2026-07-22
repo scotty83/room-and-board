@@ -369,15 +369,16 @@ html, body {
 .index__name { font-size: 21px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .index__price { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .spark { width: 160px; height: 28px; }
-.spark--up { color: var(--good); }
-.spark--down { color: var(--bad); }
-/* 2-day sparkline: yesterday's segment fades so today reads vivid — the
-   boundary IS the intensity change — anchored by a dashed rule. The rule
-   extends past the chart box (overflow:visible + y -5..33) so a big swing at
-   the boundary can't swallow it, and its stroke reads at board distance. */
+/* Sparkline colours. Today is coloured against the prior close (green above /
+   red below the baseline, so a mid-session cross shows both); the prior session
+   in the 2-day view reads WHITE, and the day boundary is a bright dashed rule.
+   The rule extends past the chart box (overflow:visible + y -5..33) so a big
+   swing at the boundary can't swallow it, and it reads at board distance. */
 .spark { overflow: visible; }
-.spark__prev { opacity: 0.4; }
-.spark__div { stroke: var(--ink-dim); opacity: 0.6; stroke-width: 1.75; stroke-dasharray: 3 3; }
+.spark__up { stroke: var(--good); }
+.spark__down { stroke: var(--bad); }
+.spark__prev { stroke: var(--ink); }
+.spark__div { stroke: var(--ink); opacity: 0.85; stroke-width: 1.75; stroke-dasharray: 3 3; }
 .delta { font-size: 24px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .delta--up { color: var(--good); }
 .delta--down { color: var(--bad); }

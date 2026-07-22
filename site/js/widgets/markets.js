@@ -35,11 +35,24 @@ export function sparkDividerX(len, split, w = 90, pad = 2) {
   return pad + (split - 0.5) * step;
 }
 
-// Sparkline SVG. Wide cards (twoDay) draw both sessions when the payload
-// carries them (ix.split > 0): yesterday's segment DIMMED, today vivid — the
-// boundary reads as faded-history|live-today — plus a soft rule at the day
-// gap. Otherwise the compact last-session shape.
-function sparkSvg(ix, up) {
+// Y (in the 28-tall viewBox) of a value, using a series' own min/max — matches
+// sparkPts' value→y mapping, so a value in `values` lands on its plotted point.
+export function yForValue(val, values, h = 28, pad = 2) {
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const span = max - min || 1;
+  return pad + (1 - (val - min) / span) * (h - 2 * pad);
+}
+
+let sparkUid = 0;
+
+// Sparkline SVG. The CURRENT session is coloured against the prior close: green
+// where the price sits above it, red where below, split cleanly at the crossing
+// so an intraday move that dips through the baseline shows BOTH colours. The
+// two colours are the same today path drawn twice and clip-masked at the
+// baseline y. Wide cards (twoDay) draw the prior session in WHITE ahead of a
+// dashed day-boundary rule; compact cards draw today alone, coloured the same.
+function sparkSvg(ix) {
   const two =
     ix.twoDay &&
     Array.isArray(ix.spark2) &&
@@ -47,21 +60,27 @@ function sparkSvg(ix, up) {
     ix.split > 0 &&
     ix.split < ix.spark2.length;
   const series = two ? ix.spark2 : ix.spark;
-  let paths;
+  const pts = sparkPts(series, 90, 28);
+  if (pts.length < 2) return '<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none"></svg>';
+  const uid = ++sparkUid;
+  // Colour baseline = the prior close. Two-day: yesterday's last bar (the split
+  // point); compact: price − change. The current segment starts there, so the
+  // overnight move reads as part of today.
+  const baseVal = two ? series[ix.split - 1] : ix.price - ix.change;
+  const yBase = yForValue(baseVal, series);
+  const todayD = toPath(two ? pts.slice(ix.split - 1) : pts);
+  // Above the baseline (lower y) is green; below (higher y) is red.
+  const clips = `<clipPath id="sk-u${uid}"><rect x="-10" y="-30" width="110" height="${(yBase + 30).toFixed(2)}"/></clipPath>` +
+    `<clipPath id="sk-d${uid}"><rect x="-10" y="${yBase.toFixed(2)}" width="110" height="90"/></clipPath>`;
+  const today = `<path class="spark__up" d="${todayD}" fill="none" stroke-width="1.5" clip-path="url(#sk-u${uid})"/>` +
+    `<path class="spark__down" d="${todayD}" fill="none" stroke-width="1.5" clip-path="url(#sk-d${uid})"/>`;
+  let extras = '';
   if (two) {
-    const pts = sparkPts(series, 90, 28);
     const dx = sparkDividerX(series.length, ix.split).toFixed(1);
-    // Both segments include the split point, so the line stays continuous;
-    // the overnight jump (split-1 → split) belongs to the dimmed history.
-    paths = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split + 1))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
-              <path d="${toPath(pts.slice(ix.split))}" fill="none" stroke="currentColor" stroke-width="1.5"/>
-              <line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
-  } else {
-    paths = `<path d="${sparkPath(series, 90, 28)}" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
+    extras = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split))}" fill="none" stroke-width="1.5"/>` +
+      `<line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
   }
-  return `<svg class="spark ${up ? 'spark--up' : 'spark--down'}" viewBox="0 0 90 28" preserveAspectRatio="none">
-              ${paths}
-            </svg>`;
+  return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${clips}${extras}${today}</svg>`;
 }
 
 const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -89,7 +108,7 @@ export function render(el, vm, cfg) {
               <span class="index__name">${escapeHtml(ix.name)}</span>
               <span class="index__price">${fmt.format(ix.price)}</span>
             </div>
-            ${sparkSvg({ ...ix, twoDay }, up)}
+            ${sparkSvg({ ...ix, twoDay })}
             <span class="delta delta__chg ${up ? 'delta--up' : 'delta--down'}">${up ? '▲' : '▼'} ${fmt.format(Math.abs(ix.change))}</span>
             <span class="delta delta__pct ${up ? 'delta--up' : 'delta--down'}">(${Math.abs(ix.changePct).toFixed(2)}%)</span>
           </div>`;

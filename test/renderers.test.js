@@ -618,6 +618,9 @@ describe('markets 2-day sparkline', () => {
     const wide = mk(4); // markets' max width — fixture carries spark2/split
     expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
     expect(wide.querySelectorAll('.spark__prev').length).toBe(3); // white yesterday segment
+    // Non-scaling stroke → uniform line width despite the non-uniform (wide)
+    // preserveAspectRatio scale, otherwise steep parts render fat.
+    expect(wide.querySelector('.spark__prev').getAttribute('vector-effect')).toBe('non-scaling-stroke');
     // Today is baseline-coloured with plain paths — NO clip-paths (gen1 WebEngine
     // drops clipped SVG). Every sparkline has at least one coloured today path.
     expect(wide.querySelector('clipPath')).toBeNull();

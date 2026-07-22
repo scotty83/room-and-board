@@ -136,13 +136,13 @@ function sparkSvg(ix) {
     const dx = sparkDividerX(series.length, ix.split);
     const { left, right } = splitAtX(sm, dx);
     todayPts = right;
-    extras = `<path class="spark__prev" d="${toPath(left)}" fill="none" stroke-width="1.5"/>` +
+    extras = `<path class="spark__prev" d="${toPath(left)}" fill="none" stroke-width="1.5" vector-effect="non-scaling-stroke"/>` +
       `<line class="spark__div" x1="${dx.toFixed(1)}" y1="-5" x2="${dx.toFixed(1)}" y2="33" vector-effect="non-scaling-stroke"/>`;
   }
   const { up, down } = colorSplit(todayPts, yBase);
   const today =
-    (up ? `<path class="spark__up" d="${up}" fill="none" stroke-width="1.5"/>` : '') +
-    (down ? `<path class="spark__down" d="${down}" fill="none" stroke-width="1.5"/>` : '');
+    (up ? `<path class="spark__up" d="${up}" fill="none" stroke-width="1.5" vector-effect="non-scaling-stroke"/>` : '') +
+    (down ? `<path class="spark__down" d="${down}" fill="none" stroke-width="1.5" vector-effect="non-scaling-stroke"/>` : '');
   return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${extras}${today}</svg>`;
 }
 

@@ -117,22 +117,39 @@ export async function runHealthChecks(env, selfFetch, extFetch = fetch) {
   return { ok: results.every((r) => r.ok), at: new Date().toISOString(), results };
 }
 
-// Posts a failure summary to ALERT_WEBHOOK. Understands Slack incoming webhooks
+// Decides whether to alert this run, given the set of checks that failed LAST
+// run (persisted by the caller). Only a CHANGE pages: a check flipping fail↔ok.
+// An ongoing outage stays silent after its first alert, so a stuck dependency
+// (e.g. NJT's token cap all afternoon) doesn't page every 20 min. Returns the
+// current failing-check names for the caller to persist for next time.
+export function alertPlan(report, prevFailing = []) {
+  const failing = report.results.filter((r) => !r.ok);
+  const names = failing.map((r) => r.name);
+  const sameSet = names.length === prevFailing.length && names.every((n) => prevFailing.includes(n));
+  if (sameSet) return { changed: false, failing: names, text: null };
+  const recovered = prevFailing.filter((n) => !names.includes(n));
+  let text;
+  if (failing.length) {
+    text = `🔴 Room & Board health: ${failing.map((r) => `${r.name} (${r.detail})`).join(', ')}`;
+    if (recovered.length) text += ` (recovered: ${recovered.join(', ')})`;
+  } else {
+    text = `✅ Room & Board health: all clear (recovered: ${recovered.join(', ')})`;
+  }
+  return { changed: true, failing: names, text: `${text} — ${report.at}` };
+}
+
+// Posts a prebuilt message to ALERT_WEBHOOK. Understands Slack incoming webhooks
 // (JSON {text}) and ntfy.sh (plain body) by URL; no-ops with a log if the secret
-// isn't set, so the monitor can deploy before the alert channel is wired. v1
-// alerts on every failing run — if that gets noisy during a long outage, add a
-// transition guard later.
-export async function notify(env, report, fetchImpl = fetch) {
-  const failed = report.results.filter((r) => !r.ok);
-  const msg = `Room & Board health check FAILED: ${failed.map((r) => `${r.name} (${r.detail})`).join(', ')} — ${report.at}`;
+// isn't set, so the monitor can deploy before the alert channel is wired.
+export async function notify(env, text, fetchImpl = fetch) {
   const url = env?.ALERT_WEBHOOK;
-  if (!url) { console.error('[health]', msg, '(ALERT_WEBHOOK not set)'); return; }
+  if (!url) { console.error('[health]', text, '(ALERT_WEBHOOK not set)'); return; }
   const ntfy = url.includes('ntfy.sh');
   try {
     await fetchImpl(url, {
       method: 'POST',
-      headers: ntfy ? { Title: 'Room & Board health', Priority: 'high', Tags: 'red_circle' } : { 'content-type': 'application/json' },
-      body: ntfy ? msg : JSON.stringify({ text: `🔴 ${msg}` }),
+      headers: ntfy ? { Title: 'Room & Board health' } : { 'content-type': 'application/json' },
+      body: ntfy ? text : JSON.stringify({ text }),
       signal: AbortSignal.timeout(8000),
     });
   } catch (err) {

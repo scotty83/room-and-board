@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CHECKS, runHealthChecks, notify } from '../../worker/src/health.js';
+import { CHECKS, runHealthChecks, notify, alertPlan } from '../../worker/src/health.js';
 
 // Valid response bodies keyed by a unique substring of each check's URL, so a
 // mock fetch can answer every probe with a shape its validator accepts.
@@ -127,29 +127,66 @@ describe('stale-age (cached routes serving old data)', () => {
 });
 
 describe('notify', () => {
-  const failReport = { at: 'T', results: [{ name: 'markets', ok: false, detail: 'HTTP 503' }, { name: 'site', ok: true, detail: 'ok' }] };
-
   it('no-ops (no POST) when ALERT_WEBHOOK is unset', async () => {
     const fetchImpl = vi.fn();
-    await notify({}, failReport, fetchImpl);
+    await notify({}, 'anything', fetchImpl);
     expect(fetchImpl).not.toHaveBeenCalled();
   });
-  it('posts Slack-shaped JSON naming only the failed checks', async () => {
+  it('posts the message as Slack-shaped JSON', async () => {
     const fetchImpl = mockFetch();
-    await notify({ ALERT_WEBHOOK: 'https://hooks.slack.com/services/x' }, failReport, fetchImpl);
+    await notify({ ALERT_WEBHOOK: 'https://hooks.slack.com/services/x' }, '🔴 markets (HTTP 503)', fetchImpl);
     expect(fetchImpl).toHaveBeenCalledOnce();
     const [, init] = fetchImpl.mock.calls[0];
     expect(init.headers['content-type']).toBe('application/json');
-    const payload = JSON.parse(init.body);
-    expect(payload.text).toContain('markets (HTTP 503)');
-    expect(payload.text).not.toContain('site');
+    expect(JSON.parse(init.body).text).toBe('🔴 markets (HTTP 503)');
   });
   it('posts a plain-text body with Title header for ntfy.sh', async () => {
     const fetchImpl = mockFetch();
-    await notify({ ALERT_WEBHOOK: 'https://ntfy.sh/roomboard-alerts' }, failReport, fetchImpl);
+    await notify({ ALERT_WEBHOOK: 'https://ntfy.sh/roomboard-alerts' }, 'markets (HTTP 503)', fetchImpl);
     const [, init] = fetchImpl.mock.calls[0];
     expect(init.headers.Title).toBe('Room & Board health');
-    expect(typeof init.body).toBe('string');
-    expect(init.body).toContain('markets (HTTP 503)');
+    expect(init.body).toBe('markets (HTTP 503)');
+  });
+});
+
+describe('alertPlan (alert only on change)', () => {
+  const mk = (name, ok, detail = 'ok') => ({ name, ok, detail });
+  const rep = (results) => ({ at: '2026-07-22T00:00:00Z', results });
+
+  it('stays silent when the failing set is unchanged (ongoing outage)', () => {
+    const plan = alertPlan(rep([mk('njt', false, 'stale 500 min old'), mk('site', true)]), ['njt']);
+    expect(plan.changed).toBe(false);
+    expect(plan.text).toBeNull();
+    expect(plan.failing).toEqual(['njt']);
+  });
+  it('stays silent when all green and nothing was failing', () => {
+    expect(alertPlan(rep([mk('site', true), mk('njt', true)]), []).changed).toBe(false);
+  });
+  it('alerts on a newly-failing check', () => {
+    const plan = alertPlan(rep([mk('njt', false, 'stale 500 min old'), mk('site', true)]), []);
+    expect(plan.changed).toBe(true);
+    expect(plan.text).toContain('🔴');
+    expect(plan.text).toContain('njt (stale 500 min old)');
+    expect(plan.failing).toEqual(['njt']);
+  });
+  it('sends a recovery notice when the last failure clears', () => {
+    const plan = alertPlan(rep([mk('njt', true), mk('site', true)]), ['njt']);
+    expect(plan.changed).toBe(true);
+    expect(plan.text).toContain('✅');
+    expect(plan.text).toContain('all clear');
+    expect(plan.text).toContain('recovered: njt');
+    expect(plan.failing).toEqual([]);
+  });
+  it('alerts when another check fails on top of an existing one', () => {
+    const plan = alertPlan(rep([mk('njt', false, 'stale 500 min old'), mk('markets', false, 'HTTP 502')]), ['njt']);
+    expect(plan.changed).toBe(true);
+    expect(plan.text).toContain('markets (HTTP 502)');
+    expect(plan.failing.sort()).toEqual(['markets', 'njt']);
+  });
+  it('notes a partial recovery while another stays down', () => {
+    const plan = alertPlan(rep([mk('njt', false, 'stale 500 min old'), mk('markets', true)]), ['njt', 'markets']);
+    expect(plan.changed).toBe(true);
+    expect(plan.text).toContain('njt (stale 500 min old)');
+    expect(plan.text).toContain('recovered: markets');
   });
 });

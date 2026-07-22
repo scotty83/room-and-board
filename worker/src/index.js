@@ -22,7 +22,7 @@ import { fetchChart, CHART_TOPICS } from './chart.js';
 import { fetchF1 } from './f1.js';
 import { fetchGolf, fetchTennis } from './scores.js';
 import { fetchAmtrak } from './amtrak.js';
-import { runHealthChecks, notify } from './health.js';
+import { runHealthChecks, notify, alertPlan } from './health.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -204,6 +204,27 @@ async function fetchMarkets(symbols) {
 // of via fetch(). The hostname is arbitrary — only the path drives routing.
 const selfFetch = (env) => (routePath) =>
   handlers.fetch(new Request('https://api.roomboard.app' + routePath), env);
+
+// Last-alerted failing-check set, so the cron only alerts on a CHANGE (see
+// alertPlan). Kept in the Cache API, not KV — it's colo-local and evictable, but
+// a lost state just means one extra alert on the next run, which is harmless
+// (and keeps the CODES KV codes-only). 24h TTL.
+const HEALTH_STATE = new Request('https://api.roomboard.app/__health/laststate');
+async function readHealthFailing() {
+  try {
+    const hit = await caches.default.match(HEALTH_STATE);
+    if (hit) return (await hit.json()).failing ?? [];
+  } catch { /* first run / evicted — treat as no prior failures */ }
+  return [];
+}
+async function writeHealthFailing(failing) {
+  try {
+    await caches.default.put(
+      HEALTH_STATE,
+      new Response(JSON.stringify({ failing }), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=86400' } }),
+    );
+  } catch { /* best effort */ }
+}
 
 const handlers = {
   async fetch(request, env) {
@@ -389,7 +410,7 @@ const handlers = {
     if (path === '/health' && request.method === 'GET') {
       const report = await runHealthChecks(env, selfFetch(env));
       if (url.searchParams.get('test') === 'alert') {
-        await notify(env, { at: report.at, results: [{ name: 'test', ok: false, detail: 'manual channel-wiring check — not a real outage' }] });
+        await notify(env, `🔴 Room & Board health: test (manual channel-wiring check — not a real outage) — ${report.at}`);
       }
       return json(report, report.ok ? 200 : 503);
     }
@@ -404,7 +425,12 @@ const handlers = {
   // from fetch — so it catches route regressions, not just upstream outages.
   async scheduled(event, env, ctx) {
     const report = await runHealthChecks(env, selfFetch(env));
-    if (!report.ok) ctx.waitUntil(notify(env, report));
+    // Alert only when the failing set changes (see alertPlan), so an ongoing
+    // outage doesn't page every 20 min. Persist this run's failing set for the
+    // next comparison regardless.
+    const plan = alertPlan(report, await readHealthFailing());
+    if (plan.changed && plan.text) ctx.waitUntil(notify(env, plan.text));
+    ctx.waitUntil(writeHealthFailing(plan.failing));
   },
 };
 

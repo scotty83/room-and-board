@@ -44,14 +44,38 @@ export function yForValue(val, values, h = 28, pad = 2) {
   return pad + (1 - (val - min) / span) * (h - 2 * pad);
 }
 
-let sparkUid = 0;
+// Splits a polyline into GREEN (at/above the baseline) and RED (below) subpaths,
+// cutting each segment exactly where it crosses the baseline y. Pure geometry
+// with plain <path> data — deliberately NO SVG clip-paths, which the board's
+// gen1 WebEngine renders unreliably (a crossing line dropped out entirely).
+export function colorSplit(pts, yBase) {
+  let up = '';
+  let down = '';
+  const push = (above, x1, y1, x2, y2) => {
+    const s = `M${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}`;
+    if (above) up += s; else down += s;
+  };
+  for (let i = 1; i < pts.length; i++) {
+    const [x1, y1] = pts[i - 1];
+    const [x2, y2] = pts[i];
+    const a1 = y1 <= yBase; // smaller y = higher price = above the baseline (green)
+    const a2 = y2 <= yBase;
+    if (a1 === a2) {
+      push(a1, x1, y1, x2, y2);
+    } else {
+      const xc = x1 + ((yBase - y1) / (y2 - y1)) * (x2 - x1); // x where it crosses
+      push(a1, x1, y1, xc, yBase);
+      push(a2, xc, yBase, x2, y2);
+    }
+  }
+  return { up, down };
+}
 
 // Sparkline SVG. The CURRENT session is coloured against the prior close: green
-// where the price sits above it, red where below, split cleanly at the crossing
-// so an intraday move that dips through the baseline shows BOTH colours. The
-// two colours are the same today path drawn twice and clip-masked at the
-// baseline y. Wide cards (twoDay) draw the prior session in WHITE ahead of a
-// dashed day-boundary rule; compact cards draw today alone, coloured the same.
+// where the price sits above it, red where below, cut cleanly at the crossing
+// so an intraday move that dips through the baseline shows BOTH colours. Wide
+// cards (twoDay) draw the prior session in WHITE ahead of a dashed day-boundary
+// rule; compact cards draw today alone, coloured the same way.
 function sparkSvg(ix) {
   const two =
     ix.twoDay &&
@@ -62,25 +86,22 @@ function sparkSvg(ix) {
   const series = two ? ix.spark2 : ix.spark;
   const pts = sparkPts(series, 90, 28);
   if (pts.length < 2) return '<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none"></svg>';
-  const uid = ++sparkUid;
   // Colour baseline = the prior close. Two-day: yesterday's last bar (the split
   // point); compact: price − change. The current segment starts there, so the
   // overnight move reads as part of today.
   const baseVal = two ? series[ix.split - 1] : ix.price - ix.change;
   const yBase = yForValue(baseVal, series);
-  const todayD = toPath(two ? pts.slice(ix.split - 1) : pts);
-  // Above the baseline (lower y) is green; below (higher y) is red.
-  const clips = `<clipPath id="sk-u${uid}"><rect x="-10" y="-30" width="110" height="${(yBase + 30).toFixed(2)}"/></clipPath>` +
-    `<clipPath id="sk-d${uid}"><rect x="-10" y="${yBase.toFixed(2)}" width="110" height="90"/></clipPath>`;
-  const today = `<path class="spark__up" d="${todayD}" fill="none" stroke-width="1.5" clip-path="url(#sk-u${uid})"/>` +
-    `<path class="spark__down" d="${todayD}" fill="none" stroke-width="1.5" clip-path="url(#sk-d${uid})"/>`;
+  const { up, down } = colorSplit(two ? pts.slice(ix.split - 1) : pts, yBase);
+  const today =
+    (up ? `<path class="spark__up" d="${up}" fill="none" stroke-width="1.5"/>` : '') +
+    (down ? `<path class="spark__down" d="${down}" fill="none" stroke-width="1.5"/>` : '');
   let extras = '';
   if (two) {
     const dx = sparkDividerX(series.length, ix.split).toFixed(1);
     extras = `<path class="spark__prev" d="${toPath(pts.slice(0, ix.split))}" fill="none" stroke-width="1.5"/>` +
       `<line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
   }
-  return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${clips}${extras}${today}</svg>`;
+  return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${extras}${today}</svg>`;
 }
 
 const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

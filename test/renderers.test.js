@@ -39,7 +39,7 @@ import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, sparkDividerX, yForValue, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, yForValue, colorSplit, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
@@ -618,17 +618,16 @@ describe('markets 2-day sparkline', () => {
     const wide = mk(4); // markets' max width — fixture carries spark2/split
     expect(wide.querySelectorAll('.spark__div').length).toBe(3); // one per index
     expect(wide.querySelectorAll('.spark__prev').length).toBe(3); // white yesterday segment
-    // Today is drawn twice (green above / red below the prior close) and masked.
-    expect(wide.querySelectorAll('.spark__up').length).toBe(3);
-    expect(wide.querySelectorAll('.spark__down').length).toBe(3);
-    expect(wide.querySelectorAll('.spark clipPath').length).toBe(6); // 2 masks per index
+    // Today is baseline-coloured with plain paths — NO clip-paths (gen1 WebEngine
+    // drops clipped SVG). Every sparkline has at least one coloured today path.
+    expect(wide.querySelector('clipPath')).toBeNull();
+    expect(wide.querySelectorAll('.spark__up, .spark__down').length).toBeGreaterThanOrEqual(3);
     wide.remove();
     const narrow = mk(3); // the 3-wide min → compact 1-day spark, no divider
     expect(narrow.querySelector('.spark__div')).toBeNull();
     expect(narrow.querySelector('.spark__prev')).toBeNull();
-    // Compact today is still baseline-coloured (green above / red below).
-    expect(narrow.querySelectorAll('.spark__up').length).toBe(3);
-    expect(narrow.querySelectorAll('.spark__down').length).toBe(3);
+    expect(narrow.querySelector('clipPath')).toBeNull();
+    expect(narrow.querySelectorAll('.spark__up, .spark__down').length).toBeGreaterThanOrEqual(3);
     narrow.remove();
   });
 
@@ -637,6 +636,17 @@ describe('markets 2-day sparkline', () => {
     expect(yForValue(10, [0, 10], 28, 2)).toBeCloseTo(2, 5);
     expect(yForValue(0, [0, 10], 28, 2)).toBeCloseTo(26, 5);
     expect(yForValue(5, [0, 10], 28, 2)).toBeCloseTo(14, 5); // midpoint
+  });
+
+  it('colorSplit cuts a crossing polyline into green/red subpaths at the baseline', () => {
+    // (0,4) is above yBase=10, (10,16) below → crossing interpolated at x=5.
+    const cross = colorSplit([[0, 4], [10, 16]], 10);
+    expect(cross.up).toBe('M0.0,4.0L5.0,10.0');   // green: above → baseline
+    expect(cross.down).toBe('M5.0,10.0L10.0,16.0'); // red: baseline → below
+    // A same-side segment stays one colour, the other path empty.
+    const above = colorSplit([[0, 2], [10, 4]], 10);
+    expect(above.up).toBe('M0.0,2.0L10.0,4.0');
+    expect(above.down).toBe('');
   });
 });
 

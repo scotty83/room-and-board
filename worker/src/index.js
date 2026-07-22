@@ -376,8 +376,14 @@ export default {
     // On-demand health probe (same checks the cron runs). Returns 200 when all
     // green, 503 when any check fails — so an external uptime pinger can watch
     // this one URL as a belt-and-suspenders to the self-hosted cron.
+    // /health?test=alert forces a synthetic alert so an operator can confirm the
+    // ALERT_WEBHOOK channel actually delivers — an unverified alert path is
+    // worthless. No-ops (like any alert) when the secret is unset.
     if (path === '/health' && request.method === 'GET') {
       const report = await runHealthChecks();
+      if (url.searchParams.get('test') === 'alert') {
+        await notify(env, { at: report.at, results: [{ name: 'test', ok: false, detail: 'manual channel-wiring check — not a real outage' }] });
+      }
       return json(report, report.ok ? 200 : 503);
     }
 

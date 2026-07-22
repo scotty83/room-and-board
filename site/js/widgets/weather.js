@@ -2,7 +2,7 @@
 // plus NWS active-alert banner. All time strings stay in the device-local
 // timezone Open-Meteo returns (timezone=auto) — no Date parsing of API times.
 
-import { escapeHtml, setCardNote } from '../util.js';
+import { escapeHtml, setCardNote, chaikin } from '../util.js';
 import { icon } from '../icons.js';
 
 export const meta = { id: 'weather', title: 'Weather', refreshMs: 10 * 60 * 1000 };
@@ -20,11 +20,16 @@ function trendSvg(temps, gradId) {
   if (hi - lo < 6) { const mid = (lo + hi) / 2; lo = mid - 3; hi = mid + 3; }
   else { lo -= 1; hi += 1; }
   const TOP = 14, BOT = 86;
-  const xs = (i) => (i + 0.5).toFixed(2);
-  const ys = (t) => (TOP + (1 - (t - lo) / (hi - lo)) * (BOT - TOP)).toFixed(2);
-  const pts = temps.map((t, i) => `${xs(i)} ${ys(t)}`);
+  const px = (i) => i + 0.5;
+  const py = (t) => TOP + (1 - (t - lo) / (hi - lo)) * (BOT - TOP);
+  // Smooth the trend the same way as the markets sparkline: Chaikin keeps the
+  // endpoints (so the line still spans 0.5..n-0.5 and lines up with the hour
+  // columns) and never overshoots the padded domain.
+  const sm = chaikin(temps.map((t, i) => [px(i), py(t)]));
+  const xy = ([x, y]) => `${x.toFixed(2)} ${y.toFixed(2)}`;
+  const pts = sm.map(xy);
   const line = 'M' + pts.join(' L');
-  const area = `M${xs(0)} 100 L` + pts.join(' L') + ` L${xs(n - 1)} 100 Z`;
+  const area = `M${sm[0][0].toFixed(2)} 100 L` + pts.join(' L') + ` L${sm[sm.length - 1][0].toFixed(2)} 100 Z`;
   return `<svg class="wx-trend__chart" viewBox="0 0 ${n} 100" preserveAspectRatio="none" aria-hidden="true">
       <defs><linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" class="wx-trend__g0"></stop><stop offset="1" class="wx-trend__g1"></stop>

@@ -39,7 +39,8 @@ import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, sparkDividerX, yForValue, colorSplit, chaikin, splitAtX, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, yForValue, colorSplit, splitAtX, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { chaikin } from '../site/js/util.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');

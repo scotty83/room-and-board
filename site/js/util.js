@@ -3,6 +3,27 @@ export function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
+// Chaikin corner-cutting: rounds a polyline ([[x,y],...]) into a denser,
+// curve-like one so a chart reads smooth rather than angular. It stays inside
+// the data's convex hull (NO overshoot, so no phantom crossings), preserves the
+// exact endpoints, and remains a plain polyline. Two passes lose the polygon
+// look. Shared by the markets and weather trend lines.
+export function chaikin(pts, iterations = 2) {
+  let p = pts;
+  for (let it = 0; it < iterations && p.length >= 3; it++) {
+    const out = [p[0]];
+    for (let i = 0; i < p.length - 1; i++) {
+      const [x1, y1] = p[i];
+      const [x2, y2] = p[i + 1];
+      out.push([x1 + 0.25 * (x2 - x1), y1 + 0.25 * (y2 - y1)]);
+      out.push([x1 + 0.75 * (x2 - x1), y1 + 0.75 * (y2 - y1)]);
+    }
+    out.push(p[p.length - 1]);
+    p = out;
+  }
+  return p;
+}
+
 export function fmtTime(epochSec) {
   return new Date(epochSec * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }

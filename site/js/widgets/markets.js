@@ -3,7 +3,7 @@
 // widget hides itself when the payload is unusable).
 
 import { WORKER_URL } from '../env.js';
-import { escapeHtml, fmtClock, setCardNote, setMoreBadge } from '../util.js';
+import { escapeHtml, fmtClock, setCardNote, setMoreBadge, chaikin } from '../util.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
 export const meta = { id: 'markets', title: 'Markets', refreshMs: 5 * 60 * 1000 };
@@ -42,27 +42,6 @@ export function yForValue(val, values, h = 28, pad = 2) {
   const max = Math.max(...values);
   const span = max - min || 1;
   return pad + (1 - (val - min) / span) * (h - 2 * pad);
-}
-
-// Chaikin corner-cutting: rounds a polyline into a denser, curve-like one so the
-// sparkline reads smooth rather than angular. It stays inside the data's convex
-// hull (NO overshoot, so no phantom baseline crossings), preserves the exact
-// endpoints (the divider + baseline anchors), and remains a plain polyline — so
-// colorSplit still works. Two passes is enough to lose the polygon look.
-export function chaikin(pts, iterations = 2) {
-  let p = pts;
-  for (let it = 0; it < iterations && p.length >= 3; it++) {
-    const out = [p[0]];
-    for (let i = 0; i < p.length - 1; i++) {
-      const [x1, y1] = p[i];
-      const [x2, y2] = p[i + 1];
-      out.push([x1 + 0.25 * (x2 - x1), y1 + 0.25 * (y2 - y1)]);
-      out.push([x1 + 0.75 * (x2 - x1), y1 + 0.75 * (y2 - y1)]);
-    }
-    out.push(p[p.length - 1]);
-    p = out;
-  }
-  return p;
 }
 
 // Splits a polyline into GREEN (at/above the baseline) and RED (below) subpaths,

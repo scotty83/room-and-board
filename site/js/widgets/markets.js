@@ -92,6 +92,20 @@ export function colorSplit(pts, yBase) {
   return { up, down };
 }
 
+// Splits a monotonic-x polyline at x = xc, interpolating the point on the line
+// there so the two halves join EXACTLY at xc (the day divider). Returns
+// { left, right }, both including the join point, so the white prior session and
+// the coloured today meet with no gap or kink.
+export function splitAtX(pts, xc) {
+  const k = pts.findIndex(([x]) => x >= xc);
+  if (k <= 0) return { left: [], right: pts };
+  if (pts[k][0] === xc) return { left: pts.slice(0, k + 1), right: pts.slice(k) };
+  const [x1, y1] = pts[k - 1];
+  const [x2, y2] = pts[k];
+  const cross = [xc, y1 + ((xc - x1) / (x2 - x1)) * (y2 - y1)];
+  return { left: [...pts.slice(0, k), cross], right: [cross, ...pts.slice(k)] };
+}
+
 // Sparkline SVG. The CURRENT session is coloured against the prior close: green
 // where the price sits above it, red where below, cut cleanly at the crossing
 // so an intraday move that dips through the baseline shows BOTH colours. Wide
@@ -112,17 +126,23 @@ function sparkSvg(ix) {
   // overnight move reads as part of today.
   const baseVal = two ? series[ix.split - 1] : ix.price - ix.change;
   const yBase = yForValue(baseVal, series);
-  // Smooth each drawn segment (Chaikin) so the line curves instead of kinking.
-  const { up, down } = colorSplit(chaikin(two ? pts.slice(ix.split - 1) : pts), yBase);
+  // Smooth the WHOLE line once (Chaikin), then split at the day divider — so the
+  // white prior session flows seamlessly into today's colour. Smoothing the two
+  // halves separately left a visible kink at the boundary.
+  const sm = chaikin(pts);
+  let extras = '';
+  let todayPts = sm;
+  if (two) {
+    const dx = sparkDividerX(series.length, ix.split);
+    const { left, right } = splitAtX(sm, dx);
+    todayPts = right;
+    extras = `<path class="spark__prev" d="${toPath(left)}" fill="none" stroke-width="1.5"/>` +
+      `<line class="spark__div" x1="${dx.toFixed(1)}" y1="-5" x2="${dx.toFixed(1)}" y2="33" vector-effect="non-scaling-stroke"/>`;
+  }
+  const { up, down } = colorSplit(todayPts, yBase);
   const today =
     (up ? `<path class="spark__up" d="${up}" fill="none" stroke-width="1.5"/>` : '') +
     (down ? `<path class="spark__down" d="${down}" fill="none" stroke-width="1.5"/>` : '');
-  let extras = '';
-  if (two) {
-    const dx = sparkDividerX(series.length, ix.split).toFixed(1);
-    extras = `<path class="spark__prev" d="${toPath(chaikin(pts.slice(0, ix.split)))}" fill="none" stroke-width="1.5"/>` +
-      `<line class="spark__div" x1="${dx}" y1="-5" x2="${dx}" y2="33" vector-effect="non-scaling-stroke"/>`;
-  }
   return `<svg class="spark" viewBox="0 0 90 28" preserveAspectRatio="none">${extras}${today}</svg>`;
 }
 

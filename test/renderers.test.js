@@ -39,7 +39,7 @@ import * as iptv from '../site/js/widgets/iptv.js';
 import * as amtrak from '../site/js/widgets/amtrak.js';
 import * as clock from '../site/js/widgets/clock.js';
 import { fmtClock } from '../site/js/util.js';
-import { sparkPath, sparkDividerX, yForValue, colorSplit, chaikin, normalizeSymbol } from '../site/js/widgets/markets.js';
+import { sparkPath, sparkDividerX, yForValue, colorSplit, chaikin, splitAtX, normalizeSymbol } from '../site/js/widgets/markets.js';
 
 const CFG = { name: 'Sean' };
 const el = () => document.createElement('div');
@@ -658,6 +658,13 @@ describe('markets 2-day sparkline', () => {
     const ys = s.map((p) => p[1]);
     expect(Math.max(...ys)).toBeLessThanOrEqual(20); // stays within the data — no phantom crossings
     expect(Math.min(...ys)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('splitAtX interpolates the join so both halves meet at x (seamless divider)', () => {
+    const { left, right } = splitAtX([[0, 0], [10, 10], [20, 6]], 5);
+    expect(left[left.length - 1]).toEqual([5, 5]); // white ends exactly at the divider
+    expect(right[0]).toEqual([5, 5]); // colour begins exactly at the divider — no kink
+    expect(right[right.length - 1]).toEqual([20, 6]); // rest of today intact
   });
 });
 

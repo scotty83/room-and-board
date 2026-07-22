@@ -5,6 +5,9 @@
 #   npx wrangler secret put NJT_USER
 #   npx wrangler secret put NJT_PASS
 # Replace the KV id with your namespace: npx wrangler kv namespace create CODES
+# Health-alert channel (see src/health.js) — a Slack incoming-webhook URL or an
+# ntfy.sh topic URL; the monitor no-ops if unset:
+#   npx wrangler secret put ALERT_WEBHOOK
 name = "signage-api"
 main = "src/index.js"
 compatibility_date = "2026-06-01"
@@ -14,6 +17,12 @@ routes = [
   # fallback site target this host (see site/js/env.js).
   { pattern = "signage-api.rvc.tech", custom_domain = true }
 ]
+
+# Health monitor (src/health.js): validates the key endpoints' CONTENT every
+# 20 min and posts to ALERT_WEBHOOK on failure. Delete this block to turn it off
+# (the /health route stays available for on-demand / external checks).
+[triggers]
+crons = ["*/20 * * * *"]
 
 [[kv_namespaces]]
 binding = "CODES"

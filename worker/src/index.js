@@ -22,6 +22,7 @@ import { fetchChart, CHART_TOPICS } from './chart.js';
 import { fetchF1 } from './f1.js';
 import { fetchGolf, fetchTennis } from './scores.js';
 import { fetchAmtrak } from './amtrak.js';
+import { runHealthChecks, notify } from './health.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -372,6 +373,24 @@ export default {
       return cached(url.origin, busKey, 30, () => fetchBusStops(env, legs));
     }
 
+    // On-demand health probe (same checks the cron runs). Returns 200 when all
+    // green, 503 when any check fails — so an external uptime pinger can watch
+    // this one URL as a belt-and-suspenders to the self-hosted cron.
+    if (path === '/health' && request.method === 'GET') {
+      const report = await runHealthChecks();
+      return json(report, report.ok ? 200 : 503);
+    }
+
     return json({ error: 'not_found' }, 404);
+  },
+
+  // Cron Trigger (see [triggers] in wrangler.toml): probe the key endpoints and
+  // alert (ALERT_WEBHOOK) if any fail. waitUntil keeps the alert POST alive past
+  // the handler return. A monitor living in the api worker still runs its checks
+  // even when a bad deploy breaks the routes — the scheduled handler is separate
+  // from fetch — so it catches route regressions, not just upstream outages.
+  async scheduled(event, env, ctx) {
+    const report = await runHealthChecks();
+    if (!report.ok) ctx.waitUntil(notify(env, report));
   },
 };

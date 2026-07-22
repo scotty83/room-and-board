@@ -9,6 +9,7 @@ const OK_BODIES = {
   'open-meteo': { hourly: { temperature_2m: [70, 71, 69] } },
   'gdrive': { photos: [{ id: 'a' }, { id: 'b' }] },
   'amtrak': { station: 'New York Penn', departures: [] }, // empty at night is still healthy
+  '/njt': { station: 'NY', trains: [{ time: 1, dest: 'Trenton' }] },
 };
 const bodyFor = (url) => OK_BODIES[Object.keys(OK_BODIES).find((k) => url.includes(k))];
 
@@ -53,6 +54,11 @@ describe('health CHECKS validators', () => {
     expect(byName.amtrak({ station: 'NYP' })).toBe(false);
     expect(byName.amtrak({ departures: [] })).toBe(false);
   });
+  it('njt: station + trains array (NJT returns `trains`, not `departures`)', () => {
+    expect(byName.njt({ station: 'NY', trains: [] })).toBe(true);
+    expect(byName.njt({ station: 'NY' })).toBe(false);
+    expect(byName.njt({ trains: [] })).toBe(false);
+  });
 });
 
 describe('runHealthChecks', () => {
@@ -86,6 +92,37 @@ describe('runHealthChecks', () => {
   it('flags a timeout by name', async () => {
     const report = await run({ gdrive: { throw: 'TimeoutError' } });
     expect(report.results.find((r) => r.name === 'gdrive')).toMatchObject({ ok: false, detail: 'timeout' });
+  });
+});
+
+describe('stale-age (cached routes serving old data)', () => {
+  const nowSec = () => Math.floor(Date.now() / 1000);
+  const run = (overrides = {}) => {
+    const m = mockFetch(overrides);
+    return runHealthChecks({}, m, m);
+  };
+  const njtResult = (report) => report.results.find((r) => r.name === 'njt');
+
+  it('FAILS when stale data is older than the 1h threshold (the NJT token-cap case)', async () => {
+    const body = JSON.stringify({ station: 'NY', trains: [{ time: 1 }], stale: true, updatedAt: nowSec() - 6 * 3600 });
+    const report = await run({ '/njt': { body } });
+    const njt = njtResult(report);
+    expect(njt.ok).toBe(false);
+    expect(njt.detail).toMatch(/stale \d+ min old/);
+    expect(report.ok).toBe(false);
+  });
+
+  it('tolerates brief staleness within the threshold', async () => {
+    const body = JSON.stringify({ station: 'NY', trains: [{ time: 1 }], stale: true, updatedAt: nowSec() - 10 * 60 });
+    const report = await run({ '/njt': { body } });
+    const njt = njtResult(report);
+    expect(njt.ok).toBe(true);
+    expect(njt.detail).toMatch(/ok \(stale \d+ min\)/);
+  });
+
+  it('treats a 503 not-configured route as skipped, not failed', async () => {
+    const report = await run({ '/njt': { status: 503, body: JSON.stringify({ error: 'njt_not_configured' }) } });
+    expect(njtResult(report)).toMatchObject({ ok: true, detail: 'not configured (skipped)' });
   });
 });
 

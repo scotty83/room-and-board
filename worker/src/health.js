@@ -1,14 +1,21 @@
 // Health monitor. Probes the key endpoints and validates the RESPONSE CONTENT —
 // not just up/down — so it catches the real failure mode: an upstream that
-// returns HTTP 200 with reshaped garbage (e.g. Yahoo changing its JSON). Runs
-// from the worker's scheduled() cron and on-demand via GET /health, and posts to
-// ALERT_WEBHOOK on failure.
+// returns HTTP 200 with reshaped garbage (e.g. Yahoo changing its JSON), or a
+// worker route quietly serving hours-old cache (e.g. NJT after its daily token
+// cap is hit). Runs from the worker's scheduled() cron and on-demand via GET
+// /health, and posts to ALERT_WEBHOOK on failure.
 //
 // Checks with `path` are the worker's OWN routes: they run in-process via
 // selfFetch (a Worker fetching its own custom domain over the network loops →
 // Cloudflare 522). Checks with `url` are external and use plain fetch.
+// `maxStaleSec` (own-route checks only): when the worker serves last-good cache
+// (`stale: true`) because the upstream refresh keeps failing, tolerate a brief
+// blip but FAIL once the data is older than this, that sustained-stale window is
+// exactly how the NJT token cap and similar silent degradations show up.
 // Self-hosters: change the hosts/paths (or delete the [triggers] block in
 // wrangler.toml to turn the cron off).
+
+const STALE_MAX = 3600; // 1h: past this, stale cache means the upstream is really down
 
 export const CHECKS = [
   {
@@ -19,6 +26,7 @@ export const CHECKS = [
   {
     name: 'markets', // Yahoo (unofficial) — the flakiest dependency
     path: '/markets',
+    maxStaleSec: STALE_MAX,
     ok: (j) => Array.isArray(j.indices) && j.indices.length > 0 && Number.isFinite(j.indices[0].price),
   },
   {
@@ -29,14 +37,30 @@ export const CHECKS = [
   {
     name: 'gdrive', // curated photos + backdrops; also proves GDRIVE_KEY works
     path: '/gdrive/album?folder=1RHow60mcBwzMturimQSbziK3hqCvP2lz',
+    maxStaleSec: STALE_MAX,
     ok: (j) => Array.isArray(j.photos) && j.photos.length > 0,
   },
   {
-    name: 'amtrak', // one transit example; departures may be empty at night, so shape-only
+    name: 'amtrak', // Amtraker (unofficial) transit proxy
     path: '/amtrak/departures',
+    maxStaleSec: STALE_MAX,
     ok: (j) => typeof j.station === 'string' && Array.isArray(j.departures),
   },
+  {
+    name: 'njt', // NJTransit — token-authed, 10 getToken calls/day; stale-prone
+    path: '/njt/departures',
+    maxStaleSec: STALE_MAX,
+    ok: (j) => typeof j.station === 'string' && Array.isArray(j.trains),
+  },
 ];
+
+// Age of a payload in seconds. All worker routes stamp updatedAt as epoch
+// seconds (Math.floor(Date.now()/1000)). null when absent/unparseable.
+function ageSeconds(updatedAt) {
+  const n = Number(updatedAt);
+  if (!Number.isFinite(n)) return null;
+  return Math.floor(Date.now() / 1000) - n;
+}
 
 // Rejects with a TimeoutError if p doesn't settle in ms; clears the timer on
 // settle so it never dangles (matters for the in-process self checks, which
@@ -54,14 +78,32 @@ async function probe(check, selfFetch, extFetch) {
     const res = check.path
       ? await withTimeout(selfFetch(check.path), 13000)
       : await extFetch(check.url, { signal: AbortSignal.timeout(12000), headers: { 'cache-control': 'no-cache' } });
-    if (!res.ok) return { name: check.name, ok: false, detail: `HTTP ${res.status}` };
+    if (!res.ok) {
+      // An optional route the operator chose not to configure (NJT without
+      // creds, bus without a key) returns 503 {error:'..._not_configured'} —
+      // a choice, not an outage. Skip it rather than page forever.
+      if (res.status === 503) {
+        const b = await res.text().catch(() => '');
+        if (/_not_configured/.test(b)) return { name: check.name, ok: true, detail: 'not configured (skipped)' };
+      }
+      return { name: check.name, ok: false, detail: `HTTP ${res.status}` };
+    }
     const body = await res.text();
     let json;
     try { json = JSON.parse(body); } catch { return { name: check.name, ok: false, detail: 'unparseable response' }; }
     if (!check.ok(json)) return { name: check.name, ok: false, detail: 'unexpected shape/content' };
-    // stale=true means the worker served old cache because the upstream refresh
-    // failed — a soft early-warning, surfaced but not treated as a hard failure.
-    return { name: check.name, ok: true, detail: json.stale === true ? 'ok (stale cache)' : 'ok', stale: json.stale === true };
+    // stale=true means the worker served last-good cache because the upstream
+    // refresh failed. Tolerate a brief blip; FAIL once it's older than
+    // maxStaleSec (the upstream has been down a while and the data is misleading).
+    if (json.stale === true) {
+      const age = ageSeconds(json.updatedAt);
+      const mins = age === null ? null : Math.round(age / 60);
+      if (check.maxStaleSec && age !== null && age > check.maxStaleSec) {
+        return { name: check.name, ok: false, detail: `stale ${mins} min old`, stale: true, ageSec: age };
+      }
+      return { name: check.name, ok: true, detail: mins === null ? 'ok (stale cache)' : `ok (stale ${mins} min)`, stale: true, ageSec: age };
+    }
+    return { name: check.name, ok: true, detail: 'ok', stale: false };
   } catch (err) {
     const detail = err?.name === 'TimeoutError' ? 'timeout' : String(err?.message ?? err).slice(0, 80);
     return { name: check.name, ok: false, detail };

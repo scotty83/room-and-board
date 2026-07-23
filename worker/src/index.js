@@ -140,6 +140,10 @@ async function cached(origin, key, ttlS, fetcher) {
     }
     return json(fresh);
   } catch (err) {
+    // Observability: log which upstream failed and why (visible in `wrangler
+    // tail` / Workers logs), so a silent stale-serve (e.g. NJT returning 500s)
+    // is diagnosable without deploying a one-off debug probe.
+    console.warn(`[cached] ${key} upstream failed, serving stale if available: ${String(err?.message ?? err)}`);
     const stale = await cache.match(staleKey);
     if (stale) return json({ ...(await stale.json()), stale: true });
     return json({ error: 'upstream_failed', detail: String(err) }, 502);
@@ -262,13 +266,6 @@ const handlers = {
 
     if (path === '/njt/departures' && request.method === 'GET') {
       if (!env.NJT_USER || !env.NJT_PASS) return json({ error: 'njt_not_configured' }, 503);
-      // TEMP diagnostic (2026-07-22 stale investigation): ?debug=njt bypasses the
-      // cache and surfaces the real error fetchNjtDepartures throws, instead of it
-      // being swallowed into a stale response. Remove once the root cause is found.
-      if (url.searchParams.get('debug') === 'njt') {
-        try { return json({ ok: true, count: (await fetchNjtDepartures(env)).trains.length }); }
-        catch (e) { return json({ ok: false, error: String(e?.message ?? e), stack: String(e?.stack ?? '').slice(0, 500) }, 500); }
-      }
       // Pinned to New York Penn (the widget filters by line client-side).
       return cached(url.origin, 'njt:NY', 60, () => fetchNjtDepartures(env));
     }

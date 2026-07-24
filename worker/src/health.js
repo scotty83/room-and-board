@@ -47,10 +47,15 @@ export const CHECKS = [
     ok: (j) => typeof j.station === 'string' && Array.isArray(j.departures),
   },
   {
-    name: 'njt', // NJTransit — token-authed, 10 getToken calls/day; stale-prone
+    name: 'njt', // NJTransit — getStationSchedule is a STATIC daily timetable, so
+    // "old" is not "wrong": healthy = the schedule still has a future departure.
+    // A prior-day timetable (every train already in the past) is the real
+    // failure. No maxStaleSec — staleness is meaningless for static daily data,
+    // and NJT's own endpoint is chronically flaky (recovers only at its midnight
+    // reset), so paging on age would just be nightly noise. See the redesign
+    // plan in docs/superpowers/plans for fetch-once-per-day.
     path: '/njt/departures',
-    maxStaleSec: STALE_MAX,
-    ok: (j) => typeof j.station === 'string' && Array.isArray(j.trains),
+    ok: (j) => typeof j.station === 'string' && Array.isArray(j.trains) && j.trains.some((t) => Number(t?.time) > Date.now() / 1000),
   },
 ];
 

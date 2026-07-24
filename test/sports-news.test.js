@@ -101,6 +101,18 @@ describe('news parsing', () => {
     expect(b.link).toBe('https://example.com/b');
     expect(b.desc).toBe(''); // missing description -> empty, never undefined
   });
+  it('cleans entity-ENCODED markup and named entities out of the summary', () => {
+    // NPR emits its <em> markup as entities (&lt;em&gt;); the raw string below is
+    // exactly what the live feed served the day this was reported.
+    const xml = `<rss><channel>
+      <item><title>Nun</title><description>Her memoir is C&lt;em&gt;loistered: My Years as a Nun.&lt;/em&gt;&#160;Originally published &amp;mdash; March 20, 2024.</description><pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate></item>
+    </channel></rss>`;
+    const [a] = parseRss(xml, 'NPR');
+    expect(a.desc).not.toMatch(/<\/?em>/); // no literal tags leak
+    expect(a.desc).not.toContain('&lt;'); // no residual entities
+    expect(a.desc).toContain('Cloistered: My Years as a Nun.');
+    expect(a.desc).toContain('—'); // &amp;mdash; (double-encoded) resolves to an em dash
+  });
   it('drops a non-http link (relative/guid) so no broken QR is offered', () => {
     const xml = `<rss><channel>
       <item><title>Relative link</title><link>/local/path</link><pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate></item>

@@ -4,25 +4,42 @@ import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
+// Common named HTML entities seen in news feeds (numeric refs handled inline).
+const NAMED_ENTITIES = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  mdash: '—', ndash: '–', hellip: '…',
+  lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”',
+  copy: '©', reg: '®', trade: '™', deg: '°',
+};
+// Decode numeric (&#dd; / &#xhh;) and known-named entities; leave an unknown
+// named ref untouched rather than mangling it.
+function decodeEntities(s) {
+  return s.replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);/gi, (m, code) => {
+    if (code[0] === '#') {
+      const n = /^#x/i.test(code) ? parseInt(code.slice(2), 16) : Number(code.slice(1));
+      return Number.isFinite(n) && n > 0 ? String.fromCodePoint(n) : m;
+    }
+    const c = NAMED_ENTITIES[code.toLowerCase()];
+    return c === undefined ? m : c;
+  });
+}
+const stripTags = (s) => s.replace(/<[^>]+>/g, '');
+
 // Minimal RSS <item> parser: title, pubDate, and (for the tap-to-read story
-// view) the article link + a short description/summary. Handles CDATA.
+// view) the article link + a short description/summary.
 export function parseRss(xml, sourceLabel) {
   const items = [];
   const itemRe = /<item[\s>][\s\S]*?<\/item>/g;
+  // Strip real tags, decode entities, then strip AGAIN: some feeds entity-ENCODE
+  // their markup (NPR emits "&lt;em&gt;"), so those tags only become strippable
+  // after the first decode. A second decode catches double-encoded text.
   const pick = (block, tag) => {
     const m = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`).exec(block);
     if (!m) return '';
-    return m[1]
-      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-      .replace(/<[^>]+>/g, '')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-      .replace(/&#x([0-9a-fA-F]+);/g, (_, n) => String.fromCodePoint(parseInt(n, 16)))
-      .replace(/&apos;/g, "'")
-      .replace(/&quot;/g, '"')
-      .trim();
+    let s = m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
+    s = decodeEntities(stripTags(s));
+    s = decodeEntities(stripTags(s));
+    return s.replace(/\s+/g, ' ').trim();
   };
   for (const block of xml.match(itemRe) ?? []) {
     const title = pick(block, 'title');

@@ -3,7 +3,7 @@
 // nothing served here is sensitive, and the boards fetch from a static origin.
 
 import { mapYahooChart } from './markets.js';
-import { fetchNjtDepartures } from './njt.js';
+import { getNjtSchedule, fetchNjtAlerts } from './njt.js';
 import { fetchMtaAlerts } from './alerts.js';
 import { fetchBusStops, parseLegs } from './bus.js';
 import { fetchNewsFeed, newsFeedUrl } from './news.js';
@@ -150,6 +150,25 @@ async function cached(origin, key, ttlS, fetcher) {
   }
 }
 
+// NJT live alerts (getStationMSG): dynamic, so a short colo cache (~2 min) is
+// fine, but a fetch failure returns [] rather than a stale banner — unlike the
+// schedule, a resolved delay must not linger. Not the shared cached() helper,
+// which serves 24h stale on failure.
+async function njtAlerts(env, origin) {
+  const key = new Request(`${origin}/__cache/njt-alerts`);
+  const hit = await caches.default.match(key);
+  if (hit) { try { return await hit.json(); } catch { /* refetch */ } }
+  try {
+    const alerts = await fetchNjtAlerts(env);
+    await caches.default.put(key, new Response(JSON.stringify(alerts), {
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=120' },
+    }));
+    return alerts;
+  } catch {
+    return [];
+  }
+}
+
 const YAHOO_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
 const INDEX_NAMES = { '^DJI': 'Dow Jones', '^IXIC': 'Nasdaq', '^GSPC': 'S&P 500' };
@@ -266,8 +285,17 @@ const handlers = {
 
     if (path === '/njt/departures' && request.method === 'GET') {
       if (!env.NJT_USER || !env.NJT_PASS) return json({ error: 'njt_not_configured' }, 503);
-      // Pinned to New York Penn (the widget filters by line client-side).
-      return cached(url.origin, 'njt:NY', 60, () => fetchNjtDepartures(env));
+      // Pinned to New York Penn (the widget filters by line client-side). The
+      // schedule is a static daily timetable served from KV (getNjtSchedule);
+      // alerts are dynamic, so they ride a short colo cache and empty out (never
+      // stale) when NJT is down — a resolved delay must not linger on the board.
+      try {
+        const schedule = await getNjtSchedule(env);
+        const alerts = await njtAlerts(env, url.origin);
+        return json({ ...schedule, alerts });
+      } catch (err) {
+        return json({ error: 'upstream_failed', detail: String(err) }, 502);
+      }
     }
 
     if (path === '/markets' && request.method === 'GET') {

@@ -182,23 +182,84 @@ export function mapNjtMessages(json) {
     .slice(0, 4);
 }
 
-// The station is always New York Penn (the board mirrors LIRR/Amtrak); the
-// `station` arg is ignored so old callers still resolve to Penn.
-export async function fetchNjtDepartures(env, _station) {
-  const run = async (fresh) => {
-    const token = await njtToken(env, fresh);
-    const vm = mapNjtUpstream(await form(`${BASE}/getStationSchedule`, { token, station: PENN }), PENN);
-    try {
-      vm.alerts = mapNjtMessages(await form(`${BASE}/getStationMSG`, { token, station: PENN }));
-    } catch {
-      vm.alerts = [];
-    }
-    return vm;
-  };
+// Wraps a single NJT upstream call with the one-shot 401 re-auth: try with the
+// cached token, and only on a token rejection spend a fresh mint and retry once.
+// The station is always New York Penn (the board mirrors LIRR/Amtrak).
+async function withReauth(env, oneCall) {
   try {
-    return await run(false);
+    return await oneCall(await njtToken(env, false));
   } catch (err) {
-    if (!isAuthError(err)) throw err; // transient failure: let cached() serve stale, don't burn a token
-    return run(true); // token expired: re-authenticate once
+    if (!isAuthError(err)) throw err; // transient upstream failure — don't burn a token
+    return oneCall(await njtToken(env, true)); // token expired: re-authenticate once
   }
+}
+
+// The day's static timetable (getStationSchedule). Split from alerts because the
+// schedule is fetched once per service day while alerts refresh often.
+export async function fetchNjtSchedule(env) {
+  return withReauth(env, (token) =>
+    form(`${BASE}/getStationSchedule`, { token, station: PENN }).then((j) => mapNjtUpstream(j, PENN)));
+}
+
+// Live station advisories (getStationMSG) — the dynamic delay banner.
+export async function fetchNjtAlerts(env) {
+  return withReauth(env, (token) =>
+    form(`${BASE}/getStationMSG`, { token, station: PENN }).then(mapNjtMessages));
+}
+
+// America/New_York calendar date ('YYYY-MM-DD') — the service day a timetable is
+// for. en-CA renders ISO-style; timeZone pins it to NJT's clock.
+export function nyDate(now = new Date()) {
+  return now.toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+}
+
+// getStationSchedule returns a STATIC full-day timetable, so we fetch it at most
+// ONCE per service day and serve it all day from KV. KV (not the Cache API)
+// because the Cache API is colo-local and evicts — which stranded the widget with
+// 502s mid-outage. ~1 write/day is the same low-write exception the token uses,
+// nowhere near the 1000/day cap. NJT's endpoint 500s most of the day and only
+// recovers after its ~midnight reset, so one good fetch in that window keeps the
+// widget correct for 24h even while the upstream is down. `stale:true` means we
+// could not get today's copy and are serving a prior day's.
+const SCHEDULE_KV_KEY = 'njt:schedule';
+let scheduleMemo = null; // { date, vm, until } per isolate
+
+const scheduleGood = (s, today) => s && s.date === today && s.vm?.trains?.length > 0;
+
+export async function getNjtSchedule(env) {
+  const today = nyDate();
+  if (scheduleMemo && scheduleMemo.until > Date.now() && scheduleGood(scheduleMemo, today)) {
+    return { ...scheduleMemo.vm, stale: false };
+  }
+  let stored = null;
+  try {
+    const raw = await env.CODES.get(SCHEDULE_KV_KEY);
+    if (raw) stored = JSON.parse(raw);
+  } catch { /* KV read failed — fall through and fetch fresh */ }
+  if (scheduleGood(stored, today)) {
+    scheduleMemo = { date: today, vm: stored.vm, until: Date.now() + 5 * 60 * 1000 };
+    return { ...stored.vm, stale: false };
+  }
+  try {
+    const vm = await fetchNjtSchedule(env);
+    // Only persist a non-empty timetable — an empty result is anomalous and must
+    // not become the cached "today" (nor spend a KV write on every request).
+    if (vm.trains?.length > 0) {
+      scheduleMemo = { date: today, vm, until: Date.now() + 5 * 60 * 1000 };
+      try {
+        await env.CODES.put(SCHEDULE_KV_KEY, JSON.stringify({ date: today, vm }), { expirationTtl: 48 * 3600 });
+      } catch { /* best effort: a later isolate re-fetches */ }
+    }
+    return { ...vm, stale: false };
+  } catch (err) {
+    if (stored?.vm) return { ...stored.vm, stale: true }; // last resort: a prior day's timetable
+    throw err;
+  }
+}
+
+// Test hook: clear the cached schedule (KV + isolate memo) so state can't leak
+// between cases.
+export async function resetNjtSchedule(env) {
+  scheduleMemo = null;
+  try { await env?.CODES?.delete(SCHEDULE_KV_KEY); } catch { /* ignore */ }
 }

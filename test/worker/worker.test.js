@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { digestNext, digestSchedule, mapTeamSummary } from '../../worker/src/sports.js';
 import { env } from 'cloudflare:test';
 import worker from '../../worker/src/index.js';
-import { resetNjtToken } from '../../worker/src/njt.js';
+import { resetNjtToken, resetNjtSchedule } from '../../worker/src/njt.js';
 import { mapRidePath } from '../../worker/src/path.js';
 import GtfsRt from 'gtfs-realtime-bindings';
 import { mapFerryFeed } from '../../worker/src/ferry.js';
@@ -50,6 +50,8 @@ function stubFetch(routes) {
 afterEach(async () => {
   vi.unstubAllGlobals();
   await resetNjtToken(env); // clears the KV session token + isolate memo so it can't leak between cases
+  await resetNjtSchedule(env); // clears the KV daily schedule + memo
+  await caches.default.delete(new Request('https://api.test/__cache/njt-alerts'));
 });
 
 describe('CORS and routing', () => {
@@ -127,7 +129,9 @@ const SCHEDULE_RESPONSE = [
 ];
 
 describe('/njt/departures', () => {
-  beforeEach(() => clearCache('njt:NY'));
+  // A prior-day timetable seed for the KV fallback tests (its one train's epoch
+  // is irrelevant to the route — only the mapping/health layers judge upcoming).
+  const priorDay = { date: '2020-01-01', vm: { station: 'NY', updatedAt: 1, stale: false, trains: [{ time: 1, dest: 'Old', line: 'X', direction: 'Westbound', track: null, status: '' }] } };
 
   it('503s when secrets are not configured', async () => {
     const res = await call('/njt/departures');
@@ -135,10 +139,11 @@ describe('/njt/departures', () => {
     expect((await res.json()).error).toBe('njt_not_configured');
   });
 
-  it('fetches, maps and caches upstream departures', async () => {
+  it('fetches, maps, and serves today\'s schedule (durable in KV, not the Cache API)', async () => {
     const calls = stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE },
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
+      { match: /getStationMSG/, body: [] },
     ]);
     const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
@@ -166,44 +171,29 @@ describe('/njt/departures', () => {
     // 08:15 AM America/New_York on 2026-07-02 is 12:15 UTC (EDT).
     expect(train.time).toBe(Date.UTC(2026, 6, 2, 12, 15, 0) / 1000);
 
-    // Cached in the Cache API, not KV — KV's daily write cap is reserved for
-    // setup codes, so nothing cache-related should land in the CODES namespace.
-    expect(await env.CODES.get('njt:NY:last')).toBeNull();
-    expect(await caches.default.match(cacheKey('fresh', 'njt:NY'))).toBeTruthy();
+    // The static schedule is durable in KV (survives colo eviction); nothing lands
+    // in the old evictable 'njt:NY' Cache-API slot.
+    expect(await env.CODES.get('njt:schedule')).toBeTruthy();
+    expect(await caches.default.match(cacheKey('fresh', 'njt:NY'))).toBeFalsy();
 
-    // Second call inside the TTL is served from cache without touching upstream.
-    const before = calls.length;
+    // Second same-day call is served from KV/memo — no second getStationSchedule.
+    const before = calls.filter((u) => /getStationSchedule/.test(u)).length;
     const res2 = await call('/njt/departures', {}, NJT_ENV);
     expect(res2.status).toBe(200);
     expect((await res2.json()).trains).toHaveLength(2);
-    expect(calls.length).toBe(before);
+    expect(calls.filter((u) => /getStationSchedule/.test(u)).length).toBe(before);
   });
 
-  it('retries once with a fresh token when the schedule call fails', async () => {
+  it('retries once with a fresh token when the schedule call 401s', async () => {
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'expired', status: 401 },
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
+      { match: /getStationMSG/, body: [], times: 2 },
     ]);
     const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
     expect((await res.json()).trains).toHaveLength(2);
-  });
-
-  it('reuses the Cache-API session token across fetches (getToken fires once)', async () => {
-    const calls = stubFetch([
-      { match: /getToken/, body: TOKEN_RESPONSE, times: 5 },
-      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE, times: 5 },
-      { match: /getStationMSG/, body: [], times: 5 },
-    ]);
-    // First fleet-cache-miss fetch authenticates and caches the token.
-    await call('/njt/departures', {}, NJT_ENV);
-    // Expire the digest cache (both layers) but keep the token — simulates a fresh
-    // isolate 60 s later that lost its in-memory state but shares the colo cache.
-    await clearCache('njt:NY');
-    await call('/njt/departures', {}, NJT_ENV);
-    const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
-    expect(tokenCalls).toBe(1); // the second fetch reused the cached token — no extra getToken
   });
 
   it('dedupes concurrent cold-cache token mints (getToken fires once)', async () => {
@@ -212,26 +202,18 @@ describe('/njt/departures', () => {
       { match: /getStationSchedule/, body: SCHEDULE_RESPONSE, times: 5 },
       { match: /getStationMSG/, body: [], times: 5 },
     ]);
-    // Two independent fetches race on a cold token cache. cached() doesn't dedupe
-    // concurrent misses, so both reach fetchNjtDepartures -> njtToken. Without an
+    // Two independent fetches race on a cold token cache. Without njtToken's
     // in-flight guard each would read the empty cache and mint its own token —
-    // the burst that drained the 10/day getToken cap. The in-flight promise
-    // collapses them to one mint.
+    // the burst that (was blamed for) draining the 10/day getToken cap.
     await Promise.all([
       call('/njt/departures', {}, NJT_ENV),
       call('/njt/departures', {}, NJT_ENV),
     ]);
-    const tokenCalls = calls.filter((u) => /getToken/.test(u)).length;
-    expect(tokenCalls).toBe(1);
+    expect(calls.filter((u) => /getToken/.test(u)).length).toBe(1);
   });
 
-  it('serves stale data when upstream fails after a success', async () => {
-    stubFetch([
-      { match: /getToken/, body: TOKEN_RESPONSE },
-      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
-    ]);
-    await call('/njt/departures', {}, NJT_ENV);
-    await caches.default.delete(cacheKey('fresh', 'njt:NY')); // expire fresh, keep stale backup
+  it('serves a prior-day timetable (stale) when today\'s fetch fails', async () => {
+    await env.CODES.put('njt:schedule', JSON.stringify(priorDay));
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'err', status: 500, times: 2 },
@@ -239,17 +221,39 @@ describe('/njt/departures', () => {
     const res = await call('/njt/departures', {}, NJT_ENV);
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.stale).toBe(true);
-    expect(body.trains).toHaveLength(2);
+    expect(body.stale).toBe(true); // could not get today's — flagged for the health check
+    expect(body.trains).toHaveLength(1);
   });
 
-  it('502s when upstream fails with no cached copy', async () => {
+  it('a stale KV date triggers a refetch (service-day rollover)', async () => {
+    await env.CODES.put('njt:schedule', JSON.stringify(priorDay));
+    const calls = stubFetch([
+      { match: /getToken/, body: TOKEN_RESPONSE },
+      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
+      { match: /getStationMSG/, body: [] },
+    ]);
+    const res = await call('/njt/departures', {}, NJT_ENV);
+    expect((await res.json()).trains).toHaveLength(2); // today's fetch, not the seeded prior day
+    expect(calls.some((u) => /getStationSchedule/.test(u))).toBe(true);
+  });
+
+  it('502s when the schedule fetch fails and there is no stored copy', async () => {
     stubFetch([
       { match: /getToken/, body: TOKEN_RESPONSE, times: 2 },
       { match: /getStationSchedule/, body: 'err', status: 500, times: 2 },
     ]);
-    const res = await call('/njt/departures', {}, NJT_ENV);
-    expect(res.status).toBe(502);
+    expect((await call('/njt/departures', {}, NJT_ENV)).status).toBe(502);
+  });
+
+  it('serves alerts separately and empties them (never stale) when getStationMSG fails', async () => {
+    stubFetch([
+      { match: /getToken/, body: TOKEN_RESPONSE },
+      { match: /getStationSchedule/, body: SCHEDULE_RESPONSE },
+      { match: /getStationMSG/, body: 'boom', status: 500 },
+    ]);
+    const body = await (await call('/njt/departures', {}, NJT_ENV)).json();
+    expect(body.trains).toHaveLength(2); // schedule unaffected
+    expect(body.alerts).toEqual([]); // alert fetch failed -> empty, not a stale banner
   });
 });
 

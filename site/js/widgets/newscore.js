@@ -4,7 +4,8 @@ import { escapeHtml, setMoreBadge } from '../util.js';
 import { WORKER_URL } from '../env.js';
 import { itemCapacity, cardSize } from '../capacity.js';
 
-// Minimal RSS <item> parser: title, link-free, pubDate. Handles CDATA.
+// Minimal RSS <item> parser: title, pubDate, and (for the tap-to-read story
+// view) the article link + a short description/summary. Handles CDATA.
 export function parseRss(xml, sourceLabel) {
   const items = [];
   const itemRe = /<item[\s>][\s\S]*?<\/item>/g;
@@ -27,7 +28,10 @@ export function parseRss(xml, sourceLabel) {
     const title = pick(block, 'title');
     if (!title) continue;
     const t = Date.parse(pick(block, 'pubDate')) || 0;
-    items.push({ title, t, source: sourceLabel });
+    // link is a bare URL; description is a summary (HTML stripped by pick). Both
+    // optional — some feeds omit the summary (Seeking Alpha), a few the link.
+    const link = pick(block, 'link');
+    items.push({ title, t, source: sourceLabel, link: /^https?:/i.test(link) ? link : '', desc: pick(block, 'description') });
   }
   return items;
 }
@@ -69,13 +73,18 @@ export function renderHeadlines(el, vm, { widgetId, emptyHint }) {
   const nowMs = vm.nowMs ?? Date.now();
   // Source + age stack above the full-width headline so neither ever
   // squeezes the other (at 3 cols the old side-by-side row truncated both).
-  const itemHtml = (i, clamp) => `<div class="headline${clamp ? ' headline--clamp' : ''}">
+  // A story with a link or summary is tappable (opens the full-screen story
+  // view); carry those on the element so the delegated handler can read them.
+  const itemHtml = (i, clamp) => {
+    const more = i.link || i.desc;
+    return `<div class="headline${clamp ? ' headline--clamp' : ''}${more ? ' headline--more' : ''}"${i.link ? ` data-link="${escapeHtml(i.link)}"` : ''}${i.desc ? ` data-desc="${escapeHtml(i.desc)}"` : ''}>
         <div class="headline__meta">
           <span class="headline__src">${escapeHtml(i.source)}</span>
           <span class="headline__age">${escapeHtml(ageLabel(i.t, nowMs))}</span>
         </div>
         <span class="headline__title">${escapeHtml(i.title)}</span>
       </div>`;
+  };
   // Markup for the first n items. The overflow count rides the title badge
   // (setMoreBadge below), so it costs no row and isn't part of the measure.
   // clampLast renders the final item with its title clamped to one line.

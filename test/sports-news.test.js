@@ -90,6 +90,23 @@ describe('news parsing', () => {
     expect(items[0]).toMatchObject({ title: 'Big headline & more', source: 'NYT' });
     expect(items[0].t).toBe(Date.parse('2026-07-02T12:00:00Z'));
   });
+  it('captures the article link and summary for the tap-to-read story view', () => {
+    const xml = `<rss><channel>
+      <item><title>Markets slip</title><link>https://example.com/a?utm=rss</link><description><![CDATA[Stocks <b>fell</b> as oil rose.]]></description><pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate></item>
+      <item><title>No summary here</title><link>https://example.com/b</link><pubDate>Thu, 02 Jul 2026 11:00:00 +0000</pubDate></item>
+    </channel></rss>`;
+    const [a, b] = parseRss(xml, 'X');
+    expect(a.link).toBe('https://example.com/a?utm=rss');
+    expect(a.desc).toBe('Stocks fell as oil rose.'); // HTML stripped out of the summary
+    expect(b.link).toBe('https://example.com/b');
+    expect(b.desc).toBe(''); // missing description -> empty, never undefined
+  });
+  it('drops a non-http link (relative/guid) so no broken QR is offered', () => {
+    const xml = `<rss><channel>
+      <item><title>Relative link</title><link>/local/path</link><pubDate>Thu, 02 Jul 2026 12:00:00 +0000</pubDate></item>
+    </channel></rss>`;
+    expect(parseRss(xml, 'X')[0].link).toBe('');
+  });
   it('decodes hex and decimal numeric character references', () => {
     // Regression: MarketWatch emits hex refs (&#x2019;); only decimal was
     // decoded, so "Here&#x2019;s" survived and rendered the literal entity.

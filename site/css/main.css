@@ -874,6 +874,33 @@ body.mode-ambient .gear--edit { display: none; }
 .text-viewer__body { font-size: 42px; line-height: 1.45; color: var(--ink); text-wrap: pretty; }
 .text-viewer__hint { font-size: 20px; color: var(--ink-faint); }
 
+/* Story view: a tapped headline's summary + a QR to the full article (the board
+   is a shared kiosk and finance sources are paywalled — read it on your phone). */
+.text-viewer__panel.story { max-width: 1200px; gap: 22px; }
+.story__meta { display: flex; align-items: baseline; gap: 14px; font-size: 22px; text-transform: uppercase; letter-spacing: 0.08em; }
+.story__src { font-weight: 600; color: var(--ink-dim); }
+.story__age { color: var(--ink-faint); text-transform: none; } /* keep "12m", not "12M" */
+.story__title { font-size: 46px; line-height: 1.18; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; text-wrap: balance; }
+.story__desc { font-size: 30px; line-height: 1.5; color: var(--ink); text-wrap: pretty; max-width: 34ch; } /* full ink: it's the content they tapped for, read at 6 ft */
+.story__more { display: flex; align-items: center; gap: 32px; margin-top: 10px; }
+/* QR must sit on white to scan; the padding is its quiet zone. */
+.story__qr { width: 232px; height: 232px; flex: none; background: #fff; border-radius: 18px; padding: 16px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+.story__qr svg { width: 100%; height: 100%; display: block; }
+.story__qr:empty { background: var(--bg-card-2); } /* while the QR chunk loads */
+.story__more-text { display: flex; flex-direction: column; gap: 8px; }
+.story__more-label { font-size: 26px; font-weight: 600; color: var(--ink); }
+.story__more-host { font-size: 24px; color: var(--ink-dim); }
+.story__more-hint { font-size: 20px; color: var(--ink-faint); }
+@media (prefers-reduced-motion: no-preference) {
+  .text-viewer__panel.story { animation: story-in 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+@keyframes story-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* Calm tap affordance: no chrome at rest, a brief press tint on touch so the
+   headline feels responsive (the "there's more here" signal is the press). */
+.headline--more { cursor: pointer; border-radius: 8px; }
+.headline--more:active { background: var(--bg-card-2); }
+
 /* ---------- per-size compact variants (gen1 Chromium lacks container queries;
    cards carry data-w/data-h and the tier classes t-s/t-m/t-l/t-narrow that
    main.js derives from the layout: t-s when h≤2, t-narrow when w≤4) ---------- */

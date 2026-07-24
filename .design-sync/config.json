@@ -1,0 +1,18 @@
+{
+  "projectId": "eb346f68-bd54-49c9-a052-6f0d9c2907f5",
+  "shape": "package",
+  "pkg": "room-and-board",
+  "globalName": "RoomBoard",
+  "srcDir": "site/js",
+  "cssEntry": ".design-sync/ds-styles.css",
+  "guidelinesGlob": [
+    "DESIGN.md",
+    "PRODUCT.md"
+  ],
+  "runtimeFontPrefixes": [
+    "CiscoSans",
+    "Cisco Sans",
+    "SF Pro"
+  ],
+  "readmeHeader": ".design-sync/conventions.md"
+}

@@ -1,0 +1,40 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #000; color: rgba(255,255,255,.95); width: 900px;
+         font-family: 'CiscoSansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; padding: 36px; box-sizing: border-box; }
+  h2 { font-size: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.72); margin: 30px 0 14px; }
+  h2:first-child { margin-top: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center;
+         min-height: 64px; min-width: 160px; font-size: 23px; padding: 0 30px; border-radius: 12px;
+         border: 1px solid rgba(147,160,180,.16); background: #121212; color: rgba(255,255,255,.95); margin-right: 14px; }
+  .btn--primary { background: #64b4fa; border-color: #64b4fa; color: #06131f; font-weight: 700; }
+  .btn--ghost { background: transparent; border-color: transparent; color: rgba(255,255,255,.72); }
+  .fab { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px;
+         border-radius: 50%; background: rgba(255,255,255,.08); color: rgba(255,255,255,.72); font-size: 26px; vertical-align: middle; }
+  .card { width: 420px; background: #121212; border-radius: 24px; padding: 22px 26px; position: relative; }
+  .card__title { font-size: 20px; font-weight: 600; color: rgba(255,255,255,.72); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+  .card__stamp { position: absolute; top: 24px; right: 26px; font-size: 20px; color: #f2990a; }
+  .trow { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+  .trow__min { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; width: 74px; }
+  .trow__dest { flex: 1; }
+  .trow__dest b { display: block; font-size: 22px; font-weight: 600; }
+  .trow__dest span { font-size: 20px; color: rgba(255,255,255,.72); }
+  .track { background: rgba(255,255,255,.11); border-radius: 8px; padding: 6px 10px; font-size: 20px; color: #64b4fa; white-space: nowrap; align-self: center; }
+</style>
+<h2>Buttons — one standard: 64px / 160px min, three tiers, one primary per pane</h2>
+<div>
+  <span class="btn btn--primary">Save</span>
+  <span class="btn">Change</span>
+  <span class="btn btn--ghost">Cancel</span>
+  <span class="fab">⚙</span>
+</div>
+<h2>Card — title, freshness stamp, glance rows, track well</h2>
+<div class="card">
+  <div class="card__title">LIRR — Penn Station</div>
+  <div class="card__stamp">as of 10:12</div>
+  <div class="trow"><div class="trow__min">4m</div><div class="trow__dest"><b>Port Washington</b><span>stops at Mineola</span></div><div class="track">TK 19</div></div>
+  <div class="trow"><div class="trow__min">12m</div><div class="trow__dest"><b>Huntington</b><span>express to Jamaica</span></div><div class="track">TK 17</div></div>
+  <div class="trow" style="margin-bottom:0"><div class="trow__min">18m</div><div class="trow__dest"><b>Babylon</b><span>all stops</span></div><div class="track">—</div></div>
+</div>

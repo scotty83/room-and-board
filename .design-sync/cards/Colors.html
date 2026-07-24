@@ -1,0 +1,43 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #000; color: rgba(255,255,255,.95); width: 840px;
+         font-family: 'CiscoSansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; padding: 32px; box-sizing: border-box; }
+  h2 { font-size: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.72); margin: 26px 0 12px; }
+  h2:first-child { margin-top: 0; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .sw { width: 118px; border-radius: 12px; overflow: hidden; background: #121212; }
+  .sw__chip { height: 64px; }
+  .sw__meta { padding: 8px 10px; }
+  .sw__name { font-size: 15px; font-weight: 600; }
+  .sw__val { font-size: 13px; color: rgba(255,255,255,.56); }
+  .well { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 10px 16px; font-size: 22px; font-weight: 700; }
+</style>
+<h2>Surfaces</h2>
+<div class="row">
+  <div class="sw"><div class="sw__chip" style="background:#000; border:1px solid rgba(255,255,255,.11)"></div><div class="sw__meta"><div class="sw__name">canvas</div><div class="sw__val">#000 (OLED)</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:#121212"></div><div class="sw__meta"><div class="sw__name">surface</div><div class="sw__val">#121212</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:rgba(255,255,255,.11)"></div><div class="sw__meta"><div class="sw__name">surface-alt</div><div class="sw__val">white 11%</div></div></div>
+</div>
+<h2>Ink ramp (white alpha)</h2>
+<div class="row">
+  <div class="sw"><div class="sw__chip" style="background:rgba(255,255,255,.95)"></div><div class="sw__meta"><div class="sw__name">ink</div><div class="sw__val">95%</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:rgba(255,255,255,.84)"></div><div class="sw__meta"><div class="sw__name">ink-mid</div><div class="sw__val">84%</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:rgba(255,255,255,.72)"></div><div class="sw__meta"><div class="sw__name">ink-dim</div><div class="sw__val">72%</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:rgba(255,255,255,.56)"></div><div class="sw__meta"><div class="sw__name">ink-faint</div><div class="sw__val">56%</div></div></div>
+</div>
+<h2>Accent &amp; semantic</h2>
+<div class="row">
+  <div class="sw"><div class="sw__chip" style="background:#64b4fa"></div><div class="sw__meta"><div class="sw__name">accent</div><div class="sw__val">#64b4fa</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:#3cc29a"></div><div class="sw__meta"><div class="sw__name">good</div><div class="sw__val">#3cc29a</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:#fc8b98"></div><div class="sw__meta"><div class="sw__name">bad</div><div class="sw__val">#fc8b98</div></div></div>
+  <div class="sw"><div class="sw__chip" style="background:#f2990a"></div><div class="sw__meta"><div class="sw__name">warn</div><div class="sw__val">#f2990a</div></div></div>
+</div>
+<h2>Semantic wells (solid tints, never alpha)</h2>
+<div class="row">
+  <span class="well" style="background:#0e2b20; color:#3cc29a">▲ 148.71</span>
+  <span class="well" style="background:#4f0e10; color:#fc8b98">▼ 124.59</span>
+  <span class="well" style="background:#36220c; color:#f2990a">as of 10:12 AM</span>
+  <span class="well" style="background:#0a274a; color:#64b4fa">TRACK 14</span>
+</div>

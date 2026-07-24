@@ -24,3 +24,10 @@ RoomOS.md
 # Local visual-audit harnesses (dev-only, not deployed)
 site/_audit.html
 site/_settings-audit.html
+
+# design-sync machine state
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

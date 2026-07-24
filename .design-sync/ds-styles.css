@@ -1,0 +1,75 @@
+/* Room & Board — Momentum design-system stylesheet (curated for Claude Design).
+   The real tokens + reusable idioms from site/css/main.css, MINUS the app's
+   fixed-viewport rules (html,body 1920x1080 overflow:hidden) which must never
+   leak into designs built with this system. Source of truth: site/css/main.css
+   :root and the component idioms documented in DESIGN.md. */
+
+:root {
+  /* Momentum: Cisco Webex Frame / RoomOS neutrals. Pure-black OLED canvas,
+     #121212 surfaces, white-alpha ink ramp + tile layer, one cool accent. */
+  --bg: #000;
+  --bg-card: #121212;
+  --bg-card-2: rgba(255, 255, 255, 0.11);
+  --ink: rgba(255, 255, 255, 0.95);
+  --ink-mid: rgba(255, 255, 255, 0.84);
+  --ink-dim: rgba(255, 255, 255, 0.72);
+  --ink-faint: rgba(255, 255, 255, 0.56);
+  --accent: #64b4fa;
+  --good: #3cc29a;
+  --bad: #fc8b98;
+  --warn: #f2990a;
+  /* Solid "wells" under bright semantic text (the Webex Frame badge idiom) —
+     never alpha tints, which go muddy on OLED black. */
+  --good-tint: #0e2b20;
+  --bad-tint: #4f0e10;
+  --warn-tint: #36220c;
+  --radius: 24px; /* cards */
+  --gap: 20px;    /* grid gap */
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'CiscoSansTT', 'Cisco SansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- card: the base surface ---------- */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.card__title {
+  font-size: 20px; font-weight: 600; color: var(--ink-dim);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px;
+}
+.card__stamp { position: absolute; top: 24px; right: 26px; font-size: 20px; color: var(--warn); }
+.card.is-stale { opacity: 0.75; } /* degrade visibly, never blankly */
+
+/* ---------- buttons: one standard, three tiers ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 64px; min-width: 160px;
+  font-size: 23px; padding: 0 30px; border-radius: 12px;
+  border: 1px solid rgba(147, 160, 180, 0.16); background: var(--bg-card);
+  color: var(--ink); cursor: pointer;
+}
+.btn--primary { background: var(--accent); border-color: var(--accent); color: #06131f; font-weight: 700; } /* max one per pane */
+.btn--ghost { background: transparent; border-color: transparent; color: var(--ink-dim); }
+
+/* ---------- semantic deltas + wells ---------- */
+.delta--up { color: var(--good); }
+.delta--down { color: var(--bad); }
+.well { display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 6px 12px; font-weight: 700; }
+.well--good { background: var(--good-tint); color: var(--good); }
+.well--bad { background: var(--bad-tint); color: var(--bad); }
+.well--warn { background: var(--warn-tint); color: var(--warn); }
+.well--accent { background: #0a274a; color: var(--accent); } /* the native Webex Frame pairing */
+
+/* ---------- quiet states ---------- */
+.empty { color: var(--ink-faint); font-size: 22px; margin: auto; text-align: center; }

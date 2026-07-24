@@ -20,6 +20,11 @@ Classes: `.card` + `.card__title` + `.card__stamp` + `.is-stale` (surface, upper
 - Motion: transitions on transform/opacity only, 150-250ms, `cubic-bezier(0.22, 1, 0.36, 1)`; crossfade or nothing. No slides, bounces, or entrance choreography.
 - Radii: cards 24px (`var(--radius)`), controls 12px, chips 10px, tiles 8px, pills 999px. No nested cards.
 
+## Brand marks
+
+Real marks ship in `brand/` — use them instead of setting the product name as type:
+`room-and-board-wordmark-dark.svg` (216×50 at default scale; the default mark, for page headers and hero areas), `room-and-board-lockup-dark.svg` (216×56; icon + wordmark when the full mark stands alone), `room-and-board-icon-180.png` (square: favicons, avatars, app tiles) and `room-and-board-favicon-32.png`. Both SVGs are dark-background variants, the only variant this dark-only system needs. Preserve their aspect ratios, never recolor or add effects, and give them clear space.
+
 ## Where the truth lives
 
 Read `styles.css` (and its `_ds_bundle.css` import: the full token + class definitions) before styling. `guidelines/DESIGN.md` is the visual system; `guidelines/PRODUCT.md` is the product register (calm utility) and its anti-references.

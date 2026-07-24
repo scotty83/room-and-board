@@ -1,0 +1,39 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; background: #000; color: rgba(255,255,255,.95); width: 900px;
+         font-family: 'CiscoSansTT', -apple-system, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif; padding: 40px; box-sizing: border-box; }
+  h2 { font-size: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.72); margin: 0 0 20px; }
+  .row { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+  .item { background: #121212; border-radius: 24px; padding: 26px 30px; display: flex; flex-direction: column; gap: 14px; }
+  .item img { display: block; }
+  .item__name { font-size: 20px; font-weight: 600; }
+  .item__use { font-size: 18px; color: rgba(255,255,255,.72); max-width: 30ch; line-height: 1.45; }
+  .note { font-size: 18px; color: rgba(255,255,255,.56); margin-top: 26px; line-height: 1.5; max-width: 70ch; }
+</style>
+<h2>Brand assets</h2>
+<div class="row">
+  <div class="item">
+    <img src="../brand/room-and-board-wordmark-dark.svg" alt="Room &amp; Board wordmark" width="216" height="50">
+    <div>
+      <div class="item__name">Wordmark</div>
+      <div class="item__use">The default mark. Page headers, hero areas, the Settings rail.</div>
+    </div>
+  </div>
+  <div class="item">
+    <img src="../brand/room-and-board-lockup-dark.svg" alt="Room &amp; Board lockup" width="216" height="56">
+    <div>
+      <div class="item__name">Lockup</div>
+      <div class="item__use">Icon plus wordmark, for when the full mark needs to stand alone.</div>
+    </div>
+  </div>
+  <div class="item">
+    <img src="../brand/room-and-board-icon-180.png" alt="Room &amp; Board icon" width="90" height="90">
+    <div>
+      <div class="item__name">Icon</div>
+      <div class="item__use">Square mark: favicons, avatars, app tiles. 32px favicon also ships.</div>
+    </div>
+  </div>
+</div>
+<div class="note">Both SVGs are the dark-background variants, which is the only variant this system needs: Room &amp; Board is dark-only. Place a real mark rather than setting the name as type. Never recolor, stretch, or add effects to the mark; give it clear space and let the black canvas do the work.</div>

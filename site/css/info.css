@@ -107,6 +107,26 @@ img { max-width: 100%; }
 .row__desc { font-size: 16px; line-height: 1.5; color: var(--ink-mid); margin: 0; flex: 1 1 260px; }
 .row__note { color: var(--ink-dim); display: block; margin-top: 4px; }
 
+/* Settings hint marker. The app's own cog (icons.js) drawn as a mask in
+   currentColor — NOT the "⚙" character, which platforms render as a colour
+   emoji that clashes with the type. */
+.row__note::before,
+.card__note::before,
+.aside::before,
+.notes__p::before {
+  content: "";
+  display: inline-block;
+  width: 1.05em; height: 1.05em;
+  margin-right: 0.45em;
+  vertical-align: -0.17em;
+  background-color: currentColor;
+  -webkit-mask: var(--cog) center / contain no-repeat;
+  mask: var(--cog) center / contain no-repeat;
+}
+:root {
+  --cog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z'/%3E%3C/svg%3E");
+}
+
 /* ---------- weather glance ---------- */
 .glance { display: flex; align-items: baseline; gap: 14px; margin-top: 16px; flex-wrap: wrap; }
 .glance__temp { font-size: 40px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
